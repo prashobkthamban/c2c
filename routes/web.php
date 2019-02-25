@@ -13,7 +13,14 @@
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('home', 'HomeController@index')->name('home');
+Route::get('cdrreport', 'CdrReportController@index')->name('CdrReport');
+
+
+
+
+
+
 
 // Route::view('/', 'starter')->name('starter');
 Route::get('large-compact-sidebar/dashboard/dashboard1', function () {
