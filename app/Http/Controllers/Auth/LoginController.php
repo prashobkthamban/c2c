@@ -23,65 +23,46 @@ class LoginController extends Controller
     */
 
     use AuthenticatesUsers;
-
     protected $guard = 'account';
     protected $username = 'username';
-
     /**
      * Where to redirect users after login.
      *
      * @var string
      */
     protected $redirectTo = '/';
-
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( )
     {
-        $this->middleware('guest:account')->except('logout');
+        $this->middleware( 'guest:account' )->except( 'logout' );
     }
-
-
-    public function showLoginForm() {
-
-
-            return view('auth.login');
-
-    }
-    public function login(Request $request)
+    public function showLoginForm( )
     {
-        $rules = array(
+        return view( 'auth.login' );
+    }
+    public function login( Request $request )
+    {
+        $rules     = array(
             'username' => 'required',
             'password' => 'required'
         );
-
-
-        $validator = Validator::make($request->all(), $rules);
-
-
-        if ($validator->fails()) {
-            return Redirect::to('login')
-                ->withErrors($validator)
-                ->withInput();
+        $validator = Validator::make( $request->all(), $rules );
+        if ( $validator->fails() ) {
+            return Redirect::to( 'login' )->withErrors( $validator )->withInput();
         } else {
-            $credentials = $request->only('username', 'password');
-
-            if (Auth::attempt($credentials)) {
+            $credentials = $request->only( 'username', 'password' );
+            if ( Auth::attempt( $credentials ) ) {
                 // Authentication passed...
-                return redirect()->intended('/');
-            }else{
-                return Redirect::to('login')
-                    ->withErrors([
-                        'username' => 'Invalid details',
-                    ])
-                    ->withInput();
+                return redirect()->intended( '/' );
+            } else {
+                return Redirect::to( 'login' )->withErrors( array(
+                    'username' => 'Invalid credentials'
+                ) )->withInput();
             }
         }
-
     }
-
-
 }

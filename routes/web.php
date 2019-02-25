@@ -12,9 +12,9 @@
 */
 Auth::routes();
 
-Route::get('/', function () {
-    return view('dashboard.dashboardv1');
-});
+Route::get('/', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index')->name('home');
+
 // Route::view('/', 'starter')->name('starter');
 Route::get('large-compact-sidebar/dashboard/dashboard1', function () {
     // set layout sesion(key)
@@ -95,7 +95,3 @@ Route::view('sessions/forgot', 'sessions.forgot')->name('forgot');
 Route::view('others/notFound', 'others.notFound')->name('notFound');
 Route::view('others/user-profile', 'others.user-profile')->name('user-profile');
 Route::view('others/starter', 'starter')->name('starter');
-
-Auth::routes();
-
-Route::get('/home', 'HomeController@index')->name('home');
