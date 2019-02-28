@@ -9,6 +9,20 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('cdrreport')}}">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">Call Details</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('cdrreportarchive')}}">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">Archived Call Details</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
                     <li class="nav-item {{ request()->is('uikits/*') ? 'active' : '' }}" data-item="uikits">
                         <a class="nav-item-hold" href="#">
                             <i class="nav-icon i-Library"></i>
