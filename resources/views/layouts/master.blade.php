@@ -200,6 +200,12 @@
     {{-- <script src="{{mix('assets/js/laravel/app.js')}}"></script> --}}
 
     @yield('bottom-js')
+<script>
+    $('#zero_configuration_table').dataTable( {
+        paging: false
+
+    } );
+</script>
 </body>
 
 </html>

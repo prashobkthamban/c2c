@@ -17,9 +17,7 @@
                     <div class="card text-left">
 
                         <div class="card-body">
-                            <h4 class="card-title mb-3">Zero configuration</h4>
-                            <p>DataTables has most features enabled by default, so all you need to do to use it with your own ables is to call the construction function: $().DataTable();.</p>
-                            <div class="table-responsive">
+                           <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                     <thead>
                                     <tr>
@@ -38,11 +36,20 @@
                                     @if(!empty($result))
                                         @foreach($result as $row )
                                     <tr>
-                                        <td>{{$row->number}}</td>
+                                        <td>
+                                            @if(Auth::user()->usertype=='groupadmin')
+                                                <a href="?" data-toggle="modal" data-target="#formDiv" title="{{ $row->fname ? $row->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->fname ? $row->fname : $row->number }}</a>
+                                                @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
+                                                {{ $row->fname ? $row->fname : $row->number }}
+                                                @else
+                                                <a href="?" data-toggle="modal" data-target="#formDiv" title="{{ $row->fname ? $row->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->fname ? $row->fname : $row->number }}</a>
+                                            @endif
+
+                                        </td>
                                         <td>{{$row->did_no}}</td>
                                         <td>{{$row->datetime}}</td>
                                         <td>{{$row->firstleg .'('. $row->secondleg.')'}}</td>
-                                        <td>{{$row->status}}</td>
+                                        <td><a>{{$row->status}}</a></td>
                                         <td>{{$row->creditused}}</td>
                                         <td>{{$row->deptname}}</td>
                                         <td>{{$row->opername}}</td>
@@ -63,12 +70,14 @@
                                         <th>Department</th>
                                         <th>Operator</th>
                                     </tr>
+
                                     </tfoot>
 
                                 </table>
                             </div>
 
                         </div>
+                        <div class="pull-right">{{ $result->links() }}</div>
                     </div>
                 </div>
                 <!-- end of col -->
