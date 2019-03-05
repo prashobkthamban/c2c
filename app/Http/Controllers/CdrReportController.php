@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Models\CdrReport;
 use App\Models\CdrArchive;
+use App\Models\CdrPbx;
 
 class CdrReportController extends Controller
 {
@@ -22,5 +23,8 @@ class CdrReportController extends Controller
     }
     public function cdrreportarchive(){
         return view('home.cdrreportarchive', ['result' => CdrArchive::getReport()]);
+    }
+    public function cdrreportout(){
+        return view('home.cdrreportout', ['result' => CdrPbx::getReport()]);
     }
 }

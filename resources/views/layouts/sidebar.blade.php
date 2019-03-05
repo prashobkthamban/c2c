@@ -23,7 +23,21 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
-                    <li class="nav-item {{ request()->is('uikits/*') ? 'active' : '' }}" data-item="uikits">
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('cdrreportout')}}">
+                            <i class="nav-icon i-Headphone"></i>
+                            <span class="nav-text">Voice Out</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('reminder')}}">
+                            <i class="nav-icon i-Bell"></i>
+                            <span class="nav-text">Reminders</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    {{--<li class="nav-item {{ request()->is('uikits/*') ? 'active' : '' }}" data-item="uikits">
                         <a class="nav-item-hold" href="#">
                             <i class="nav-icon i-Library"></i>
                             <span class="nav-text">UI kits</span>
@@ -78,7 +92,7 @@
                             <span class="nav-text">Doc</span>
                         </a>
                         <div class="triangle"></div>
-                    </li>
+                    </li>--}}
                 </ul>
             </div>
 

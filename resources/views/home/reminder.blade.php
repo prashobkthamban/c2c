@@ -6,7 +6,7 @@
 
 @section('main-content')
   <div class="breadcrumb">
-                <h1>Archived CDR Report </h1>
+                <h1>My Reminder </h1>
 
             </div>
             <div class="separator-breadcrumb border-top"></div>
@@ -22,15 +22,13 @@
                                     <thead>
                                     <tr>
                                         <th>Caller</th>
-                                        <th>Date</th>
-                                        <th>Didname</th>
+                                        <th>Reminder Date</th>
                                         <th>Duration</th>
                                         <th>Status</th>
-                                        <th>Coin</th>
                                         <th>Department</th>
                                         <th>Operator</th>
-                                        <th>Assignedto</th>
-                                        <th>Rec</th>
+                                        <th>Assigned to</th>
+                                        <th>Action</th>
 
                                     </tr>
                                     </thead>
@@ -48,15 +46,14 @@
                                             @endif
 
                                         </td>
-                                        <td>{{$row->datetime}}</td>
-                                        <td>{{$row->did_no}}</td>
-                                        <td>{{$row->firstleg .'('. $row->secondleg.')'}}</td>
-                                        <td><a>{{$row->status}}</a></td>
-                                        <td>{{$row->creditused}}</td>
-                                        <td>{{$row->deptname}}</td>
+                                        <td>{{$row->followupdate}}</td>
+                                        <td>{{$row->secondleg}}</td>
+                                        <td>{{$row->appoint_status}}</td>
+                                        <td><a>{{$row->deptname}}</a></td>
                                         <td>{{$row->opername}}</td>
-                                        <td>{{$row->assignedto}}</td>
+                                        <td>{{$row->assignedname}}</td>
                                         <td></td>
+
 
                                     </tr>
                                     @endforeach

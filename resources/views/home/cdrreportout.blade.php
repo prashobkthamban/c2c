@@ -6,7 +6,7 @@
 
 @section('main-content')
   <div class="breadcrumb">
-                <h1>Archived CDR Report </h1>
+                <h1>CDR Report </h1>
 
             </div>
             <div class="separator-breadcrumb border-top"></div>
@@ -22,8 +22,8 @@
                                     <thead>
                                     <tr>
                                         <th>Caller</th>
+                                        <th>DNID</th>
                                         <th>Date</th>
-                                        <th>Didname</th>
                                         <th>Duration</th>
                                         <th>Status</th>
                                         <th>Coin</th>
@@ -48,8 +48,8 @@
                                             @endif
 
                                         </td>
-                                        <td>{{$row->datetime}}</td>
                                         <td>{{$row->did_no}}</td>
+                                        <td>{{$row->datetime}}</td>
                                         <td>{{$row->firstleg .'('. $row->secondleg.')'}}</td>
                                         <td><a>{{$row->status}}</a></td>
                                         <td>{{$row->creditused}}</td>
