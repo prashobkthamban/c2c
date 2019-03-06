@@ -6,7 +6,7 @@
 
 @section('main-content')
   <div class="breadcrumb">
-                <h1>My Reminder </h1>
+                <h1>Operator Account </h1>
 
             </div>
             <div class="separator-breadcrumb border-top"></div>
@@ -21,14 +21,13 @@
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                     <thead>
                                     <tr>
+                                        <th>Customer</th>
+                                        <th>Dnid</th>
                                         <th>Caller</th>
-                                        <th>Reminder Date</th>
-                                        <th>Duration</th>
-                                        <th>Status</th>
                                         <th>Department</th>
-                                        <th>Operator</th>
-                                        <th>Assigned to</th>
-                                        <th>Action</th>
+                                        <th>Duration</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
 
                                     </tr>
                                     </thead>
@@ -37,23 +36,15 @@
                                         @foreach($result as $row )
                                     <tr>
                                         <td>
-                                            @if(Auth::user()->usertype=='groupadmin')
-                                                <a href="?" data-toggle="modal" data-target="#formDiv" title="{{ $row->fname ? $row->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->fname ? $row->fname : $row->number }}</a>
-                                                @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
-                                                {{ $row->fname ? $row->fname : $row->number }}
-                                                @else
-                                                <a href="?" data-toggle="modal" data-target="#formDiv" title="{{ $row->fname ? $row->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->fname ? $row->fname : $row->number }}</a>
-                                            @endif
+                                           {{ $row->name }}
 
                                         </td>
-                                        <td>{{$row->followupdate}}</td>
-                                        <td>{{$row->secondleg}}</td>
-                                        <td>{{$row->appoint_status}}</td>
-                                        <td><a>{{$row->deptname}}</a></td>
-                                        <td>{{$row->opername}}</td>
-                                        <td>{{$row->assignedname}}</td>
+                                        <td>{{$row->dnid}}</td>
+                                        <td>{{$row->callerid}}</td>
+                                        <td>{{$row->departmentname}}</td>
+                                        <td><a>{{$row->duration}}</a></td>
+                                        <td>{{$row->datetime}}</td>
                                         <td></td>
-
 
                                     </tr>
                                     @endforeach
@@ -62,14 +53,13 @@
                                     </tbody>
                                     <tfoot>
                                     <tr>
+                                        <th>Customer</th>
+                                        <th>Dnid</th>
                                         <th>Caller</th>
-                                        <th>Reminder Date</th>
-                                        <th>Duration</th>
-                                        <th>Status</th>
                                         <th>Department</th>
-                                        <th>Operator</th>
-                                        <th>Assigned to</th>
-                                        <th>Action</th>
+                                        <th>Duration</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
                                     </tr>
 
                                     </tfoot>

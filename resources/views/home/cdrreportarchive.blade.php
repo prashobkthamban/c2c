@@ -66,13 +66,15 @@
                                     <tfoot>
                                     <tr>
                                         <th>Caller</th>
-                                        <th>DNID</th>
                                         <th>Date</th>
+                                        <th>Didname</th>
                                         <th>Duration</th>
                                         <th>Status</th>
                                         <th>Coin</th>
                                         <th>Department</th>
                                         <th>Operator</th>
+                                        <th>Assignedto</th>
+                                        <th>Rec</th>
                                     </tr>
 
                                     </tfoot>

@@ -73,6 +73,8 @@
                                         <th>Coin</th>
                                         <th>Department</th>
                                         <th>Operator</th>
+                                        <th>Assignedto</th>
+                                        <th>Rec</th>
                                     </tr>
 
                                     </tfoot>

@@ -37,6 +37,27 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('operator')}}">
+                            <i class="nav-icon i-Bell"></i>
+                            <span class="nav-text">Operator Account</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('contacts')}}">
+                            <i class="nav-icon i-Bell"></i>
+                            <span class="nav-text">Contacts</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('voicemail')}}">
+                            <i class="nav-icon i-Bell"></i>
+                            <span class="nav-text">VoiceMails</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
                     {{--<li class="nav-item {{ request()->is('uikits/*') ? 'active' : '' }}" data-item="uikits">
                         <a class="nav-item-hold" href="#">
                             <i class="nav-icon i-Library"></i>

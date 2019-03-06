@@ -14,12 +14,13 @@ Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('home', 'HomeController@index')->name('home');
-Route::get('cdrreport', 'CdrReportController@index')->name('CdrReport');
-Route::get('cdrreportarchive', 'CdrReportController@cdrreportarchive')->name('CdrReport');
-Route::get('cdrreportout', 'CdrReportController@cdrreportout')->name('CdrReport');
+Route::get('cdrreport', 'ReportController@index')->name('CdrReport');
+Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('CdrReport');
+Route::get('cdrreportout', 'ReportController@cdrreportout')->name('CdrReport');
 Route::get('reminder', 'ReminderController@index')->name('Reminder');
-
-
+Route::get('operator', 'ReportController@operator')->name('Reminder');
+Route::get('contacts', 'ReportController@contacts')->name('Reminder');
+Route::get('voicemail', 'ReportController@voicemail')->name('Reminder');
 
 
 // Route::view('/', 'starter')->name('starter');
