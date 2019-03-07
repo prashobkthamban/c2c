@@ -14,9 +14,9 @@ Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('home', 'HomeController@index')->name('home');
-Route::get('cdrreport', 'ReportController@index')->name('CdrReport');
-Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('CdrReport');
-Route::get('cdrreportout', 'ReportController@cdrreportout')->name('CdrReport');
+Route::get('cdrreport', 'ReportController@index')->name('cdrreport');
+Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('cdrreportarchive');
+Route::get('cdrreportout', 'ReportController@cdrreportout')->name('cdrreportout');
 Route::get('reminder', 'ReminderController@index')->name('Reminder');
 Route::get('operator', 'ReportController@operator')->name('operator');
 Route::get('contacts', 'ReportController@contacts')->name('contacts');
