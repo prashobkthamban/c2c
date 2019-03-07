@@ -18,9 +18,16 @@ Route::get('cdrreport', 'ReportController@index')->name('CdrReport');
 Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('CdrReport');
 Route::get('cdrreportout', 'ReportController@cdrreportout')->name('CdrReport');
 Route::get('reminder', 'ReminderController@index')->name('Reminder');
-Route::get('operator', 'ReportController@operator')->name('Reminder');
-Route::get('contacts', 'ReportController@contacts')->name('Reminder');
-Route::get('voicemail', 'ReportController@voicemail')->name('Reminder');
+Route::get('operator', 'ReportController@operator')->name('operator');
+Route::get('contacts', 'ReportController@contacts')->name('contacts');
+Route::get('voicemail', 'ReportController@voicemail')->name('voicemail');
+Route::get('blacklist', 'ReportController@blacklist')->name('blacklist');
+Route::get('holiday', 'ReportController@holiday')->name('holiday');
+Route::get('conference', 'ReportController@conference')->name('conference');
+Route::get('notification', 'NotificationController@index')->name('notification');
+Route::get('cdrtags', 'ReportController@cdrtags')->name('cdrtags');
+Route::get('operatorgrp', 'ReportController@operatorgrp')->name('operatorgrp');
+
 
 
 // Route::view('/', 'starter')->name('starter');

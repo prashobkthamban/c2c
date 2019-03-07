@@ -58,6 +58,41 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('blacklist')}}">
+                            <i class="nav-icon i-Bell"></i>
+                            <span class="nav-text">Blacklist</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('holiday')}}">
+                            <i class="nav-icon i-Bell"></i>
+                            <span class="nav-text">Holiday</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('conference')}}">
+                            <i class="nav-icon i-Bell"></i>
+                            <span class="nav-text">Dial Out Conference</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('notification')}}">
+                            <i class="nav-icon i-Bell"></i>
+                            <span class="nav-text">Help</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('cdrtags')}}">
+                            <i class="nav-icon i-Bell"></i>
+                            <span class="nav-text">Cdr Tags</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
                     {{--<li class="nav-item {{ request()->is('uikits/*') ? 'active' : '' }}" data-item="uikits">
                         <a class="nav-item-hold" href="#">
                             <i class="nav-icon i-Library"></i>

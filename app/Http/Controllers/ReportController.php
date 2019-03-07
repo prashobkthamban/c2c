@@ -11,6 +11,11 @@ use App\Models\CdrPbx;
 use App\Models\OperatorAccount;
 use App\Models\Contact;
 use App\Models\VoiceEmail;
+use App\Models\Blacklist;
+use App\Models\Holiday;
+use App\Models\Conference;
+use App\Models\CdrTag;
+
 
 class ReportController extends Controller
 {
@@ -38,5 +43,17 @@ class ReportController extends Controller
     }
     public function voicemail(){
         return view('home.voicemail', ['result' => VoiceEmail::getReport()]);
+    }
+    public function blacklist(){
+        return view('home.blacklist', ['result' => Blacklist::getReport()]);
+    }
+    public function holiday(){
+        return view('home.holiday', ['result' => Holiday::getReport()]);
+    }
+    public function conference(){
+        return view('home.conference', ['result' => Conference::getReport()]);
+    }
+    public function cdrtags(){
+        return view('home.cdrtags', ['result' => CdrTag::getReport()]);
     }
 }
