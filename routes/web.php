@@ -27,6 +27,7 @@ Route::get('conference', 'ReportController@conference')->name('conference');
 Route::get('notification', 'NotificationController@index')->name('notification');
 Route::get('cdrtags', 'ReportController@cdrtags')->name('cdrtags');
 Route::get('operatorgrp', 'ReportController@operatorgrp')->name('operatorgrp');
+Route::get('livecalls', 'ReportController@livecalls')->name('livecalls');
 
 
 

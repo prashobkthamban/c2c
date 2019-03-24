@@ -15,6 +15,7 @@ use App\Models\Blacklist;
 use App\Models\Holiday;
 use App\Models\Conference;
 use App\Models\CdrTag;
+use App\Models\CurChannelUsed;
 
 
 class ReportController extends Controller
@@ -55,5 +56,8 @@ class ReportController extends Controller
     }
     public function cdrtags(){
         return view('home.cdrtags', ['result' => CdrTag::getReport()]);
+    }
+    public function livecalls(){
+        return view('home.livecalls', ['result' => CdrTag::getReport()]);
     }
 }

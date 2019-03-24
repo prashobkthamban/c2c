@@ -37,6 +37,13 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
+                    <li class="nav-item" data-item="insightcrm">
+                        <a class="nav-item-hold" href="#">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">Insight CRM</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
                     <li class="nav-item" data-item="">
                         <a class="nav-item-hold" href="{{url('contacts')}}">
                             <i class="nav-icon i-Administrator"></i>
@@ -44,7 +51,20 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
-
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="">
+                            <i class="nav-icon i-Administrator"></i>
+                            <span class="nav-text">To Do List</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="">
+                            <i class="nav-icon i-Administrator"></i>
+                            <span class="nav-text">Send SMS</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
 
                     <li class="nav-item" data-item="">
                         <a class="nav-item-hold" href="{{url('conference')}}">
@@ -81,7 +101,7 @@
                         </a>
                     </li>
                     <li class="nav-item ">
-                        <a class="{{ Route::currentRouteName()=='dashboard_version_1' ? 'open' : '' }}" href="#">
+                        <a class="{{ Route::currentRouteName()=='livecalls' ? 'open' : '' }}" href="{{url('livecalls')}}">
                             <i class="nav-icon i-Clock-3"></i>
                             <span class="item-name">Incoming Calls</span>
                         </a>
@@ -130,6 +150,33 @@
                         <a class="{{ Route::currentRouteName()=='cdrreportarchive' ? 'open' : '' }}" href="#" >
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="item-name">Set Office Hours</span>
+                        </a>
+                    </li>
+
+                </ul>
+                <ul class="childNav" data-parent="insightcrm">
+                    <li class="nav-item">
+                        <a>
+                            <i class="nav-icon i-Over-Time"></i>
+                            <span class="item-name">Categories</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a>
+                            <i class="nav-icon i-Over-Time"></i>
+                            <span class="item-name">Sub Categories</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a>
+                            <i class="nav-icon i-Over-Time"></i>
+                            <span class="item-name">Email & SMS Settings</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a>
+                            <i class="nav-icon i-Over-Time"></i>
+                            <span class="item-name">Email & Templates</span>
                         </a>
                     </li>
 

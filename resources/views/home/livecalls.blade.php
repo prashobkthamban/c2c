@@ -6,7 +6,7 @@
 
 @section('main-content')
   <div class="breadcrumb">
-                <h1>Operator Account </h1>
+                <h1>Holiday Manager </h1>
 
             </div>
             <div class="separator-breadcrumb border-top"></div>
@@ -21,14 +21,13 @@
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                     <thead>
                                     <tr>
-                                        <th>Customer</th>
-                                        <th>Dnid</th>
-                                        <th>Caller</th>
+                                        <th>Callerid</th>
+                                        <th>Call time</th>
                                         <th>Department</th>
+                                        <th>Operator</th>
+                                        <th>Call status</th>
+                                        <th>Dial Statergy</th>
                                         <th>Duration</th>
-                                        <th>Date</th>
-                                        <th>Actions</th>
-
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -36,18 +35,16 @@
                                         @foreach($result as $row )
                                     <tr>
                                         <td>
-                                           {{ $row->name }}
+                                           {{ $row->callerid }}
 
                                         </td>
-                                        <td>{{$row->dnid}}</td>
-                                        <td>{{$row->callerid}}</td>
-                                        <td>{{$row->departmentname}}</td>
-                                        <td><a>{{$row->duration}}</a></td>
-                                        <td>{{$row->datetime}}</td>
-                                        <td>
-                                            <a href="{{asset('voicefiles/'.$row->filename)}}" class="nav-icon i-Download" title="Download"></a>
-                                            <a href="{{asset('voicefiles/'.$row->filename)}}" class="nav-icon i-Download" title="Play"></a>
-                                        </td>
+                                        <td>{{$row->time}}</td>
+                                        <td>{{$row->dept_name}}</td>
+                                        <td>{{$row->opername}}</td>
+                                        <td>{{$row->call_status}}</td>
+                                        <td>{{$row->dial_statergy}}</td>
+                                        <td>{{$row->priority}}</td>
+                                        <td></td>
 
                                     </tr>
                                     @endforeach
@@ -56,13 +53,13 @@
                                     </tbody>
                                     <tfoot>
                                     <tr>
-                                        <th>Customer</th>
-                                        <th>Dnid</th>
-                                        <th>Caller</th>
+                                        <th>Callerid</th>
+                                        <th>Call time</th>
                                         <th>Department</th>
+                                        <th>Operator</th>
+                                        <th>Call status</th>
+                                        <th>Dial Statergy</th>
                                         <th>Duration</th>
-                                        <th>Date</th>
-                                        <th>Actions</th>
                                     </tr>
 
                                     </tfoot>
