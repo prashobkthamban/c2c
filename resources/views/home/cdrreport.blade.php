@@ -35,7 +35,7 @@
                                     <tbody>
                                     @if(!empty($result))
                                         @foreach($result as $row )
-                                    <tr>
+                                    <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable">
                                         <td>
                                             @if(Auth::user()->usertype=='groupadmin')
                                                 <a href="?" data-toggle="modal" data-target="#formDiv" title="{{ $row->fname ? $row->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->fname ? $row->fname : $row->number }}</a>
@@ -55,6 +55,19 @@
                                         <td>{{$row->opername}}</td>
 
                                     </tr>
+                                    <tr>
+                                        <td colspan="7">
+                                            <div id="accordion_{{$row->cdrid}}" class="collapse">
+                                                <button type="button" class="btn btn-primary btn-rounded m-1" data-toggle="modal" data-target="#ModalContent">Form</button>
+                                                <button type="button" class="btn btn-primary btn-rounded m-1">Tag</button>
+                                                <button type="button" class="btn btn-primary btn-rounded m-1">Assign</button>
+                                                <button type="button" class="btn btn-primary btn-rounded m-1">Add Contact</button>
+                                                <button type="button" class="btn btn-primary btn-rounded m-1">Play</button>
+                                                <button type="button" class="btn btn-primary btn-rounded m-1">Download</button>
+                                                <button type="button" class="btn btn-primary btn-rounded m-1">More</button>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                         @endif
 
@@ -69,6 +82,7 @@
                                         <th>Coin</th>
                                         <th>Department</th>
                                         <th>Operator</th>
+                                        <th></th>
                                     </tr>
 
                                     </tfoot>
