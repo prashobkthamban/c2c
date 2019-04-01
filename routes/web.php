@@ -29,6 +29,10 @@ Route::get('cdrtags', 'ReportController@cdrtags')->name('cdrtags');
 Route::get('operatorgrp', 'ReportController@operatorgrp')->name('operatorgrp');
 Route::get('livecalls', 'ReportController@livecalls')->name('livecalls');
 
+//ajax
+//Route::get('getForm', 'CdrAjaxController@getForm');
+Route::post('getForm', 'CdrAjaxController@getForm');
+
 
 
 // Route::view('/', 'starter')->name('starter');

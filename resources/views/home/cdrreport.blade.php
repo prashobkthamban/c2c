@@ -55,16 +55,32 @@
                                         <td>{{$row->opername}}</td>
 
                                     </tr>
-                                    <tr>
+                                    <tr id="accordion_{{$row->cdrid}}" class="collapse">
                                         <td colspan="7">
-                                            <div id="accordion_{{$row->cdrid}}" class="collapse">
-                                                <button type="button" class="btn btn-primary btn-rounded m-1" data-toggle="modal" data-target="#ModalContent">Form</button>
-                                                <button type="button" class="btn btn-primary btn-rounded m-1">Tag</button>
-                                                <button type="button" class="btn btn-primary btn-rounded m-1">Assign</button>
-                                                <button type="button" class="btn btn-primary btn-rounded m-1">Add Contact</button>
-                                                <button type="button" class="btn btn-primary btn-rounded m-1">Play</button>
-                                                <button type="button" class="btn btn-primary btn-rounded m-1">Download</button>
-                                                <button type="button" class="btn btn-primary btn-rounded m-1">More</button>
+                                            <div >
+                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.form')">Form</button>
+                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.tag')">Tag</button>
+                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.reminder')">Add Reminder</button>
+                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.assign')">Assign</button>
+                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.contact')">Add Contact</button>
+                                                <button type="button" class="btn btn-info m-1">Play</button>
+                                                <button type="button" class="btn btn-info m-1">Download</button>
+
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-info">More</button>
+                                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                                        <span class="caret"></span>
+                                                        <span class="sr-only">Toggle Dropdown</span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" role="menu">
+                                                        <li><a href="#">Action</a></li>
+                                                        <li><a href="#">Another action</a></li>
+                                                        <li><a href="#">Something else here</a></li>
+                                                        <li class="divider"></li>
+                                                        <li><a href="#">Separated link</a></li>
+                                                    </ul>
+                                                </div>
+
                                             </div>
                                         </td>
                                     </tr>
@@ -107,5 +123,11 @@
 
  <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
     <script src="{{asset('assets/js/datatables.script.js')}}"></script>
+ <script type="text/javascript">
+
+
+
+ </script>
+
 
 @endsection
