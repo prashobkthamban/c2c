@@ -2,7 +2,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Validator;
+use App\Models\CdrReport;
+use App\Models\Contact;
 
 
 class CdrAjaxController extends Controller
@@ -20,13 +22,30 @@ class CdrAjaxController extends Controller
                 exit( );
             }
 
-            $array[ 'headertitle' ] = 'ss';
+            $array[ 'id' ] = $data[ 'id' ];
             $html               = view( $data[ 'viewfile' ], $array );
             $arr[ 'view' ]      = $html->__toString();
         }
         $arr[ 'success' ] = 1;
         return response()->json( $arr );
         exit( );
+
+    }
+    public function addContact(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'fname' => 'required',
+            'lname' => 'required',
+            'email' => 'required',
+        ]);
+
+        if ($validator->fails())
+        {
+            return response()->json(['errors'=>$validator->errors()->all()]);
+        }
+        Contact::InsertContact( $request->Input( ) );
+
+        return response()->json(['success'=>'Record is successfully added']);
 
     }
 

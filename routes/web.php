@@ -32,6 +32,7 @@ Route::get('livecalls', 'ReportController@livecalls')->name('livecalls');
 //ajax
 //Route::get('getForm', 'CdrAjaxController@getForm');
 Route::post('getForm', 'CdrAjaxController@getForm');
+Route::post('addContact', 'CdrAjaxController@addContact');
 
 
 

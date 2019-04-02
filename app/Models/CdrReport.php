@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Contact;
 
 
 class CdrReport extends Model
@@ -23,4 +24,10 @@ class CdrReport extends Model
         ->paginate(30);
         return $result;
     }
+    public static function getContact( $rowid ){
+        return CdrReport::select( 'number' )->where( 'cdr.cdrid', $rowid )
+            ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'cdr.operatorid')
+            ->first( );
+    }
+
 }

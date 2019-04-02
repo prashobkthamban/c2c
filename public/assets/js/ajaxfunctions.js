@@ -5,7 +5,8 @@ function loadForm( id,viewfile ) {
         //url: '{{URL::to('/getForm')}}',
         url: '/getForm',
         data: {
-            viewfile: viewfile
+            'viewfile': viewfile,
+            'id': id
         },
         success: function (data) {
             if (data.success == 1) {
