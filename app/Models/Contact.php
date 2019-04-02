@@ -18,7 +18,7 @@ class Contact extends Model
         $data = Contact::paginate(30);
         return $data;
     }
-    public static function InsertContact( $input , $cdr){
+    public static function InsertContact( $input ){
         $cdr = CdrReport::getContact( $input['rowid'] );
 
         return Contact::insertGetId(
