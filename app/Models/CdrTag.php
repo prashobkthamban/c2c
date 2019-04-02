@@ -23,4 +23,8 @@ class CdrTag extends Model
         $result = $data->orderBy( 'id', 'DESC' )->paginate( 30 );
         return $result;
     }
+
+    public static function getTag(){
+        return CdrTag::select('id','tag')->where('groupid', Auth::user()->groupid )->get();
+    }
 }

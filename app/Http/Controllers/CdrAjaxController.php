@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\CdrReport;
 use App\Models\Contact;
-
+use App\Models\CdrTag;
 
 class CdrAjaxController extends Controller
 
@@ -23,6 +23,10 @@ class CdrAjaxController extends Controller
             }
 
             $array[ 'id' ] = $data[ 'id' ];
+            if($data[ 'viewfile' ] == 'cdr.tag'){
+                $array['tags'] =   CdrTag::getTag();
+            }
+
             $html               = view( $data[ 'viewfile' ], $array );
             $arr[ 'view' ]      = $html->__toString();
         }
@@ -43,7 +47,13 @@ class CdrAjaxController extends Controller
         {
             return response()->json(['errors'=>$validator->errors()->all()]);
         }
-        Contact::InsertContact( $request->Input( ) );
+        if($data = Contact::getContactsByNumber($request->Input()['rowid'])){
+            Contact::updateContact($request->input(),$data->id);
+        }
+        else{
+            Contact::InsertContact( $request->Input() );
+        }
+
 
         return response()->json(['success'=>'Record is successfully added']);
 
