@@ -2,6 +2,9 @@
 @section('page-css')
 
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">
+<link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.css')}}">
+<link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.date.css')}}">
+<link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.time.css')}}">
 @endsection
 
 @section('main-content')
@@ -122,7 +125,10 @@
 @section('page-js')
 
  <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables.script.js')}}"></script>
+ <script src="{{asset('assets/js/datatables.script.js')}}"></script>
+ <script src="{{asset('assets/js/vendor/pickadate/picker.js')}}"></script>
+ <script src="{{asset('assets/js/vendor/pickadate/picker.date.js')}}"></script>
+ <script src="{{asset('assets/js/vendor/pickadate/picker.time.js')}}"></script>
  <script type="text/javascript">
 
 

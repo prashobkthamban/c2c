@@ -33,8 +33,8 @@ Route::get('livecalls', 'ReportController@livecalls')->name('livecalls');
 //Route::get('getForm', 'CdrAjaxController@getForm');
 Route::post('getForm', 'CdrAjaxController@getForm');
 Route::post('addContact', 'CdrAjaxController@addContact');
-
-
+Route::post('addTag', 'CdrAjaxController@addTag');
+Route::post('addReminder', 'CdrAjaxController@addReminder');
 
 // Route::view('/', 'starter')->name('starter');
 Route::get('large-compact-sidebar/dashboard/dashboard1', function () {

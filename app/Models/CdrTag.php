@@ -27,4 +27,10 @@ class CdrTag extends Model
     public static function getTag(){
         return CdrTag::select('id','tag')->where('groupid', Auth::user()->groupid )->get();
     }
+
+    public static function getTagFromId($id){
+        return CdrTag::select('tag')->where('id', $id )->first();
+    }
+
+
 }

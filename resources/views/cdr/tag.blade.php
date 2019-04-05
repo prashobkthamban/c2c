@@ -7,6 +7,7 @@
     </div>
     <div class="modal-body">
         <form>
+            <input type="hidden" id="cdrid" name="cdrid" value="{{$id}}">
             <div class="form-group">
                 <label for="recipient-name-1" class="col-form-label">Tag:</label>
                 <select name="tagid" id="tagid" class="form-control">
@@ -32,7 +33,8 @@
                 url: "{{ url('addTag') }}",
                 method: 'post',
                 data: {
-                    tagid: $('#tagid').val()
+                    tagid: $('#tagid').val(),
+                    cdrid: $('#cdrid').val()
                 },
                 success: function(data){
                     $.each(data.errors, function(key, value){

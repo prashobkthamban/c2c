@@ -29,4 +29,24 @@ class Reminder extends Model
             ->paginate(30);
         return $result;
     }
+
+    public static function insertReminder($data,$newdate){
+
+        return Reminder::insertGetId(
+            ['number' => $data->number,
+                'groupid' => Auth::user()->groupid,
+                'operatorid' => Auth::user()->id,
+                'followupdate' => $newdate,
+                'appoint_status' => "Live",
+                'follower' => Auth::user()->username,
+                'recordedfilename' => $data->recordedfilename,
+                'calldate' =>  $data->datetime,
+                'deptname' => $data->deptname,
+                'uniqueid' => $data->uniqueid,
+                'resellerid' => $data->resellerid,
+                'secondleg' => $data->secondleg,
+                'assignedto' => $data->assignedto
+            ]
+        );
+    }
 }

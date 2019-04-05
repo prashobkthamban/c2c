@@ -1,11 +1,13 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Reminder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\CdrReport;
 use App\Models\Contact;
 use App\Models\CdrTag;
+use App\Models\Cdr;
 
 class CdrAjaxController extends Controller
 
@@ -59,4 +61,45 @@ class CdrAjaxController extends Controller
 
     }
 
+    public function addTag(Request $request){
+        $validator = Validator::make($request->all(), [
+            'tagid' => 'required',
+            'cdrid' => 'required'
+        ]);
+
+        if ($validator->fails())
+        {
+            return response()->json(['errors'=>$validator->errors()->all()]);
+        }
+
+        if($data = CdrTag::getTagFromId($request->Input()['tagid'])){
+            Cdr::updateTag(    $request->input(),$data->tag);
+        }
+
+
+        return response()->json(['success'=>'Record is successfully added']);
+    }
+
+    public function addReminder(Request $request){
+        $validator = Validator::make($request->all(), [
+            'startdate' => 'required',
+            'Timepicker' => 'required'
+        ]);
+
+        if ($validator->fails())
+        {
+            return response()->json(['errors'=>$validator->errors()->all()]);
+        }
+
+        if($data = Cdr::getCdrFromId($request->Input()['cdrid'])){
+            $date = date('Y-m-d', strtotime($request->Input()['startdate']));
+            $time = date('H:i', strtotime($request->Input()['Timepicker']));
+            $newdate = $date.' '.$time;
+
+            Reminder::insertReminder(   $data,$newdate);
+        }
+
+
+        return response()->json(['success'=>'Record is successfully added']);
+    }
 }
