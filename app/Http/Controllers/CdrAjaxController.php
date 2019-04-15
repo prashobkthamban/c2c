@@ -8,6 +8,7 @@ use App\Models\CdrReport;
 use App\Models\Contact;
 use App\Models\CdrTag;
 use App\Models\Cdr;
+use App\Models\CdrSub;
 
 class CdrAjaxController extends Controller
 
@@ -29,6 +30,9 @@ class CdrAjaxController extends Controller
                 $array['tags'] =   CdrTag::getTag();
             }
 
+            if($data[ 'viewfile' ] == 'cdr.callhistory'){
+                $array['callhistory'] =   CdrSub::getCdrSub($data[ 'id' ]);
+            }
             $html               = view( $data[ 'viewfile' ], $array );
             $arr[ 'view' ]      = $html->__toString();
         }

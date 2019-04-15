@@ -14,7 +14,20 @@
             </div>
             <div class="separator-breadcrumb border-top"></div>
 
+              <div class="row">
+                  <div class="col-lg-6 col-md-12">
+                      <div class="card mb-2">
+                          <div class="card-body">
+                              <div class="row row-xs">
 
+                                  <div class="col-md-2 mt-3 mt-md-0">
+                                      <button class="btn btn-primary btn-block">Filter</button>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
             <div class="row mb-4">
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
@@ -76,11 +89,28 @@
                                                         <span class="sr-only">Toggle Dropdown</span>
                                                     </button>
                                                     <ul class="dropdown-menu" role="menu">
-                                                        <li><a href="#">Action</a></li>
-                                                        <li><a href="#">Another action</a></li>
-                                                        <li><a href="#">Something else here</a></li>
+                                                        <li>
+                                                            <a href="#" class="btn btn-outline-info m-1">Call Duration : {{$row->firstleg}}({{$row->secondleg}})</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" class="btn btn-outline-info m-1">Coin : {{$row->creditused}}</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" class="btn btn-outline-info m-1">Assign To : {{$row->assignedname}}</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" class="btn btn-outline-info m-1">Reminder : {{$row->creditused}}</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" class="btn btn-outline-info m-1">Tag : {{$row->tag}}</a>
+                                                        </li>
+                                                        <li>
+                                                            <a href="#" class="btn btn-outline-info m-1">Form Owner : {{$row->opername}}</a>
+                                                        </li>
                                                         <li class="divider"></li>
-                                                        <li><a href="#">Separated link</a></li>
+                                                        <li>
+                                                            <a href="#" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.callhistory')">For Call History</a>
+                                                        </li>
                                                     </ul>
                                                 </div>
 
