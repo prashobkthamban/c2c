@@ -16,6 +16,7 @@ use App\Models\Holiday;
 use App\Models\Conference;
 use App\Models\CdrTag;
 use App\Models\CurChannelUsed;
+use App\Models\OperatorDepartment;
 
 
 class ReportController extends Controller
@@ -28,7 +29,7 @@ class ReportController extends Controller
         }
     }
     public function index(){
-        return view('home.cdrreport', ['result' => CdrReport::getReport()]);
+        return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids()]);
     }
     public function cdrreportarchive(){
         return view('home.cdrreportarchive', ['result' => CdrArchive::getReport()]);

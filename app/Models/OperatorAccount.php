@@ -28,4 +28,14 @@ class OperatorAccount extends Model
             ->paginate(30);
         return $result;
     }
+
+    public static function getOperatorbygroup( ){
+        
+        $data = OperatorAccount::select('id','opername');          
+         if( Auth::user()->usertype == 'reseller'){
+            $data->where('operatoraccount.resellerid',Auth::user()->resellerid );
+        } 
+        $result = $data->where('groupid',Auth::user()->groupid )->get();
+        return $result;
+    }
 }

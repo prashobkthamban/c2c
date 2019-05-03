@@ -10,6 +10,16 @@ use App\Models\CdrTag;
 use App\Models\Cdr;
 use App\Models\CdrSub;
 
+use App\Models\CdrArchive;
+use App\Models\CdrPbx;
+use App\Models\OperatorAccount;
+use App\Models\VoiceEmail;
+use App\Models\Blacklist;
+use App\Models\Holiday;
+use App\Models\Conference;
+use App\Models\CurChannelUsed;
+use App\Models\OperatorDepartment;
+
 class CdrAjaxController extends Controller
 
 {
@@ -105,5 +115,21 @@ class CdrAjaxController extends Controller
 
 
         return response()->json(['success'=>'Record is successfully added']);
+    }
+
+    public function getreportsearch(Request $request)
+    {
+
+        if ( $request->ajax() ) {
+            $data = $request->all();
+            
+            $array = array('result' => CdrReport::getReport_search($data));
+            $html               = view( 'home.cdrreport_ajax', $array );
+            $arr[ 'view' ]      = $html->__toString();
+        }
+        $arr[ 'success' ] = 1;
+        return response()->json( $arr );
+        exit( );
+
     }
 }
