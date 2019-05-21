@@ -20,8 +20,13 @@
                           <div class="card-body">
 
                              <div class="col-md-2 mt-3 mt-md-0">
-                                  <button class="btn btn-primary btn-block collapsed pull-right" data-toggle="collapse" data-target="#filter-panel">Filter</button>
+                                
+                                    {{-- <button class="btn btn-default mt-3" id="btn_make_call">Make a call</button> --}}
+                                   <button class="btn btn-default mt-3" id="btn_refresh">Refresh</button> 
+                                   <a class="btn btn-default mt-3" id="btn_download" href="{{ url('cdrexport') }}">Download</a> 
+                                    <button class="btn btn-primary btn-block collapsed pull-right mt-3" data-toggle="collapse" data-target="#filter-panel">Filter</button>
                               </div>
+
                               <div class="row row-xs">
 
 
@@ -123,7 +128,27 @@
                                                         <label class="filter-col"  for="pref-search">By Caller Number</label>
                                                         <input type="text" class="form-control input-sm" name="caller_number">
                                                     </div>
-                                                    
+
+                                                    <div class="form-group ">
+                                                        <label class="filter-col"  for="pref-perpage">Tags</label>
+                                                        <select  class="form-control" name="tags">
+                                                            <option value="">All</option>
+                                                            @if(!empty($tags))
+                                                                @foreach($tags as $tg )
+                                                                    <option value="{{$tg->tag}}">{{$tg->tag}}
+                                                                    </option>
+                                                                @endforeach
+                                                            @endif
+                                                            
+                                                        </select>                                
+                                                    </div> 
+                                                    {{--
+                                                    <div class="form-group">  
+                                                        <div class="">
+                                                          <label><input type="checkbox" value="1" name="unique_call"> Unique Calls</label>
+                                                        </div>
+                                                    </div>
+                                                    --}}
                                                     <div class="form-group">    
                                                         
                                                         <button type="button" id="report_search_button" class="btn btn-default filter-col">
@@ -297,7 +322,11 @@
         event.preventDefault();
         var page = $(this).text();       
         get_report_search(page);
-    })
+    });
+    $(document).on("click","#btn_refresh",function(){
+        $("#cdr_filter_form")[0].reset();
+        get_report_search(1);
+    });
 //});
 
 function get_report_search(page)

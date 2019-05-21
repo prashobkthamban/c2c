@@ -32,7 +32,8 @@ class CdrReport extends Model
 
     public static function getReport_search($post_data )
     {
-       $data = CdrReport::select('cdr.*','name','resellername','opername','phonenumber')
+         $data = CdrReport::select('cdr.*','name','resellername','opername','phonenumber')
+              
             ->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr.groupid')
             ->leftJoin('resellergroup', 'resellergroup.id', '=', 'cdr.resellerid')
             ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'cdr.operatorid');
@@ -101,9 +102,14 @@ class CdrReport extends Model
         {
             $data->where('cdr.status',$post_data['did_no'] );
         }
+        if(isset($post_data['tags']) && $post_data['tags'] != '')
+        {
+            $data->where('cdr.tag','LIKE','%' .$post_data['tags'].'%'  );
+        }
         if( Auth::user()->usertype == 'reseller'){
             $data->where('cdr.resellerid',Auth::user()->resellerid );
         }
+        
         $result = $data->orderBy('datetime','DESC')
         ->paginate(30);
         return $result;
@@ -125,5 +131,43 @@ class CdrReport extends Model
         }    
         $data->where('cdr.groupid',Auth::user()->groupid);
          return $data->distinct()->get( );
+    }
+
+    public static function cdrExport()
+    {
+        $field = 'cdr.operatorid';
+        if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller')
+        {
+            $columns = array('uniqueid','did_no','name','number' ,'datetime','firstleg','secondleg','cdr.status as status','creditused','deptname','opername' ,'phonenumber');
+        }
+        elseif(Auth::user()->usertype ==  'groupadmin')
+        {
+            $columns = array('uniqueid','did_no','number' ,'datetime','firstleg','secondleg', 'cdr.status as status','creditused','deptname','tag','A.opername as opername','B.opername as assignedto');
+        }
+        elseif(Auth::user()->usertype ==  'operator')
+        {
+            $columns = array('uniqueid','did_no','number' ,'datetime','firstleg','secondleg','cdr.status as status','creditused','deptname','tag','opername');
+            $field = 'cdr.assignedto';
+        }
+        $data = CdrReport::select($columns)
+            ->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr.groupid')
+            ->leftJoin('resellergroup', 'resellergroup.id', '=', 'cdr.resellerid')
+            ->leftJoin('operatoraccount AS A', 'A.id', '=', $field);
+        if(Auth::user()->usertype ==  'reseller')
+        {
+            $data->where('cdr.resellerid',Auth::user()->resellerid );
+        }
+        elseif(Auth::user()->usertype ==  'groupadmin')
+        {
+            
+            $data ->leftJoin('operatoraccount AS B', 'B.id', '=', 'cdr.assignedto');
+            $data->where('cdr.groupid',Auth::user()->groupid);
+        }
+        elseif(Auth::user()->usertype ==  'operator')
+        {
+            $data->where('cdr.operatorid',Auth::user()->id);
+        }
+        return $data->orderBy('datetime','DESC')->get();
+       // return  $data ->get();
     }
 }
