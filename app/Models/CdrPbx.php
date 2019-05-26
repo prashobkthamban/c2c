@@ -113,7 +113,7 @@ class CdrPbx extends Model
         //
         if(isset($post_data['did_no']) && $post_data['did_no'] != '')
         {
-            $data->where('cdrpbx.status',$post_data['did_no'] );
+            $data->where('cdrpbx.did_no',$post_data['did_no'] );
         }
         if(isset($post_data['tags']) && $post_data['tags'] != '')
         {

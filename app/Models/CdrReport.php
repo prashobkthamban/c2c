@@ -100,7 +100,7 @@ class CdrReport extends Model
         //
         if(isset($post_data['did_no']) && $post_data['did_no'] != '')
         {
-            $data->where('cdr.status',$post_data['did_no'] );
+            $data->where('cdr.did_no',$post_data['did_no'] );
         }
         if(isset($post_data['tags']) && $post_data['tags'] != '')
         {

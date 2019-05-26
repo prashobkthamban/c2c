@@ -50,7 +50,7 @@ class ReportController extends Controller
         return view('home.contacts', ['result' => Contact::getReport()]);
     }
     public function voicemail(){
-        return view('home.voicemail', ['result' => VoiceEmail::getReport()]);
+        return view('home.voicemail', ['result' => VoiceEmail::getReport(),'departments'=> VoiceEmail::get_dept_by_group(),'dnidnames'=>VoiceEmail::getdids()]);
     }
     public function blacklist(){
         return view('home.blacklist', ['result' => Blacklist::getReport()]);

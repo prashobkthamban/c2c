@@ -30,6 +30,7 @@ Route::get('operatorgrp', 'ReportController@operatorgrp')->name('operatorgrp');
 Route::get('livecalls', 'ReportController@livecalls')->name('livecalls');
 Route::get('cdrexport', 'ReportController@cdrexport')->name('cdrexport');
 Route::get('cdroutexport', 'ReportController@cdroutexport')->name('cdroutexport');
+Route::get('voicemailexport', 'ReportController@voicemailexport')->name('voicemailexport');
 
 //ajax
 //Route::get('getForm', 'CdrAjaxController@getForm');
@@ -39,6 +40,7 @@ Route::post('addTag', 'CdrAjaxController@addTag');
 Route::post('addReminder', 'CdrAjaxController@addReminder');
 Route::post('getreportsearch', 'CdrAjaxController@getreportsearch');
 Route::post('getcdroutsearch', 'CdrAjaxController@getcdroutsearch');
+Route::post('getvoicesearch', 'CdrAjaxController@getvoicesearch');
 
 
 // Route::view('/', 'starter')->name('starter');

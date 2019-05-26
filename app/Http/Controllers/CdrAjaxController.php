@@ -147,4 +147,18 @@ class CdrAjaxController extends Controller
         exit( );
 
     }
+     public function getvoicesearch(Request $request)
+    {
+        if ( $request->ajax() ) {
+            $data = $request->all();
+            
+            $array = array('result' => VoiceEmail::getReport($data));
+            $html               = view( 'home.voicemail_ajax', $array );
+            $arr[ 'view' ]      = $html->__toString();
+        }
+        $arr[ 'success' ] = 1;
+        return response()->json( $arr );
+        exit( );
+
+    }
 }
