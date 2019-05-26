@@ -132,4 +132,19 @@ class CdrAjaxController extends Controller
         exit( );
 
     }
+
+    public function getcdroutsearch(Request $request)
+    {
+        if ( $request->ajax() ) {
+            $data = $request->all();
+            
+            $array = array('result' => CdrPbx::getReport_search($data));
+            $html               = view( 'home.cdrreport_ajax', $array );
+            $arr[ 'view' ]      = $html->__toString();
+        }
+        $arr[ 'success' ] = 1;
+        return response()->json( $arr );
+        exit( );
+
+    }
 }

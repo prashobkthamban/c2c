@@ -29,6 +29,7 @@ Route::get('cdrtags', 'ReportController@cdrtags')->name('cdrtags');
 Route::get('operatorgrp', 'ReportController@operatorgrp')->name('operatorgrp');
 Route::get('livecalls', 'ReportController@livecalls')->name('livecalls');
 Route::get('cdrexport', 'ReportController@cdrexport')->name('cdrexport');
+Route::get('cdroutexport', 'ReportController@cdroutexport')->name('cdroutexport');
 
 //ajax
 //Route::get('getForm', 'CdrAjaxController@getForm');
@@ -37,6 +38,8 @@ Route::post('addContact', 'CdrAjaxController@addContact');
 Route::post('addTag', 'CdrAjaxController@addTag');
 Route::post('addReminder', 'CdrAjaxController@addReminder');
 Route::post('getreportsearch', 'CdrAjaxController@getreportsearch');
+Route::post('getcdroutsearch', 'CdrAjaxController@getcdroutsearch');
+
 
 // Route::view('/', 'starter')->name('starter');
 Route::get('large-compact-sidebar/dashboard/dashboard1', function () {
