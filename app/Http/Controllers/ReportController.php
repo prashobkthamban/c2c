@@ -19,7 +19,7 @@ use App\Models\CdrTag;
 use App\Models\CurChannelUsed;
 use App\Models\OperatorDepartment;
 
-use Excel;
+//use Excel;
 
 
 
@@ -111,9 +111,9 @@ class ReportController extends Controller
                 }
             }
             
-         
-            $collection = collect($result_array);
-            return Excel::download($collection, 'Report.csv');
+         return;
+           // $collection = collect($result_array);
+          //  return Excel::download($collection, 'Report.csv');
             
     }
 
@@ -162,10 +162,10 @@ class ReportController extends Controller
                 }
             }
            //
-         
-            $collection = collect($result_array);
+            return;
+           // $collection = collect($result_array);
            
-            return Excel::download($collection, 'Report.csv');
+           // return Excel::download($collection, 'Report.csv');
             
     }
 }
