@@ -31,7 +31,7 @@
                         <div class="triangle"></div>
                     </li>
                     <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{url('UserList')}}">
+                        <a class="nav-item-hold" href="{{url('users')}}">
                             <i class="nav-icon i-Administrator"></i>
                             <span class="nav-text">Users</span>
                         </a>

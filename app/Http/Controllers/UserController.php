@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use App\Users;
+use App\Models\Users;
 use Carbon\Carbon;
 
 class UserController extends Controller
