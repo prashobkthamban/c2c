@@ -31,7 +31,7 @@
                         <div class="triangle"></div>
                     </li>
                     <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{url('operator')}}">
+                        <a class="nav-item-hold" href="{{url('UserList')}}">
                             <i class="nav-icon i-Administrator"></i>
                             <span class="nav-text">Users</span>
                         </a>
@@ -126,6 +126,12 @@
                         <a class="{{ Route::currentRouteName()=='operator' ? 'open' : '' }}" href="{{url('operator')}}" >
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="item-name">IVR Department</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
+                        <a class="{{ Route::currentRouteName()=='operatordept' ? 'open' : '' }}" href="{{url('operatordept')}}">
+                            <i class="nav-icon i-Clock-3"></i>
+                            <span class="item-name">Operator Departments</span>
                         </a>
                     </li>
                     <li class="nav-item ">

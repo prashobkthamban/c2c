@@ -31,6 +31,14 @@ Route::get('livecalls', 'ReportController@livecalls')->name('livecalls');
 Route::get('cdrexport', 'ReportController@cdrexport')->name('cdrexport');
 Route::get('cdroutexport', 'ReportController@cdroutexport')->name('cdroutexport');
 Route::get('voicemailexport', 'ReportController@voicemailexport')->name('voicemailexport');
+Route::get('operatordept', 'ReportController@operatordept')->name('operatordept');
+
+Route::get('users', 'UserController@index')->name('UserList');
+Route::get('adduser', 'UserController@addUser')->name('addUser');
+Route::post('store', 'UserController@store')->name('store');
+Route::get('user/{id}', 'UserController@destroy')->name('deleteUser');
+Route::get('edit/{id}', 'UserController@edit')->name('editUser');
+Route::put('update/user/{id}', 'UserController@update')->name('updateUser');
 
 //ajax
 //Route::get('getForm', 'CdrAjaxController@getForm');
@@ -41,6 +49,7 @@ Route::post('addReminder', 'CdrAjaxController@addReminder');
 Route::post('getreportsearch', 'CdrAjaxController@getreportsearch');
 Route::post('getcdroutsearch', 'CdrAjaxController@getcdroutsearch');
 Route::post('getvoicesearch', 'CdrAjaxController@getvoicesearch');
+Route::post('getoperatorsearch', 'CdrAjaxController@getoperatorsearch');
 
 
 // Route::view('/', 'starter')->name('starter');

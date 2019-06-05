@@ -161,4 +161,19 @@ class CdrAjaxController extends Controller
         exit( );
 
     }
+
+    public function getoperatorsearch(Request $request)
+    {
+        if ( $request->ajax() ) {
+            $data = $request->all();
+            
+            $array = array('result' => OperatorAccount::getReport($data));
+            $html               = view( 'home.operator_ajax', $array );
+            $arr[ 'view' ]      = $html->__toString();
+        }
+        $arr[ 'success' ] = 1;
+        return response()->json( $arr );
+        exit( );
+
+    }
 }
