@@ -13,6 +13,7 @@
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
+Route::get('/test', 'ServiceController@test')->name('test');
 Route::get('home', 'HomeController@index')->name('home');
 Route::get('cdrreport', 'ReportController@index')->name('cdrreport');
 Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('cdrreportarchive');
