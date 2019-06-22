@@ -64,7 +64,9 @@ class UserController extends Controller
         ]);
 
         if($validator->fails()) {
-
+            //echo "if";die();
+            //echo "if";die();
+            //echo "if";die();
             $messages = $validator->messages(); 
             return view('user.add_user', compact('messages', 'lang'));
         } else {
