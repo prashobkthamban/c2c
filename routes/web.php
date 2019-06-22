@@ -1,4 +1,4 @@
-<?php
+	<?php
 
 /*
 |--------------------------------------------------------------------------
@@ -28,6 +28,19 @@ Route::get('notification', 'NotificationController@index')->name('notification')
 Route::get('cdrtags', 'ReportController@cdrtags')->name('cdrtags');
 Route::get('operatorgrp', 'ReportController@operatorgrp')->name('operatorgrp');
 Route::get('livecalls', 'ReportController@livecalls')->name('livecalls');
+Route::get('users', 'UserController@index')->name('UserList');
+Route::get('adduser', 'UserController@addUser')->name('addUser');
+Route::post('user_store', 'UserController@store')->name('user_store');
+Route::get('user/{id}', 'UserController@destroy')->name('deleteUser');
+Route::get('edit/{id}', 'UserController@edit')->name('editUser');
+Route::patch('update/user/{id}', 'UserController@update')->name('updateUser');
+
+Route::get('did_list', 'DidController@index')->name('DidList');
+Route::get('add_did', 'DidController@addDid')->name('addDid');
+Route::post('store', 'DidController@store')->name('store');
+Route::get('did/{id}', 'DidController@destroy')->name('deleteDid');
+Route::get('edit/did/{id}', 'DidController@edit')->name('editDid');
+Route::patch('update/did/{id}', 'DidController@update')->name('updateDid');
 
 //ajax
 //Route::get('getForm', 'CdrAjaxController@getForm');

@@ -15,10 +15,10 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
-        if(!Auth::check()){
-        return redirect('login');
-    }
+        // $this->middleware('auth');
+        // if(!Auth::check()){
+        // return redirect('login');
+        // }
 
     }
 

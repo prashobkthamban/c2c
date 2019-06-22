@@ -101,6 +101,10 @@ class CdrReport extends Model
         {
             $data->where('cdr.status',$post_data['did_no'] );
         }
+        if(isset($post_data['tags']) && $post_data['tags'] != '')
+        {
+            $data->where('cdr.tag','LIKE','%' .$post_data['tags'].'%'  );
+        }
         if( Auth::user()->usertype == 'reseller'){
             $data->where('cdr.resellerid',Auth::user()->resellerid );
         }

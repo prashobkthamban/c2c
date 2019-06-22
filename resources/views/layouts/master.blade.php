@@ -13,6 +13,11 @@
     {{-- theme css --}}
 <link id="gull-theme" rel="stylesheet" href="{{asset('assets/styles/css/themes/lite-purple.min.css')}}">
  <link rel="stylesheet" href="{{asset('assets/styles/vendor/perfect-scrollbar.css')}}">
+ <!-- <link rel="stylesheet" href="{{asset('assets/styles/vendor/toastr.css')}}"> -->
+ <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+  @toastr_css
+ <!-- <script src="{{asset('assets/js/toastr.script.js')}}"></script> -->
+
  {{-- page specific css --}}
  @yield('page-css')
 </head>
@@ -142,7 +147,7 @@
 
         <!-- ============ Body content start ============= -->
         <div class="main-content-wrap sidenav-open d-flex flex-column">
-<div class="main-content">
+<div class="main-content">  
     @yield('main-content')
 </div>
 
@@ -166,6 +171,7 @@
 
 
 {{-- common js --}}
+@jquery
 <script src="{{asset('assets/js/common-bundle-script.js')}}"></script>
     {{-- page specific javascript --}}
     @yield('page-js')
@@ -202,18 +208,22 @@
             }
         });
     </script>
-
+     
     <script src="{{asset('assets/js/ajaxfunctions.js')}}"></script>
     {{-- laravel js --}}
     {{-- <script src="{{mix('assets/js/laravel/app.js')}}"></script> --}}
-
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     @yield('bottom-js')
-<script>
-    $('#zero_configuration_table').dataTable( {
-        paging: false
+    <script>
+        $('#zero_configuration_table').dataTable( {
+            paging: false
 
-    } );
-</script>
+        } );
+
+        $( function() {
+            $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });        
+        });
+    </script>
     <div class="modal fade" id="ModalContent" tabindex="-1" role="dialog" aria-labelledby="ModalContent" style="display: none;" aria-hidden="true">
         <div class="modal-dialog" id="model-wrapper" role="document">
 
@@ -221,5 +231,7 @@
     </div>
 
 </body>
+@toastr_js
+@toastr_render
 
 </html>

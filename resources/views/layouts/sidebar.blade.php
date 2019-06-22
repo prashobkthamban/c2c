@@ -23,15 +23,15 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
-                    <li class="nav-item" data-item="insight">
-                        <a class="nav-item-hold" href="#">
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{route('DidList')}}">
                             <i class="nav-icon i-Library"></i>
-                            <span class="nav-text">Insight IVR</span>
+                            <span class="nav-text">Did</span>
                         </a>
-                        <div class="triangle"></div>
+                        <!-- <div class="triangle"></div> -->
                     </li>
                     <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{url('operator')}}">
+                        <a class="nav-item-hold" href="{{route('UserList')}}">
                             <i class="nav-icon i-Administrator"></i>
                             <span class="nav-text">Users</span>
                         </a>

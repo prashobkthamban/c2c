@@ -59,6 +59,8 @@ class LoginController extends Controller
                 // Authentication passed...
                 return redirect()->intended( '/' );
             } else {
+                // dd(Auth::attempt( $credentials ));
+                // dd(Auth::check());die;
                 return Redirect::to( 'login' )->withErrors( array(
                     'username' => 'Invalid credentials'
                 ) )->withInput();
