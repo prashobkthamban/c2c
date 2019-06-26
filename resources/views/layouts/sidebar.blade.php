@@ -29,6 +29,7 @@
                             <span class="nav-text">Did</span>
                         </a>
                         <!-- <div class="triangle"></div> -->
+                        <!-- <div class="triangle"></div> -->
                     </li>
                     <li class="nav-item" data-item="">
                         <a class="nav-item-hold" href="{{route('UserList')}}">

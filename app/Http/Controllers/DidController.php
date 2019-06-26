@@ -28,6 +28,7 @@ class DidController extends Controller
 
     public function index() {
         $dids = Dids::all();
+        //dd($dids);
         return view('did.did_list', compact('dids'));
     }
 
