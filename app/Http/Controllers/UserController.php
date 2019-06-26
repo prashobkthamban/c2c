@@ -28,6 +28,7 @@ class UserController extends Controller
 
     public function index() {
         $users = Users::all();
+        //dd($users);
         return view('user.user_list', compact('users'));
     }
 
@@ -64,9 +65,6 @@ class UserController extends Controller
         ]);
 
         if($validator->fails()) {
-            //echo "if";die();
-            //echo "if";die();
-            //echo "if";die();
             $messages = $validator->messages(); 
             return view('user.add_user', compact('messages', 'lang'));
         } else {
@@ -117,6 +115,7 @@ class UserController extends Controller
 
     public function update($id, Request $request)
     {
+
         $user = new Users();
         $lang = $user->get_language();
         $user_edit = $user->findOrFail($id);
@@ -177,6 +176,8 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user= Users::find($id);
+        //dd($user);
+        //dd($user123);
         $user->delete();
         toastr()->success('User delete successfully.');
         return redirect()->route('UserList');

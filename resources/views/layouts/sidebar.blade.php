@@ -129,6 +129,12 @@
                         </a>
                     </li>
                     <li class="nav-item ">
+                        <a class="{{ Route::currentRouteName()=='operatordept' ? 'open' : '' }}" href="{{url('operatordept')}}">
+                            <i class="nav-icon i-Clock-3"></i>
+                            <span class="item-name">Operator Departments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item ">
                         <a class="{{ Route::currentRouteName()=='blacklist' ? 'open' : '' }}" href="{{url('blacklist')}}">
                             <i class="nav-icon i-Clock-3"></i>
                             <span class="item-name">Black list</span>

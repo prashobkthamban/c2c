@@ -18,7 +18,6 @@
                   <div class="col-lg-12 col-md-12">
                       <div class="card mb-2">
                           <div class="card-body">
-
                              <div class="col-md-2 mt-3 mt-md-0">
                                 <!--
                                     <button class="btn btn-default mt-3" id="btn_make_call">Make a call</button>
@@ -26,17 +25,20 @@
                                    
                                     <button class="btn btn-primary btn-block collapsed pull-right mt-3" data-toggle="collapse" data-target="#filter-panel">Filter</button>
                               </div>
-
+                                    {{-- <button class="btn btn-secondary m-1" id="btn_make_call">Make a call</button> --}}
+                                   <button class="btn btn-secondary m-1" id="btn_refresh">Refresh</button> 
+                                   <a class="btn btn-secondary m-1" id="btn_download" href="{{ url('cdrexport') }}">Download</a> 
+                                    <button class="btn btn-primary collapsed m-1" data-toggle="collapse" data-target="#filter-panel">Filter</button>
                               <div class="row row-xs">
 
 
 
-                                  <div id="filter-panel" class="filter-panel collapse col-lg-12">
-                                        <div class="panel panel-default">
-                                            <div class="panel-body">
+                                  <div id="filter-panel" class="filter-panel collapse">
+                                        
                                                 <form class="form" role="form" id="cdr_filter_form">
+                                                    <div class="row"> 
                                                     @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
-                                                    <div class="form-group">
+                                                    <div class="col-md-6 form-group mb-3">
                                                         <label class="filter-col"  for="pref-perpage">Departments</label>
                                                         <select name="department" class="form-control">
                                                             <option value="">All</option>
@@ -51,7 +53,7 @@
                                                     </div> <!-- form group [rows] -->
                                                     @endif
                                                     @if( Auth::user()->usertype == 'groupadmin' )
-                                                    <div class="form-group">
+                                                    <div class="col-md-6 form-group mb-3">
                                                         <label class="filter-col"  for="pref-perpage">Operators</label>
                                                         <select name="operator" class="form-control">
                                                              <option value="">All</option>
@@ -65,7 +67,7 @@
                                                         </select>                                
                                                     </div> <!-- form group [rows] -->
                                                      @endif
-                                                    <div class=" form-group">
+                                                    <div class="col-md-6 form-group mb-3">
                                                         <label class="filter-col"  for="pref-perpage">Date</label>
                                                         <select class="form-control" name="date" id="date_select">
                                                             <option value="">All</option>
@@ -76,14 +78,14 @@
                                                             <option value="custom">Custom</option>
                                                         </select>                                
                                                     </div> 
-                                                    <div class="form-group " style="display: none;" id="custom_date_div">
+                                                    <div class="col-md-6 form-group mb-3" style="display: none;" id="custom_date_div">
                                                         <label class="filter-col"  for="pref-search">Stardate </label>
                                                         <input type="text" name="startdate" class="form-control input-sm datepicker" >
                                                         <label class="filter-col"  for="pref-search">Enddate</label>
                                                         <input type="text" class="form-control input-sm datepicker" name="enddate">
                                                     </div>
                                                     @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
-                                                     <div class="form-group ">
+                                                     <div class="col-md-6 form-group mb-3">
                                                         <label class="filter-col"  for="pref-perpage">Assigned To</label>
                                                         <select  class="form-control" name="assigned_to">
                                                             <option value="">All</option>
@@ -97,7 +99,7 @@
                                                         </select>                                
                                                     </div> 
                                                     @endif
-                                                    <div class="form-group ">
+                                                    <div class="col-md-6 form-group mb-3 ">
                                                         <label class="filter-col"  for="pref-perpage">Status</label>
                                                         <select  class="form-control" name="status">
                                                             <option value="">All</option>
@@ -110,7 +112,7 @@
                                                             
                                                         </select>                                
                                                     </div> 
-                                                    <div class="form-group ">
+                                                    <div class="col-md-6 form-group mb-3">
                                                         <label class="filter-col"  for="pref-perpage">Dnid Name</label>
                                                         <select  class="form-control" name="did_no">
                                                             <option value="">All</option>
@@ -124,12 +126,13 @@
                                                         </select>                                
                                                     </div> 
                                                    
-                                                    <div class="form-group">
+                                                    <div class="col-md-6 form-group mb-3">
                                                         <label class="filter-col"  for="pref-search">By Caller Number</label>
                                                         <input type="text" class="form-control input-sm" name="caller_number">
                                                     </div>
 
                                                     <div class="form-group ">
+                                                    <div class="col-md-6 form-group mb-3 ">
                                                         <label class="filter-col"  for="pref-perpage">Tags</label>
                                                         <select  class="form-control" name="tags">
                                                             <option value="">All</option>
@@ -144,14 +147,22 @@
                                                     </div> 
                                                     
                                                     <div class="form-group">    
+                                                    {{--
+                                                    <div class="col-md-6 form-group mb-3">  
+                                                        <div class="">
+                                                          <label><input type="checkbox" value="1" name="unique_call"> Unique Calls</label>
+                                                        </div>
+                                                    </div>
+                                                    --}}
+                                                    <div class="col-md-6 form-group mb-3">    
                                                         
                                                         <button type="button" id="report_search_button" class="btn btn-default filter-col">
                                                             <span class="glyphicon glyphicon-record"></span> Search
                                                         </button>  
                                                     </div>
+                                                </div>
                                                 </form>
-                                            </div>
-                                        </div>
+                                            
                                     </div>
 
 

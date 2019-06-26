@@ -18,7 +18,6 @@
                         <div class="card-body">
                             <div class="card-title mb-3">Edit User</div>
                             {!! Form::model($user_edit, ['method' => 'PATCH', 'route' => ['updateUser', $user_edit->id]]) !!}
-                            <form method="post">
                                 <div class="row">
                                     <div class="col-md-6 form-group mb-3">
                                         {!! Form::label('customer_name', 'Customer name') !!}
@@ -137,6 +136,7 @@
                                         <label for="firstName1">Client IP</label>
                                          {!! Form::text('client_ip', null, ['class' => 'form-control']) !!}
                                          <p class="text-danger ">{!! !empty($messages) ? $messages->first('client_ip', ':message') : '' !!}</p>
+
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">

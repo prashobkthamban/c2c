@@ -13,6 +13,7 @@
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
+Route::get('/test', 'ServiceController@test')->name('test');
 Route::get('home', 'HomeController@index')->name('home');
 Route::get('cdrreport', 'ReportController@index')->name('cdrreport');
 Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('cdrreportarchive');
@@ -42,6 +43,11 @@ Route::get('did/{id}', 'DidController@destroy')->name('deleteDid');
 Route::get('edit/did/{id}', 'DidController@edit')->name('editDid');
 Route::patch('update/did/{id}', 'DidController@update')->name('updateDid');
 
+Route::get('cdrexport', 'ReportController@cdrexport')->name('cdrexport');
+Route::get('cdroutexport', 'ReportController@cdroutexport')->name('cdroutexport');
+Route::get('voicemailexport', 'ReportController@voicemailexport')->name('voicemailexport');
+Route::get('operatordept', 'ReportController@operatordept')->name('operatordept');
+
 //ajax
 //Route::get('getForm', 'CdrAjaxController@getForm');
 Route::post('getForm', 'CdrAjaxController@getForm');
@@ -49,6 +55,10 @@ Route::post('addContact', 'CdrAjaxController@addContact');
 Route::post('addTag', 'CdrAjaxController@addTag');
 Route::post('addReminder', 'CdrAjaxController@addReminder');
 Route::post('getreportsearch', 'CdrAjaxController@getreportsearch');
+Route::post('getcdroutsearch', 'CdrAjaxController@getcdroutsearch');
+Route::post('getvoicesearch', 'CdrAjaxController@getvoicesearch');
+Route::post('getoperatorsearch', 'CdrAjaxController@getoperatorsearch');
+
 
 // Route::view('/', 'starter')->name('starter');
 Route::get('large-compact-sidebar/dashboard/dashboard1', function () {

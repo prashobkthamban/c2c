@@ -18,12 +18,11 @@
                         <div class="card-body">
                             <div class="card-title mb-3">Add User</div>
                             {!! Form::open(['action' => 'UserController@store', 'method' => 'post','autocomplete' => 'off']) !!} 
-                            <form method="post">
                                 <div class="row">
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Customer name</label>
                                         <input type="text" class="form-control" id="firstName1" placeholder="Customer name" name="customer_name">
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('customer_name', ':message') : '' !!}</p>                                   
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('customer_name', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
@@ -40,7 +39,6 @@
                                         <label for="picker3">Start date</label>
                                         <div class="input-group">
                                             <input class="form-control datepicker" placeholder="dd-mm-yyyy" name="start_date" >
-                                           
                                             <div class="input-group-append">
                                                 <button class="btn btn-secondary"  type="button">
                                                     <i class="icon-regular i-Calendar-4"></i>
@@ -61,6 +59,8 @@
                                             </div>  
                                         </div>
                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('end_date', ':message') : '' !!}</p>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
