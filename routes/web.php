@@ -140,3 +140,7 @@ Route::view('sessions/forgot', 'sessions.forgot')->name('forgot');
 Route::view('others/notFound', 'others.notFound')->name('notFound');
 Route::view('others/user-profile', 'others.user-profile')->name('user-profile');
 Route::view('others/starter', 'starter')->name('starter');
+
+//CRM
+Route::get('/crm/category-list', 'CrmController@categoryList');
+Route::get('/crm/status-list', 'CrmController@statusList');

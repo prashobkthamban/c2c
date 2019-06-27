@@ -163,7 +163,7 @@
                 </ul>
                 <ul class="childNav" data-parent="insightcrm">
                     <li class="nav-item">
-                        <a>
+                        <a href="{{url('/crm-category-list')}}">
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="item-name">Categories</span>
                         </a>
