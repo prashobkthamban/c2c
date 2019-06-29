@@ -163,15 +163,21 @@
                 </ul>
                 <ul class="childNav" data-parent="insightcrm">
                     <li class="nav-item">
-                        <a href="{{url('/crm-category-list')}}">
+                        <a href="{{url('/crm/category-list')}}">
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="item-name">Categories</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a>
+                        <a href="{{url('/crm/sub-category-list')}}">
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="item-name">Sub Categories</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('/crm/status-list')}}">
+                            <i class="nav-icon i-Over-Time"></i>
+                            <span class="item-name">Status</span>
                         </a>
                     </li>
                     <li class="nav-item">

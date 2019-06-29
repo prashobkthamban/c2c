@@ -31,6 +31,17 @@ class CrmController extends Controller
     }
 
     /**
+     * Show crm sub category list
+     *
+     * @return \Illuminate\Contracts\Support\Renderable
+     */
+    public function subCategoryList()
+    {
+        $subCategories = $this->crmService->getAllSubCategories();
+        return view('crm.subcategorylist')->with('crmSubCategories', $subCategories);
+    }
+
+    /**
      * Show crm status list
      *
      * @return \Illuminate\Contracts\Support\Renderable

@@ -143,4 +143,5 @@ Route::view('others/starter', 'starter')->name('starter');
 
 //CRM
 Route::get('/crm/category-list', 'CrmController@categoryList');
+Route::get('/crm/sub-category-list', 'CrmController@subCategoryList');
 Route::get('/crm/status-list', 'CrmController@statusList');

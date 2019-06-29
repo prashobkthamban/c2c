@@ -15,10 +15,11 @@ class CreateCrmSubCategoryTable extends Migration
     {
         Schema::create('crm_sub_category', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('crm_category_id');
+            $table->integer('crm_category_id')->unsigned();
             $table->string('crm_sub_category_name');
             $table->integer('crm_sub_category_active')->default(1);
             $table->timestamps();
+            $table->foreign('crm_category_id')->references('id')->on('crm_category');
         });
     }
 
