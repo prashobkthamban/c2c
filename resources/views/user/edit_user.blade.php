@@ -20,41 +20,41 @@
                             {!! Form::model($user_edit, ['method' => 'PATCH', 'route' => ['updateUser', $user_edit->id]]) !!}
                                 <div class="row">
                                     <div class="col-md-6 form-group mb-3">
-                                        {!! Form::label('customer_name', 'Customer name') !!}
-                                        {!! Form::text('customer_name', null, ['class' => 'form-control']) !!}
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('customer_name', ':message') : '' !!}</p>
+                                        {!! Form::label('groupname', 'Customer name') !!}
+                                        {!! Form::text('groupname', null, ['class' => 'form-control']) !!}
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('groupname', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Coperate name</label>
-                                        {!! Form::select('coperate_id', array('' => 'Select Coperate', 'test1' => 'test 1', 'test2' => 'test 2'), null,array('class' => 'form-control')) !!}
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('coperate_id', ':message') : '' !!}</p>
+                                         {!! Form::select('resellerid', $coperate, null,array('class' => 'form-control')) !!}
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('resellerid', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker3">Start date</label>
                                         <div class="input-group">
-                                             {!! Form::text('start_date', null, ['class' => 'form-control datepicker']) !!}
+                                             {!! Form::text('sdate', null, ['class' => 'form-control datepicker']) !!}
                                             <div class="input-group-append">
                                                 <button class="btn btn-secondary"  type="button">
                                                     <i class="icon-regular i-Calendar-4"></i>
                                                 </button>
                                             </div>
                                         </div>
-                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('start_date', ':message') : '' !!}</p>
+                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('sdate', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker3">End date</label>
                                         <div class="input-group">
-                                            {!! Form::text('end_date', null, ['class' => 'form-control datepicker']) !!} 
+                                            {!! Form::text('edate', null, ['class' => 'form-control datepicker']) !!} 
                                             <div class="input-group-append">
                                                 <button class="btn btn-secondary"  type="button">
                                                     <i class="icon-regular i-Calendar-4"></i>
                                                 </button>
                                             </div>
                                         </div>
-                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('end_date', ':message') : '' !!}</p>
+                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('edate', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
@@ -65,59 +65,150 @@
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">DID</label>
-                                        {!! Form::select('did', array('ACTIVE' => 'Active', 'INACTIVE' => 'InActive'), null,array('class' => 'form-control')) !!}
+                                        {!! Form::select('did', $did_list, null,array('class' => 'form-control')) !!}
+                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('did', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Multilanguage</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('multilanguage', 'YES') }} Yes
+                                                {{ Form::radio('lang', 'YES') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('multilanguage', 'NO') }} No   
+                                                {{ Form::radio('lang', 'NO') }} No   
                                             </label>
                                         </div>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Language option</label>
-                                        {!! Form::select('language', $lang, null,array('class' => 'form-control')) !!}
+                                        {!! Form::select('lango', $lang, null,array('class' => 'form-control')) !!}
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Record Call</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('record_call', 'YES') }} Yes
+                                                {{ Form::radio('recordcall', 'YES') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('record_call', 'NO') }} No  
+                                                {{ Form::radio('recordcall', 'NO') }} No  
                                             </label>
                                         </div>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Operator Call Count</label>
-                                        {!! Form::text('operator_call_count', null, ['class' => 'form-control']) !!}
-                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('operator_call_count', ':message') : '' !!}</p>
+                                        {!! Form::text('trycount', null, ['class' => 'form-control']) !!}
+                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('trycount', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
+                                        <label for="firstName1">Dialtime</label>
+                                        {!! Form::text('dialtime', null, ['class' => 'form-control']) !!}
+                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('dialtime', ':message') : '' !!}</p>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="firstName1">Max Call Duration</label>
+                                        {!! Form::text('max_call', null, ['class' => 'form-control']) !!}
+                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('max_call', ':message') : '' !!}</p>
+                                    </div>
+
+                                     <div class="col-md-6 form-group mb-3">
+                                        <label for="firstName1">Max Web Logins</label>
+                                         {!! Form::text('operator_no_logins', null, ['class' => 'form-control']) !!}
+                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('operator_no_logins', ':message') : '' !!}</p>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="picker1">Number of Channels</label>
+                                        {!! Form::select('chan', array('0' => '0', '1' => '1'), null,array('class' => 'form-control')) !!}          
+                                    </div>
+
+                                    <div class="col-md-4 form-group mb-3">
+                                        <label for="picker1">CDR assign Email</label>
+                                        <div>
+                                            <label class="radio-inline">
+                                                {{ Form::radio('emailservice_assign_cdr', 'YES') }} Yes
+                                            </label>
+                                            <label class="radio-inline">
+                                                {{ Form::radio('emailservice_assign_cdr', 'NO') }} No
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 form-group mb-3">
+                                        <label for="picker1">CDR assign SMS</label>
+                                        <div>
+                                            <label class="radio-inline">
+                                                {{ Form::radio('c2cchan', 'YES') }} Yes
+                                            </label>
+                                            <label class="radio-inline">
+                                                {{ Form::radio('c2cchan', 'NO') }} No
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 form-group mb-3">
+                                        <label for="picker1">Click2Call</label>
+                                        <div>
+                                            <label class="radio-inline">
+                                                {{ Form::radio('c2c', 'YES') }} Yes
+                                            </label>
+                                            <label class="radio-inline">
+                                                {{ Form::radio('c2c', 'NO') }} No
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="firstName1">Click2Call Channels</label>
+                                        {!! Form::text('c2cchan', null, ['class' => 'form-control']) !!} 
+                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('c2cchan', ':message') : '' !!}</p>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="firstName1">Clik2CallAPI</label>
+                                        {!! Form::text('c2capi', null, ['class' => 'form-control']) !!} 
+                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('c2capi', ':message') : '' !!}</p>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="firstName1">Direct Trasfer</label>
+                                        <div>
+                                            <label class="radio-inline">
+                                                {{ Form::radio('dt', 'YES') }} Yes
+                                            </label>
+                                            <label class="radio-inline">
+                                                {{ Form::radio('dt', 'NO') }} No
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="picker1">Sms Gateway</label>
+                                        {!! Form::select('resellerid1', $coperate, null,array('class' => 'form-control')) !!}
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('resellerid1', ':message') : '' !!}</p>
+                                    </div>
+
+
+                                    <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Sms api user</label>
-                                        {!! Form::text('sms_api_user', null, ['class' => 'form-control']) !!}
-                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('sms_api_user', ':message') : '' !!}</p>
+                                        {!! Form::text('user', null, ['class' => 'form-control']) !!}
+                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('user', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Sms api Password</label>
-                                        {!! Form::password('sms_api_password', ['class' => 'form-control']) !!} 
+                                        {!! Form::password('pass', ['class' => 'form-control']) !!} 
                                     </div> 
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Sms api sender</label>
-                                        {!! Form::text('sms_api_sender', null, ['class' => 'form-control']) !!}
-                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('sms_api_sender', ':message') : '' !!}</p>
+                                        {!! Form::text('sender', null, ['class' => 'form-control']) !!}
+                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('sender', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
@@ -128,14 +219,14 @@
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">CDR API key</label>
-                                         {!! Form::text('cdr_api_key', null, ['class' => 'form-control']) !!}
-                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('cdr_api_key', ':message') : '' !!}</p>
+                                         {!! Form::text('cdrapi', null, ['class' => 'form-control']) !!}
+                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('cdrapi', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Client IP</label>
-                                         {!! Form::text('client_ip', null, ['class' => 'form-control']) !!}
-                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('client_ip', ':message') : '' !!}</p>
+                                         {!! Form::text('ip', null, ['class' => 'form-control']) !!}
+                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('ip', ':message') : '' !!}</p>
 
                                     </div>
 
@@ -146,13 +237,13 @@
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Log ChanUNavil calls</label>
-                                        {!! Form::select('chanunavil_calls', array('ENABLED' => 'Enabled', 'DISABLED' => 'Disabled'), null,array('class' => 'form-control')) !!} 
+                                        {!! Form::select('cdr_chnunavil_log', array('ENABLED' => 'Enabled', 'DISABLED' => 'Disabled'), null,array('class' => 'form-control')) !!} 
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Dialout conference members</label>
-                                        {!! Form::text('conference_members', null, ['class' => 'form-control']) !!}
-                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('conference_members', ':message') : '' !!}</p>
+                                        {!! Form::text('max_no_confrence', null, ['class' => 'form-control']) !!}
+                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('max_no_confrence', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
@@ -160,17 +251,17 @@
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="picker1">Android APP</label>
-                                         {!! Form::select('android_app', array('YES' => 'Yes', 'NO' => 'No'), null,array('class' => 'form-control')) !!}
+                                         {!! Form::select('andriodapp', array('YES' => 'Yes', 'NO' => 'No'), null,array('class' => 'form-control')) !!}
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="picker1">Web portal SMS</label>
-                                        {!! Form::select('portal_sms', array('YES' => 'Yes', 'NO' => 'No'), null,array('class' => 'form-control')) !!}
+                                        {!! Form::select('web_sms', array('YES' => 'Yes', 'NO' => 'No'), null,array('class' => 'form-control')) !!}
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="picker1">Dial stratergy Type</label>
-                                        <select class="form-control" name="dial_stratergy">
+                                        <select class="form-control" name="dial_statergy">
                                             <option value="1">New</option>  
                                         </select>
                                     </div>
@@ -191,10 +282,10 @@
                                         <label for="picker1">Push Api Service</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('push_api_service', 'YES') }} Yes
+                                                {{ Form::radio('pushapi', 'YES') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('push_api_service', 'NO') }} No
+                                                {{ Form::radio('pushapi', 'NO') }} No
                                             </label>
                                         </div>
                                     </div>
@@ -203,12 +294,17 @@
                                         <label for="picker1">PBX Extension</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('pbx_extension', 'YES') }} Yes
+                                                {{ Form::radio('pbxexten', 'YES') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('pbx_extension', 'NO') }} No
+                                                {{ Form::radio('pbxexten', 'NO') }} No
                                             </label>
                                         </div>
+                                    </div>
+
+                                    <div class="col-md-4 form-group mb-3">
+                                        <label for="picker1">Service Type</label>
+                                        {!! Form::select('servicetype', array('call' => 'Call', 'callback' => 'Callback', 'misscall' => 'Misscall'), null,array('class' => 'form-control')) !!}    
                                     </div>
 
                                     <div class="col-md-12">

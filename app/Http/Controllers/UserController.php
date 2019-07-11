@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Users;
+use App\Models\Dids;
 use Carbon\Carbon;
 use Session;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -27,7 +29,11 @@ class UserController extends Controller
     }
 
     public function index() {
-        $users = Users::all();
+        //$users = Users::all();
+        $users = DB::table('Users')
+            ->join('resellergroup', 'Users.coperate_id', '=', 'resellergroup.id')
+            ->select('Users.*', 'resellergroup.resellername')
+            ->get();
         //dd($users);
         return view('user.user_list', compact('users'));
     }
@@ -40,9 +46,14 @@ class UserController extends Controller
     public function addUser()
     {
         $user = new Users();
+        $did = new Dids();
         $lang = $user->get_language();
-        //dd($lang);
-        return view('user.add_user', compact('lang'));
+        $coperate = $user->get_coperate();
+        $coperate = $coperate->prepend('Select coperate', '0');
+        $did_list = $did->get_did();
+        $did_list = $did_list->prepend('Select Did', '0');
+        //dd($did_list);
+        return view('user.add_user', compact('lang', 'coperate', 'default', 'did_list'));
     }
 
     public function store(Request $request)
@@ -109,8 +120,10 @@ class UserController extends Controller
         $user = new Users();
         $user_edit = $user->findOrFail($id);        
         $lang = $user->get_language();
+        $coperate = $user->get_coperate();
+        $coperate = $coperate->prepend('Select coperate', '0');
 
-        return view('user.edit_user', compact('user_edit','lang'));
+        return view('user.edit_user', compact('user_edit','lang', 'coperate'));
     }
 
     public function update($id, Request $request)
@@ -118,6 +131,8 @@ class UserController extends Controller
 
         $user = new Users();
         $lang = $user->get_language();
+        $coperate = $user->get_coperate();
+        $coperate = $coperate->prepend('Select coperate', '0');
         $user_edit = $user->findOrFail($id);
         $validator = Validator::make($request->all(), [
             'customer_name' => 'required',
@@ -135,7 +150,7 @@ class UserController extends Controller
 
         if($validator->fails()) {
             $messages = $validator->messages(); 
-            return view('user.edit_user', compact('messages', 'lang', 'user_edit'));
+            return view('user.edit_user', compact('messages', 'lang', 'user_edit', 'coperate'));
         } else {
             //dd($user_edit);
             $users = array(

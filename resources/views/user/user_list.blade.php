@@ -36,9 +36,9 @@
                                         @foreach($users as $user)
                                         <tr>
                                             <td>{{$user->customer_name}}</td>
-                                            <td>{{$user->coperate_id}}</td>
-                                            <td>{{$user->start_date->format('d-m-Y')}}</td>
-                                            <td>{{$user->end_date->format('d-m-Y')}}</td>
+                                            <td>{{$user->resellername}}</td>
+                                            <td>{{ date('d-m-Y', strtotime($user->start_date)) }}</td>
+                                            <td>{{ date('d-m-Y', strtotime($user->end_date)) }}</td>
                                             <td>{{$user->did}}</td>
                                             <td>{{ date('d-m-Y', strtotime($user->created_at)) }}</td>
                                             <td>{{$user->status}}</td>
