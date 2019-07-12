@@ -18,5 +18,9 @@ class Users extends Model
     public function get_language() {
     	return DB::table('languages')->pluck('Language', 'id');
     }
+
+    public function get_coperate() {
+        return DB::table('resellergroup')->pluck('resellername', 'id');
+    }
    
 }

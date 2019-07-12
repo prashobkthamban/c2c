@@ -34,7 +34,7 @@
                                         <tr>
                                             <td>{{$did->outgoing_callerid}}</td>
                                             <td>{{$did->did}}</td>
-                                            <td>{{$did->gatewayid}}</td>
+                                            <td>{{$did->Gprovider}}</td>
                                             <td>{{$did->assignedto}}</td>
                                             <td><a href="{{ route('editDid', $did->id) }}" class="text-success mr-2">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
