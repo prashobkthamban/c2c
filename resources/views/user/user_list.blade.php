@@ -35,12 +35,12 @@
                                        
                                         @foreach($users as $user)
                                         <tr>
-                                            <td>{{$user->customer_name}}</td>
+                                            <td>{{$user->name}}</td>
                                             <td>{{$user->resellername}}</td>
-                                            <td>{{ date('d-m-Y', strtotime($user->start_date)) }}</td>
-                                            <td>{{ date('d-m-Y', strtotime($user->end_date)) }}</td>
+                                            <td>{{ date('d-m-Y', strtotime($user->startdate)) }}</td>
+                                            <td>{{ date('d-m-Y', strtotime($user->enddate)) }}</td>
                                             <td>{{$user->did}}</td>
-                                            <td>{{ date('d-m-Y', strtotime($user->created_at)) }}</td>
+                                            <td>hbj</td>
                                             <td>{{$user->status}}</td>
                                             <td><a href="{{ route('editUser', $user->id) }}" class="text-success mr-2">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
