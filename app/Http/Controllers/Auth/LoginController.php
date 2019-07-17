@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request;
 use Validator;
+use App\Models\Account;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
 {
@@ -55,7 +56,14 @@ class LoginController extends Controller
             return Redirect::to( 'login' )->withErrors( $validator )->withInput();
         } else {
             $credentials = $request->only( 'username', 'password' );
-            if ( Auth::attempt( $credentials ) ) {
+            $user = Account::where('username', $request->username)
+            ->where('password', $request->password)
+            ->first();
+
+            //dd($user);
+
+            if ( $user ) {
+                Auth::loginUsingId($user->id);
                 // Authentication passed...
                 return redirect()->intended( '/' );
             } else {
