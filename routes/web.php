@@ -140,3 +140,14 @@ Route::view('sessions/forgot', 'sessions.forgot')->name('forgot');
 Route::view('others/notFound', 'others.notFound')->name('notFound');
 Route::view('others/user-profile', 'others.user-profile')->name('user-profile');
 Route::view('others/starter', 'starter')->name('starter');
+
+
+/*
+|--------------------------------------------------------------------------
+| Frontend Routes
+|--------------------------------------------------------------------------
+|
+| The routes associated with frontend goes here. added by Kurian
+|
+*/
+require_once "frontend.php";

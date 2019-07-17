@@ -88,6 +88,13 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('languages')}}">
+                            <i class="nav-icon i-List"></i>
+                            <span class="nav-text">Languages</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>                    
 
                 </ul>
             </div>
