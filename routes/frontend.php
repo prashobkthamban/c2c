@@ -8,4 +8,11 @@
 
         //language
 
+        //IVR Menu
+
+        Route::get('/ivrmenulist', 'AccountGroupController@index');
+
+        //IVR Menu
+
+
     });
