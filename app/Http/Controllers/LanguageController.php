@@ -27,6 +27,7 @@ class LanguageController extends Controller
     public function create()
     {
         //
+        return view('languages/create');
     }
 
     /**
@@ -38,6 +39,14 @@ class LanguageController extends Controller
     public function store(Request $request)
     {
         //
+        $language = new Language();
+
+        $language->shortcode = $request->shortcode;
+        $language->Language = $request->Language;
+        $language->default = $request->default;
+        $language->save();
+
+        return redirect('/languages')->with('success', 'Language created successfully');        
     }
 
     /**
@@ -46,7 +55,7 @@ class LanguageController extends Controller
      * @param  \App\Language  $language
      * @return \Illuminate\Http\Response
      */
-    public function show(Language $language)
+    public function show(Request $request)
     {
         //
     }
@@ -57,9 +66,11 @@ class LanguageController extends Controller
      * @param  \App\Language  $language
      * @return \Illuminate\Http\Response
      */
-    public function edit(Language $language)
+    public function edit(Request $request)
     {
         //
+        $language = Language::where('id',$request->id)->first();
+        return view('languages/edit',compact('language'));
     }
 
     /**
@@ -72,6 +83,13 @@ class LanguageController extends Controller
     public function update(Request $request, Language $language)
     {
         //
+        $language = Language::where('id',$request->id)->first();
+        $language->shortcode = $request->shortcode;
+        $language->Language = $request->Language;
+        $language->default = $request->default;
+        $language->update();
+
+        return redirect('/languages')->with('success', 'Language edited successfully');
     }
 
     /**
