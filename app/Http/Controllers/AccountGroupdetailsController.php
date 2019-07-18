@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Accountgroup;
+use App\AccountGroupdetails;
 use Illuminate\Http\Request;
 
-class AccountGroupController extends Controller
+class AccountGroupdetailsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,6 +15,9 @@ class AccountGroupController extends Controller
     public function index()
     {
         //
+        $result = AccountGroupdetails::with('account')->paginate(10);
+        //dd($result);
+        return view('ivrmenu/list',compact('result'));        
     }
 
     /**
@@ -41,10 +44,10 @@ class AccountGroupController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\AccountGroup  $accountGroup
+     * @param  \App\AccountGroupdetails  $accountGroupdetails
      * @return \Illuminate\Http\Response
      */
-    public function show(AccountGroup $accountGroup)
+    public function show(AccountGroupdetails $accountGroupdetails)
     {
         //
     }
@@ -52,10 +55,10 @@ class AccountGroupController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\AccountGroup  $accountGroup
+     * @param  \App\AccountGroupdetails  $accountGroupdetails
      * @return \Illuminate\Http\Response
      */
-    public function edit(AccountGroup $accountGroup)
+    public function edit(AccountGroupdetails $accountGroupdetails)
     {
         //
     }
@@ -64,10 +67,10 @@ class AccountGroupController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\AccountGroup  $accountGroup
+     * @param  \App\AccountGroupdetails  $accountGroupdetails
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, AccountGroup $accountGroup)
+    public function update(Request $request, AccountGroupdetails $accountGroupdetails)
     {
         //
     }
@@ -75,10 +78,10 @@ class AccountGroupController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\AccountGroup  $accountGroup
+     * @param  \App\AccountGroupdetails  $accountGroupdetails
      * @return \Illuminate\Http\Response
      */
-    public function destroy(AccountGroup $accountGroup)
+    public function destroy(AccountGroupdetails $accountGroupdetails)
     {
         //
     }

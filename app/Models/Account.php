@@ -11,4 +11,10 @@ class Account extends Authenticatable
     protected $primaryKey = 'id';
     protected $fillable = ['username', 'password'];
     protected $hidden = ['password'];
+
+	public function accountdetails()
+	{
+	    return $this->hasMany('\App\AccountGroupdetails','groupid');
+	}
+
 }

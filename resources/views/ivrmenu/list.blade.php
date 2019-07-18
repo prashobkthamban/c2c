@@ -35,12 +35,12 @@
                                     @if(!empty($result))
                                         @foreach($result as $row )
                                     <tr>
-                                        <td>{{ $row->name }}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td>{{$row->operator_dpt}}</td>
+                                        <td>{{ $row->account->name }}</td>
+                                        <td>--</td>
+                                        <td>{{ $row->ivr_level_name }}</td>
+                                        <td>{{ $row->ivr_level }}</td>
+                                        <td>{{ $row->ivroption }}</td>
+                                        <td>{{ $row->operator_dept }}</td>
                                         <td>{{$row->adddate}}</td>
                                         <td>
                                             <button class="btn btn-warning">Edit</button>

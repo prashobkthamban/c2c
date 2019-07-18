@@ -10,7 +10,7 @@
 
         //IVR Menu
 
-        Route::get('/ivrmenulist', 'AccountGroupController@index');
+        Route::get('/ivrmenulist', 'AccountGroupdetailsController@index');
 
         //IVR Menu
 
