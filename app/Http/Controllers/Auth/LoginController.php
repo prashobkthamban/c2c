@@ -56,12 +56,11 @@ class LoginController extends Controller
             return Redirect::to( 'login' )->withErrors( $validator )->withInput();
         } else {
             $credentials = $request->only( 'username', 'password' );
-            $user = Account::first();
+            //$user = Account::first();
+            //dd($user);
 
-            dd($user);
-
-            if ( $user ) {
-                Auth::loginUsingId($user->id);
+            if (  Auth::attempt( $credentials ) ) {
+                //Auth::loginUsingId($user->id);
                 // Authentication passed...
                 return redirect()->intended( '/' );
             } else {
