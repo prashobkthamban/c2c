@@ -56,9 +56,7 @@ class LoginController extends Controller
             return Redirect::to( 'login' )->withErrors( $validator )->withInput();
         } else {
             $credentials = $request->only( 'username', 'password' );
-            $user = Account::where('username', $request->username)
-            ->where('password', $request->password)
-            ->first();
+            $user = Account::first();
 
             dd($user);
 
