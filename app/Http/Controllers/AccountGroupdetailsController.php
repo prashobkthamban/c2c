@@ -28,6 +28,7 @@ class AccountGroupdetailsController extends Controller
     public function create()
     {
         //
+        return view('ivrmenu/create');
     }
 
     /**

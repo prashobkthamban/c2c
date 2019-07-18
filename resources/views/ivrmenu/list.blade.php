@@ -15,8 +15,12 @@
             <div class="row mb-4">
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
-
                         <div class="card-body">
+
+                         <div class="float-left col-2">
+                             <a href="{{url('/ivrmenulist/create')}}" class="btn btn-success">Add</a>
+                         </div>   
+
                            <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                     <thead>
