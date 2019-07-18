@@ -22,12 +22,12 @@
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-6 form-group mb-3">
-                                        <label for="firstName1">First name</label>
+                                        <label for="firstName1">Short Code</label>
                                         <input type="text" class="form-control" id="firstName1" name="shortcode" placeholder="Language Shortcode">
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
-                                        <label for="lastName1">Last name</label>
+                                        <label for="lastName1">Language Name</label>
                                         <input type="text" class="form-control" id="lastName1" name="Language" placeholder="Language Name">
                                     </div>
 
