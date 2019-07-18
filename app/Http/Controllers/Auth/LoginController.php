@@ -60,7 +60,7 @@ class LoginController extends Controller
             ->where('password', $request->password)
             ->first();
 
-            //dd($user);
+            dd($user);
 
             if ( $user ) {
                 Auth::loginUsingId($user->id);
