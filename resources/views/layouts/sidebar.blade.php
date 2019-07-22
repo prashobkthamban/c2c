@@ -88,6 +88,21 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('languages')}}">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">Languages</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>                    
+
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('ivrmenulist')}}">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">IVR Menu</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
 
                 </ul>
             </div>

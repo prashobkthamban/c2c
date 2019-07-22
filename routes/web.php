@@ -145,3 +145,13 @@ Route::view('others/starter', 'starter')->name('starter');
 Route::get('/crm/category-list', 'CrmController@categoryList');
 Route::get('/crm/sub-category-list', 'CrmController@subCategoryList');
 Route::get('/crm/status-list', 'CrmController@statusList');
+
+/*
+|--------------------------------------------------------------------------
+| Frontend Routes
+|--------------------------------------------------------------------------
+|
+| The routes associated with frontend goes here. added by Kurian
+|
+*/
+require_once "frontend.php";
