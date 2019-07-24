@@ -142,9 +142,11 @@ Route::view('others/user-profile', 'others.user-profile')->name('user-profile');
 Route::view('others/starter', 'starter')->name('starter');
 
 //CRM
-Route::get('/crm/category-list', 'CrmController@categoryList');
+Route::get('/crm/category-list', 'CrmController@categoryList')->name('category-list');
 Route::get('/crm/sub-category-list', 'CrmController@subCategoryList');
 Route::get('/crm/status-list', 'CrmController@statusList');
+Route::get('/crm/category-add', 'CrmController@categoryadd');
+Route::post('/crm/category-add', 'CrmController@categoryadd');
 
 /*
 |--------------------------------------------------------------------------

@@ -16,7 +16,7 @@
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
                         <div class="card-body">
-                            <a title="Compact Sidebar" href="#" class="btn btn-primary"> Add Category </a>
+                            <a title="Compact Sidebar" href="/crm/category-add" class="btn btn-primary"> Add Category </a>
                             <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>

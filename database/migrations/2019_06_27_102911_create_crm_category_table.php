@@ -15,6 +15,7 @@ class CreateCrmCategoryTable extends Migration
     {
         Schema::create('crm_category', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('group_id');
             $table->string('crm_category_name');
             $table->integer('crm_category_active')->default(1);
             $table->timestamps();

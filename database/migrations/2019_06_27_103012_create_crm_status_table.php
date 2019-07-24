@@ -15,6 +15,7 @@ class CreateCrmStatusTable extends Migration
     {
         Schema::create('crm_status', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('group_id');
             $table->string('crm_status_name');
             $table->integer('crm_status_active')->default(1);
             $table->timestamps();
