@@ -53,6 +53,15 @@ class CrmController extends Controller
        return view('crm.categoryadd');
     }
 
+    public function categorydelete($categoryId)
+    {
+       $categoryDelete = $this->crmService->deleteCategory($categoryId);
+       if($categoryDelete) {
+            toastr()->success('Crm Category deleted successfully.');
+            return redirect()->route('category-list');
+        }
+    }
+
     /**
      * Show crm sub category list
      *

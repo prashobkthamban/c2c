@@ -147,6 +147,7 @@ Route::get('/crm/sub-category-list', 'CrmController@subCategoryList');
 Route::get('/crm/status-list', 'CrmController@statusList');
 Route::get('/crm/category-add', 'CrmController@categoryadd');
 Route::post('/crm/category-add', 'CrmController@categoryadd');
+Route::get('/crm/category-delete/{categoryId}', 'CrmController@categorydelete')->name('category-delete');
 
 /*
 |--------------------------------------------------------------------------

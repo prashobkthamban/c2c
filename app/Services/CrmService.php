@@ -29,6 +29,11 @@ class CrmService implements ICrmService
         ]);
     }
 
+    public function deleteCategory($category_id)
+    {
+        return CrmCategories::destroy($category_id);
+    }
+
     public function getAllSubCategories()
     {
         return $subCategories = CrmSubCategories::join('crm_category', 'crm_category.id', '=', 'crm_sub_category.crm_category_id')->get();
