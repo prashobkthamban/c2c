@@ -28,7 +28,7 @@ class CrmController extends Controller
      */
     public function categoryList()
     {        
-        $categories = $this->crmService->getAllCategories();
+        $categories = $this->crmService->getAllCategoriesByStatus(1);
         return view('crm.categorylist')->with('crmCategories', $categories);
     }
 
@@ -55,7 +55,7 @@ class CrmController extends Controller
 
     public function categorydelete($categoryId)
     {
-       $categoryDelete = $this->crmService->deleteCategory($categoryId);
+       $categoryDelete = $this->crmService->updateCategoryStatus($categoryId, 0);
        if($categoryDelete) {
             toastr()->success('Crm Category deleted successfully.');
             return redirect()->route('category-list');
@@ -69,8 +69,17 @@ class CrmController extends Controller
      */
     public function subCategoryList()
     {
-        $subCategories = $this->crmService->getAllSubCategories();
+        $subCategories = $this->crmService->getAllSubCategoriesByStatus(1);
         return view('crm.subcategorylist')->with('crmSubCategories', $subCategories);
+    }
+
+    public function subcategorydelete($subCategoryId)
+    {
+       $categoryDelete = $this->crmService->updateSubCategoryStatus($subCategoryId, 0);
+       if($categoryDelete) {
+            toastr()->success('Crm Sub Category deleted successfully.');
+            return redirect()->route('sub-category-list');
+        }
     }
 
     /**
@@ -80,7 +89,37 @@ class CrmController extends Controller
      */
     public function statusList()
     {
-        $crmStatus = $this->crmService->getAllStatus();
+        $crmStatus = $this->crmService->getAllCrmStatusByStatus(1);
         return view('crm.statuslist')->with('crmStatus', $crmStatus);
+    }
+
+    public function statusadd(Request $request)
+    {
+        if($request->method() == 'POST') {
+            $validator = Validator::make($request->all(), [
+                'crm_status_name' => 'required',
+            ]);
+            if($validator->fails()) {
+                $messages = $validator->messages(); 
+                return view('crm.statusadd', compact('messages'));
+            } else {
+                $groupId = Auth::user()->groupid;
+                $categoryId = $this->crmService->setCrmStatus($groupId, $request->crm_status_name);
+                if($categoryId) {
+                    toastr()->success('Crm Status added successfully.');
+                    return redirect()->route('status-list');
+                }
+            }
+        }
+       return view('crm.statusadd');
+    }
+
+    public function statusdelete($statusId)
+    {
+       $categoryDelete = $this->crmService->updateCrmStatusStatus($statusId, 0);
+       if($categoryDelete) {
+            toastr()->success('Crm Status deleted successfully.');
+            return redirect()->route('status-list');
+        }
     }
 }

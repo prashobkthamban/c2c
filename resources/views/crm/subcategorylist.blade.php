@@ -36,9 +36,9 @@
                                             <td>{{$crmSubCategory->crm_category_name}}</td>
                                             <td>{{$crmSubCategory->crm_sub_category_name}}</td>
                                             <td>{{ ($crmSubCategory->crm_sub_category_active == 1) ? 'Active' : 'Inactive' }}</td>
-                                            <td><a href="{{ route('editDid', $crmSubCategory->id) }}" class="text-success mr-2">
+                                            <td><a href="#" class="text-success mr-2">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                                </a><a href="{{ route('deleteDid', $crmSubCategory->id) }}" onclick="return confirm('Are you sure you want to delete this Did?')" class="text-danger mr-2">
+                                                </a><a href="{{ route('sub-category-delete', $crmSubCategory->subCategoryId) }}" onclick="return confirm('Are you sure you want to delete this sub category?')" class="text-danger mr-2">
                                                     <i class="nav-icon i-Close-Window font-weight-bold"></i>
                                                 </a></td>
                                         </tr>

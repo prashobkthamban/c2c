@@ -16,7 +16,7 @@
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
                         <div class="card-body">
-                            <a title="Compact Sidebar" href="#" class="btn btn-primary"> Add CRM Status </a>
+                            <a title="Compact Sidebar" href="/crm/status-add" class="btn btn-primary"> Add CRM Status </a>
                             <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
@@ -34,9 +34,9 @@
                                             <td>{{$loop->iteration}}</td>
                                             <td>{{$status->crm_status_name}}</td>
                                             <td>{{ ($status->crm_status_active == 1) ? 'Active' : 'Inactive' }}</td>
-                                            <td><a href="{{ route('editDid', $status->id) }}" class="text-success mr-2">
+                                            <td><a href="#" class="text-success mr-2">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                                </a><a href="{{ route('deleteDid', $status->id) }}" onclick="return confirm('Are you sure you want to delete this Did?')" class="text-danger mr-2">
+                                                </a><a href="{{ route('status-delete', $status->id) }}" onclick="return confirm('Are you sure you want to delete this crm status?')" class="text-danger mr-2">
                                                     <i class="nav-icon i-Close-Window font-weight-bold"></i>
                                                 </a></td>
                                         </tr>

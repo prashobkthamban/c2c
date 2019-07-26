@@ -143,11 +143,15 @@ Route::view('others/starter', 'starter')->name('starter');
 
 //CRM
 Route::get('/crm/category-list', 'CrmController@categoryList')->name('category-list');
-Route::get('/crm/sub-category-list', 'CrmController@subCategoryList');
-Route::get('/crm/status-list', 'CrmController@statusList');
+Route::get('/crm/sub-category-list', 'CrmController@subCategoryList')->name('sub-category-list');
+Route::get('/crm/status-list', 'CrmController@statusList')->name('status-list');
 Route::get('/crm/category-add', 'CrmController@categoryadd');
 Route::post('/crm/category-add', 'CrmController@categoryadd');
+Route::get('/crm/status-add', 'CrmController@statusadd');
+Route::post('/crm/status-add', 'CrmController@statusadd');
 Route::get('/crm/category-delete/{categoryId}', 'CrmController@categorydelete')->name('category-delete');
+Route::get('/crm/sub-category-delete/{subCategoryId}', 'CrmController@subcategorydelete')->name('sub-category-delete');
+Route::get('/crm/status-delete/{statusId}', 'CrmController@statusdelete')->name('status-delete');
 
 /*
 |--------------------------------------------------------------------------
