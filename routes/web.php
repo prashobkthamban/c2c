@@ -36,6 +36,11 @@ Route::get('user/{id}', 'UserController@destroy')->name('deleteUser');
 Route::get('edit/{id}', 'UserController@edit')->name('editUser');
 Route::patch('update/user/{id}', 'UserController@update')->name('updateUser');
 
+Route::get('blacklist', 'UserController@blacklist')->name('BlackList');
+Route::get('add_black_list', 'UserController@addBlacklist')->name('addBlackList');
+Route::get('blacklist/{id}', 'UserController@destroyBlacklist')->name('deleteBlacklist');
+Route::post('blacklist_store', 'UserController@storeBlacklist')->name('blacklistStore');
+
 Route::get('did_list', 'DidController@index')->name('DidList');
 Route::get('extra_did/{id}', 'DidController@extra_did')->name('extraDid');
 Route::post('add_extra_did', 'DidController@add_extra_did')->name('addExtraDid');

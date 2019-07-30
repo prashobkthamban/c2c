@@ -27,9 +27,7 @@
                         <a class="nav-item-hold" href="{{route('DidList')}}">
                             <i class="nav-icon i-Library"></i>
                             <span class="nav-text">Did</span>
-                        </a>
-                        <!-- <div class="triangle"></div> -->
-                        <!-- <div class="triangle"></div> -->
+                        </a> 
                     </li>
                     <li class="nav-item" data-item="">
                         <a class="nav-item-hold" href="{{route('UserList')}}">
@@ -37,6 +35,12 @@
                             <span class="nav-text">Users</span>
                         </a>
                         <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{route('BlackList')}}">
+                            <i class="nav-icon i-Security-Block"></i>
+                            <span class="nav-text">Blacklist</span>
+                        </a> 
                     </li>
                     <li class="nav-item" data-item="insightcrm">
                         <a class="nav-item-hold" href="#">

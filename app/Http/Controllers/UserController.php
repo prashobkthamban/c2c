@@ -257,4 +257,58 @@ class UserController extends Controller
         toastr()->success('User delete successfully.');
         return redirect()->route('UserList');
     }
+
+    // ----------blacklis-----------
+    public function blacklist() {
+        $blacklists = DB::table('blacklist')
+            ->leftJoin('accountgroup', 'blacklist.groupid', '=', 'accountgroup.id')
+            ->select('blacklist.*', 'accountgroup.name')
+            ->get();
+        return view('user.black_list', compact('blacklists'));
+    }
+
+    public function addBlacklist()
+    {
+        $customer = DB::table('accountgroup')->pluck('name', 'id');
+        $customer = $customer->prepend('Select Customer', '');
+        return view('user.add_blacklist', compact('customer'));
+    }
+
+    public function storeBlacklist(Request $request)
+    {
+        $customer = DB::table('accountgroup')->pluck('name', 'id');
+        $customer = $customer->prepend('Select Customer', '');
+        $validator = Validator::make($request->all(), [
+            'groupid' => 'required',
+            'phone_number' => 'required',
+            'reason' => 'required',
+        ]);
+
+        if($validator->fails()) {
+            $messages = $validator->messages(); 
+            return view('user.add_blacklist', compact('messages', 'customer'));
+        } else {
+            $blacklist_data = [
+                'groupid' => $request->get('groupid'),
+                'phone_number'=> $request->get('phone_number'),
+                'reason'=> $request->get('reason')
+            ];
+
+            DB::table('blacklist')->insert(
+                $blacklist_data
+            );  
+
+            toastr()->success('Blacklist added successfully.');
+        } 
+        return redirect()->route('BlackList');
+        
+    }
+
+    public function destroyBlacklist($id)
+    {
+        //dd($id);
+        $res = DB::table('blacklist')->where('id',$id)->delete();
+        toastr()->success('Blacklist delete successfully.');
+        return redirect()->route('BlackList');
+    }
 }
