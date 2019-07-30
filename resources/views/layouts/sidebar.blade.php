@@ -88,6 +88,21 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('languages')}}">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">Languages</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>                    
+
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('ivrmenulist')}}">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">IVR Menu</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
 
                 </ul>
             </div>
@@ -163,15 +178,21 @@
                 </ul>
                 <ul class="childNav" data-parent="insightcrm">
                     <li class="nav-item">
-                        <a>
+                        <a href="{{url('/crm/category-list')}}">
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="item-name">Categories</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a>
+                        <a href="{{url('/crm/sub-category-list')}}">
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="item-name">Sub Categories</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('/crm/status-list')}}">
+                            <i class="nav-icon i-Over-Time"></i>
+                            <span class="item-name">Status</span>
                         </a>
                     </li>
                     <li class="nav-item">

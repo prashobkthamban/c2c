@@ -30,9 +30,9 @@ class UserController extends Controller
     }
 
     public function index() {
-        $users = DB::table('Accountgroup')
-            ->join('resellergroup', 'Accountgroup.resellerid', '=', 'resellergroup.id')
-            ->select('Accountgroup.*', 'resellergroup.resellername')
+        $users = DB::table('accountgroup')
+            ->join('resellergroup', 'accountgroup.resellerid', '=', 'resellergroup.id')
+            ->select('accountgroup.*', 'resellergroup.resellername')
             ->get();
         //dd($users);
         return view('user.user_list', compact('users'));
