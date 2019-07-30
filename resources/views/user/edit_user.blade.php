@@ -73,27 +73,29 @@
                                         <label for="picker1">Multilanguage</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('multi_lang', 'YES') }} Yes
+                                                {{ Form::radio('multi_lang', 'Yes') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('multi_lang', 'NO') }} No   
+                                                {{ Form::radio('multi_lang', 'No') }} No   
                                             </label>
                                         </div>
                                     </div>
 
-                                    <div class="col-md-6 form-group mb-3">
-                                        <label for="firstName1">Language option</label>
-                                        {!! Form::select('lang_file', $lang, null,array('class' => 'form-control')) !!}
+                                     <div class="col-md-6 form-group mb-3">
+                                        {!! Form::label('name', 'Language option') !!}
+                                        {!! Form::text('lang_file', null, ['class' => 'form-control']) !!}
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('lang_file', ':message') : '' !!}</p>
+                                        <span><b>separeted by :</b> eg:->gu:en:hi:te:ma</span>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Record Call</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('record_call', 'YES') }} Yes
+                                                {{ Form::radio('record_call', 'Yes') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('record_call', 'NO') }} No  
+                                                {{ Form::radio('record_call', 'No') }} No  
                                             </label>
                                         </div>
                                     </div>
@@ -131,10 +133,10 @@
                                         <label for="picker1">CDR assign Email</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('emailservice_assign_cdr', 'YES') }} Yes
+                                                {{ Form::radio('emailservice_assign_cdr', 'Yes') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('emailservice_assign_cdr', 'NO') }} No
+                                                {{ Form::radio('emailservice_assign_cdr', 'No') }} No
                                             </label>
                                         </div>
                                     </div>
@@ -143,10 +145,10 @@
                                         <label for="picker1">CDR assign SMS</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('smsservice_assign_cdr', 'YES') }} Yes
+                                                {{ Form::radio('smsservice_assign_cdr', 'Yes') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('smsservice_assign_cdr', 'NO') }} No
+                                                {{ Form::radio('smsservice_assign_cdr', 'No') }} No
                                             </label>
                                         </div>
                                     </div>
@@ -155,10 +157,10 @@
                                         <label for="picker1">Click2Call</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('c2c', 'YES') }} Yes
+                                                {{ Form::radio('c2c', 'Yes') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('c2c', 'NO') }} No
+                                                {{ Form::radio('c2c', 'No') }} No
                                             </label>
                                         </div>
                                     </div>
@@ -179,10 +181,10 @@
                                         <label for="firstName1">Direct Trasfer</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('operator_dpt', 'YES') }} Yes
+                                                {{ Form::radio('operator_dpt', 'Yes') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('operator_dpt', 'NO') }} No
+                                                {{ Form::radio('operator_dpt', 'No') }} No
                                             </label>
                                         </div>
                                     </div>
@@ -203,6 +205,7 @@
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Sms api Password</label>
                                         {!! Form::password('sms_api_pass', ['class' => 'form-control']) !!} 
+                                        <p class="text-danger ">{!! !empty($messages) ? $messages->first('sms_api_pass', ':message') : '' !!}</p>
                                     </div> 
 
                                     <div class="col-md-6 form-group mb-3">
@@ -275,10 +278,10 @@
                                         <label for="picker1">SMS Support</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('sms_support', 'YES') }} Yes
+                                                {{ Form::radio('sms_support', 'Yes') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('sms_support', 'NO') }} No
+                                                {{ Form::radio('sms_support', 'No') }} No
                                             </label>
                                         </div>
                                     </div>
@@ -287,10 +290,10 @@
                                         <label for="picker1">Push Api Service</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('pushapi', 'YES') }} Yes
+                                                {{ Form::radio('pushapi', 'yes') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('pushapi', 'NO') }} No
+                                                {{ Form::radio('pushapi', 'No') }} No
                                             </label>
                                         </div>
                                     </div>
@@ -299,10 +302,10 @@
                                         <label for="picker1">PBX Extension</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('pbxexten', 'YES') }} Yes
+                                                {{ Form::radio('pbxexten', 'Yes') }} Yes
                                             </label>
                                             <label class="radio-inline">
-                                                {{ Form::radio('pbxexten', 'NO') }} No
+                                                {{ Form::radio('pbxexten', 'No') }} No
                                             </label>
                                         </div>
                                     </div>                            

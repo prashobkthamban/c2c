@@ -37,6 +37,9 @@ Route::get('edit/{id}', 'UserController@edit')->name('editUser');
 Route::patch('update/user/{id}', 'UserController@update')->name('updateUser');
 
 Route::get('did_list', 'DidController@index')->name('DidList');
+Route::get('extra_did/{id}', 'DidController@extra_did')->name('extraDid');
+Route::post('add_extra_did', 'DidController@add_extra_did')->name('addExtraDid');
+Route::delete('delete_extra_did/{id}', 'DidController@delete_extra_did')->name('deleteExtraDid');
 Route::get('add_did', 'DidController@addDid')->name('addDid');
 Route::post('store', 'DidController@store')->name('store');
 Route::get('did/{id}', 'DidController@destroy')->name('deleteDid');

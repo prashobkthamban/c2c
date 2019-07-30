@@ -148,7 +148,8 @@ class UserController extends Controller
         //$user = new Users();
         $account_group = new Accountgroup();
         $did = new Dids();
-        $user_edit = $account_group->findOrFail($id);        
+        $user_edit = $account_group->findOrFail($id);     
+        //dd($user_edit);   
         $lang = $account_group->get_language();
         $lang = $lang->prepend('Select language', '0');
         $coperate = $account_group->get_coperate();
@@ -197,7 +198,7 @@ class UserController extends Controller
 
         if($validator->fails()) {
             $messages = $validator->messages();
-           // dd($messages = $validator->messages());
+            //dd($messages = $validator->messages());
             return view('user.edit_user', compact('messages', 'lang', 'user_edit', 'coperate', 'sms_gateway', 'did_list'));
         } else {
             $account_group = [
