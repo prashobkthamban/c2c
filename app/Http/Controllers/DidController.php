@@ -28,13 +28,51 @@ class DidController extends Controller
     }
 
     public function index() {
-        //$dids = Dids::all();
         $dids = DB::table('dids')
             ->join('prigateway', 'dids.gatewayid', '=', 'prigateway.id')
-            ->select('dids.*', 'prigateway.Gprovider')
+            ->leftJoin('Accountgroup', 'dids.assignedto', '=', 'Accountgroup.id')
+            ->select('dids.*', 'prigateway.Gprovider', 'Accountgroup.name')
             ->get();
+            //dd($dids);
+        $did = new Dids();
+        $prigateway = $did->get_prigateway();
+        return view('did.did_list', compact('dids', 'prigateway'));
+    }
+
+    public function extra_did($id) {
+    // echo "sss";die();
+        return $extra_dids = DB::table('extra_dids')
+            ->where('did_id', $id)
+            ->get();
+
         //dd($dids);
-        return view('did.did_list', compact('dids'));
+    }
+
+    public function add_extra_did(Request $request) {
+        $extra_did_data = [
+                'did_id' => $request->get('did_id'),
+                'did_no'=> $request->get('did_no'),
+                'did_name'=> $request->get('did_name'),
+                'set_pri_callerid'=> $request->get('set_pri_callerid'),
+                'pri_id'=> $request->get('pri_id'),
+            ];
+
+        DB::table('extra_dids')->insert(
+            $extra_did_data
+        );    
+
+        toastr()->success('Extra did added successfully.');
+        return redirect()->route('DidList');
+    }
+
+    public function delete_extra_did($id)
+    {
+        // echo "dss";die();
+        // dd($id);
+        $res = DB::table('extra_dids')->where('id',$id)->delete();
+        return response()->json([
+            'status' => $res
+        ]);
     }
 
     /**
@@ -46,8 +84,6 @@ class DidController extends Controller
     {
         $did = new Dids();
         $prigateway = $did->get_prigateway();
-        // $did_list = $did->get_did();
-        // dd($did_list);
         return view('did.add_did', compact('prigateway'));
     }
 

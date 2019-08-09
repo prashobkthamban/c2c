@@ -14,6 +14,7 @@ class IVRServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('App\Services\IUserService', 'App\Services\UserService');
+        $this->app->bind('App\Services\ICrmService', 'App\Services\CrmService');
     }
 
     /**

@@ -148,7 +148,8 @@ class UserController extends Controller
         //$user = new Users();
         $account_group = new Accountgroup();
         $did = new Dids();
-        $user_edit = $account_group->findOrFail($id);        
+        $user_edit = $account_group->findOrFail($id);     
+        //dd($user_edit);   
         $lang = $account_group->get_language();
         $lang = $lang->prepend('Select language', '0');
         $coperate = $account_group->get_coperate();
@@ -197,7 +198,7 @@ class UserController extends Controller
 
         if($validator->fails()) {
             $messages = $validator->messages();
-           // dd($messages = $validator->messages());
+            //dd($messages = $validator->messages());
             return view('user.edit_user', compact('messages', 'lang', 'user_edit', 'coperate', 'sms_gateway', 'did_list'));
         } else {
             $account_group = [
@@ -255,5 +256,59 @@ class UserController extends Controller
         $user->delete();
         toastr()->success('User delete successfully.');
         return redirect()->route('UserList');
+    }
+
+    // ----------blacklis-----------
+    public function blacklist() {
+        $blacklists = DB::table('blacklist')
+            ->leftJoin('accountgroup', 'blacklist.groupid', '=', 'accountgroup.id')
+            ->select('blacklist.*', 'accountgroup.name')
+            ->get();
+        return view('user.black_list', compact('blacklists'));
+    }
+
+    public function addBlacklist()
+    {
+        $customer = DB::table('accountgroup')->pluck('name', 'id');
+        $customer = $customer->prepend('Select Customer', '');
+        return view('user.add_blacklist', compact('customer'));
+    }
+
+    public function storeBlacklist(Request $request)
+    {
+        $customer = DB::table('accountgroup')->pluck('name', 'id');
+        $customer = $customer->prepend('Select Customer', '');
+        $validator = Validator::make($request->all(), [
+            'groupid' => 'required',
+            'phone_number' => 'required',
+            'reason' => 'required',
+        ]);
+
+        if($validator->fails()) {
+            $messages = $validator->messages(); 
+            return view('user.add_blacklist', compact('messages', 'customer'));
+        } else {
+            $blacklist_data = [
+                'groupid' => $request->get('groupid'),
+                'phone_number'=> $request->get('phone_number'),
+                'reason'=> $request->get('reason')
+            ];
+
+            DB::table('blacklist')->insert(
+                $blacklist_data
+            );  
+
+            toastr()->success('Blacklist added successfully.');
+        } 
+        return redirect()->route('BlackList');
+        
+    }
+
+    public function destroyBlacklist($id)
+    {
+        //dd($id);
+        $res = DB::table('blacklist')->where('id',$id)->delete();
+        toastr()->success('Blacklist delete successfully.');
+        return redirect()->route('BlackList');
     }
 }

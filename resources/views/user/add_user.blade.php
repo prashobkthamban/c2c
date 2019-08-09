@@ -82,7 +82,8 @@
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Language option</label>
-                                        {!! Form::select('lang_file', $lang, null,array('class' => 'form-control')) !!}
+                                         <input type="text" class="form-control" placeholder="Language" name="lang_file">
+                                        <span><b>separeted by :</b> eg:->gu:en:hi:te:ma</span>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
