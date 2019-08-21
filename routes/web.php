@@ -161,6 +161,16 @@ Route::get('/crm/category-delete/{categoryId}', 'CrmController@categorydelete')-
 Route::get('/crm/sub-category-delete/{subCategoryId}', 'CrmController@subcategorydelete')->name('sub-category-delete');
 Route::get('/crm/status-delete/{statusId}', 'CrmController@statusdelete')->name('status-delete');
 
+
+//leads
+Route::get('leads', 'UserController@leadList')->name('LeadList');
+Route::get('addlead', 'UserController@addLead')->name('addLead');
+Route::post('leadstore', 'UserController@storeLead')->name('leadstore');
+
+
+Route::get('leaddelete/{id}', 'UserController@destroyLead')->name('deleteLead');
+Route::get('editlead/{id}', 'UserController@editLead')->name('editLead');
+Route::patch('update/lead/{id}', 'UserController@updateLead')->name('updateLead');
 /*
 |--------------------------------------------------------------------------
 | Frontend Routes

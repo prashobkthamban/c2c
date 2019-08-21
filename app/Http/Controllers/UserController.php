@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Users;
 use App\Models\Dids;
+use App\Models\CrmLeads;
 use App\Models\Accountgroup;
 use Carbon\Carbon;
 use Session;
@@ -310,5 +311,106 @@ class UserController extends Controller
         $res = DB::table('blacklist')->where('id',$id)->delete();
         toastr()->success('Blacklist delete successfully.');
         return redirect()->route('BlackList');
+    }
+    
+    public function leadList() {
+        $leads = DB::table('crm_leads')->get();
+        //dd($users);
+        return view('leads.lead_list', compact('leads'));
+    }
+    
+    public function addLead()
+    {
+       // $customer = DB::table('crm_leads')->pluck('name', 'id');
+       // $customer = $customer->prepend('Select Customer', '');
+        return view('leads.add_lead');
+    }
+    
+    public function storeLead(Request $request)
+    {
+        $crmleads = new CrmLeads();
+        
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required',
+            'phone_number' => 'required|integer',
+            'dob' => 'required',
+            'lead_status' => 'required',
+            'address' => 'required',
+            'lead_owner' => 'required',
+        ]);
+
+        if($validator->fails()) {
+            $messages = $validator->messages(); 
+            return view('leads.add_lead',compact('messages'));
+        } else {
+            $crmleads = new CrmLeads([
+                'name' => $request->get('name'),
+                'email'=> $request->get('email'),
+                'dob'=> Carbon::parse($request->get('dob'))->format('Y-m-d'),
+                'lead_status'=> $request->get('lead_status'),
+                'phone_number'=> $request->get('phone_number'),
+                'address'=> $request->get('address'),
+                'lead_owner'=> $request->get('lead_owner'),
+            ]);
+
+        //dd($users);
+        $crmleads->save();
+        toastr()->success('Lead added successfully.');
+        } 
+        return redirect()->route('LeadList');     
+    }
+    
+    public function editLead($id)
+    {
+        $lead_edit = CrmLeads::where('lead_id', $id)->firstOrFail(); 
+        return view('leads.edit_lead', compact('lead_edit'));
+    }
+
+    public function updateLead($id, Request $request)
+    {
+        //dd($id);
+       // $crm_leads = new CrmLeads();
+        $lead_edit = CrmLeads::where('lead_id',$id)->firstOrFail();
+        $validator = Validator::make($request->all(), [
+           'name' => 'required',
+            'email' => 'required',
+            'phone_number' => 'required|integer',
+            'dob' => 'required',
+            'lead_status' => 'required',
+            'address' => 'required',
+            'lead_owner' => 'required',
+        ]);
+
+        if($validator->fails()) {
+            $messages = $validator->messages();
+            //dd($messages = $validator->messages());
+            return view('leads.edit_lead', compact('messages','lead_edit'));
+        } else {
+            $lead_edit = [
+                'name' => $request->get('name'),
+                'email'=> $request->get('email'),
+                'dob'=> Carbon::parse($request->get('dob'))->format('Y-m-d'),
+                'lead_status'=> $request->get('lead_status'),
+                'phone_number'=> $request->get('phone_number'),
+                'address'=> $request->get('address'),
+                'lead_owner'=> $request->get('lead_owner'),
+                'lead_id' => $id,
+            ];
+            //dd($account_group);
+            $lead_edit->save();
+            toastr()->success('Lead update successfully.');
+            return redirect()->route('LeadList');
+        }
+        
+    }
+
+    public function destroyLead($id)
+    {
+        $lead= CrmLeads::where('lead_id','=',$id)->delete();
+       // dd($lead);
+        //$lead->delete();
+        toastr()->success('Lead delete successfully.');
+        return redirect()->route('LeadList');
     }
 }
