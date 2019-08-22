@@ -9,19 +9,30 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
-                    <li class="nav-item" data-item="calldetails">
+                    <!-- <li class="nav-item" data-item="calldetails">
                         <a class="nav-item-hold" href="#">
                             <i class="nav-icon i-Library"></i>
                             <span class="nav-text">Call Details</span>
                         </a>
                         <div class="triangle"></div>
+                    </li> -->
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{route('OperatorList')}}">
+                            <i class="nav-icon i-Administrator"></i>
+                            <span class="nav-text">Operator Account</span>
+                        </a> 
                     </li>
                     <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="#">
-                            <i class="nav-icon i-File-Clipboard-File--Text"></i>
-                            <span class="nav-text">Forms</span>
-                        </a>
-                        <div class="triangle"></div>
+                        <a class="nav-item-hold" href="{{route('OperatorGroup')}}">
+                            <i class="nav-icon i-Folder-Organizing"></i>
+                            <span class="nav-text">Operator Departments</span>
+                        </a> 
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{route('Voicemail')}}">
+                            <i class="nav-icon i-Mail-2"></i>
+                            <span class="nav-text">Voicemails</span>
+                        </a> 
                     </li>
                     <li class="nav-item" data-item="">
                         <a class="nav-item-hold" href="{{route('DidList')}}">

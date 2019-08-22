@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 class Holiday extends Model
 {
     protected $table = 'holiday';
+    protected $fillable = ['date', 'reason', 'groupid', 'resellerid'];
+    public $timestamps = false;
 
     public static function getReport( )
     {
