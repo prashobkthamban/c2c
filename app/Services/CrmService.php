@@ -34,6 +34,18 @@ class CrmService implements ICrmService
         ]);
     }
 
+    public function setSubCategory($group_id, $request)
+    {
+        return CrmSubCategories::insertGetId([
+            'group_id' => $group_id,
+            'crm_category_id' => $request->crm_category_id,
+            'crm_sub_category_name' => $request->crm_sub_category_name,
+            'crm_sub_category_active' => 1,
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s')
+        ]);
+    }
+
     public function updateCategoryStatus($category_id, $category_status)
     {
         $crmCategory =  CrmCategories::find($category_id);

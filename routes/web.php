@@ -164,6 +164,11 @@ Route::get('/crm/category-delete/{categoryId}', 'CrmController@categorydelete')-
 Route::get('/crm/sub-category-delete/{subCategoryId}', 'CrmController@subcategorydelete')->name('sub-category-delete');
 Route::get('/crm/status-delete/{statusId}', 'CrmController@statusdelete')->name('status-delete');
 
+Route::get('/crm/sub-category-add', 'CrmController@subcategoryadd');
+Route::post('/crm/sub-category-add', 'CrmController@subcategoryadd');
+Route::get('/crm/sub-category-edit/{id}', 'CrmController@subcategoryedit')->name('sub-category-edit');
+Route::patch('/crm/sub-category-update/{id}', 'CrmController@subcategoryupdate')->name('sub-category-update');
+
 
 //leads
 Route::get('leads', 'UserController@leadList')->name('LeadList');

@@ -321,7 +321,7 @@ class UserController extends Controller
     
     public function addLead()
     {
-        $category = DB::table('crm_category')->pluck('crm_category_name','id');
+        $category = DB::table('crm_category')->where('crm_category_active',1)->pluck('crm_category_name','id');
         $category = $category->prepend('Select category', '0');
         //$subcategory = $subcategory->prepend('Select category', '0');
         return view('leads.add_lead',compact('category'));
@@ -344,7 +344,7 @@ class UserController extends Controller
         ]);
 
         if($validator->fails()) {
-            $category = DB::table('crm_category')->pluck('crm_category_name','id');
+            $category = DB::table('crm_category')->where('crm_category_active',1)->pluck('crm_category_name','id');
             $category = $category->prepend('Select category', '0');
             $messages = $validator->messages(); 
             return view('leads.add_lead',compact('messages','category'));
@@ -371,7 +371,7 @@ class UserController extends Controller
     
     public function editLead($id)
     {
-        $category = DB::table('crm_category')->pluck('crm_category_name','id');
+        $category = DB::table('crm_category')->where('crm_category_active',1)->pluck('crm_category_name','id');
         $category = $category->prepend('Select category', '0');
         $lead_edit = CrmLeads::where('lead_id', $id)->firstOrFail(); 
         $subcategory = DB::table('crm_sub_category')->where('crm_category_id',$lead_edit->category_id)->pluck('crm_sub_category_name','id');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Services\ICrmService;
 use App\CrmCategories;
+use App\CrmSubCategories;
 use Illuminate\Support\Facades\Validator;
 use Auth;
 class CrmController extends Controller
@@ -103,6 +104,64 @@ class CrmController extends Controller
         $subCategories = $this->crmService->getAllSubCategoriesByStatus(1);
         return view('crm.subcategorylist')->with('crmSubCategories', $subCategories);
     }
+    
+    
+    public function subcategoryadd(Request $request)
+    {
+        $crmCategory = CrmCategories :: where('crm_category_active',1)->pluck('crm_category_name','id');
+        if($request->method() == 'POST') {
+            $validator = Validator::make($request->all(), [
+                'crm_sub_category_name' => 'required',
+                'crm_category_id' => 'required',
+            ]);
+            if($validator->fails()) {
+                $messages = $validator->messages(); 
+                return view('crm.subcategoryadd', compact('messages'));
+            } else {
+                $groupId = Auth::user()->groupid;
+                $categoryId = $this->crmService->setSubCategory($groupId, $request);
+                if($categoryId) {
+                    toastr()->success('Crm subCategory added successfully.');
+                    return redirect()->route('sub-category-list');
+                }
+            }
+        }
+       return view('crm.subcategoryadd',compact('crmCategory'));
+    }
+    
+    public function subcategoryedit($categoryId)
+    {
+        $crmCategory = CrmCategories :: where('crm_category_active',1)->pluck('crm_category_name','id');
+        $crmSubCategory = CrmSubCategories::find($categoryId);
+        return view('crm.subcategoryedit', compact('crmCategory','crmSubCategory'));   
+    }
+
+    public function subcategoryupdate($id, Request $request)
+    {
+        $crmCategory = CrmCategories :: where('crm_category_active',1)->pluck('crm_category_name','id');
+        $crmSubCategory = new CrmSubCategories();
+        $editsubcategory =  CrmSubCategories::find($id);
+       
+        $validator = Validator::make($request->all(), [
+            'crm_sub_category_name' => 'required',
+            'crm_category_id' => 'required',
+        ]);
+
+        if($validator->fails()) {
+            $messages = $validator->messages();
+            return view('crm.categoryedit', compact('messages','crmCategory','editcategory'));
+        } else {
+            $crmSubCategory = [
+                'crm_category_id' => $request->get('crm_category_id'),
+                'crm_sub_category_name' => $request->get('crm_sub_category_name'),
+            ];
+            $editsubcategory->fill($crmSubCategory)->save();
+            toastr()->success('Sub Category update successfully.');
+             return redirect()->route('sub-category-list');
+        }
+        
+    }
+
 
     public function subcategorydelete($subCategoryId)
     {
