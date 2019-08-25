@@ -321,9 +321,10 @@ class UserController extends Controller
     
     public function addLead()
     {
-       // $customer = DB::table('crm_leads')->pluck('name', 'id');
-       // $customer = $customer->prepend('Select Customer', '');
-        return view('leads.add_lead');
+        $category = DB::table('crm_category')->pluck('crm_category_name','id');
+        $category = $category->prepend('Select category', '0');
+        //$subcategory = $subcategory->prepend('Select category', '0');
+        return view('leads.add_lead',compact('category'));
     }
     
     public function storeLead(Request $request)
@@ -334,24 +335,31 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required',
             'phone_number' => 'required|integer',
-            'dob' => 'required',
+            'DOB' => 'required',
             'lead_status' => 'required',
             'address' => 'required',
             'lead_owner' => 'required',
+            'category_id' => 'required',
+            'sub_category_id' => 'required',
         ]);
 
         if($validator->fails()) {
+            $category = DB::table('crm_category')->pluck('crm_category_name','id');
+            $category = $category->prepend('Select category', '0');
             $messages = $validator->messages(); 
-            return view('leads.add_lead',compact('messages'));
+            return view('leads.add_lead',compact('messages','category'));
         } else {
             $crmleads = new CrmLeads([
                 'name' => $request->get('name'),
-                'email'=> $request->get('email'),
-                'dob'=> Carbon::parse($request->get('dob'))->format('Y-m-d'),
-                'lead_status'=> $request->get('lead_status'),
-                'phone_number'=> $request->get('phone_number'),
-                'address'=> $request->get('address'),
-                'lead_owner'=> $request->get('lead_owner'),
+                'email' => $request->get('email'),
+                'DOB' => Carbon::parse($request->get('DOB'))->format('Y-m-d'),
+                'lead_status' => $request->get('lead_status'),
+                'phone_number' => $request->get('phone_number'),
+                'address' => $request->get('address'),
+                'lead_owner' => $request->get('lead_owner'),
+                'category_id' => $request->get('category_id'),
+                'sub_category_id' => $request->get('sub_category_id'),
+                
             ]);
 
         //dd($users);
@@ -363,23 +371,32 @@ class UserController extends Controller
     
     public function editLead($id)
     {
+        $category = DB::table('crm_category')->pluck('crm_category_name','id');
+        $category = $category->prepend('Select category', '0');
         $lead_edit = CrmLeads::where('lead_id', $id)->firstOrFail(); 
-        return view('leads.edit_lead', compact('lead_edit'));
+        $subcategory = DB::table('crm_sub_category')->where('crm_category_id',$lead_edit->category_id)->pluck('crm_sub_category_name','id');
+        $subcategory = $subcategory->prepend('Select sub category', '0');
+        return view('leads.edit_lead', compact('lead_edit','category','subcategory'));
     }
 
     public function updateLead($id, Request $request)
     {
         //dd($id);
        // $crm_leads = new CrmLeads();
-        $lead_edit = CrmLeads::where('lead_id',$id)->firstOrFail();
+        $crm_lead = new CrmLeads();
+       
+        $lead_edit = $crm_lead->findOrFail($id);
+       
         $validator = Validator::make($request->all(), [
            'name' => 'required',
             'email' => 'required',
             'phone_number' => 'required|integer',
-            'dob' => 'required',
+            'DOB' => 'required',
             'lead_status' => 'required',
             'address' => 'required',
             'lead_owner' => 'required',
+            'category_id' => 'required',
+            'sub_category_id' => 'required',
         ]);
 
         if($validator->fails()) {
@@ -387,18 +404,20 @@ class UserController extends Controller
             //dd($messages = $validator->messages());
             return view('leads.edit_lead', compact('messages','lead_edit'));
         } else {
-            $lead_edit = [
+            $crm_lead = [
                 'name' => $request->get('name'),
                 'email'=> $request->get('email'),
-                'dob'=> Carbon::parse($request->get('dob'))->format('Y-m-d'),
+                'DOB'=> Carbon::parse($request->get('DOB'))->format('Y-m-d'),
                 'lead_status'=> $request->get('lead_status'),
                 'phone_number'=> $request->get('phone_number'),
                 'address'=> $request->get('address'),
                 'lead_owner'=> $request->get('lead_owner'),
+                'category_id'=> $request->get('category_id'),
+                'sub_category_id'=> $request->get('sub_category_id'),
                 'lead_id' => $id,
             ];
             //dd($account_group);
-            $lead_edit->save();
+            $lead_edit->fill($crm_lead)->save();
             toastr()->success('Lead update successfully.');
             return redirect()->route('LeadList');
         }
@@ -407,9 +426,7 @@ class UserController extends Controller
 
     public function destroyLead($id)
     {
-        $lead= CrmLeads::where('lead_id','=',$id)->delete();
-       // dd($lead);
-        //$lead->delete();
+        $res = DB::table('crm_leads')->where('lead_id',$id)->delete();
         toastr()->success('Lead delete successfully.');
         return redirect()->route('LeadList');
     }

@@ -19,3 +19,26 @@ function loadForm( id,viewfile ) {
     });
 }
 
+$(document).ready(function(){
+    
+    $('.lead-category').change(function (){
+        $.ajax({
+            type: 'POST',
+            //url: '{{URL::to('/getForm')}}',
+            url: '/getSubCategory',
+            data: {
+                
+                'id': $(this).val()
+            },
+            success: function (data) {
+                if (data.success == 1) {
+                    $('.lead-sub-category').empty();
+                    $(".lead-sub-category").html(data.view);
+                } else if (data.error == 1) {
+                    alert(data.errormsg);
+                }
+            }
+        });
+    });
+});
+

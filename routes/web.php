@@ -66,6 +66,7 @@ Route::post('getreportsearch', 'CdrAjaxController@getreportsearch');
 Route::post('getcdroutsearch', 'CdrAjaxController@getcdroutsearch');
 Route::post('getvoicesearch', 'CdrAjaxController@getvoicesearch');
 Route::post('getoperatorsearch', 'CdrAjaxController@getoperatorsearch');
+Route::post('getSubCategory', 'CdrAjaxController@getSubCategory');
 
 
 // Route::view('/', 'starter')->name('starter');

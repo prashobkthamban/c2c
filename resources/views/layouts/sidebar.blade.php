@@ -49,6 +49,14 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
+                    
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{route('LeadList')}}">
+                            <i class="nav-icon far fa-align-justify"></i>
+                            <span class="nav-text">Leads</span>
+                        </a> 
+                    </li>
+                    
                     <li class="nav-item" data-item="">
                         <a class="nav-item-hold" href="{{url('contacts')}}">
                             <i class="nav-icon i-Administrator"></i>

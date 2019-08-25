@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\DB;
 class CrmLeads extends Model
 {
     protected $table = 'crm_leads';
-    protected $primaryKey = 'id';
-    protected $fillable = ['name', 'dob', 'phone_number', 'email','address','lead_status','lead_owner'];
+    protected $primaryKey = 'lead_id';
+    protected $fillable = ['name', 'DOB', 'phone_number', 'email','address','lead_status','lead_owner','category_id','sub_category_id'];
     public $timestamps = false;
 
 }

@@ -38,14 +38,14 @@
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="dob">Date of birth</label>
                                         <div class="input-group">
-                                            <input class="form-control datepicker" placeholder="dd-mm-yyyy" name="dob" >
+                                            <input class="form-control datepicker" placeholder="dd-mm-yyyy" name="DOB" >
                                             <div class="input-group-append">
                                                 <button class="btn btn-secondary"  type="button">
                                                     <i class="icon-regular i-Calendar-4"></i>
                                                 </button>
                                             </div>
                                         </div>
-                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('dob', ':message') : '' !!}</p>
+                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('DOB', ':message') : '' !!}</p>
                                     </div>
 
                                    <div class="col-md-6 form-group mb-3">
@@ -53,7 +53,7 @@
                                         <textarea rows="8" cols="20" class="form-control" placeholder="Address" name="address"></textarea>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('address', ':message') : '' !!}</p>
                                     </div>
-
+                                    
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="lead_status">Lead Status</label>
                                         <select class="form-control" name="lead_status">
@@ -62,7 +62,19 @@
                                         </select>
                                     </div>
                                     
-                                    
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="picker1">Category name</label>
+                                        {!! Form::select('category_id', $category, null,array('class' => array('form-control','lead-category'))) !!}
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('category_id', ':message') : '' !!}</p>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="picker1">Subcategory name</label>
+                                        <select class="form-control lead-sub-category" name="sub_category_id">
+                                            <option value="0" selected="selected">Select sub category</option>
+                                        </select>
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('category_id', ':message') : '' !!}</p>
+                                    </div>
                                     
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="lead_owner">Lead owner assign to</label>
