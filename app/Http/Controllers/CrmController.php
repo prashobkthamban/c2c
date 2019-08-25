@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\ICrmService;
+use App\CrmCategories;
 use Illuminate\Support\Facades\Validator;
 use Auth;
 class CrmController extends Controller
@@ -51,6 +52,36 @@ class CrmController extends Controller
             }
         }
        return view('crm.categoryadd');
+    }
+    
+    public function categoryedit($categoryId)
+    {
+        $crmCategory = CrmCategories::find($categoryId);
+        return view('crm.categoryedit', compact('crmCategory'));   
+    }
+
+    public function categoryupdate($id, Request $request)
+    {
+        $crmCategory = new CrmCategories();
+       
+        $editcategory =  CrmCategories::find($id);
+       
+        $validator = Validator::make($request->all(), [
+           'crm_category_name' => 'required',
+        ]);
+
+        if($validator->fails()) {
+            $messages = $validator->messages();
+            return view('crm.categoryedit', compact('messages','editcategory'));
+        } else {
+            $crmCategory = [
+                'crm_category_name' => $request->get('crm_category_name'),
+            ];
+            $editcategory->fill($crmCategory)->save();
+            toastr()->success('Category update successfully.');
+             return redirect()->route('category-list');
+        }
+        
     }
 
     public function categorydelete($categoryId)

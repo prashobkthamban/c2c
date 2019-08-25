@@ -156,6 +156,8 @@ Route::get('/crm/sub-category-list', 'CrmController@subCategoryList')->name('sub
 Route::get('/crm/status-list', 'CrmController@statusList')->name('status-list');
 Route::get('/crm/category-add', 'CrmController@categoryadd');
 Route::post('/crm/category-add', 'CrmController@categoryadd');
+Route::get('/crm/category-edit/{id}', 'CrmController@categoryedit')->name('category-edit');
+Route::patch('/crm/category-update/{id}', 'CrmController@categoryupdate')->name('category-update');
 Route::get('/crm/status-add', 'CrmController@statusadd');
 Route::post('/crm/status-add', 'CrmController@statusadd');
 Route::get('/crm/category-delete/{categoryId}', 'CrmController@categorydelete')->name('category-delete');
