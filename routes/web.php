@@ -41,6 +41,31 @@ Route::get('add_black_list', 'UserController@addBlacklist')->name('addBlackList'
 Route::get('blacklist/{id}', 'UserController@destroyBlacklist')->name('deleteBlacklist');
 Route::post('blacklist_store', 'UserController@storeBlacklist')->name('blacklistStore');
 
+Route::get('operators', 'UserController@operators')->name('OperatorList');
+Route::get('add_operator', 'UserController@addOperator')->name('addOperator');
+Route::post('operator_store', 'UserController@storeOperator')->name('operatorStore');
+Route::get('edit/operator/{id}', 'UserController@editOperator')->name('editOperator');
+Route::patch('update/operator/{id}', 'UserController@updateOperator')->name('updateOperator');
+Route::get('operator/{id}', 'UserController@destroyOperator')->name('deleteOperator');
+
+/* operatorgrp */
+Route::get('operatorgrp', 'UserController@operatorgrp')->name('OperatorGroup');
+Route::get('operatorgrp_details/{id}', 'UserController@operatorgrp_details')->name('OperatorGroupDetails');
+
+/* holiday */
+Route::get('holiday', 'ManagementController@holiday')->name('holiday');
+Route::post('holiday_store', 'ManagementController@holidayStore')->name('holidayStore');
+Route::get('delete_holiday/{id}', 'ManagementController@delete_holiday')->name('deleteHoliday');
+
+/* voicemail */
+Route::get('voicemail', 'ManagementController@voicemail')->name('Voicemail');
+
+/* contacts */
+Route::get('contacts', 'ManagementController@contacts')->name('Contacts');
+Route::get('edit_contact', 'ManagementController@editContact')->name('editContact');
+Route::get('delete_contact/{id}', 'ManagementController@delete_contact')->name('deleteContact');
+
+
 Route::get('did_list', 'DidController@index')->name('DidList');
 Route::get('extra_did/{id}', 'DidController@extra_did')->name('extraDid');
 Route::post('add_extra_did', 'DidController@add_extra_did')->name('addExtraDid');

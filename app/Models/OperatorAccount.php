@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 class OperatorAccount extends Model
 {
     protected $table = 'operatoraccount';
+    protected $fillable = [
+        'phonenumber'
+        ];
 
     public static function getReport( $post_data=NULL){
 

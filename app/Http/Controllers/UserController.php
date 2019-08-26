@@ -9,10 +9,13 @@ use App\Users;
 use App\Models\Dids;
 use App\Models\CrmLeads;
 use App\Models\Accountgroup;
+use App\Models\OperatorAccount;
+use App\Models\OperatorDepartment;
 use Carbon\Carbon;
 use Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
 
 class UserController extends Controller
 {
@@ -312,7 +315,122 @@ class UserController extends Controller
         toastr()->success('Blacklist delete successfully.');
         return redirect()->route('BlackList');
     }
-    
+
+    public function operators() {
+        $operators = DB::table('operatoraccount')
+            ->select('operatoraccount.*')
+            ->get();
+        //dd($operators);
+        return view('user.operator_list', compact('operators'));
+    }
+
+    public function addOperator()
+    {
+        return view('user.add_operator');
+    }
+
+    public function storeOperator(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'phonenumber' => 'required',
+            'opername' => 'required',
+            'livetrasferid' => 'required',
+            'start_work' => 'required',
+            'end_work' => 'required',
+        ]);
+
+        if($validator->fails()) {
+            $messages = $validator->messages();
+            return view('user.add_operator', compact('messages'));
+        } else {
+            //dd($request->all());die();
+            $operator_data = [
+                'phonenumber' => $request->get('phonenumber'),
+                'opername'=> $request->get('opername'),
+                'oper_status'=> $request->get('oper_status'),
+                'livetrasferid'=> $request->get('livetrasferid'),
+                'start_work'=> $request->get('start_work'),
+                'end_work'=> $request->get('end_work'),
+                'app_use'=> $request->get('app_use'),
+                'edit'=> $request->get('edit'),
+                'download'=> $request->get('download'),
+                'play'=> $request->get('play'),
+            ];
+
+            DB::table('operatoraccount')->insert(
+                $operator_data
+            );  
+
+            toastr()->success('Operator added successfully.');
+        } 
+        return redirect()->route('OperatorList');
+        
+    }
+
+    public function editOperator($id)
+    {
+        $operator = new OperatorAccount();
+        $operator_edit = $operator->findOrFail($id);     
+       // dd($operator_edit);   
+        return view('user.edit_operator', compact('operator_edit'));
+    }
+
+    public function updateOperator($id, Request $request)
+    {
+        //dd($id);
+        $operator = new OperatorAccount();
+        $operator_edit = $operator->findOrFail($id);
+        $validator = Validator::make($request->all(), [
+            'phonenumber' => 'required',
+            'opername' => 'required',
+            'livetrasferid' => 'required',
+            'start_work' => 'required',
+            'end_work' => 'required',
+        ]);
+
+        if($validator->fails()) {
+            $messages = $validator->messages();
+            //dd($messages = $validator->messages());
+            return view('user.edit_operator', compact('messages', 'user_edit'));
+        } else {
+            $operator_data = [
+                'phonenumber' => $request->get('phonenumber'),
+                'opername'=> $request->get('opername'),
+                'oper_status'=> $request->get('oper_status'),
+                'livetrasferid'=> $request->get('livetrasferid'),
+                'start_work'=> $request->get('start_work'),
+                'end_work'=> $request->get('end_work'),
+                'app_use'=> $request->get('app_use'),
+                'edit'=> $request->get('edit'),
+                'download'=> $request->get('download'),
+                'play'=> $request->get('play'),
+            ];
+            //dd($operator_data);
+            $operator_edit->fill($operator_data)->save();
+            toastr()->success('Operator update successfully.');
+            return redirect()->route('OperatorList');
+        }
+        
+    }
+
+    public function destroyOperator($id)
+    {
+        $operator = OperatorAccount::find($id);
+        //dd($operator);
+        $operator->delete();
+        toastr()->success('Operator delete successfully.');
+        return redirect()->route('OperatorList');
+    }
+
+    public function operatorgrp() {
+        $operatordept = DB::table('operatordepartment')->where('groupid', 1)->where('C2C', '1')->get();
+        return view('user.operatorgrp', compact('operatordept'));
+    }
+
+    public function operatorgrp_details($id) {
+        return $details = OperatorDepartment::find($id);
+    }
+
     public function leadList() {
         $leads = DB::table('crm_leads')->get();
         //dd($users);
@@ -334,7 +452,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required',
-            'phone_number' => 'required|integer',
+            'phone_number' => 'required',
             'DOB' => 'required',
             'lead_status' => 'required',
             'address' => 'required',
@@ -342,7 +460,6 @@ class UserController extends Controller
             'category_id' => 'required',
             'sub_category_id' => 'required',
         ]);
-
         if($validator->fails()) {
             $category = DB::table('crm_category')->where('crm_category_active',1)->pluck('crm_category_name','id');
             $category = $category->prepend('Select category', '0');
@@ -361,7 +478,6 @@ class UserController extends Controller
                 'sub_category_id' => $request->get('sub_category_id'),
                 
             ]);
-
         //dd($users);
         $crmleads->save();
         toastr()->success('Lead added successfully.');
@@ -378,7 +494,6 @@ class UserController extends Controller
         $subcategory = $subcategory->prepend('Select sub category', '0');
         return view('leads.edit_lead', compact('lead_edit','category','subcategory'));
     }
-
     public function updateLead($id, Request $request)
     {
         //dd($id);
@@ -390,7 +505,7 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
            'name' => 'required',
             'email' => 'required',
-            'phone_number' => 'required|integer',
+            'phone_number' => 'required',
             'DOB' => 'required',
             'lead_status' => 'required',
             'address' => 'required',
@@ -398,7 +513,6 @@ class UserController extends Controller
             'category_id' => 'required',
             'sub_category_id' => 'required',
         ]);
-
         if($validator->fails()) {
             $messages = $validator->messages();
             //dd($messages = $validator->messages());
@@ -423,7 +537,6 @@ class UserController extends Controller
         }
         
     }
-
     public function destroyLead($id)
     {
         $res = DB::table('crm_leads')->where('lead_id',$id)->delete();
