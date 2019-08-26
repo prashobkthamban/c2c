@@ -467,6 +467,8 @@ class UserController extends Controller
             return view('leads.add_lead',compact('messages','category'));
         } else {
             $crmleads = new CrmLeads([
+                'campaginid' => 1,
+                'listid' => 1,
                 'name' => $request->get('name'),
                 'email' => $request->get('email'),
                 'DOB' => Carbon::parse($request->get('DOB'))->format('Y-m-d'),
@@ -519,6 +521,8 @@ class UserController extends Controller
             return view('leads.edit_lead', compact('messages','lead_edit'));
         } else {
             $crm_lead = [
+                'campaginid' => 1,
+                'listid' => 1,
                 'name' => $request->get('name'),
                 'email'=> $request->get('email'),
                 'DOB'=> Carbon::parse($request->get('DOB'))->format('Y-m-d'),
