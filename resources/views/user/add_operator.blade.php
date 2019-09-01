@@ -26,19 +26,7 @@
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('phonenumber', ':message') : '' !!}</p>
                                     </div>
 
-                                  <!--  <div class="col-md-6 form-group mb-3">
-                                        <label for="picker1">Login Id</label>
-                                         <input type="text" class="form-control" placeholder="Login Id" name="username">
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('username', ':message') : '' !!}</p>
-                                    </div>
-
-                                    <div class="col-md-6 form-group mb-3">
-                                        <label for="picker1">Password</label>
-                                         <input type="password" class="form-control" placeholder="Password" name="password">
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('password', ':message') : '' !!}</p>
-                                    </div>
-
-                                    <div class="col-md-6 form-group mb-3">
+                                    <!--<div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Extension Number</label>
                                          <input type="text" class="form-control" placeholder="Extension Number" name="extension_number">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('phone_number', ':message') : '' !!}</p>
@@ -48,6 +36,18 @@
                                         <label for="picker1">Operator</label>
                                          <input type="text" class="form-control" placeholder="Operator" name="opername">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('opername', ':message') : '' !!}</p>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="picker1">Login Id</label>
+                                         <input type="text" class="form-control" placeholder="Login Id" name="username">
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('username', ':message') : '' !!}</p>
+                                    </div>
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="picker1">Password</label>
+                                         <input type="password" class="form-control" placeholder="Password" name="password">
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('password', ':message') : '' !!}</p>
                                     </div> 
 
                                     <div class="col-md-6 form-group mb-3">

@@ -9,12 +9,18 @@ class Account extends Authenticatable
 {
     protected $table = 'account';
     protected $primaryKey = 'id';
-    protected $fillable = ['username', 'password'];
+    protected $fillable = ['username', 'password', 'operator_id'];
     protected $hidden = ['password'];
+    public $timestamps = false;
 
 	public function accountdetails()
 	{
-	    return $this->hasMany('\App\AccountGroupdetails','groupid');
+	    return $this->hasOne('\App\AccountGroupdetails','groupid');
 	}
+
+	public function operators()
+    {
+        return $this->belongsTo('OperatorAccount', 'id');
+    }
 
 }

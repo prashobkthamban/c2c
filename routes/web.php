@@ -36,6 +36,15 @@ Route::get('user/{id}', 'UserController@destroy')->name('deleteUser');
 Route::get('edit/{id}', 'UserController@edit')->name('editUser');
 Route::patch('update/user/{id}', 'UserController@update')->name('updateUser');
 
+/* ----------login account----------- */
+Route::get('account', 'UserController@loginAccounts')->name('loginAccounts');
+Route::post('add_account', 'UserController@addAccount')->name('addAccount');
+Route::get('edit_account/{id}', 'UserController@editAccount')->name('editAccount');
+
+/* ----------Reseller Group----------- */
+Route::get('resellers', 'UserController@resellers')->name('ResellerGroup');
+
+
 Route::get('blacklist', 'UserController@blacklist')->name('BlackList');
 Route::get('add_black_list', 'UserController@addBlacklist')->name('addBlackList');
 Route::get('blacklist/{id}', 'UserController@destroyBlacklist')->name('deleteBlacklist');
@@ -65,7 +74,7 @@ Route::get('contacts', 'ManagementController@contacts')->name('Contacts');
 Route::get('edit_contact', 'ManagementController@editContact')->name('editContact');
 Route::get('delete_contact/{id}', 'ManagementController@delete_contact')->name('deleteContact');
 
-
+/* ---------- Did ----------- */
 Route::get('did_list', 'DidController@index')->name('DidList');
 Route::get('extra_did/{id}', 'DidController@extra_did')->name('extraDid');
 Route::post('add_extra_did', 'DidController@add_extra_did')->name('addExtraDid');

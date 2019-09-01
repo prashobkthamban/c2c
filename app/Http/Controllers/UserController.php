@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Redirect;
 use App\Users;
 use App\Models\Dids;
 use App\Models\Accountgroup;
+use App\Models\Account;
 use App\Models\OperatorAccount;
 use App\Models\OperatorDepartment;
 use Carbon\Carbon;
@@ -254,14 +255,59 @@ class UserController extends Controller
     public function destroy($id)
     {
         $user= Users::find($id);
-        //dd($user);
-        //dd($user123);
         $user->delete();
         toastr()->success('User delete successfully.');
         return redirect()->route('UserList');
     }
 
-    // ----------blacklis-----------
+    /* ----------login account----------- */
+    public function loginAccounts() {
+        $account_group = new Accountgroup();
+        $coperate = $account_group->get_coperate();
+        $coperate = $coperate->prepend('Select coperate', '0');
+
+        $query = DB::table('account')
+             ->leftJoin('accountgroup', 'account.groupid', '=', 'accountgroup.id')
+             ->leftJoin('resellergroup', 'account.resellerid', '=', 'resellergroup.id');
+        if(Auth::user()->usertype == 'admin') {
+        } elseif(Auth::user()->usertype == 'reseller') {
+           $query->where('resellerid', Auth::user()->usertype);
+        } elseif(Auth::user()->usertype == 'groupadmin') {
+           $query->where('groupid', Auth::user()->groupid);
+           $query->where('usertype', 'groupadmin');
+        } else {
+            $query->where('groupid', Auth::user()->groupid);
+        }
+        $query->select('account.*', 'accountgroup.name', 'resellergroup.resellername');
+        $accounts = $query->get();
+        //dd($accounts);
+        return view('user.account_list', compact('accounts', 'coperate'));
+    }
+
+    public function editAccount($id = null) {
+        $account = new Account();
+        return $account->findOrFail($id);     
+        
+    }
+
+    public function addAccount(Request $request) {
+        // $add_account = [
+        //         'did_id' => $request->get('did_id'),
+        //         'did_no'=> $request->get('did_no'),
+        //         'did_name'=> $request->get('did_name'),
+        //         'set_pri_callerid'=> $request->get('set_pri_callerid'),
+        //         'pri_id'=> $request->get('pri_id'),
+        //     ];
+
+        // DB::table('extra_dids')->insert(
+        //     $extra_did_data
+        // );    
+
+        toastr()->success('Account added successfully.');
+        return redirect()->route('loginAccounts');
+    }
+
+    /* ----------blacklist----------- */
     public function blacklist() {
         $blacklists = DB::table('blacklist')
             ->leftJoin('accountgroup', 'blacklist.groupid', '=', 'accountgroup.id')
@@ -333,6 +379,8 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'phonenumber' => 'required',
             'opername' => 'required',
+            'username' => 'required',
+            'password' => 'required',
             'livetrasferid' => 'required',
             'start_work' => 'required',
             'end_work' => 'required',
@@ -343,7 +391,7 @@ class UserController extends Controller
             return view('user.add_operator', compact('messages'));
         } else {
             //dd($request->all());die();
-            $operator_data = [
+            $operator_data = new OperatorAccount([
                 'phonenumber' => $request->get('phonenumber'),
                 'opername'=> $request->get('opername'),
                 'oper_status'=> $request->get('oper_status'),
@@ -354,11 +402,19 @@ class UserController extends Controller
                 'edit'=> $request->get('edit'),
                 'download'=> $request->get('download'),
                 'play'=> $request->get('play'),
-            ];
+            ]);
 
-            DB::table('operatoraccount')->insert(
-                $operator_data
-            );  
+            // DB::table('operatoraccount')->insert(
+            //     $operator_data
+            // );  
+            $operator_data->save();
+            if($operator_data->save()){
+                $account_data = [
+                    'username'=> $request->get('username'),
+                    'password'=> $request->get('password'),
+                ];
+                $operator_data->accounts()->save($account_data);
+            }
 
             toastr()->success('Operator added successfully.');
         } 
@@ -369,8 +425,10 @@ class UserController extends Controller
     public function editOperator($id)
     {
         $operator = new OperatorAccount();
-        $operator_edit = $operator->findOrFail($id);     
-       // dd($operator_edit);   
+        //$operator_edit = $operator->find($id);     
+        $operator_edit = OperatorAccount::with(['accounts'])->find($id);     
+        //$operator_edit = OperatorAccount::with('accounts')->where('id', $id)->get();  
+        //dd($operator_edit);   
         return view('user.edit_operator', compact('operator_edit'));
     }
 
@@ -382,6 +440,8 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'phonenumber' => 'required',
             'opername' => 'required',
+            'username' => 'required',
+            'password' => 'required',
             'livetrasferid' => 'required',
             'start_work' => 'required',
             'end_work' => 'required',
@@ -406,6 +466,14 @@ class UserController extends Controller
             ];
             //dd($operator_data);
             $operator_edit->fill($operator_data)->save();
+            if($operator_edit->fill($operator_data)->save()) {
+                $account_data = [
+                    'username'=> $request->get('username'),
+                    'password'=> $request->get('password'),
+                ];
+                //dd($account_data);
+                $operator_edit->accounts()->update($account_data);
+            }
             toastr()->success('Operator update successfully.');
             return redirect()->route('OperatorList');
         }
@@ -428,5 +496,11 @@ class UserController extends Controller
 
     public function operatorgrp_details($id) {
         return $details = OperatorDepartment::find($id);
+    }
+
+    public function resellers() {
+        $resellers = DB::table('resellergroup')->get();
+        dd($resellers);
+        return view('user.reseller_list', compact('resellers'));
     }
 }

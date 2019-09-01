@@ -9,13 +9,34 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
-                    <!-- <li class="nav-item" data-item="calldetails">
+                    <li class="nav-item" data-item="calldetails">
                         <a class="nav-item-hold" href="#">
                             <i class="nav-icon i-Library"></i>
                             <span class="nav-text">Call Details</span>
                         </a>
                         <div class="triangle"></div>
-                    </li> -->
+                    </li>
+                    <li class="nav-item" data-item="insight">
+                        <a class="nav-item-hold" href="#">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">Insight IVR</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('operator')}}">
+                            <i class="nav-icon i-Administrator"></i>
+                            <span class="nav-text">Users</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="insightcrm">
+                        <a class="nav-item-hold" href="#">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">Insight CRM</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
                     <li class="nav-item" data-item="">
                         <a class="nav-item-hold" href="{{route('OperatorList')}}">
                             <i class="nav-icon i-Administrator"></i>
@@ -48,17 +69,17 @@
                         <div class="triangle"></div>
                     </li>
                     <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{route('loginAccounts')}}">
+                            <i class="nav-icon i-Administrator"></i>
+                            <span class="nav-text">Login Accounts</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
                         <a class="nav-item-hold" href="{{route('BlackList')}}">
                             <i class="nav-icon i-Security-Block"></i>
                             <span class="nav-text">Blacklist</span>
                         </a> 
-                    </li>
-                    <li class="nav-item" data-item="insightcrm">
-                        <a class="nav-item-hold" href="#">
-                            <i class="nav-icon i-Library"></i>
-                            <span class="nav-text">Insight CRM</span>
-                        </a>
-                        <div class="triangle"></div>
                     </li>
                     <li class="nav-item" data-item="">
                         <a class="nav-item-hold" href="{{url('contacts')}}">

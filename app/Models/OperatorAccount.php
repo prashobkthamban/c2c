@@ -11,6 +11,11 @@ class OperatorAccount extends Model
     protected $fillable = [
         'phonenumber'
         ];
+    public $timestamps = false;
+    public function accounts()
+    {
+        return $this->hasOne('App\Models\Account', 'operator_id');
+    }
 
     public static function getReport( $post_data=NULL){
 

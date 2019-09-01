@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Hash;
 
 class LoginController extends Controller
 {
@@ -47,23 +48,28 @@ class LoginController extends Controller
     }
     public function login( Request $request )
     {
+        // $password = Hash::make(123456);
+        // dd($password);
         $rules     = array(
             'username' => 'required',
             'password' => 'required'
         );
         $validator = Validator::make( $request->all(), $rules );
         if ( $validator->fails() ) {
+            //dd('validator fails');
             return Redirect::to( 'login' )->withErrors( $validator )->withInput();
         } else {
             $credentials = $request->only( 'username', 'password' );
             //$user = Account::first();
-            //dd($user);
+            
 
             if (  Auth::attempt( $credentials ) ) {
+                //dd('Auth attempt');
                 //Auth::loginUsingId($user->id);
                 // Authentication passed...
                 return redirect()->intended( '/' );
             } else {
+                 //dd('Invalid credentials');
                 // dd(Auth::attempt( $credentials ));
                 // dd(Auth::check());die;
                 return Redirect::to( 'login' )->withErrors( array(
