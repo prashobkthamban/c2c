@@ -100,6 +100,7 @@ Route::post('getreportsearch', 'CdrAjaxController@getreportsearch');
 Route::post('getcdroutsearch', 'CdrAjaxController@getcdroutsearch');
 Route::post('getvoicesearch', 'CdrAjaxController@getvoicesearch');
 Route::post('getoperatorsearch', 'CdrAjaxController@getoperatorsearch');
+Route::post('getSubCategory', 'CdrAjaxController@getSubCategory');
 
 
 // Route::view('/', 'starter')->name('starter');
@@ -189,12 +190,29 @@ Route::get('/crm/sub-category-list', 'CrmController@subCategoryList')->name('sub
 Route::get('/crm/status-list', 'CrmController@statusList')->name('status-list');
 Route::get('/crm/category-add', 'CrmController@categoryadd');
 Route::post('/crm/category-add', 'CrmController@categoryadd');
+Route::get('/crm/category-edit/{id}', 'CrmController@categoryedit')->name('category-edit');
+Route::patch('/crm/category-update/{id}', 'CrmController@categoryupdate')->name('category-update');
 Route::get('/crm/status-add', 'CrmController@statusadd');
 Route::post('/crm/status-add', 'CrmController@statusadd');
 Route::get('/crm/category-delete/{categoryId}', 'CrmController@categorydelete')->name('category-delete');
 Route::get('/crm/sub-category-delete/{subCategoryId}', 'CrmController@subcategorydelete')->name('sub-category-delete');
 Route::get('/crm/status-delete/{statusId}', 'CrmController@statusdelete')->name('status-delete');
 
+Route::get('/crm/sub-category-add', 'CrmController@subcategoryadd');
+Route::post('/crm/sub-category-add', 'CrmController@subcategoryadd');
+Route::get('/crm/sub-category-edit/{id}', 'CrmController@subcategoryedit')->name('sub-category-edit');
+Route::patch('/crm/sub-category-update/{id}', 'CrmController@subcategoryupdate')->name('sub-category-update');
+
+
+//leads
+Route::get('leads', 'UserController@leadList')->name('LeadList');
+Route::get('addlead', 'UserController@addLead')->name('addLead');
+Route::post('leadstore', 'UserController@storeLead')->name('leadstore');
+
+
+Route::get('leaddelete/{id}', 'UserController@destroyLead')->name('deleteLead');
+Route::get('editlead/{id}', 'UserController@editLead')->name('editLead');
+Route::patch('update/lead/{id}', 'UserController@updateLead')->name('updateLead');
 /*
 |--------------------------------------------------------------------------
 | Frontend Routes

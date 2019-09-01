@@ -9,6 +9,7 @@ use App\Models\Contact;
 use App\Models\CdrTag;
 use App\Models\Cdr;
 use App\Models\CdrSub;
+use App\CrmSubCategories;
 
 use App\Models\CdrArchive;
 use App\Models\CdrPbx;
@@ -169,6 +170,20 @@ class CdrAjaxController extends Controller
             
             $array = array('result' => OperatorAccount::getReport($data));
             $html               = view( 'home.operator_ajax', $array );
+            $arr[ 'view' ]      = $html->__toString();
+        }
+        $arr[ 'success' ] = 1;
+        return response()->json( $arr );
+        exit( );
+
+    }
+    
+    public function getSubCategory(Request $request)
+    {
+        if ( $request->ajax() ) {
+            $data = $request->all();           
+            $array = array('result' => CrmSubCategories::where('crm_category_id',$data['id'])->where('crm_sub_category_active',1)->get());
+            $html               = view( 'home.subcategory_ajax', $array );
             $arr[ 'view' ]      = $html->__toString();
         }
         $arr[ 'success' ] = 1;

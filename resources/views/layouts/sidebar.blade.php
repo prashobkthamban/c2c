@@ -81,6 +81,15 @@
                             <span class="nav-text">Blacklist</span>
                         </a> 
                     </li>
+
+                    <li class="nav-item" data-item="insightcrm">
+                        <a class="nav-item-hold" href="#">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">Insight CRM</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    
                     <li class="nav-item" data-item="">
                         <a class="nav-item-hold" href="{{url('contacts')}}">
                             <i class="nav-icon i-Administrator"></i>
@@ -232,6 +241,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{route('LeadList')}}">
+                            <i class="nav-icon i-Over-Time"></i>
+                            <span class="item-name">Leads</span>
+                        </a> 
+                    </li>
+                    <li class="nav-item">
                         <a>
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="item-name">Email & SMS Settings</span>
@@ -243,7 +258,6 @@
                             <span class="item-name">Email & Templates</span>
                         </a>
                     </li>
-
                 </ul>
 
             </div>
