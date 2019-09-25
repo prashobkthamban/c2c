@@ -216,6 +216,9 @@
     {{-- laravel js --}}
     {{-- <script src="{{mix('assets/js/laravel/app.js')}}"></script> --}}
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="{{asset('assets/js/moment.min.js')}}"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
     @yield('bottom-js')
     <script>
         $('#zero_configuration_table').dataTable( {
@@ -224,7 +227,14 @@
         } );
 
         $( function() {
-            $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });        
+            $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });     
+            //$(function () {
+              $('.datetimepicker5').datetimepicker({
+                  //use24hours: true,
+                  format: 'HH:mm'
+              });
+            //});   
+             //$('.datetimepicker5').datetimepicker();
         });
     </script>
     <div class="modal fade" id="ModalContent" tabindex="-1" role="dialog" aria-labelledby="ModalContent" style="display: none;" aria-hidden="true">

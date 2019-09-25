@@ -17,6 +17,7 @@ use Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
+use Hash;
 
 class UserController extends Controller
 {
@@ -31,12 +32,15 @@ class UserController extends Controller
         // if(!Auth::check()){
         // return redirect('login');
         // }
+        $this->did = new Dids();
+        $this->op_dept = new OperatorDepartment();
+        $this->ac_group = new Accountgroup();
 
     }
 
     public function index() {
         $users = DB::table('accountgroup')
-            ->join('resellergroup', 'accountgroup.resellerid', '=', 'resellergroup.id')
+            ->leftJoin('resellergroup', 'accountgroup.resellerid', '=', 'resellergroup.id')
             ->select('accountgroup.*', 'resellergroup.resellername')
             ->get();
         //dd($users);
@@ -51,36 +55,26 @@ class UserController extends Controller
     public function addUser()
     {
         $account_group = new Accountgroup();
-        $did = new Dids();
         $lang = $account_group->get_language();
         $lang = $lang->prepend('Select language', '0');
         $coperate = $account_group->get_coperate();
         $coperate = $coperate->prepend('Select coperate', '0');
         $sms_gateway = $account_group->sms_api_gateway();
         $sms_gateway = $sms_gateway->prepend('Select gateway', '0');
-        $did_list = $did->get_did();
-        $did_list = $did_list->prepend('Select Did', '0');
-        //dd($did_list);
+        $did_list = $this->did->get_did();
+        
+        $did_list = $did_list->prepend('Select Did', '');
+        
         return view('user.add_user', compact('lang', 'coperate', 'default', 'did_list', 'sms_gateway'));
     }
 
     public function store(Request $request)
     {
-        $account_group = new Accountgroup();
-        $did = new Dids();
-        $lang = $account_group->get_language();
-        $lang = $lang->prepend('Select language', '0');
-        $coperate = $account_group->get_coperate();
-        $coperate = $coperate->prepend('Select coperate', '0');
-        $did_list = $did->get_did();
-        $did_list = $did_list->prepend('Select Did', '0');
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'did' => 'required',
-            'resellerid' => 'required',
-            'startdate' => 'required',
-            'enddate' => 'required',
-            'lang_file' => 'required',
+            'startdate' => 'required|date|before:enddate',
+            'enddate' => 'required|date|after:startdate',
             'try_count' => 'required|integer|min:0',
             'dial_time' => 'required|integer|min:0',
             'maxcall_dur' => 'required|integer|min:0',
@@ -98,7 +92,8 @@ class UserController extends Controller
 
         if($validator->fails()) {
             $messages = $validator->messages(); 
-            return view('user.add_user', compact('messages', 'lang', 'coperate', 'did_list'));
+            // dd($messages);
+            return redirect()->back()->withErrors($validator)->withInput();
         } else {
             $account_group = new Accountgroup([
                 'name' => $request->get('name'),
@@ -128,6 +123,7 @@ class UserController extends Controller
                 'cdr_apikey'=> $request->get('cdr_apikey'),
                 'ip'=> $request->get('ip'),
                 'cdr_tag'=> $request->get('cdr_tag'),
+                'crm'=> $request->get('crm'),
                 'cdr_chnunavil_log'=> $request->get('cdr_chnunavil_log'),
                 'max_no_confrence'=> $request->get('max_no_confrence'),
                 'servicetype'=> $request->get('servicetype'),
@@ -140,8 +136,16 @@ class UserController extends Controller
                 'c2c'=> $request->get('c2c')
             ]);
 
-        //dd($users);
         $account_group->save();
+        //accountgroup.grid.inc
+        if(!empty($account_group->id)) {
+            $this->did::where('id', $request->get('did'))->update(array('assignedto' => $account_group->id));
+            //  ivrlevel_id -> department_id OR DT was the preivios fildname
+            $this->op_dept->insert(array('resellerid' => $request->get('resellerid'), 'groupid' => $account_group->id, 'ivrlevel_id' => 1, 'dept_name' => 'DT-DPT', 'opt_calltype' => 'Round_Robin', 'adddate' => NOW(), 'starttime' => '00:00:00', 'endtime' => '23:59:59'));
+
+            $this->op_dept->insert(array('resellerid' => $request->get('resellerid'), 'groupid' => $account_group->id, 'ivrlevel_id' => 1, 'dept_name' => 'C2C-DPT', 'opt_calltype' => 'Round_Robin', 'adddate' => NOW(), 'starttime' => '00:00:00', 'endtime' => '23:59:59'));
+        }
+
         toastr()->success('User added successfully.');
         } 
         return redirect()->route('UserList');
@@ -182,10 +186,8 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'did' => 'required',
-            'resellerid' => 'required',
-            'startdate' => 'required',
-            'enddate' => 'required',
-            'lang_file' => 'required',
+            'startdate' => 'required|date|before:enddate',
+            'enddate' => 'required|date|after:startdate',
             'try_count' => 'required|integer|min:0',
             'dial_time' => 'required|integer|min:0',
             'maxcall_dur' => 'required|integer|min:0',
@@ -234,6 +236,7 @@ class UserController extends Controller
                 'cdr_apikey'=> $request->get('cdr_apikey'),
                 'ip'=> $request->get('ip'),
                 'cdr_tag'=> $request->get('cdr_tag'),
+                'crm'=> $request->get('crm'),
                 'cdr_chnunavil_log'=> $request->get('cdr_chnunavil_log'),
                 'max_no_confrence'=> $request->get('max_no_confrence'),
                 'servicetype'=> $request->get('servicetype'),
@@ -255,8 +258,8 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $user= Users::find($id);
-        $user->delete();
+        $acc_group = Accountgroup::find($id);
+        $acc_group->delete();
         toastr()->success('User delete successfully.');
         return redirect()->route('UserList');
     }
@@ -265,7 +268,7 @@ class UserController extends Controller
     public function loginAccounts() {
         $account_group = new Accountgroup();
         $coperate = $account_group->get_coperate();
-        $coperate = $coperate->prepend('Select coperate', '0');
+        $coperate = $coperate->prepend('Select coperate', '');
 
         $query = DB::table('account')
              ->leftJoin('accountgroup', 'account.groupid', '=', 'accountgroup.id')
@@ -291,21 +294,41 @@ class UserController extends Controller
         
     }
 
-    public function addAccount(Request $request) {
-        // $add_account = [
-        //         'did_id' => $request->get('did_id'),
-        //         'did_no'=> $request->get('did_no'),
-        //         'did_name'=> $request->get('did_name'),
-        //         'set_pri_callerid'=> $request->get('set_pri_callerid'),
-        //         'pri_id'=> $request->get('pri_id'),
-        //     ];
+    public function getCustomer($usertype, $resellerid) {
+        return getAccountgroups($usertype, $resellerid);
+    }
 
-        // DB::table('extra_dids')->insert(
-        //     $extra_did_data
-        // );    
+    public function addAccount(Request $request) 
+    {
+        //dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'username' => 'required',
+            'password' => 'required',
+            'usertype' => 'required',
+            'resellerid' => 'required',
+            'groupid' => 'required',
+            'phone_number' => 'required',
+            'email' => 'required',
+        ]);    
 
-        toastr()->success('Account added successfully.');
-        return redirect()->route('loginAccounts');
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $account = ['username' => $request->get('username'),
+                     'password'=> Hash::make($request->get('password')),
+                     'usertype'=> $request->get('usertype'), 
+                     'resellerid' => $request->get('resellerid'),
+                     'groupid' => $request->get('groupid'),
+                     'phone_number' => $request->get('phone_number'),
+                     'email' => $request->get('email'),
+                     'status' => 'Active'
+                    ];
+            DB::table('account')->insert($account);
+            // $data['result'] = $note;
+            $data['success'] = 'Account added successfully.';
+            //$data['fname'] = $request->get('fname');
+        } 
+         return $data;
     }
 
     /* ----------blacklist----------- */
@@ -405,14 +428,14 @@ class UserController extends Controller
                 'play'=> $request->get('play'),
             ]);
 
-            // DB::table('operatoraccount')->insert(
-            //     $operator_data
-            // );  
+            DB::table('operatoraccount')->insert(
+                $operator_data
+            );  
             $operator_data->save();
             if($operator_data->save()){
                 $account_data = [
                     'username'=> $request->get('username'),
-                    'password'=> $request->get('password'),
+                    'password'=> Hash::make($request->get('password'))
                 ];
                 $operator_data->accounts()->save($account_data);
             }
@@ -498,11 +521,6 @@ class UserController extends Controller
     public function operatorgrp_details($id) {
         return $details = OperatorDepartment::find($id);
     }
-
-    public function resellers() {
-        $resellers = DB::table('resellergroup')->get();
-        dd($resellers);
-        return view('user.reseller_list', compact('resellers'));
 
     public function leadList() {
         $leads = DB::table('crm_leads')->get();
@@ -620,4 +638,79 @@ class UserController extends Controller
         toastr()->success('Lead delete successfully.');
         return redirect()->route('LeadList');
     }
+
+    public function coperates() {
+        $resellers = DB::table('resellergroup')->orderBy('adddate', 'desc')->paginate(10);
+        return view('user.reseller_list', compact('resellers'));
+    }
+
+    public function editCoperate($id) {
+
+        return DB::table('resellergroup')
+                ->join('account', 'resellergroup.id', '=', 'account.resellerid')
+                ->where('resellergroup.id', $id)
+                ->select('resellergroup.*', 'account.username', 'account.password')
+                ->get();
+    }
+
+    public function addCoperate(Request $request) 
+    {
+        if(!empty($request->get('id'))) {
+            $validator = Validator::make($request->all(), [
+                'resellername' => 'required',
+                'username' => 'required',
+                'password' => 'required',
+                'cdr_apikey' => 'required',
+            ]);
+        } else {
+            $validator = Validator::make($request->all(), [
+                'resellername' => 'required',
+                'username' => 'required|unique:account,username',
+                'password' => 'required',
+                'cdr_apikey' => 'required',
+            ]);
+        }        
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $reseller = ['resellername' => $request->get('resellername'),
+                     'cdr_apikey'=> $request->get('cdr_apikey')
+                    ];
+            $account = [ 'status' => 'Active',
+                         'usertype' => 'reseller',
+                         'username' => $request->get('username'),
+                         'password'=> Hash::make($request->get('password')),
+                        ]; 
+
+            if(empty($request->get('id'))) {
+                $id = DB::table('resellergroup')->insertGetId($reseller);
+                $new_field = array('resellerid' => $id);
+                $account_1 = array_merge($account, $new_field);
+                if(!empty($id)) {
+                    DB::table('account')->insert($account);
+                    $data['success'] = 'Coperate added successfully.';
+                }
+            } else {
+                DB::table('resellergroup')
+                    ->where('id', $request->get('id'))
+                    ->update($reseller);
+                DB::table('account')
+                    ->where('resellerid', $request->get('id'))
+                    ->update($account);
+                $data['success'] = 'Coperate updated successfully.';
+            }
+        } 
+        return $data;
+    }
+
+    public function destroyCoperate($id)
+    {
+        DB::table('resellergroup')->where('id',$id)->delete();
+        DB::table('account')->where('resellerid',$id)->delete();
+        toastr()->success('Coperate delete successfully.');
+        return redirect()->route('CoperateGroup');
+    }
+
+
 }

@@ -16,6 +16,6 @@ class Dids extends Model
     }
 
     public function get_did() {
-    	return DB::table('dids')->where('assignedto', 0)->pluck('did', 'did');
+    	return DB::table('dids')->where('assignedto', 0)->pluck('did', 'id');
     }
 }

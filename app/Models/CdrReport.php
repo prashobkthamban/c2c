@@ -11,19 +11,44 @@ class CdrReport extends Model
 {
     protected $table = 'cdr';
 
-    public static function getReport( ){
+    // public static function getReport( ){
 
-       $data = CdrReport::select('cdr.*','name','resellername','opername','phonenumber')
-            ->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr.groupid')
-            ->leftJoin('resellergroup', 'resellergroup.id', '=', 'cdr.resellerid')
-            ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'cdr.operatorid');
+    //    $data = CdrReport::select('cdr.*','fname','lname','contacts.email','name','resellername','opername','phonenumber','cdr_notes.operator', 'cdr_notes.note', 'cdr_notes.datetime as note_time')
+    //         ->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr.groupid')
+    //         ->leftJoin('resellergroup', 'resellergroup.id', '=', 'cdr.resellerid')
+    //         ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'cdr.operatorid')
+    //         ->leftJoin('contacts', 'contacts.phone', '=', 'cdr.number')
+    //         ->leftJoin('cdr_notes', 'cdr_notes.uniqueid', '=', 'cdr.uniqueid');
+    //     if( Auth::user()->usertype == 'reseller'){
+    //         $data->where('cdr.resellerid',Auth::user()->resellerid );
+    //     }
+    //     $result = $data->orderBy('datetime','DESC')
+    //     ->paginate(30);
+    //     return $result;
+    // }
+
+    public function cdrNotes()
+    {
+        return $this->hasMany('App\Models\CdrNote', 'uniqueid', 'uniqueid');
+    }
+
+    public function contacts()
+    {
+        return $this->hasMany('App\Models\Contact', 'phone', 'number');
+    }
+
+    public static function getReport(){
+
+       $data = CdrReport::with(['cdrNotes', 'contacts']);
         if( Auth::user()->usertype == 'reseller'){
             $data->where('cdr.resellerid',Auth::user()->resellerid );
         }
-        $result = $data->orderBy('datetime','DESC')
-        ->paginate(30);
-        return $result;
+        $result = $data->orderBy('datetime','DESC')->paginate(30);
+       //dd($result);
+
+       return $result;
     }
+
     public static function getContact( $rowid ){
         return CdrReport::select( 'number' )->where( 'cdr.cdrid', $rowid )
             ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'cdr.operatorid')

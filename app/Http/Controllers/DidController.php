@@ -67,8 +67,6 @@ class DidController extends Controller
 
     public function delete_extra_did($id)
     {
-        // echo "dss";die();
-        // dd($id);
         $res = DB::table('extra_dids')->where('id',$id)->delete();
         return response()->json([
             'status' => $res

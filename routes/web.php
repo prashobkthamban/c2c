@@ -15,7 +15,13 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/test', 'ServiceController@test')->name('test');
 Route::get('home', 'HomeController@index')->name('home');
+
+/* ----------Cdr Report----------- */
 Route::get('cdrreport', 'ReportController@index')->name('cdrreport');
+Route::post('add_cdr_contact', 'ReportController@addContact')->name('addContact');
+Route::post('add_note', 'ReportController@addNote')->name('addNote');
+Route::delete('delete_comment/{id}', 'ReportController@deleteComment')->name('deleteComment');
+Route::get('download_file/{file}/{id}', 'ReportController@downloadFile')->name('downloadFile');
 Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('cdrreportarchive');
 Route::get('cdrreportout', 'ReportController@cdrreportout')->name('cdrreportout');
 Route::get('reminder', 'ReminderController@index')->name('Reminder');
@@ -40,10 +46,13 @@ Route::patch('update/user/{id}', 'UserController@update')->name('updateUser');
 Route::get('account', 'UserController@loginAccounts')->name('loginAccounts');
 Route::post('add_account', 'UserController@addAccount')->name('addAccount');
 Route::get('edit_account/{id}', 'UserController@editAccount')->name('editAccount');
+Route::get('get_customer/{usertype}/{resellerid}', 'UserController@getCustomer')->name('getCustomer');
 
-/* ----------Reseller Group----------- */
-Route::get('resellers', 'UserController@resellers')->name('ResellerGroup');
-
+/* ----------Coperate Group----------- */
+Route::get('coperates', 'UserController@coperates')->name('CoperateGroup');
+Route::post('add_coperate', 'UserController@addCoperate')->name('AddCoperate');
+Route::get('edit_coperate/{id}', 'UserController@editCoperate')->name('editCoperate');
+Route::get('destroy_coperate/{id}', 'UserController@destroyCoperate')->name('destroyCoperate');
 
 Route::get('blacklist', 'UserController@blacklist')->name('BlackList');
 Route::get('add_black_list', 'UserController@addBlacklist')->name('addBlackList');
@@ -65,6 +74,12 @@ Route::get('operatorgrp_details/{id}', 'UserController@operatorgrp_details')->na
 Route::get('holiday', 'ManagementController@holiday')->name('holiday');
 Route::post('holiday_store', 'ManagementController@holidayStore')->name('holidayStore');
 Route::get('delete_holiday/{id}', 'ManagementController@delete_holiday')->name('deleteHoliday');
+
+/* ivr menu */
+Route::get('ivr_menu', 'ManagementController@ivrMenu')->name('ivrMenu');
+Route::get('delete_ivr/{id}', 'ManagementController@deleteIvr')->name('deleteIvr');
+Route::post('add_ivr_menu', 'ManagementController@addIvrmenu')->name('addIvrmenu');
+
 
 /* voicemail */
 Route::get('voicemail', 'ManagementController@voicemail')->name('Voicemail');
@@ -89,7 +104,19 @@ Route::get('cdrexport', 'ReportController@cdrexport')->name('cdrexport');
 Route::get('cdroutexport', 'ReportController@cdroutexport')->name('cdroutexport');
 Route::get('voicemailexport', 'ReportController@voicemailexport')->name('voicemailexport');
 Route::get('operatordept', 'ReportController@operatordept')->name('operatordept');
+Route::post('add_cdr', 'ReportController@addCdr')->name('AddCdr');
 
+/* ---------- Operator Department ----------- */
+Route::get('optdept_list', 'OperatorController@index')->name('OptdeptList');
+Route::get('get_ivr/{groupid}', 'OperatorController@getIvr')->name('getIvr');
+Route::post('add_operator', 'OperatorController@addOperator')->name('addOperator');
+Route::get('get_operator/{id}', 'OperatorController@getOperator')->name('getOperator');
+Route::get('delete_operator/{id}', 'OperatorController@deleteOperator')->name('deleteOperator');
+Route::get('nonoperator_list', 'OperatorController@nonOperatorList')->name('NonOperatorList');
+Route::get('sms_list', 'OperatorController@sms')->name('Sms');
+Route::post('add_sms', 'OperatorController@addSms')->name('addSms');
+Route::get('get_sms/{id}', 'OperatorController@getSms')->name('getSms');
+Route::get('delete_sms/{id}', 'OperatorController@deleteSms')->name('deleteSms');
 //ajax
 //Route::get('getForm', 'CdrAjaxController@getForm');
 Route::post('getForm', 'CdrAjaxController@getForm');

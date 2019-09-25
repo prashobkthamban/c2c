@@ -82,11 +82,11 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                         {!! Form::open(['action' => 'UserController@addAccount', 'method' => 'post']) !!} 
+                         {!! Form::open(['id' => 'add_login']) !!} 
                         <div class="modal-body">
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
-                                        <input type="hidden" name="did_id" id="did_id"> 
+                                        <!-- <input type="hidden" name="did_id" id="did_id">  -->
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
@@ -109,7 +109,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">User Type</label> 
-                                        {!! Form::select('usertype', array('0' => 'Select UserType', 'reseller' => 'Coperate Admin', 'groupadmin' => 'Group Admin'), null,array('class' => 'form-control')) !!}
+                                        {!! Form::select('usertype', array('' => 'Select UserType', 'reseller' => 'Coperate Admin', 'groupadmin' => 'Group Admin'), null,array('class' => 'form-control', 'id' => 'usertype')) !!}
                                     </div>
                                 </div>
                                 <div class="row">
@@ -118,7 +118,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Coperate Account</label>
-                                        {!! Form::select('resellerid', $coperate, null,array('class' => 'form-control')) !!}  
+                                        {!! Form::select('resellerid', $coperate, null,array('class' => 'form-control', 'id' => 'resellerid')) !!}  
                                     </div>
                                 </div>
                                 <div class="row">
@@ -127,7 +127,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Customer</label> 
-                                        <input type="text" class="form-control" placeholder="Customer" name="groupid">
+                                        {!! Form::select('groupid', ['' => 'Select Customer'], null,array('class' => 'form-control', 'id' => 'groupid')) !!} 
                                     </div>
                                 </div>
                                 <div class="row">
@@ -167,11 +167,73 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
-    function setCustomer() {
-
-    }
 
     $(document).ready(function() {
+
+        $( '#add_login' ).on( 'submit', function(e) {
+            e.preventDefault();
+            //var cdrid = $('input[name="cdrid"]').val();
+            var noteHTML = "";
+            // console.log($('input[name="cdrid"]').val());
+            var errors = ''; 
+          $.ajax({
+            type: "POST",
+            url: '/add_account/', // This is the url we gave in the route
+            data: $('#add_login').serialize(),
+            success: function(res){ // What to do if we succeed
+                if(res.error) {
+                    $.each(res.error, function(index, value)
+                    {
+                        if (value.length != 0)
+                        {
+                            errors += value[0];
+                            errors += "</br>";
+                        }
+                    });
+                    toastr.error(errors);
+                } else {
+                    //console.log(moment(new Date()).format('YYYY-MM-DD hh:mm:ss'));
+                    // noteHTML += "<tr>";
+                    // noteHTML += "<td>" + res.result.operator  + "</td>";
+                    // noteHTML += "<td>" + moment(res.result.datetime.date).format('YYYY-MM-DD hh:mm:ss')  + "</td>";
+                    // noteHTML += "<td>" + res.result.note  + "</td>";
+                    // noteHTML += "<td><a href='#' class='text-danger mr-2'><i class='nav-icon i-Close-Window font-weight-bold'></td>";
+                    // noteHTML += "</tr>";
+                    // $("#comments_table tbody").append(noteHTML);
+                    // $("#notes_"+cdrid).removeClass('d-none');
+                    // $("#add_note_"+cdrid).addClass('d-none');
+                    toastr.success(res.success);                
+                }
+               
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                toastr.error('Some errors are occured');
+            }
+          });
+        });
+
+        $("#resellerid, #usertype").on('change',function(){
+            var resellerid = $("#resellerid").val();
+            var usertype = $("#usertype").val();
+
+          $.ajax({
+            url: '/get_customer/'+usertype+'/'+resellerid, // This is the url we gave in the route
+            success: function(res){ // What to do if we succeed
+                $('#groupid').find('option').not(':first').remove();
+                $.each(res, function (i, item) {
+                    $('#groupid').append($('<option>', { 
+                        value: i,
+                        text : item 
+                    }));
+                });
+                
+                
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+            }
+          });
+        });
+
         $('.edit_login').click(function() {
            //alert(this.id);  
           $.ajax({

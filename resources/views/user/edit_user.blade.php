@@ -28,7 +28,6 @@
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Coperate name</label>
                                          {!! Form::select('resellerid', $coperate, null,array('class' => 'form-control')) !!}
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('resellerid', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
@@ -234,16 +233,6 @@
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
-                                        <label for="picker1">CDR Tag</label>
-                                         {!! Form::select('cdr_tag', array('1' => 'Enabled', '0' => 'Disabled'), null,array('class' => 'form-control')) !!} 
-                                    </div>
-
-                                    <div class="col-md-6 form-group mb-3">
-                                        <label for="picker1">Log ChanUNavil calls</label>
-                                        {!! Form::select('cdr_chnunavil_log', array('1' => 'Enabled', '0' => 'Disabled'), null,array('class' => 'form-control')) !!} 
-                                    </div>
-
-                                    <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Dialout conference members</label>
                                         {!! Form::text('max_no_confrence', null, ['class' => 'form-control']) !!}
                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('max_no_confrence', ':message') : '' !!}</p>
@@ -252,6 +241,21 @@
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Service Type</label>
                                         {!! Form::select('servicetype', array('call' => 'Call', 'callback' => 'Callback', 'misscall' => 'Misscall'), null,array('class' => 'form-control')) !!}    
+                                    </div>
+
+                                     <div class="col-md-4 form-group mb-3">
+                                        <label for="picker1">CDR Tag</label>
+                                         {!! Form::select('cdr_tag', array('1' => 'Enabled', '0' => 'Disabled'), null,array('class' => 'form-control')) !!} 
+                                    </div>
+
+                                    <div class="col-md-4 form-group mb-3">
+                                        <label for="picker1">Log ChanUNavil calls</label>
+                                        {!! Form::select('cdr_chnunavil_log', array('1' => 'Enabled', '0' => 'Disabled'), null,array('class' => 'form-control')) !!} 
+                                    </div>
+
+                                    <div class="col-md-4 form-group mb-3">
+                                        <label for="picker1">Inbuilt CRM</label>
+                                        {!! Form::select('crm', array('1' => 'Enabled', '0' => 'Disabled'), null,array('class' => 'form-control')) !!}  
                                     </div>
 
                                     <div class="col-md-12 form-group mb-3">
@@ -269,9 +273,7 @@
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="picker1">Dial stratergy Type</label>
-                                        <select class="form-control" name="dial_statergy">
-                                            <option value="1">New</option>  
-                                        </select>
+                                         {!! Form::select('dial_statergy', array('1' => 'New', '0' => 'Old'), null,array('class' => 'form-control')) !!}
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">

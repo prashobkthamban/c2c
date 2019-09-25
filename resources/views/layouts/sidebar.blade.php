@@ -16,6 +16,13 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('ivr_menu')}}">
+                            <i class="nav-icon i-Arrow-From"></i>
+                            <span class="nav-text">IVR Menu</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
                     <li class="nav-item" data-item="insight">
                         <a class="nav-item-hold" href="#">
                             <i class="nav-icon i-Library"></i>
@@ -72,6 +79,13 @@
                         <a class="nav-item-hold" href="{{route('loginAccounts')}}">
                             <i class="nav-icon i-Administrator"></i>
                             <span class="nav-text">Login Accounts</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{route('CoperateGroup')}}">
+                            <i class="nav-icon i-Administrator"></i>
+                            <span class="nav-text">Add coperate</span>
                         </a>
                         <div class="triangle"></div>
                     </li>
@@ -145,6 +159,14 @@
                         <a class="nav-item-hold" href="{{url('ivrmenulist')}}">
                             <i class="nav-icon i-Library"></i>
                             <span class="nav-text">IVR Menu</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+
+                    <li class="nav-item" data-item="user_dept">
+                        <a class="nav-item-hold" href="{{url('ivrmenulist')}}">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">User Department</span>
                         </a>
                         <div class="triangle"></div>
                     </li>
@@ -258,6 +280,25 @@
                             <span class="item-name">Email & Templates</span>
                         </a>
                     </li>
+                </ul>
+
+                <ul class="childNav" data-parent="user_dept">
+                    <li class="nav-item">
+                        <a href="{{url('optdept_list')}}">
+                            <span class="item-name">Operator Department</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('nonoperator_list')}}">
+                            <span class="item-name">Non Operator Department</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('sms_list')}}">
+                            <span class="item-name">Operator Dpt Configure SMS</span>
+                        </a>
+                    </li>
+               
                 </ul>
 
             </div>

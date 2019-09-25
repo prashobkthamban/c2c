@@ -24,6 +24,7 @@
     "vue-template-compiler": "^2.5.17"
   },
   "dependencies": {
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
     "font-awesome": "^4.7.0"
   }
 }

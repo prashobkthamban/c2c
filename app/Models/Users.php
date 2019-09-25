@@ -12,6 +12,6 @@ class Users extends Model
         ];
     protected $primaryKey = 'id';
     //public $timestamps = false;
-    protected $dates = ['start_date', 'end_date', 'created_at'];
+    //protected $dates = ['start_date', 'end_date'];
    
 }

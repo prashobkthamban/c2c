@@ -9,8 +9,7 @@
 
 @section('main-content')
   <div class="breadcrumb">
-                <h1>CDR Report </h1>
-
+                <h1>CDR Report </h1>   
             </div>
             <div class="separator-breadcrumb border-top"></div>
 
@@ -24,11 +23,20 @@
                                    <button class="btn btn-default mt-3" id="btn_refresh">Refresh</button> -->
                                    
                                     <button class="btn btn-primary btn-block collapsed pull-right mt-3" data-toggle="collapse" data-target="#filter-panel">Filter</button>
+
                               </div>
                                     {{-- <button class="btn btn-secondary m-1" id="btn_make_call">Make a call</button> --}}
                                    <button class="btn btn-secondary m-1" id="btn_refresh">Refresh</button> 
                                    <a class="btn btn-secondary m-1" id="btn_download" href="{{ url('cdrexport') }}">Download</a> 
-                                    <button class="btn btn-primary collapsed m-1" data-toggle="collapse" data-target="#filter-panel">Filter</button>
+                                   <button class="btn btn-primary collapsed m-1" data-toggle="collapse" data-target="#filter-panel">Filter</button>
+                                   <a href="#" class="btn btn-primary m-1 dropdown-toggle" data-toggle="dropdown">Assign To</a>
+                                   <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#dial_modal"><i class="i-Telephone"></i></a>
+                                   <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#msg_modal"><i class="i-Email"></i></a>
+                                   
+                                   <ul class="dropdown-menu" role="menu">
+                          <li> <a href="javascript:assignoper(5136,'Teena');">Teena</a><ul><li><a href="javascript:assignoper(5136,'Teena','S');">Notify By SMS</a></li><li><a href="javascript:assignoper(5136,'Teena','E');">Notify By Email</a></li></ul></li><li> <a href="javascript:assignoper(11496,'aab');">aab</a><ul><li><a href="javascript:assignoper(11496,'aab','S');">Notify By SMS</a></li><li><a href="javascript:assignoper(11496,'aab','E');">Notify By Email</a></li></ul></li><li><a href="javascript:assignoper(0);">Unassign</a></li>    
+                        </ul>
+
                               <div class="row row-xs">
 
 
@@ -179,7 +187,7 @@
 
                         <div class="card-body">
                            <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                                <table id="zero_configuration_table" class="display table table-bordered" style="width:100%">
                                     <thead>
                                     <tr>
                                         <th>Caller</th>
@@ -196,8 +204,9 @@
                                     <tbody>
                                     @if(!empty($result))
                                         @foreach($result as $row )
+
                                     <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable">
-                                        <td>
+                                        <td id="caller_{{$row->cdrid}}">
                                             @if(Auth::user()->usertype=='groupadmin')
                                                 <a href="?" data-toggle="modal" data-target="#formDiv" title="{{ $row->fname ? $row->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->fname ? $row->fname : $row->number }}</a>
                                                 @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
@@ -217,16 +226,23 @@
 
                                     </tr>
                                     <tr id="accordion_{{$row->cdrid}}" class="collapse">
-                                        <td colspan="7">
+                                        <td colspan="8">
                                             <div >
                                                 <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.form',{{$row->number}})">Form</button>
-                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.tag')">Tag</button>
-                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.reminder')">Add Reminder</button>
+                                                <button type="button" onClick="xajax_show('add_tag_{{$row->cdrid}}')" class="btn btn-info m-1">Tag</button>
+                                                <button type="button" onClick="xajax_show('notes_{{$row->cdrid}}')" class="btn btn-info m-1">Notes</button>
+                                                <button type="button" class="btn btn-info m-1" onClick="xajax_show('add_reminder_{{$row->cdrid}}')">Add Reminder</button>
                                                 <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.assign')">Assign</button>
-                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.contact')">Add Contact</button>
-                                                <button type="button" class="btn btn-info m-1">Play</button>
-                                                <button type="button" class="btn btn-info m-1">Download</button>
-
+                                                <!-- <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.contact')">Add Contact</button> -->
+                                                @if(!empty($row->fname))
+                                                <button type="button" onClick="xajax_show('contact_form_{{$row->cdrid}}')" class="btn btn-info m-1 clickable" >View Contact</button>
+                                                @else
+                                                <button type="button" onClick="xajax_show('contact_form_{{$row->cdrid}}')" class="btn btn-info m-1 clickable">Add Contact</button>
+                                                @endif
+                                                <a href="#" data-toggle="modal" id="{{$row->cdrid}}" data-target="#play_modal" class="btn btn-info m-1">
+                                                    Play
+                                                </a>
+                                                <a href="{{ route('downloadFile', ['1_3409081_09886080500.mp3', $row->groupid]) }} " class="btn btn-info m-1">Download</a>
                                                 <div class="btn-group">
                                                     <button type="button" class="btn btn-info">More</button>
                                                     <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -262,6 +278,161 @@
                                             </div>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td colspan="8">
+                                            <div class="row d-none cdr_form" id="contact_form_{{$row->cdrid}}">
+                                                <div class="col-md-4">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h5>Add Contact</h5>
+                                                            <form class="contact_form" id="{{$row->cdrid}}">
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-12">
+                                                                        <input type="hidden" name="phone" value="{{$row->number}}">
+                                                                        <input type="hidden" name="groupid" value="{{$row->groupid}}">
+                                                                        <input type="text" class="form-control" name="fname" value="{{$row->fname}}" placeholder="First Name">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-12">
+                                                                        <input type="text" name="lname" value="{{$row->lname}}" class="form-control" placeholder="Last Name">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-12">
+                                                                        <input type="email" name="email" value="{{$row->email}}" class="form-control" placeholder="Email">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-10">
+                                                                        <button type="submit" class="btn btn-primary">Save</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row d-none cdr_form" id="add_tag_{{$row->cdrid}}">
+                                                <div class="col-md-3">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h5>Tag call</h5>
+                                                            <form class="tag_form" id="{{$row->cdrid}}">
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-12">
+                                                                
+                                                                        {!! Form::select('tagid', $tags, null,array('class' => 'form-control')) !!}
+                                                                    
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-10">
+                                                                        <button type="submit" class="btn btn-primary">Save</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row d-none cdr_form" id="notes_{{$row->cdrid}}">
+                                                <div class="col-md-6">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="row">
+                                                            <h5>Notes for this Call</h5>
+                                                            <button type="button" onClick="xajax_show('add_note_{{$row->cdrid}}')" style="margin: 0px 0px 12px 288px !important;"class="btn btn-info">Add Note</button>
+                                                            </div>
+                                                            <table id="comments_table" class="display table table-bordered">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Operator</th>
+                                                                        <th>Date</th>
+                                                                        <th>Comments</th>
+                                                                        <th>Action</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    @if(!$row->cdrNotes->isEmpty())
+                                                                    @foreach($row->cdrNotes as $note )
+                                                                        <tr id="cmnt_row_{{$note->id}}">
+                                                                            <td>{{$note->operator}}</td>
+                                                                            <td>{{$note->datetime}}</td>
+                                                                            <td>{{$note->note}}</td>
+                                                                            <td><a href="javascript:void(0)" class="text-danger mr-2 delete_comment" id="{{$note->id}}"><i class="nav-icon i-Close-Window font-weight-bold"></i>
+                                                                            </a></td>
+                                                                        </tr>
+                                                                    @endforeach
+                                                                    @else 
+                                                                        <tr>
+                                                                            <td colspan="3">No Comments !!!</td>
+                                                                        </tr>
+                                                                    @endif
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row d-none cdr_form" id="add_note_{{$row->cdrid}}">
+                                                <div class="col-md-5">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h5>Add Note</h5>
+                                                            <form class="notes_form" id="cdr_note_{{$row->cdrid}}" autocomplete="off">
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-12">
+                                                                      <input type="hidden" name="cdrid" value="{{$row->cdrid}}" />
+                                                                      <input type="hidden" name="uniqueid" value="{{$row->uniqueid}}"/>
+                                                                      <textarea class="form-control" rows="5" name="note" placeholder="Comment"></textarea>
+                                                                    </div>
+                                                                </div>                          
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-10">
+                                                                        <button type="submit" class="btn btn-primary">Save</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form> 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row d-none cdr_form" id="add_reminder_{{$row->cdrid}}">
+                                                <div class="col-md-3">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <h5>Add Reminder</h5>
+                                                            <form class="reminder_form" id="{{$row->cdrid}}" autocomplete="off">
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-12">
+                                                                
+                                                                      
+                                                                        <input class="form-control datepicker" placeholder="dd-mm-yyyy" name="enddate">
+                                                                    
+                                                                    </div>
+                                                                </div>
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-12">
+                                                                
+                                                                      
+                                                                        <input class="form-control timepicker" placeholder="" name="time">
+                                                                    
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="form-group row">
+                                                                    <div class="col-sm-10">
+                                                                        <button type="submit" class="btn btn-primary">Save</button>
+                                                                    </div>
+                                                                </div>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
                                     @endforeach
                                         @endif
 
@@ -293,6 +464,125 @@
             </div>
             <!-- end of row -->
 
+            <!-- play modal -->
+            <div class="modal fade" id="play_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                               <audio controls id="play_file" class="">
+                                                  <source src="{{asset('voicefiles/1/3409081_09886080500.ogg')}}" type="audio/ogg">
+                                                  <source src="{{asset('voicefiles/1/3409081_09886080500.ogg')}}" type="audio/mpeg">
+                                                Your browser does not support the audio element.
+                                                </audio>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- dial modal -->
+            <div class="modal fade" id="dial_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle-2">Dial A Number</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                         {!! Form::open(['method' => 'post', 'id' => 'dial_form']) !!} 
+                        <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="number">Customer Number</label> 
+                                        <input type="text" class="form-control" placeholder="Customer Number" name="number">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Operator Number</label> 
+                                        <input type="text" class="form-control" value="{{Auth::user()->phone_number}}" placeholder="Operator Number" name="phone">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Call First</label> 
+                                        <label class="radio-inline"> {{ Form::radio('callf', 'cust') }} Customer</label>
+                                            <label class="radio-inline">{{ Form::radio('callf', 'oper', true) }} Operator</label>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" id="dial_submit" class="btn btn-primary">Dial Now</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        </div>
+                         {!! Form::close() !!}
+                    </div>
+                </div>
+            </div>
+             <!-- end of dial modal -->
+
+             <!-- msg modal -->
+            <div class="modal fade" id="msg_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle-2">Send Message</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                         {!! Form::open(['method' => 'post', 'id' => 'msg_form']) !!} 
+                        <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="number">Customer Number</label> 
+                                        <input type="text" class="form-control" placeholder="Customer Number" name="number">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Operator Number</label> 
+                                        <input type="text" class="form-control" value="{{Auth::user()->phone_number}}" placeholder="Operator Number" name="phone">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Message</label>
+                                        <textarea rows="8" cols="20" class="form-control" placeholder="Message" name="message"></textarea>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" id="msg_submit" class="btn btn-primary">Send Now</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        </div>
+                         {!! Form::close() !!}
+                    </div>
+                </div>
+            </div>
+             <!-- end of msg modal -->
+
 
 
 @endsection
@@ -304,9 +594,199 @@
  <script src="{{asset('assets/js/vendor/pickadate/picker.js')}}"></script>
  <script src="{{asset('assets/js/vendor/pickadate/picker.date.js')}}"></script>
  <script src="{{asset('assets/js/vendor/pickadate/picker.time.js')}}"></script>
+ <script src="{{asset('assets/js/moment.min.js')}}"></script>
+
  <script type="text/javascript">
+     function xajax_show(id) {
+        $(".cdr_form").addClass('d-none');
+        $("#"+id).removeClass('d-none');
+     } 
+
+     function xajax_play(id) {
+       $("#"+id).removeClass('d-none');
+     }
+     $(document).ready(function() {
+       
+            $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });        
+            $('.timepicker').pickatime();
+
+        $( '#dial_form' ).on( 'submit', function(e) {
+            e.preventDefault();
+            // $("#dial_submit").text('Dialing...');
+            // $("#dial_submit").attr('disabled', 'disabled');
+            //return false;
+            console.log('sap');
+            var errors = ''; 
+          $.ajax({
+            type: "POST",
+            url: '/add_cdr/', // This is the url we gave in the route
+            data: $('#dial_form').serialize(),
+            success: function(res){ // What to do if we succeed
+                if(res.error) {
+                    $.each(res.error, function(index, value)
+                    {
+                        if (value.length != 0)
+                        {
+                            errors += value[0];
+                            errors += "</br>";
+                        }
+                    });
+                    toastr.error(errors);
+                } else {
+                    // $("#coperate_form").trigger("reset");
+                    // $("#reseller_form").modal('hide');
+                    toastr.success(res.success);
+                    setTimeout( function() { 
+                        location.reload(true); 
+                    }, 1000);
+                    
+                }
+               
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                toastr.error('Some errors are occured');
+            }
+          });
+        });
+        
+        $( '#msg_form' ).on( 'submit', function(e) {
+            e.preventDefault();
+            // $("#msg_submit").text('Dialing...');
+            // $("#msg_submit").attr('disabled', 'disabled');
+            //return false;
+            console.log('sap');
+            var errors = ''; 
+          $.ajax({
+            type: "POST",
+            url: '/add_cdr/', // This is the url we gave in the route
+            data: $('#msg_form').serialize(),
+            success: function(res){ // What to do if we succeed
+                if(res.error) {
+                    $.each(res.error, function(index, value)
+                    {
+                        if (value.length != 0)
+                        {
+                            errors += value[0];
+                            errors += "</br>";
+                        }
+                    });
+                    toastr.error(errors);
+                } else {
+                    // $("#coperate_form").trigger("reset");
+                    // $("#reseller_form").modal('hide');
+                    toastr.success(res.success);
+                    setTimeout( function() { 
+                        location.reload(true); 
+                    }, 1000);
+                    
+                }
+               
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                toastr.error('Some errors are occured');
+            }
+          });
+        });
+
+        $( '.contact_form' ).on( 'submit', function(e) {
+            e.preventDefault();
+            var cdrid = this.id;
+            var errors = ''; 
+          $.ajax({
+            type: "POST",
+            url: '/add_cdr_contact/', // This is the url we gave in the route
+            data: $('#'+this.id).serialize(),
+            success: function(res){ // What to do if we succeed
+                if(res.error) {
+                    $.each(res.error, function(index, value)
+                    {
+                        if (value.length != 0)
+                        {
+                            errors += value[0];
+                            errors += "</br>";
+                        }
+                    });
+                    toastr.error(errors);
+                } else {
+                    $("#caller_"+cdrid).text(res.fname);
+                    toastr.success(res.success);                
+                }
+               
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                console.log('error');
+                //toastr.error('Some errors are occured');
+            }
+          });
+        });
+
+        //add note
+        $( '.notes_form' ).on( 'submit', function(e) {
+            e.preventDefault();
+            var cdrid = $('input[name="cdrid"]').val();
+            var noteHTML = "";
+            // console.log($('input[name="cdrid"]').val());
+            var errors = ''; 
+          $.ajax({
+            type: "POST",
+            url: '/add_note/', // This is the url we gave in the route
+            data: $('#'+this.id).serialize(),
+            success: function(res){ // What to do if we succeed
+                if(res.error) {
+                    $.each(res.error, function(index, value)
+                    {
+                        if (value.length != 0)
+                        {
+                            errors += value[0];
+                            errors += "</br>";
+                        }
+                    });
+                    toastr.error(errors);
+                } else {
+                    //console.log(moment(new Date()).format('YYYY-MM-DD hh:mm:ss'));
+                    noteHTML += "<tr>";
+                    noteHTML += "<td>" + res.result.operator  + "</td>";
+                    noteHTML += "<td>" + moment(res.result.datetime.date).format('YYYY-MM-DD hh:mm:ss')  + "</td>";
+                    noteHTML += "<td>" + res.result.note  + "</td>";
+                    noteHTML += "<td><a href='#' class='text-danger mr-2'><i class='nav-icon i-Close-Window font-weight-bold'></td>";
+                    noteHTML += "</tr>";
+                    $("#comments_table tbody").append(noteHTML);
+                    $("#notes_"+cdrid).removeClass('d-none');
+                    $("#add_note_"+cdrid).addClass('d-none');
+                    toastr.success(res.success);                
+                }
+               
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                toastr.error('Some errors are occured');
+            }
+          });
+        });
+
+        //delete comment
+        $(".delete_comment").click(function() { 
+            var id = this.id;
+            if (confirm('Are you sure you want to delete this Comment?')) {
+                $.ajax({
+                    url: "delete_comment/"+id,
+                    type: 'DELETE',
+                    success: function (res) {
+
+                        if(res.status == 1) {
+                           $("#cmnt_row_"+id).remove();
+                           toastr.success('Comment delete successfully.')
+                        }
+                        
+                    }
+                });
+            } 
+        }); 
+     });
 //$(document).ready(functon(){
 
+    $('.add_contact').click(function() {
+        $("#contact_form").removeClass('hide');
+    });
     $(document).on("change","#date_select",function(){
         var date_val = $(this).val();
         $("#custom_date_div").hide();

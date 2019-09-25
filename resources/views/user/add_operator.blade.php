@@ -64,7 +64,7 @@
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Start time (00:00:00)</label>
-                                         <input type="text" class="form-control" placeholder="(00:00:00)" name="start_work">
+                                         <input type="text" class="form-control datetimepicker5" placeholder="(00:00:00)" name="start_work">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('start_work', ':message') : '' !!}</p>
                                     </div>
 

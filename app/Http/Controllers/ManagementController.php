@@ -104,6 +104,53 @@ class ManagementController extends Controller
         return redirect()->route('Contacts');
     }
 
+    public function ivrMenu() {
+        $customers = DB::table('accountgroupdetails')
+            ->select('accountgroupdetails.*', 'accountgroup.name', 'resellergroup.resellername' )
+            ->where('accountgroupdetails.delete_status', '0')
+            ->join('accountgroup', 'accountgroupdetails.groupid', '=', 'accountgroup.id')
+            ->leftJoin('resellergroup', 'accountgroupdetails.resellerid', '=', 'resellergroup.id')
+            ->get();
+        $languages = DB::table('languages')->get();
+        // dd($customers);
+        return view('management.ivr_menu', compact('customers', 'languages'));
+    }
+
+    public function deleteIvr($id)
+    {
+        DB::table('accountgroupdetails')->where('id', $id)->delete();
+        toastr()->success('Record deleted successfully.');
+        return redirect()->route('ivrMenu');
+    }
+
+    public function addIvrmenu(Request $request) {
+        //dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'groupid' => 'required',
+            'ivr_level_name' => 'required',
+            'ivr_level' => 'required',
+            'ivroption' => 'required',
+            'operator_dept' => 'required',
+        ]);    
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $accGroup = ['resellerid' => $request->get('resellerid'),
+                     'groupid' => $request->get('groupid'),
+                     'ivr_level_name'=> $request->get('ivr_level_name'),
+                     'ivr_level'=> $request->get('ivr_level'), 
+                     'ivroption' => $request->get('ivroption'),
+                     'operator_dept' => $request->get('operator_dept'),
+                    ];
+
+            DB::table('accountgroupdetails')->insert($accGroup);
+            $data['result'] = $accGroup;
+            $data['success'] = 'Menu added successfully.';
+        } 
+         return $data;
+    }
+
 
 
 }

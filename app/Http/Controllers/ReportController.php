@@ -19,6 +19,8 @@ use App\Models\CdrTag;
 use App\Models\CurChannelUsed;
 use App\Models\OperatorDepartment;
 use App\Models\Accountgroup;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 //use Excel;
 
@@ -32,10 +34,122 @@ class ReportController extends Controller
         if(!Auth::check()){
             return redirect('login');
         }
+        $this->cdr = new CdrReport();
     }
     public function index(){
+        $cdr = new CdrReport();
+        $user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
+        //dd(Auth::user()->groupid);
+        // $cdr_details = $this->cdr->where('assignedto', Auth::user()->groupid)->first();
+        // dd($cdr_details);
+
         return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag()]);
     }
+
+    public function addContact(Request $request) 
+    {
+        //dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'fname' => 'required',
+            'lname' => 'required',
+            'email' => 'required|email',
+        ]);    
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $contact = ['fname' => $request->get('fname'),
+                     'lname'=> $request->get('lname'),
+                     'phone'=> $request->get('phone'),
+                     'email'=> $request->get('email'),
+                     'groupid'=> $request->get('groupid')
+                    ];
+           
+            DB::table('contacts')->insert($contact);
+            $data['success'] = 'Contact added successfully.';
+            $data['fname'] = $request->get('fname');
+        } 
+         return $data;
+    }
+
+    public function addNote(Request $request) 
+    {
+        //dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'note' => 'required',
+        ]);    
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $note = ['operator' => Auth::user()->username,
+                     'note'=> $request->get('note'),
+                     'uniqueid'=> $request->get('uniqueid'), 
+                     'datetime' => NOW()
+                    ];
+            //dd($note); 
+            DB::table('cdr_notes')->insert($note);
+            $data['result'] = $note;
+            $data['success'] = 'Note added successfully.';
+            //$data['fname'] = $request->get('fname');
+        } 
+         return $data;
+    }
+
+    public function addCdr(Request $request) 
+    {
+        //if(!empty($request->get('id'))) {
+        $validator = Validator::make($request->all(), [
+            'number' => 'required|max:12',
+            'phone' => 'required|max:12'
+        ]);    
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            //$cdr_details = $this->cdr->where:('assignedto', Auth::user()->groupid)->first();
+            $cdr = ['number' => $request->get('number'),
+                    'phone'=> $request->get('phone'),
+                    'did_no' => 'dfdf',
+                    'groupid' => Auth::user()->groupid,
+                    'resellerid' => Auth::user()->resellerid,
+                    'operatorid' => 'dfdf0',
+                    'datetime' => NOW(),
+                    'status' => 'dfdf',
+                    'number' => 'ssd'
+                    ];
+        
+            // if(empty($request->get('id'))) {
+            //     $id = DB::table('resellergroup')->insertGetId($reseller);
+            //     if(!empty($id)) {
+            //         DB::table('account')->insert($account);
+            //         $data['success'] = 'Coperate added successfully.';
+            //     }
+            // } else {
+            //     DB::table('resellergroup')
+            //         ->where('id', $request->get('id'))
+            //         ->update($reseller);
+            //     DB::table('account')
+            //         ->where('resellerid', $request->get('id'))
+            //         ->update($account);
+                $data['success'] = 'Cdr added successfully.';
+            //}
+        } 
+        return $data;
+    }
+
+    public function deleteComment($id) {
+        $res = DB::table('cdr_notes')->where('id',$id)->delete();
+        return response()->json([
+            'status' => $res
+        ]);
+    }
+
+    public function downloadFile($file, $id) {
+        $myFile = public_path("download_files/".$id."/".$file);
+        return response()->download($myFile);
+    }
+
     public function cdrreportarchive(){
         return view('home.cdrreportarchive', ['result' => CdrArchive::getReport()]);
     }
