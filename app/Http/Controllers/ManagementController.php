@@ -116,6 +116,16 @@ class ManagementController extends Controller
         return view('management.ivr_menu', compact('customers', 'languages'));
     }
 
+    public function getIvrMenu($id) {
+        return $ivr_menu = DB::table('accountgroupdetails')
+            ->select('accountgroupdetails.*', 'ast_ivrmenu_language.*')
+            ->where('accountgroupdetails.id', $id)
+            ->join('ast_ivrmenu_language', 'accountgroupdetails.id', '=', 'ast_ivrmenu_language.ivr_menu_id')
+            // ->leftJoin('resellergroup', 'accountgroupdetails.resellerid', '=', 'resellergroup.id')
+            ->get(); 
+        //dd($ivr_menu);
+    }
+
     public function deleteIvr($id)
     {
         DB::table('accountgroupdetails')->where('id', $id)->delete();
@@ -149,6 +159,11 @@ class ManagementController extends Controller
             $data['success'] = 'Menu added successfully.';
         } 
          return $data;
+    }
+
+    public function voiceFiles() { 
+        $voicefiles = DB::table('did_voicefilesettings')->paginate(10);
+        return view('management.voicefiles', compact('voicefiles'));
     }
 
 

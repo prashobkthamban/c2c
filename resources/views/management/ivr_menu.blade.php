@@ -41,7 +41,7 @@
                                             <td>{{$listOne->adddate}}</td>
                                            
                                             <td>
-                                                <a href="#" class="text-success mr-2 edit_login" id="{{$listOne->id}}">
+                                                <a href="#" class="text-success mr-2 edit_ivr" data-toggle="modal" data-target="#ivr_modal" id="{{$listOne->id}}">
                                                 <i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                                 </a>
                                                 <a href="{{ route('deleteIvr', $listOne->id) }}" onclick="return confirm('Are you sure want to delete this record?')" class="text-danger mr-2">
@@ -107,7 +107,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">IVR Level Name *</label> 
-                                        {!! Form::text('ivr_level_name', null, ['class' => 'form-control']) !!}
+                                        {!! Form::text('ivr_level_name', null, ['class' => 'form-control', 'id' => 'ivr_level_name']) !!}
                                     </div>
                                 </div>  
                                 <div class="row">
@@ -116,7 +116,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">IVR Level *</label> 
-                                        {!! Form::text('ivr_level', null, ['class' => 'form-control']) !!}
+                                        {!! Form::text('ivr_level', null, ['class' => 'form-control', 'id' => 'ivr_level']) !!}
                                     </div>
                                 </div>  
                                 <div class="row">
@@ -125,7 +125,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">IVR Options *</label> 
-                                        {!! Form::text('ivroption', null, ['class' => 'form-control']) !!}
+                                        {!! Form::text('ivroption', null, ['class' => 'form-control', 'id' => 'ivroption']) !!}
                                     </div>
                                 </div> 
                                 <div class="row">
@@ -134,8 +134,8 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                        <label for="firstName1">Operator department *</label> 
-                                        <label class="radio-inline"> {{ Form::radio('operator_dept', 'Yes') }} Yes</label>
-                                            <label class="radio-inline">{{ Form::radio('operator_dept', 'No', true) }} No</label>   
+                                        <label class="radio-inline"> {{ Form::radio('operator_dept', 'Yes', '', array('id' => 'operator_yes')) }} Yes</label>
+                                            <label class="radio-inline">{{ Form::radio('operator_dept', 'No', true, array('id' => 'operator_no')) }} No</label>   
                                     </div>
                                 </div>
                                 @foreach($languages as $lang)
@@ -144,7 +144,8 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">File to play in {{$lang->Language}} *</label> 
+                                        <label for="firstName1">File to play in {{$lang->Language}} *</label>
+                                        <span id="lang_id_{{$lang->id}}"></span> 
                                         {!! Form::file($lang->id, null, ['class' => 'form-control']) !!}
                                     </div>
                                 </div> 
@@ -228,6 +229,39 @@
                         text : item 
                     }));
                 });
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+            }
+          });
+        });
+
+        $('.edit_ivr').on('click',function(e)
+        {
+            var id = $(this).attr("id");
+            //console.log(id);
+            $.ajax({
+            type: "GET",
+            url: '/get_ivr_menu/'+ id, // This is the url we gave in the route
+            success: function(res){ // What to do if we succeed
+                //console.log(res)
+                var result = res[0]
+                $("#resellerid").val(result.resellerid);
+                $("#groupid").val(result.groupid);
+                $("#ivr_level_name").val(result.ivr_level_name);
+                $("#ivr_level").val(result.ivr_level);
+                $("#ivroption").val(result.ivroption);
+                if(result.operator_dept == 'Yes') {
+                    $("#operator_yes").prop("checked", true);
+                } else {
+                    $("#operator_no").prop("checked", true);
+                } 
+                //$("#ivroption").val(result.ivroption);
+                //console.log(res.length);
+                for(var i = 0; i < res.length;i++) {
+                    console.log(res[i].lang_id);
+                    console.log(res[i].orginalfilename);
+                    $("#lang_id_" + res[i].lang_id).text(res[i].orginalfilename);
+                }
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }

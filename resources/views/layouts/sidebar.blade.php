@@ -9,20 +9,135 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
-                    <li class="nav-item" data-item="calldetails">
-                        <a class="nav-item-hold" href="#">
-                            <i class="nav-icon i-Library"></i>
-                            <span class="nav-text">Call Details</span>
-                        </a>
-                        <div class="triangle"></div>
-                    </li>
-                    <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{url('ivr_menu')}}">
-                            <i class="nav-icon i-Arrow-From"></i>
-                            <span class="nav-text">IVR Menu</span>
-                        </a>
-                        <div class="triangle"></div>
-                    </li>
+                    @if(Auth::user()->usertype == 'admin')
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('DidList')}}">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">Dids</span>
+                            </a> 
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('UserList')}}">
+                                <i class="nav-icon i-Administrator"></i>
+                                <span class="nav-text">IVR Users</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('loginAccounts')}}">
+                                <i class="nav-icon i-Administrator"></i>
+                                <span class="nav-text">Login Accounts</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <!-- <a href="{{url('cdrreportout')}}" class="{{ Route::currentRouteName()=='cdrreportout' ? 'open' : '' }}"> -->
+                            <a href="{{url('cdrreportout')}}" class="nav-item-hold">
+                                <i class="nav-icon i-Clock-4"></i>
+                                <span class="item-name">Voice Out</span>
+                            </a>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('ivr_menu')}}">
+                                <i class="nav-icon i-Arrow-From"></i>
+                                <span class="nav-text">IVR Menu</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="user_dept">
+                            <a class="nav-item-hold" href="#">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">User Department</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('languages')}}">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">Multi Language</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>    
+                        <li class="nav-item" data-item="voicefiles">
+                            <a class="nav-item-hold" href="#">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">Voicefiles</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('CoperateGroup')}}">
+                                <i class="nav-icon i-Administrator"></i>
+                                <span class="nav-text">Add Coperate</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                    @endif
+
+                    @if(Auth::user()->usertype == 'groupadmin')
+                        <li class="nav-item" data-item="calldetails">
+                            <a class="nav-item-hold" href="#">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">Call Details</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <!-- <a href="{{url('cdrreportout')}}" class="{{ Route::currentRouteName()=='cdrreportout' ? 'open' : '' }}"> -->
+                            <a href="{{url('cdrreportout')}}" class="nav-item-hold">
+                                <i class="nav-icon i-Clock-4"></i>
+                                <span class="item-name">Voice Out</span>
+                            </a>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('reminder')}}">
+                                <i class="nav-icon i-Bell"></i>
+                                <span class="nav-text">Reminders</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('OperatorList')}}">
+                                <i class="nav-icon i-Administrator"></i>
+                                <span class="nav-text">Operator Account</span>
+                            </a> 
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('OperatorGroup')}}">
+                                <i class="nav-icon i-Folder-Organizing"></i>
+                                <span class="nav-text">Operator Departments</span>
+                            </a> 
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('contacts')}}">
+                                <i class="nav-icon i-Administrator"></i>
+                                <span class="nav-text">Contacts</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('Voicemail')}}">
+                                <i class="nav-icon i-Mail-2"></i>
+                                <span class="nav-text">Voicemails</span>
+                            </a> 
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('BlackList')}}">
+                                <i class="nav-icon i-Security-Block"></i>
+                                <span class="nav-text">Blacklist</span>
+                            </a> 
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('conference')}}">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">Dial Out Conference</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+
+                    @endif
+
+                    <!-- 
                     <li class="nav-item" data-item="insight">
                         <a class="nav-item-hold" href="#">
                             <i class="nav-icon i-Library"></i>
@@ -44,70 +159,10 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
-                    <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{route('OperatorList')}}">
-                            <i class="nav-icon i-Administrator"></i>
-                            <span class="nav-text">Operator Account</span>
-                        </a> 
-                    </li>
-                    <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{route('OperatorGroup')}}">
-                            <i class="nav-icon i-Folder-Organizing"></i>
-                            <span class="nav-text">Operator Departments</span>
-                        </a> 
-                    </li>
-                    <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{route('Voicemail')}}">
-                            <i class="nav-icon i-Mail-2"></i>
-                            <span class="nav-text">Voicemails</span>
-                        </a> 
-                    </li>
-                    <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{route('DidList')}}">
-                            <i class="nav-icon i-Library"></i>
-                            <span class="nav-text">Did</span>
-                        </a> 
-                    </li>
-                    <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{route('UserList')}}">
-                            <i class="nav-icon i-Administrator"></i>
-                            <span class="nav-text">Users</span>
-                        </a>
-                        <div class="triangle"></div>
-                    </li>
-                    <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{route('loginAccounts')}}">
-                            <i class="nav-icon i-Administrator"></i>
-                            <span class="nav-text">Login Accounts</span>
-                        </a>
-                        <div class="triangle"></div>
-                    </li>
-                    <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{route('CoperateGroup')}}">
-                            <i class="nav-icon i-Administrator"></i>
-                            <span class="nav-text">Add coperate</span>
-                        </a>
-                        <div class="triangle"></div>
-                    </li>
-                    <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{route('BlackList')}}">
-                            <i class="nav-icon i-Security-Block"></i>
-                            <span class="nav-text">Blacklist</span>
-                        </a> 
-                    </li>
-
                     <li class="nav-item" data-item="insightcrm">
                         <a class="nav-item-hold" href="#">
                             <i class="nav-icon i-Library"></i>
                             <span class="nav-text">Insight CRM</span>
-                        </a>
-                        <div class="triangle"></div>
-                    </li>
-                    
-                    <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{url('contacts')}}">
-                            <i class="nav-icon i-Administrator"></i>
-                            <span class="nav-text">Contacts</span>
                         </a>
                         <div class="triangle"></div>
                     </li>
@@ -125,14 +180,6 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
-
-                    <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{url('conference')}}">
-                            <i class="nav-icon i-Library"></i>
-                            <span class="nav-text">Dial Out Conference</span>
-                        </a>
-                        <div class="triangle"></div>
-                    </li>
                     <li class="nav-item" data-item="">
                         <a class="nav-item-hold" href="{{url('notification')}}">
                             <i class="nav-icon i-Bell"></i>
@@ -141,35 +188,13 @@
                         <div class="triangle"></div>
                     </li>
                     <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{url('reminder')}}">
-                            <i class="nav-icon i-Bell"></i>
-                            <span class="nav-text">Reminders</span>
-                        </a>
-                        <div class="triangle"></div>
-                    </li>
-                    <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{url('languages')}}">
-                            <i class="nav-icon i-Library"></i>
-                            <span class="nav-text">Languages</span>
-                        </a>
-                        <div class="triangle"></div>
-                    </li>                    
-
-                    <li class="nav-item" data-item="">
                         <a class="nav-item-hold" href="{{url('ivrmenulist')}}">
                             <i class="nav-icon i-Library"></i>
                             <span class="nav-text">IVR Menu</span>
                         </a>
                         <div class="triangle"></div>
-                    </li>
-
-                    <li class="nav-item" data-item="user_dept">
-                        <a class="nav-item-hold" href="{{url('ivrmenulist')}}">
-                            <i class="nav-icon i-Library"></i>
-                            <span class="nav-text">User Department</span>
-                        </a>
-                        <div class="triangle"></div>
-                    </li>
+                    </li> -->
+                    
 
                 </ul>
             </div>
@@ -189,12 +214,7 @@
                             <span class="item-name">Incoming Calls</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{url('cdrreportout')}}" class="{{ Route::currentRouteName()=='cdrreportout' ? 'open' : '' }}">
-                            <i class="nav-icon i-Clock-4"></i>
-                            <span class="item-name">Voice Out</span>
-                        </a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="{{ Route::currentRouteName()=='voicemail' ? 'open' : '' }}" href="{{url('voicemail')}}" >
                             <i class="nav-icon i-Over-Time"></i>
@@ -296,6 +316,25 @@
                     <li class="nav-item">
                         <a href="{{url('sms_list')}}">
                             <span class="item-name">Operator Dpt Configure SMS</span>
+                        </a>
+                    </li>
+               
+                </ul>
+
+                <ul class="childNav" data-parent="voicefiles">
+                    <li class="nav-item">
+                        <a href="{{url('voice_files')}}">
+                            <span class="item-name">Voicefiles Settings</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('nonoperator_list')}}">
+                            <span class="item-name">General Files</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{url('sms_list')}}">
+                            <span class="item-name">MOH Files</span>
                         </a>
                     </li>
                

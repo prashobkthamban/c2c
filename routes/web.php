@@ -79,10 +79,14 @@ Route::get('delete_holiday/{id}', 'ManagementController@delete_holiday')->name('
 Route::get('ivr_menu', 'ManagementController@ivrMenu')->name('ivrMenu');
 Route::get('delete_ivr/{id}', 'ManagementController@deleteIvr')->name('deleteIvr');
 Route::post('add_ivr_menu', 'ManagementController@addIvrmenu')->name('addIvrmenu');
+Route::get('get_ivr_menu/{id}', 'ManagementController@getIvrMenu')->name('getIvrMenu');
 
 
 /* voicemail */
 Route::get('voicemail', 'ManagementController@voicemail')->name('Voicemail');
+
+/* voicefiles */
+Route::get('voice_files', 'ManagementController@voiceFiles')->name('voiceFiles');
 
 /* contacts */
 Route::get('contacts', 'ManagementController@contacts')->name('Contacts');
