@@ -30,8 +30,8 @@ class DidController extends Controller
     public function index() {
         $dids = DB::table('dids')
             ->join('prigateway', 'dids.gatewayid', '=', 'prigateway.id')
-            ->leftJoin('Accountgroup', 'dids.assignedto', '=', 'Accountgroup.id')
-            ->select('dids.*', 'prigateway.Gprovider', 'Accountgroup.name')
+            ->leftJoin('accountgroup', 'dids.assignedto', '=', 'accountgroup.id')
+            ->select('dids.*', 'prigateway.Gprovider', 'accountgroup.name')
             ->get();
             //dd($dids);
         $did = new Dids();
