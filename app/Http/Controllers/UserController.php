@@ -298,6 +298,10 @@ class UserController extends Controller
         return getAccountgroups($usertype, $resellerid);
     }
 
+    public function getDid($groupid) {
+        return getDidList($groupid);
+    }
+
     public function addAccount(Request $request) 
     {
         //dd($request->all());
@@ -625,7 +629,7 @@ class UserController extends Controller
                 'sub_category_id'=> $request->get('sub_category_id'),
                 'lead_id' => $id,
             ];
-            //dd($account_group);
+            //dd($account_g->orderBy('adddate', 'desc'roup);
             $lead_edit->fill($crm_lead)->save();
             toastr()->success('Lead update successfully.');
             return redirect()->route('LeadList');
@@ -640,7 +644,7 @@ class UserController extends Controller
     }
 
     public function coperates() {
-        $resellers = DB::table('resellergroup')->orderBy('adddate', 'desc')->paginate(10);
+        $resellers = DB::table('resellergroup')->paginate(10);
         return view('user.reseller_list', compact('resellers'));
     }
 

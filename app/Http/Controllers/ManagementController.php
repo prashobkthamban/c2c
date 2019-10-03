@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Models\Holiday;
 use App\Models\Contact;
+use File;
 
 class ManagementController extends Controller
 {
@@ -162,8 +163,166 @@ class ManagementController extends Controller
     }
 
     public function voiceFiles() { 
-        $voicefiles = DB::table('did_voicefilesettings')->paginate(10);
-        return view('management.voicefiles', compact('voicefiles'));
+        $voicefiles = DB::table('did_voicefilesettings')
+                    ->leftJoin('accountgroup', 'did_voicefilesettings.groupid', '=', 'accountgroup.id')
+                    ->select('did_voicefilesettings.*', 'accountgroup.name')
+                    ->paginate(10);
+        $voicefilesnames = DB::table('voicefilesnames')->where('file_type', 'mainmenupress0')->pluck('filename', 'filename');
+        $thank4calling = DB::table('voicefilesnames')->where('file_type', 'thank4caling')->pluck('filename', 'filename');
+        $repeatoptions = DB::table('voicefilesnames')->where('file_type', 'repeatoptions')->pluck('filename', 'filename');
+        $previousmenu = DB::table('voicefilesnames')->where('file_type', 'previousmenu')->pluck('filename', 'filename');
+        $voicemailmsg = DB::table('voicefilesnames')->where('file_type', 'voicemailmsg')->pluck('filename', 'filename');
+        $trasfringcall = DB::table('voicefilesnames')->where('file_type', 'trasfringcall')->pluck('filename', 'filename');
+        $contactusoon = DB::table('voicefilesnames')->where('file_type', 'contactusoon')->pluck('filename', 'filename');
+        $talktooperator9 = DB::table('voicefilesnames')->where('file_type', 'talktooperator9')->pluck('filename', 'filename');
+        $noinput = DB::table('voicefilesnames')->where('file_type', 'noinput')->pluck('filename', 'filename');
+        $wronginput = DB::table('voicefilesnames')->where('file_type', 'wronginput')->pluck('filename', 'filename');
+        $nonworkinghours = DB::table('voicefilesnames')->where('file_type', 'nonworkinghours')->pluck('filename', 'filename');
+        $transferingagent = DB::table('voicefilesnames')->where('file_type', 'transferingtodifferentagent')->pluck('filename', 'filename');
+        $holiday = DB::table('voicefilesnames')->where('file_type', 'holiday')->pluck('filename', 'filename');
+        $aombefore = DB::table('voicefilesnames')->where('file_type', 'aombefore')->pluck('filename', 'filename');
+        $aomafter = DB::table('voicefilesnames')->where('file_type', 'aomafter')->pluck('filename', 'filename');
+        $moh = DB::table('mohclassess')->pluck('classname', 'classname');
+        //dd($voicefilesnames);
+        return view('management.voicefiles', compact('voicefiles', 'voicefilesnames', 'thank4calling', 'repeatoptions', 'previousmenu', 'voicemailmsg', 'trasfringcall', 'contactusoon', 'talktooperator9', 'noinput', 'wronginput', 'nonworkinghours', 'moh', 'transferingagent', 'holiday', 'aombefore', 'aomafter'));
+    }
+
+    public function addVoicefile(Request $request) {
+        //dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'groupid' => 'required',
+            'did' => 'required',
+        ]);    
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $voicefile = [
+                     'groupid' => $request->get('groupid'),
+                     'did'=> $request->get('did'),
+                     'wfile'=> $request->get('wfile'), 
+                     'welcomemsg' => 'welcomemsg',
+                     'languagesection' => $request->get('languagesection'),
+                     'flanguagesection' => 'flanguagesection',
+                     'mainmenupress0' => $request->get('mainmenupress0'),
+                     'thank4caling' => $request->get('thank4caling'),
+                     'repeatoptions' => $request->get('repeatoptions'),
+                     'previousmenu' => $request->get('previousmenu'),
+                     'voicemailmsg' => $request->get('voicemailmsg'),
+                     'trasfringcall' => $request->get('trasfringcall'),
+                     'contactusoon' => $request->get('contactusoon'),
+                     'talktooperator9' => $request->get('talktooperator9'),
+                     'noinput' => $request->get('noinput'),
+                     'wronginput' => $request->get('wronginput'),
+                     'nonworkinghours' => $request->get('nonworkinghours'),
+                     'moh' => $request->get('moh'),
+                     'transferingtodifferentagent' => $request->get('transferingtodifferentagent'),
+                     'holiday' => $request->get('holiday'),
+                     'aombeforewelcome' => $request->get('aombefore'),
+                     'aomafterwelcome' => $request->get('aomafter'),
+                    ];
+
+            if(empty($request->get('id'))) {
+                DB::table('did_voicefilesettings')->insert($voicefile);
+                $data['success'] = 'Voicefile added successfully.';
+            } else {
+                DB::table('did_voicefilesettings')
+                    ->where('id', $request->get('id'))
+                    ->update($voicefile);
+                $data['success'] = 'Voicefile updated successfully.';
+            }
+        } 
+         return $data;
+    }
+
+    public function getVoicefile($id) {
+        return $voice_file = DB::table('did_voicefilesettings')->where('id', $id)->get();
+    }
+
+    public function generalFiles() { 
+        $voicefiles = DB::table('voicefilesnames')->paginate(10);
+        //dd($voicefiles);
+        return view('management.generalfiles', compact('voicefiles'));
+    }
+
+    public function deleteFile($id)
+    {
+        DB::table('voicefilesnames')->where('id', $id)->delete();
+        toastr()->success('Record deleted successfully.');
+        return redirect()->route('generalFiles');
+    }
+
+    public function mohListings() { 
+        $moh = DB::table('MOHclassess')->orderBy('id', 'desc')->paginate(10);
+        //dd($moh);
+        return view('management.mohlistings', compact('moh'));
+    }
+
+    public function deleteMoh($id, $classname)
+    {
+        $file = config('constants.moh_file').'/'.$classname;
+        if(file_exists($file)) {
+            File::deleteDirectory($file);
+        }
+        DB::table('MOHclassess')->where('id', $id)->delete();
+        toastr()->success('Record deleted successfully.');
+        return redirect()->route('mohListings');
+    }
+
+    public function addMoh(Request $request) {
+        if(empty($request->get('id'))) {
+            $validator = Validator::make($request->all(), [
+                'classname' => 'required|alpha_dash|unique:mohclassess,classname',
+            ]);
+        } else {
+             $validator = Validator::make($request->all(), [
+                'classname' => 'required|alpha_dash',
+            ]);
+        }
+        
+        
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $files = $request->file('moh_file');
+        
+            if (file_exists(config('constants.moh_file')) && !empty($files)) {
+                $file = config('constants.moh_file').'/'.$request->get('classname');
+               if(!file_exists($file)) {
+                 File::makeDirectory($file);
+                    foreach ($files as $key => $value) {
+                        //echo $value->getClientOriginalExtension();
+                        $fileName = date('m-d-Y_hia').$value->getClientOriginalName();
+                        $value->move($file, $fileName);
+                    }
+               } else {
+                    foreach ($files as $key => $value) {
+                        //echo $value->getClientOriginalExtension();
+                        $fileName = date('m-d-Y_hia').$value->getClientOriginalName();
+                        $value->move($file, $fileName);
+                    }
+               }
+            }
+            //die;
+            $moh = [
+                     'classname' => $request->get('classname'),
+                   ];
+
+            if(empty($request->get('id'))) {
+                DB::table('mohclassess')->insert($moh);
+                $data['success'] = 'Moh added successfully.';
+            } else {
+                DB::table('mohclassess')
+                    ->where('id', $request->get('id'))
+                    ->update($moh);
+                $data['success'] = 'Moh updated successfully.';
+            }
+        } 
+         return $data;
+    }
+
+    public function getMoh($id) {
+        return $moh = DB::table('MOHclassess')->where('id', $id)->get();
     }
 
 

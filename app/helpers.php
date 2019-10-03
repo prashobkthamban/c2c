@@ -23,3 +23,8 @@ function getAccountgroupdetails($groupid = null) {
 	
     return $acc_details;
 }
+
+function getDidList($groupid = null) {
+    $did_list = DB::table('dids')->where('assignedto', $groupid)->pluck('did', 'id'); 
+    return $did_list;
+}

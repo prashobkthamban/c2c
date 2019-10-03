@@ -328,12 +328,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{url('nonoperator_list')}}">
+                        <a href="{{url('general_files')}}">
                             <span class="item-name">General Files</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{url('sms_list')}}">
+                        <a href="{{url('moh_listings')}}">
                             <span class="item-name">MOH Files</span>
                         </a>
                     </li>

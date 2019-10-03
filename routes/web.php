@@ -47,6 +47,7 @@ Route::get('account', 'UserController@loginAccounts')->name('loginAccounts');
 Route::post('add_account', 'UserController@addAccount')->name('addAccount');
 Route::get('edit_account/{id}', 'UserController@editAccount')->name('editAccount');
 Route::get('get_customer/{usertype}/{resellerid}', 'UserController@getCustomer')->name('getCustomer');
+Route::get('get_did/{groupid}', 'UserController@getDid')->name('getDid');
 
 /* ----------Coperate Group----------- */
 Route::get('coperates', 'UserController@coperates')->name('CoperateGroup');
@@ -87,6 +88,14 @@ Route::get('voicemail', 'ManagementController@voicemail')->name('Voicemail');
 
 /* voicefiles */
 Route::get('voice_files', 'ManagementController@voiceFiles')->name('voiceFiles');
+Route::post('add_voicefile', 'ManagementController@addVoicefile')->name('addVoicefile');
+Route::get('get_voicefile/{id}', 'ManagementController@getVoicefile')->name('getVoicefile');
+Route::get('general_files', 'ManagementController@generalFiles')->name('generalFiles');
+Route::get('delete_file/{id}', 'ManagementController@deleteFile')->name('deleteFile');
+Route::get('moh_listings', 'ManagementController@mohListings')->name('mohListings');
+Route::get('delete_moh/{id}/{classname}', 'ManagementController@deleteMoh')->name('deleteMoh');
+Route::post('add_moh', 'ManagementController@addMoh')->name('addMoh');
+Route::get('get_moh/{id}', 'ManagementController@getMoh')->name('getMoh');
 
 /* contacts */
 Route::get('contacts', 'ManagementController@contacts')->name('Contacts');
