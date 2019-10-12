@@ -201,11 +201,11 @@
         
         $( '.add_extra_did' ).on( 'submit', function(e) {
             e.preventDefault();
-            //var noteHTML = "";
+            var url = window.location.href+'/add_extra_did';
             var errors = ''; 
           $.ajax({
             type: "post",
-            url: '/add_extra_did/', // This is the url we gave in the route
+            url: url, // This is the url we gave in the route
             data: $('.add_extra_did').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
