@@ -139,7 +139,7 @@
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_extension/', // This is the url we gave in the route
+            url: '{{ URL::route("addExtension") }}', // This is the url we gave in the route
             data: $('.add_extension_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
