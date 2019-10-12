@@ -50,7 +50,6 @@ class DidController extends Controller
     }
 
     public function add_extra_did(Request $request) {
-        dd($request->all());
         $validator = Validator::make($request->all(), [
             'did_no' => 'required',
             'did_name' => 'required',

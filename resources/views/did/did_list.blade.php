@@ -204,7 +204,7 @@
             //var noteHTML = "";
             var errors = ''; 
           $.ajax({
-            type: "POST",
+            type: "post",
             url: '/add_extra_did/', // This is the url we gave in the route
             data: $('.add_extra_did').serialize(),
             success: function(res){ // What to do if we succeed
