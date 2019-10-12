@@ -62,8 +62,8 @@
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>
-
                                 </table>
+                                {{ $customers->links() }}
                             </div>
 
                         </div>
@@ -81,10 +81,11 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                         {!! Form::open(['class' => 'ivr_menu_form', 'method' => 'post']) !!} 
+                         {!! Form::open(['class' => 'ivr_menu_form', 'method' => 'post', 'files' => true]) !!} 
                         <div class="modal-body">
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
+                                        {!! Form::hidden('file_lang', null, ['class' => 'form-control', 'id' => 'file_lang']) !!}
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
@@ -146,7 +147,7 @@
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">File to play in {{$lang->Language}} *</label>
                                         <span id="lang_id_{{$lang->id}}"></span> 
-                                        {!! Form::file($lang->id, null, ['class' => 'form-control']) !!}
+                                        {!! Form::file($lang->id, null, ['class' => 'form-control file_play', 'id' => '$lang->id', 'enctype' => 'multipart/form-data', 'multiple' => true]) !!}
                                     </div>
                                 </div> 
                                 @endforeach 
@@ -171,15 +172,28 @@
  <script src="{{asset('assets/js/datatables.script.js')}}"></script>
  <script type="text/javascript">
      $(document).ready(function() {
+        var langs = [];
+        $("input:file").change(function (){
+            var fileLang = $(this).attr("name");
+            langs.push(fileLang);
+            $("#file_lang").val(langs);
+            // console.log('test');
+            // console.log(langs);
+           // $(".filename").html(fileName);
+        });
+
         $( '.ivr_menu_form' ).on( 'submit', function(e) {
             e.preventDefault();
-            //var cdrid = $('input[name="cdrid"]').val();
-            //var noteHTML = "";
             var errors = ''; 
           $.ajax({
             type: "POST",
             url: '/add_ivr_menu/', // This is the url we gave in the route
-            data: $('.ivr_menu_form').serialize(),
+            data: new FormData(this),
+            dataType:'JSON',
+            contentType: false,
+            enctype: 'multipart/form-data',
+            cache: false,
+            processData: false, 
             success: function(res){ // What to do if we succeed
                 if(res.error) {
                     $.each(res.error, function(index, value)
@@ -192,17 +206,8 @@
                     });
                     toastr.error(errors);
                 } else {
-                    //console.log(moment(new Date()).format('YYYY-MM-DD hh:mm:ss'));
-                    // noteHTML += "<tr>";
-                    // noteHTML += "<td>" + res.result.operator  + "</td>";
-                    // noteHTML += "<td>" + moment(res.result.datetime.date).format('YYYY-MM-DD hh:mm:ss')  + "</td>";
-                    // noteHTML += "<td>" + res.result.note  + "</td>";
-                    // noteHTML += "<td><a href='#' class='text-danger mr-2'><i class='nav-icon i-Close-Window font-weight-bold'></td>";
-                    // noteHTML += "</tr>";
-                    // $("#comments_table tbody").append(noteHTML);
-                    // $("#notes_"+cdrid).removeClass('d-none');
-                    // $("#add_note_"+cdrid).addClass('d-none');
                     $("#ivr_modal").modal('hide');
+                    setTimeout(function(){ location.reload() }, 3000);
                     toastr.success(res.success);                
                 }
                

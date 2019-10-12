@@ -21,6 +21,7 @@ use App\Models\OperatorDepartment;
 use App\Models\Accountgroup;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 //use Excel;
 
@@ -41,8 +42,7 @@ class ReportController extends Controller
         $user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
         //dd(Auth::user()->groupid);
         // $cdr_details = $this->cdr->where('assignedto', Auth::user()->groupid)->first();
-        // dd($cdr_details);
-
+        
         return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag()]);
     }
 
@@ -64,10 +64,38 @@ class ReportController extends Controller
                      'email'=> $request->get('email'),
                      'groupid'=> $request->get('groupid')
                     ];
+            if(!empty($request->get('contact_id'))) {
+                DB::table('contacts')
+                    ->where('id', $request->get('contact_id'))
+                    ->update($contact);
+                $data['success'] = 'Contact update successfully.';
+                $data['fname'] = $request->get('fname');
+            } else {
+                DB::table('contacts')->insert($contact);
+                $data['success'] = 'Contact added successfully.';
+                $data['fname'] = $request->get('fname');
+            }
            
-            DB::table('contacts')->insert($contact);
-            $data['success'] = 'Contact added successfully.';
-            $data['fname'] = $request->get('fname');
+        } 
+         return $data;
+    }
+    
+    public function addTag(Request $request) 
+    {
+        //dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'tag' => 'required',
+        ]);    
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $tag = ['tag' => $request->get('tag')];
+            DB::table('cdr')
+                ->where('cdrid', $request->get('cdrid'))
+                ->update($tag);
+            $data['success'] = 'Tag update successfully.';
+            $data['tag'] = $request->get('tag');
         } 
          return $data;
     }
@@ -94,6 +122,60 @@ class ReportController extends Controller
             //$data['fname'] = $request->get('fname');
         } 
          return $data;
+    }
+
+    public function addReminder(Request $request) 
+    {
+        $validator = Validator::make($request->all(), [
+            'startdate' => 'required',
+            'starttime' => 'required',
+        ]);    
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $date = Carbon::parse($request->get('startdate'))->format('Y-m-d')." ".$request->get('starttime').":00";
+            if(!empty($request->get('id'))) {
+                $reminder = [
+                     'followupdate'=> $date,
+                     'appoint_status'=> $request->get('appoint_status'),
+                    ]; 
+                DB::table('reminders')
+                    ->where('id', $request->get('id'))
+                    ->update($reminder);
+                $data['success'] = 'Reminder update successfully.';
+            } else {
+                $cdr_query = DB::table('cdr')->where('cdrid', $request->get('cdr_id'))->get();
+                $reminder = ['number' => $cdr_query[0]->number,
+                     'groupid'=> Auth::user()->groupid,
+                     'resellerid'=> $cdr_query[0]->resellerid,
+                     'operatorid'=> Auth::user()->id,
+                     'followupdate'=> $date,
+                     'appoint_status'=> 'live',
+                     'follower'=> Auth::user()->username,
+                     'recordedfilename'=> $cdr_query[0]->recordedfilename,
+                     'calldate'=> $cdr_query[0]->datetime,
+                     'deptname'=> $cdr_query[0]->deptname,
+                     'uniqueid'=> $cdr_query[0]->uniqueid,
+                     'secondleg'=> $cdr_query[0]->secondleg,
+                     'assignedto'=> $cdr_query[0]->assignedto,
+                    ]; 
+                DB::table('reminders')->insert($reminder);
+                $data['success'] = 'Reminder added successfully.';
+            }
+            
+        } 
+         return $data;
+    }
+
+    public function getReminder($id) {
+        return $reminder = DB::table('reminders')->where('id', $id)->get();
+    }
+
+    public function deleteReminder($id) {
+        $res = DB::table('reminders')->where('id',$id)->delete();
+        toastr()->success('Reminder delete successfully.');
+        return redirect()->route('Reminder');
     }
 
     public function addCdr(Request $request) 

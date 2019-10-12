@@ -32,7 +32,7 @@
                                        
                                         @foreach($dids as $did)
                                         <tr>
-                                            <td>{{$did->outgoing_callerid}}</td>
+                                            <td>{{$did->rdins}}</td>
                                             <td>{{$did->did}}</td>
                                             <td>{{$did->Gprovider}}</td>
                                             <td>{{$did->name}}</td>
@@ -62,8 +62,8 @@
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>
-
                                 </table>
+                                {{ $dids->links() }}
                             </div>
 
                         </div>
@@ -112,7 +112,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                         {!! Form::open(['action' => 'DidController@add_extra_did', 'method' => 'post']) !!} 
+                         {!! Form::open(['class' => 'add_extra_did', 'method' => 'post']) !!} 
                         <div class="modal-body">
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
@@ -120,7 +120,7 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">DID Number*</label> 
+                                        <label for="firstName1">DID Number *</label> 
                                         <input type="text" class="form-control" placeholder="Did Number" name="did_no">
                                     </div>
                                 </div>
@@ -129,7 +129,7 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">DID Name</label> 
+                                        <label for="firstName1">DID Name *</label> 
                                         <input type="text" class="form-control" placeholder="Did Name" name="did_name">
                                     </div>
                                 </div>
@@ -195,6 +195,38 @@
                 $("#extra_did_table tbody").html(didHTML);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+            }
+          });
+        });
+        
+        $( '.add_extra_did' ).on( 'submit', function(e) {
+            e.preventDefault();
+            //var noteHTML = "";
+            var errors = ''; 
+          $.ajax({
+            type: "POST",
+            url: '/add_extra_did/', // This is the url we gave in the route
+            data: $('.add_extra_did').serialize(),
+            success: function(res){ // What to do if we succeed
+                if(res.error) {
+                    $.each(res.error, function(index, value)
+                    {
+                        if (value.length != 0)
+                        {
+                            errors += value[0];
+                            errors += "</br>";
+                        }
+                    });
+                    toastr.error(errors);
+                } else {
+                    $("#extra_did_modal").modal('hide');
+                    toastr.success(res.success); 
+                    setTimeout(function(){ location.reload() }, 3000);               
+                }
+               
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                toastr.error('Some errors are occured');
             }
           });
         });

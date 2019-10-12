@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 
 class CdrTag extends Model
@@ -25,8 +26,8 @@ class CdrTag extends Model
     }
 
     public static function getTag(){
-        //dd(Auth::user()->groupid);
-        return CdrTag::select('id','tag')->where('groupid', Auth::user()->groupid )->get();
+        //return CdrTag::select('id','tag')->where('groupid', Auth::user()->groupid )->get();
+        return DB::table('cdr_tags')->where('groupid', Auth::user()->groupid )->pluck('tag', 'tag');
     }
 
     public static function getTagFromId($id){

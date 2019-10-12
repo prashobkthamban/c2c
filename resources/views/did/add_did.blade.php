@@ -21,13 +21,13 @@
                             <form method="post">
                                 <div class="row">
                                     <div class="col-md-6 form-group mb-3">
-                                        <label for="firstName1">Mobile/DID</label>
-                                        <input type="text" class="form-control" placeholder="Mobile Number" name="rdins">
+                                        <label for="firstName1">Mobile/DID *</label>
+                                        <input type="number" class="form-control" placeholder="Mobile Number" name="rdins">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('rdins', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
-                                        <label for="firstName1">DID Number</label>
+                                        <label for="firstName1">DID Number *</label>
                                         <input type="text" class="form-control" placeholder="Did Number" name="did">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('did', ':message') : '' !!}</p>
                                     </div>
@@ -73,32 +73,8 @@
                                         <input type="text" class="form-control" placeholder="Set PRI Callerid" name="set_did_no">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('set_did_no', ':message') : '' !!}</p>
                                     </div>
-                                </div>
-                                
-                                    <div class="card-title mb-3">Extra DID Details</div>
-                                <div class="row">
-                                    <div class="col-md-6 form-group mb-3">
-                                        <label for="firstName1">DID Number</label>
-                                        <input type="text" class="form-control" placeholder="DID Number*" name="e_did">
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('e_did', ':message') : '' !!}</p>
-                                    </div>
-                                    <div class="col-md-6 form-group mb-3">
-                                        <label for="firstName1">DID Name</label>
-                                        <input type="text" class="form-control" placeholder="DID Name" name="didname">
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('didname', ':message') : '' !!}</p>
-                                    </div>
-                                    <div class="col-md-6 form-group mb-3">
-                                        <label for="firstName1">Outgoing Callerid</label>
-                                        <input type="text" class="form-control" placeholder="Outgoing Callerid" name="e_outgoing_callerid">
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('e_outgoing_callerid', ':message') : '' !!}</p>
-                                    </div>
-                                    <div class="col-md-6 form-group mb-3">
-                                        <label for="firstName1">Outgoing PRI</label>
-                                        {!! Form::select('e_outgoing_gatewayid', $prigateway, null,array('class' => 'form-control')) !!}
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('e_outgoing_gatewayid', ':message') : '' !!}</p>
-                                    </div>
                                     <div class="col-md-12">
-                                         <button class="btn btn-primary">Submit</button>
+                                        <button class="btn btn-primary">Submit</button>
                                     </div>
                                 </div>
                             {!! Form::close() !!}

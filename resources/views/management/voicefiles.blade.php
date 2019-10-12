@@ -296,27 +296,7 @@
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
  <script type="text/javascript">
      $(document).ready(function() {
-        $('#groupid').on('change',function(e)
-        {
-            var groupid = $(this).val();
-            $.ajax({
-            type: "GET",
-            url: '/get_did/'+ groupid, // This is the url we gave in the route
-            success: function(res){ // What to do if we succeed
-                //console.log(res);
-              $('#did').find('option').not(':first').remove();
-                $.each(res, function (i, item) {
-                    $('#did').append($('<option>', { 
-                        value: i,
-                        text : item 
-                    }));
-                });
-            },
-            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
-            }
-          });
-        });
-     
+
         $( '.add_voicefile_form' ).on( 'submit', function(e) {
             e.preventDefault();
             var errors = ''; 

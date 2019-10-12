@@ -12,6 +12,7 @@
 @yield('before-css')
     {{-- theme css --}}
 <link id="gull-theme" rel="stylesheet" href="{{asset('assets/styles/css/themes/lite-purple.min.css')}}">
+<link id="gull-theme" rel="stylesheet" href="{{asset('assets/styles/css/themes/glyphicon.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/perfect-scrollbar.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/css/themes/fontawesome5.9/css/all.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/css/themes/fontawesome5.9/css/fontawesome.min.css')}}">

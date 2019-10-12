@@ -42,7 +42,7 @@
                                     <td></td>
                                     <td>{{$account->phone_number}}</td>
                                     <td>{{ date('d-m-Y', strtotime($account->adddate)) }}</td>
-                                    <td><a href="#" class="text-success mr-2 edit_login" id="{{$account->id}}">
+                                    <td><a href="#" data-toggle="modal" data-target="#login_manager" class="text-success mr-2 edit_login" id="{{$account->id}}">
                                             <i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                         </a><a href="{{ route('deleteUser', $account->id) }}" onclick="return confirm('You want to delete this user?')" class="text-danger mr-2">
                                             <i class="nav-icon i-Close-Window font-weight-bold"></i>
@@ -63,8 +63,8 @@
                                     <th>Action</th>
                                 </tr>
                             </tfoot>
-
                         </table>
+                         {{ $accounts->links() }}
                     </div>
 
                 </div>
@@ -86,7 +86,7 @@
                         <div class="modal-body">
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
-                                        <!-- <input type="hidden" name="did_id" id="did_id">  -->
+                                        <input type="hidden" name="id" id="account_id">
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
@@ -100,7 +100,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Password</label> 
-                                        <input type="text" class="form-control" placeholder="Password" name="password">
+                                        <input type="text" class="form-control" placeholder="Password" name="password" id="password">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -109,7 +109,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">User Type</label> 
-                                        {!! Form::select('usertype', array('' => 'Select UserType', 'reseller' => 'Coperate Admin', 'groupadmin' => 'Group Admin'), null,array('class' => 'form-control', 'id' => 'usertype')) !!}
+                                        {!! Form::select('usertype', array('' => 'Select UserType', 'admin' => 'Admin', 'reseller' => 'Coperate Admin', 'groupadmin' => 'Group Admin'), null,array('class' => 'form-control', 'id' => 'usertype')) !!}
                                     </div>
                                 </div>
                                 <div class="row">
@@ -172,9 +172,7 @@
 
         $( '#add_login' ).on( 'submit', function(e) {
             e.preventDefault();
-            //var cdrid = $('input[name="cdrid"]').val();
             var noteHTML = "";
-            // console.log($('input[name="cdrid"]').val());
             var errors = ''; 
           $.ajax({
             type: "POST",
@@ -192,17 +190,9 @@
                     });
                     toastr.error(errors);
                 } else {
-                    //console.log(moment(new Date()).format('YYYY-MM-DD hh:mm:ss'));
-                    // noteHTML += "<tr>";
-                    // noteHTML += "<td>" + res.result.operator  + "</td>";
-                    // noteHTML += "<td>" + moment(res.result.datetime.date).format('YYYY-MM-DD hh:mm:ss')  + "</td>";
-                    // noteHTML += "<td>" + res.result.note  + "</td>";
-                    // noteHTML += "<td><a href='#' class='text-danger mr-2'><i class='nav-icon i-Close-Window font-weight-bold'></td>";
-                    // noteHTML += "</tr>";
-                    // $("#comments_table tbody").append(noteHTML);
-                    // $("#notes_"+cdrid).removeClass('d-none');
-                    // $("#add_note_"+cdrid).addClass('d-none');
-                    toastr.success(res.success);                
+                    $("#login_manager").modal('hide');
+                    toastr.success(res.success);  
+                    setTimeout(function(){ location.reload() }, 3000);               
                 }
                
             },
@@ -234,20 +224,20 @@
           });
         });
 
-        $('.edit_login').click(function() {
-           //alert(this.id);  
+        $('.edit_login').click(function() {  
           $.ajax({
             url: '/edit_account/'+this.id, // This is the url we gave in the route
             success: function(res){ // What to do if we succeed
                 //var response = JSON.stringify(res);
                 console.log(res);
-                console.log(res.username);
                 if(res) {
                     $("input[name=email]").val(res.email);
                     $("input[name=phone_number]").val(res.phone_number);
-                    $("input[name=groupid]").val(res.groupid);
-                    $("input[name=resellerid]").val(res.resellerid);
-                    $("input[name=usertype]").val(res.usertype);
+                    $("#groupid").val(res.groupid);
+                    $("#resellerid").val(res.resellerid);
+                    $("#account_id").val(res.id);
+                    $("#usertype").val(res.usertype);
+                    $("#password").val(res.password);
                     $("input[name=username]").val(res.username);
                     $("#login_title").text('Edit Login');
                     $("#login_manager").modal('show');

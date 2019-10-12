@@ -111,7 +111,7 @@ class ManagementController extends Controller
             ->where('accountgroupdetails.delete_status', '0')
             ->join('accountgroup', 'accountgroupdetails.groupid', '=', 'accountgroup.id')
             ->leftJoin('resellergroup', 'accountgroupdetails.resellerid', '=', 'resellergroup.id')
-            ->get();
+            ->orderBy('id', 'desc')->paginate(10);
         $languages = DB::table('languages')->get();
         // dd($customers);
         return view('management.ivr_menu', compact('customers', 'languages'));
@@ -135,7 +135,9 @@ class ManagementController extends Controller
     }
 
     public function addIvrmenu(Request $request) {
-        //dd($request->all());
+        
+        $lang = explode (",", $request->get('file_lang'));
+        //dd($lang);
         $validator = Validator::make($request->all(), [
             'groupid' => 'required',
             'ivr_level_name' => 'required',
@@ -155,7 +157,37 @@ class ManagementController extends Controller
                      'operator_dept' => $request->get('operator_dept'),
                     ];
 
-            DB::table('accountgroupdetails')->insert($accGroup);
+            $ivr_menu_id = DB::table('accountgroupdetails')->insertGetId($accGroup);
+            if (file_exists(config('constants.ivr_file'))) {
+                $file = config('constants.ivr_file').'/'.$ivr_menu_id;
+
+                if(!file_exists($file)) {
+                    File::makeDirectory($file);
+                }
+
+                foreach($lang as $listOne) {
+                    //echo $listOne;
+                    $files = $request->file($listOne);
+            
+                    $ivrLanguage = ['ivr_menu_id' => $ivr_menu_id,
+                             'lang_id' => $listOne,
+                             'filename'=> $files->getClientOriginalName(),
+                             'orginalfilename'=> $files->getClientOriginalName(), 
+                            ];
+
+                    $fileName = date('m-d-Y_hia').$files->getClientOriginalName();
+                    $files->move($file, $fileName);
+                    DB::table('ast_ivrmenu_language')->insert($ivrLanguage);
+                } 
+                //die;
+                   // else {
+                   //      foreach ($files as $key => $value) {
+                   //          //echo $value->getClientOriginalExtension();
+                   //          $fileName = date('m-d-Y_hia').$value->getClientOriginalName();
+                   //          $value->move($file, $fileName);
+                   //      }
+                   // }
+            }
             $data['result'] = $accGroup;
             $data['success'] = 'Menu added successfully.';
         } 

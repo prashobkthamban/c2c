@@ -32,7 +32,8 @@ class DidController extends Controller
             ->join('prigateway', 'dids.gatewayid', '=', 'prigateway.id')
             ->leftJoin('accountgroup', 'dids.assignedto', '=', 'accountgroup.id')
             ->select('dids.*', 'prigateway.Gprovider', 'accountgroup.name')
-            ->get();
+            ->orderBy('id', 'desc')
+            ->paginate(10);
             //dd($dids);
         $did = new Dids();
         $prigateway = $did->get_prigateway();
@@ -49,7 +50,15 @@ class DidController extends Controller
     }
 
     public function add_extra_did(Request $request) {
-        $extra_did_data = [
+        $validator = Validator::make($request->all(), [
+            'did_no' => 'required',
+            'did_name' => 'required',
+        ]);  
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $extra_did_data = [
                 'did_id' => $request->get('did_id'),
                 'did_no'=> $request->get('did_no'),
                 'did_name'=> $request->get('did_name'),
@@ -57,12 +66,13 @@ class DidController extends Controller
                 'pri_id'=> $request->get('pri_id'),
             ];
 
-        DB::table('extra_dids')->insert(
-            $extra_did_data
-        );    
+            DB::table('extra_dids')->insert(
+                $extra_did_data
+            );
 
-        toastr()->success('Extra did added successfully.');
-        return redirect()->route('DidList');
+            $data['success'] = 'Operator department added successfully.';
+        }
+        return $data;
     }
 
     public function delete_extra_did($id)
@@ -90,22 +100,29 @@ class DidController extends Controller
         $did = new Dids();
         $validator = Validator::make($request->all(), [
             'did' => 'required',
-            'dnid_name' => 'required',
-            'gatewayid' => 'required',
-            'outgoing_gatewayid' => 'required',
-            'c2cpri' => 'required',
-            'c2ccallerid' => 'required',
-            'outgoing_callerid' => 'required',
-            'set_did_no' => 'required',
+            'rdins' => 'required',
+            // 'dnid_name' => 'required',
+            // 'gatewayid' => 'required',
+            // 'outgoing_gatewayid' => 'required',
+            // 'c2cpri' => 'required',
+            // 'c2ccallerid' => 'required',
+            // 'outgoing_callerid' => 'required',
+            // 'set_did_no' => 'required',
         ]);
+        $attributeNames = array(
+           'rdins' => 'Mobile Number',     
+        );
+        $validator->setAttributeNames($attributeNames);
 
         if($validator->fails()) {
-            $messages = $validator->messages(); 
-            return view('did.add_did', compact('messages'));
+            $messages = $validator->messages();
+            $prigateway = $did->get_prigateway(); 
+            return view('did.add_did', compact('messages', 'prigateway'));
         } else {
   
-            $did_data = [
+            $did = new Dids([
                 'did' => $request->get('did'),
+                'rdins' => $request->get('rdins'),
                 'dnid_name'=> $request->get('dnid_name'),
                 'gatewayid'=> $request->get('gatewayid'),
                 'outgoing_gatewayid'=> $request->get('outgoing_gatewayid'),
@@ -113,9 +130,9 @@ class DidController extends Controller
                 'c2ccallerid'=> $request->get('c2ccallerid'),
                 'outgoing_callerid'=> $request->get('outgoing_callerid'),
                 'set_did_no'=> $request->get('set_did_no')
-            ];
+            ]);
 
-            //dd($users);
+            //dd($did_data);
             $did->save();
             toastr()->success('Did added successfully.');
             return redirect()->route('DidList');
@@ -139,14 +156,19 @@ class DidController extends Controller
         $did = $did->findOrFail($id);
         $validator = Validator::make($request->all(), [
             'did' => 'required',
-            'dnid_name' => 'required',
-            'gatewayid' => 'required',
-            'outgoing_gatewayid' => 'required',
-            'c2cpri' => 'required',
-            'c2ccallerid' => 'required',
-            'outgoing_callerid' => 'required',
-            'set_did_no' => 'required',
+            'rdins' => 'required',
+            // 'dnid_name' => 'required',
+            // 'gatewayid' => 'required',
+            // 'outgoing_gatewayid' => 'required',
+            // 'c2cpri' => 'required',
+            // 'c2ccallerid' => 'required',
+            // 'outgoing_callerid' => 'required',
+            // 'set_did_no' => 'required',
         ]);
+        $attributeNames = array(
+           'rdins' => 'Mobile Number',     
+        );
+        $validator->setAttributeNames($attributeNames);
 
         if($validator->fails()) {
             $messages = $validator->messages(); 
@@ -154,6 +176,7 @@ class DidController extends Controller
         } else {
             $dids = [
                         'did' => $request->get('did'),
+                        'rdins' => $request->get('rdins'),
                         'dnid_name'=> $request->get('dnid_name'),
                         'gatewayid'=> $request->get('gatewayid'),
                         'outgoing_gatewayid'=> $request->get('outgoing_gatewayid'),
@@ -172,9 +195,9 @@ class DidController extends Controller
 
     public function destroy($id)
     {
-        $user= Users::find($id);
-        $user->delete();
-        toastr()->success('User delete successfully.');
-        return redirect()->route('UserList');
+        DB::table('dids')->where('id',$id)->delete();
+        DB::table('extra_dids')->where('did_id',$id)->delete();
+        toastr()->success('Did delete successfully.');
+        return redirect()->route('DidList');
     }
 }

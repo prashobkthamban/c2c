@@ -10,12 +10,23 @@ class Reminder extends Model
 {
     protected $table = 'reminders';
 
+    public function cdrNotes()
+    {
+        return $this->hasMany('App\Models\CdrNote', 'uniqueid', 'uniqueid');
+    }
+
+    public function contacts()
+    {
+        return $this->hasOne('App\Models\Contact', 'phone', 'number');
+    }
+
     public static function getReport( ){
 
-        $data = Reminder::select('reminders.*','name','opername','phonenumber')
+        $data = Reminder::select('name','opername','phonenumber','reminders.*')
             ->leftJoin('accountgroup', 'accountgroup.id', '=', 'reminders.groupid')
             ->leftJoin('resellergroup', 'resellergroup.id', '=', 'reminders.resellerid')
-            ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'reminders.operatorid');
+            ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'reminders.operatorid')
+            ->with(['cdrNotes', 'contacts']);
         if( Auth::user()->usertype == 'reseller'){
             $data->where('reminders.resellerid',Auth::user()->resellerid );
         }
@@ -25,8 +36,9 @@ class Reminder extends Model
         else{
             //$data->where('cdrpbx.groupid',Auth::user()->groupid );
         }
-        $result = $data->orderBy('followupdate','DESC')
+        $result = $data->orderBy('followupdate','DESC')->groupBy('reminders.id')
             ->paginate(30);
+        //dd($result);
         return $result;
     }
 

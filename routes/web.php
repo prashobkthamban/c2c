@@ -19,12 +19,33 @@ Route::get('home', 'HomeController@index')->name('home');
 /* ----------Cdr Report----------- */
 Route::get('cdrreport', 'ReportController@index')->name('cdrreport');
 Route::post('add_cdr_contact', 'ReportController@addContact')->name('addContact');
+Route::post('add_tag', 'ReportController@addTag')->name('addTag');
 Route::post('add_note', 'ReportController@addNote')->name('addNote');
+Route::post('add_reminder', 'ReportController@addReminder')->name('addReminder');
+Route::get('get_reminder/{id}', 'ReportController@getReminder')->name('getReminder');
+Route::get('delete_reminder/{id}', 'ReportController@deleteReminder')->name('deleteReminder');
 Route::delete('delete_comment/{id}', 'ReportController@deleteComment')->name('deleteComment');
 Route::get('download_file/{file}/{id}', 'ReportController@downloadFile')->name('downloadFile');
 Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('cdrreportarchive');
 Route::get('cdrreportout', 'ReportController@cdrreportout')->name('cdrreportout');
 Route::get('reminder', 'ReminderController@index')->name('Reminder');
+
+/* pbx extension */
+Route::get('pbx_extension', 'ReminderController@pbxextension')->name('PbxExtension');
+Route::get('get_pbx_extension/{id}', 'ReminderController@getExtension')->name('getExtension');
+Route::get('delete_pbxexten/{id}', 'ReminderController@delete_pbxexten')->name('deletePbxexten');
+Route::post('add_extension', 'ReminderController@addExtension')->name('addExtension');
+
+/* pbx ringgroups */
+Route::get('pbx_ringgroups', 'ReminderController@pbxringgroups')->name('PbxRingGroups');
+Route::get('get_pbx_ringgroup/{id}', 'ReminderController@getRinggroup')->name('getRinggroup');
+Route::post('add_ringgroup', 'ReminderController@addRinggroup')->name('addRinggroup');
+Route::get('delete_ringgroup/{id}', 'ReminderController@deleteRinggroup')->name('deleteRinggroup');
+
+/* pbx did */
+Route::get('pbx_did', 'ReminderController@pbxDid')->name('PbxDid');
+
+
 Route::get('operator', 'ReportController@operator')->name('operator');
 Route::get('contacts', 'ReportController@contacts')->name('contacts');
 Route::get('voicemail', 'ReportController@voicemail')->name('voicemail');
@@ -39,6 +60,7 @@ Route::get('users', 'UserController@index')->name('UserList');
 Route::get('adduser', 'UserController@addUser')->name('addUser');
 Route::post('user_store', 'UserController@store')->name('user_store');
 Route::get('user/{id}', 'UserController@destroy')->name('deleteUser');
+Route::get('delete_account/{id}', 'UserController@deleteAccount')->name('deleteAccount');
 Route::get('edit/{id}', 'UserController@edit')->name('editUser');
 Route::patch('update/user/{id}', 'UserController@update')->name('updateUser');
 

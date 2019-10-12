@@ -34,7 +34,7 @@ class CdrReport extends Model
 
     public function contacts()
     {
-        return $this->hasMany('App\Models\Contact', 'phone', 'number');
+        return $this->hasOne('App\Models\Contact', 'phone', 'number');
     }
 
     public static function getReport(){

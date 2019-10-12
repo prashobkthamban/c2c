@@ -25,6 +25,10 @@ function getAccountgroupdetails($groupid = null) {
 }
 
 function getDidList($groupid = null) {
-    $did_list = DB::table('dids')->where('assignedto', $groupid)->pluck('did', 'id'); 
+    if($groupid != null) {
+        $did_list = DB::table('dids')->where('assignedto', $groupid)->pluck('did', 'id'); 
+    } else {
+        $did_list = DB::table('dids')->pluck('did', 'id'); 
+    }
     return $did_list;
 }

@@ -31,6 +31,27 @@
                             <div class="triangle"></div>
                         </li>
                         <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('PbxExtension')}}">
+                                <i class="nav-icon i-Smartphone--Secure"></i>
+                                <span class="nav-text">PBX Extension</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('PbxDid')}}">
+                                <i class="nav-icon i-Smartphone--Secure"></i>
+                                <span class="nav-text">PBX DIDs</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('PbxRingGroups')}}">
+                                <i class="nav-icon i-Smartphone--Secure"></i>
+                                <span class="nav-text">PBX RingGroups</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
                             <!-- <a href="{{url('cdrreportout')}}" class="{{ Route::currentRouteName()=='cdrreportout' ? 'open' : '' }}"> -->
                             <a href="{{url('cdrreportout')}}" class="nav-item-hold">
                                 <i class="nav-icon i-Clock-4"></i>

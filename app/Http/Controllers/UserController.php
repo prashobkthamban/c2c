@@ -41,7 +41,8 @@ class UserController extends Controller
     public function index() {
         $users = DB::table('accountgroup')
             ->leftJoin('resellergroup', 'accountgroup.resellerid', '=', 'resellergroup.id')
-            ->select('accountgroup.*', 'resellergroup.resellername')
+            ->leftJoin('dids', 'accountgroup.did', '=', 'dids.id')
+            ->select('accountgroup.*', 'resellergroup.resellername', 'dids.did')
             ->get();
         //dd($users);
         return view('user.user_list', compact('users'));
@@ -250,18 +251,25 @@ class UserController extends Controller
             ];
             //dd($account_group);
             $user_edit->fill($account_group)->save();
+            $this->did::where('id', $request->get('did'))->update(array('assignedto' => $id));
             toastr()->success('User update successfully.');
             return redirect()->route('UserList');
         }
         
     }
 
-    public function destroy($id)
+    public function deleteAccount($id)
     {
-        $acc_group = Accountgroup::find($id);
-        $acc_group->delete();
+        $res = DB::table('accountgroup')->where('id',$id)->delete();
         toastr()->success('User delete successfully.');
         return redirect()->route('UserList');
+    }
+
+    public function destroy($id)
+    {
+        $res = DB::table('account')->where('id',$id)->delete();
+        toastr()->success('User delete successfully.');
+        return redirect()->route('loginAccounts');
     }
 
     /* ----------login account----------- */
@@ -283,7 +291,7 @@ class UserController extends Controller
             $query->where('groupid', Auth::user()->groupid);
         }
         $query->select('account.*', 'accountgroup.name', 'resellergroup.resellername');
-        $accounts = $query->get();
+        $accounts = $query->orderBy('id', 'desc')->paginate(10);
         //dd($accounts);
         return view('user.account_list', compact('accounts', 'coperate'));
     }
@@ -309,8 +317,8 @@ class UserController extends Controller
             'username' => 'required',
             'password' => 'required',
             'usertype' => 'required',
-            'resellerid' => 'required',
-            'groupid' => 'required',
+            // 'resellerid' => 'required',
+            // 'groupid' => 'required',
             'phone_number' => 'required',
             'email' => 'required',
         ]);    
@@ -327,10 +335,16 @@ class UserController extends Controller
                      'email' => $request->get('email'),
                      'status' => 'Active'
                     ];
-            DB::table('account')->insert($account);
-            // $data['result'] = $note;
-            $data['success'] = 'Account added successfully.';
-            //$data['fname'] = $request->get('fname');
+            if(empty($request->get('id'))) {
+                DB::table('account')->insert($account);
+                $data['success'] = 'Account added successfully.';
+            } else {
+                DB::table('account')
+                    ->where('id', $request->get('id'))
+                    ->update($account);
+                    $data['success'] = 'Account updated successfully.';
+            }
+
         } 
          return $data;
     }

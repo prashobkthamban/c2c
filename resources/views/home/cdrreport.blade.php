@@ -1,10 +1,10 @@
 @extends('layouts.master')
 @section('page-css')
-
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.date.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.time.css')}}">
+<link rel="stylesheet" href="{{asset('assets/styles/css/bootstrap-timepicker.min.css')}}">
 @endsection
 
 @section('main-content')
@@ -139,36 +139,27 @@
                                                         <input type="text" class="form-control input-sm" name="caller_number">
                                                     </div>
 
-                                                    <div class="form-group ">
+                                                    <!-- <div class="form-group "> -->
                                                     <div class="col-md-6 form-group mb-3 ">
                                                         <label class="filter-col"  for="pref-perpage">Tags</label>
-                                                        <select  class="form-control" name="tags">
-                                                            <option value="">All</option>
-                                                            @if(!empty($tags))
-                                                                @foreach($tags as $tg )
-                                                                    <option value="{{$tg->tag}}">{{$tg->tag}}
-                                                                    </option>
-                                                                @endforeach
-                                                            @endif
-                                                            
-                                                        </select>                                
+                                                        {!! Form::select('tags', $tags->prepend('All', ''), null,array('class' => 'form-control')) !!}                        
                                                     </div> 
                                                     
-                                                    <div class="form-group">    
-                                                    {{--
+                                                   <div class="form-group">    
+                                                   <!-- {{--
                                                     <div class="col-md-6 form-group mb-3">  
                                                         <div class="">
                                                           <label><input type="checkbox" value="1" name="unique_call"> Unique Calls</label>
                                                         </div>
                                                     </div>
-                                                    --}}
+                                                    --}} -->
                                                     <div class="col-md-6 form-group mb-3">    
                                                         
                                                         <button type="button" id="report_search_button" class="btn btn-default filter-col">
                                                             <span class="glyphicon glyphicon-record"></span> Search
                                                         </button>  
                                                     </div>
-                                                </div>
+                                                <!-- </div> -->
                                                 </form>
                                             
                                     </div>
@@ -197,6 +188,7 @@
                                         <th>Status</th>
                                         <th>Coin</th>
                                         <th>Department</th>
+                                        <th>Tag</th>
                                         <th>Operator</th>
 
                                     </tr>
@@ -208,11 +200,11 @@
                                     <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable">
                                         <td id="caller_{{$row->cdrid}}">
                                             @if(Auth::user()->usertype=='groupadmin')
-                                                <a href="?" data-toggle="modal" data-target="#formDiv" title="{{ $row->fname ? $row->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->fname ? $row->fname : $row->number }}</a>
+                                                <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
                                                 @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
-                                                {{ $row->fname ? $row->fname : $row->number }}
+                                                {{ $row->contacts->fname ? $row->contacts->fname : $row->number }}
                                                 @else
-                                                <a href="?" data-toggle="modal" data-target="#formDiv" title="{{ $row->fname ? $row->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->fname ? $row->fname : $row->number }}</a>
+                                                <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
                                             @endif
 
                                         </td>
@@ -222,6 +214,7 @@
                                         <td><a>{{$row->status}}</a></td>
                                         <td>{{$row->creditused}}</td>
                                         <td>{{$row->deptname}}</td>
+                                        <td id="tag_{{$row->cdrid}}">{{$row->tag}}</td>
                                         <td>{{$row->opername}}</td>
 
                                     </tr>
@@ -234,7 +227,7 @@
                                                 <button type="button" class="btn btn-info m-1" onClick="xajax_show('add_reminder_{{$row->cdrid}}')">Add Reminder</button>
                                                 <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.assign')">Assign</button>
                                                 <!-- <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.contact')">Add Contact</button> -->
-                                                @if(!empty($row->fname))
+                                                @if(!empty($row->contacts->fname))
                                                 <button type="button" onClick="xajax_show('contact_form_{{$row->cdrid}}')" class="btn btn-info m-1 clickable" >View Contact</button>
                                                 @else
                                                 <button type="button" onClick="xajax_show('contact_form_{{$row->cdrid}}')" class="btn btn-info m-1 clickable">Add Contact</button>
@@ -285,22 +278,23 @@
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <h5>Add Contact</h5>
-                                                            <form class="contact_form" id="{{$row->cdrid}}">
+                                                            <form class="contact_form" id="add_contact{{$row->cdrid}}">
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-12">
+                                                                        <input type="hidden" name="contact_id" value="{{$row->contacts->id}}">
                                                                         <input type="hidden" name="phone" value="{{$row->number}}">
                                                                         <input type="hidden" name="groupid" value="{{$row->groupid}}">
-                                                                        <input type="text" class="form-control" name="fname" value="{{$row->fname}}" placeholder="First Name">
+                                                                        <input type="text" class="form-control" name="fname" value="{{$row->contacts->fname}}" placeholder="First Name">
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-12">
-                                                                        <input type="text" name="lname" value="{{$row->lname}}" class="form-control" placeholder="Last Name">
+                                                                        <input type="text" name="lname" value="{{$row->contacts->lname}}" class="form-control" placeholder="Last Name">
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-12">
-                                                                        <input type="email" name="email" value="{{$row->email}}" class="form-control" placeholder="Email">
+                                                                        <input type="email" name="email" value="{{$row->contacts->email}}" class="form-control" placeholder="Email">
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row">
@@ -317,12 +311,14 @@
                                                 <div class="col-md-3">
                                                     <div class="card">
                                                         <div class="card-body">
-                                                            <h5>Tag call</h5>
-                                                            <form class="tag_form" id="{{$row->cdrid}}">
+                                                            <h5>Tag Call</h5>
+                                                            <form class="tag_form" id="tag_form{{$row->cdrid}}">
+                                                                <input type="hidden" name="cdrid" value="{{$row->cdrid}}" />
+
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-12">
                                                                 
-                                                                        {!! Form::select('tagid', $tags, null,array('class' => 'form-control')) !!}
+                                                                        {!! Form::select('tag', $tags->prepend('Select Tag', ''), null,array('class' => 'form-control')) !!}
                                                                     
                                                                     </div>
                                                                 </div>
@@ -356,7 +352,7 @@
                                                                 <tbody>
                                                                     @if(!$row->cdrNotes->isEmpty())
                                                                     @foreach($row->cdrNotes as $note )
-                                                                        <tr id="cmnt_row_{{$note->id}}">
+                                                                        <tr class="cmnt_row_{{$note->id}}">
                                                                             <td>{{$note->operator}}</td>
                                                                             <td>{{$note->datetime}}</td>
                                                                             <td>{{$note->note}}</td>
@@ -403,27 +399,23 @@
                                                     <div class="card">
                                                         <div class="card-body">
                                                             <h5>Add Reminder</h5>
-                                                            <form class="reminder_form" id="{{$row->cdrid}}" autocomplete="off">
+                                                            <form class="reminder_form" id="reminder_{{$row->cdrid}}" autocomplete="off">
+                                                                <input type="hidden" name="cdr_id" value="{{$row->cdrid}}">
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-12">
-                                                                
-                                                                      
-                                                                        <input class="form-control datepicker" placeholder="dd-mm-yyyy" name="enddate">
-                                                                    
+                                                                        <input class="form-control datepicker" placeholder="dd-mm-yyyy" name="startdate">
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-12">
-                                                                
-                                                                      
-                                                                        <input class="form-control timepicker" placeholder="" name="time">
-                                                                    
+                                                                        <input  placeholder="Followup Time" type="text"  size="10"  data-rel="timepicker" id="timepicker1" name="starttime" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" class="form-control" />
                                                                     </div>
                                                                 </div>
 
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-10">
                                                                         <button type="submit" class="btn btn-primary">Save</button>
+                                                                        <button type="button" class="btn btn-primary" onClick="xajax_hide()">Cancel</button>
                                                                     </div>
                                                                 </div>
                                                             </form>
@@ -431,8 +423,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </td>
-                                    </tr>
+                                            
                                     @endforeach
                                         @endif
 
@@ -588,19 +579,25 @@
 @endsection
 
 @section('page-js')
-
  <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
  <script src="{{asset('assets/js/datatables.script.js')}}"></script>
  <script src="{{asset('assets/js/vendor/pickadate/picker.js')}}"></script>
  <script src="{{asset('assets/js/vendor/pickadate/picker.date.js')}}"></script>
  <script src="{{asset('assets/js/vendor/pickadate/picker.time.js')}}"></script>
  <script src="{{asset('assets/js/moment.min.js')}}"></script>
-
+ <script src="{{asset('assets/js/bootstrap-timepicker.min.js')}}"></script>
+ <script type="text/javascript">
+    $('#timepicker1').timepicker();
+ </script>
  <script type="text/javascript">
      function xajax_show(id) {
         $(".cdr_form").addClass('d-none');
         $("#"+id).removeClass('d-none');
      } 
+
+     function xajax_hide() {
+        $(".cdr_form").addClass('d-none');
+     }
 
      function xajax_play(id) {
        $("#"+id).removeClass('d-none');
@@ -688,13 +685,13 @@
           });
         });
 
-        $( '.contact_form' ).on( 'submit', function(e) {
+        //add reminder
+        $( '.reminder_form' ).on( 'submit', function(e) {
             e.preventDefault();
-            var cdrid = this.id;
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_cdr_contact/', // This is the url we gave in the route
+            url: '/add_reminder/', // This is the url we gave in the route
             data: $('#'+this.id).serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
@@ -708,51 +705,7 @@
                     });
                     toastr.error(errors);
                 } else {
-                    $("#caller_"+cdrid).text(res.fname);
-                    toastr.success(res.success);                
-                }
-               
-            },
-            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
-                console.log('error');
-                //toastr.error('Some errors are occured');
-            }
-          });
-        });
-
-        //add note
-        $( '.notes_form' ).on( 'submit', function(e) {
-            e.preventDefault();
-            var cdrid = $('input[name="cdrid"]').val();
-            var noteHTML = "";
-            // console.log($('input[name="cdrid"]').val());
-            var errors = ''; 
-          $.ajax({
-            type: "POST",
-            url: '/add_note/', // This is the url we gave in the route
-            data: $('#'+this.id).serialize(),
-            success: function(res){ // What to do if we succeed
-                if(res.error) {
-                    $.each(res.error, function(index, value)
-                    {
-                        if (value.length != 0)
-                        {
-                            errors += value[0];
-                            errors += "</br>";
-                        }
-                    });
-                    toastr.error(errors);
-                } else {
-                    //console.log(moment(new Date()).format('YYYY-MM-DD hh:mm:ss'));
-                    noteHTML += "<tr>";
-                    noteHTML += "<td>" + res.result.operator  + "</td>";
-                    noteHTML += "<td>" + moment(res.result.datetime.date).format('YYYY-MM-DD hh:mm:ss')  + "</td>";
-                    noteHTML += "<td>" + res.result.note  + "</td>";
-                    noteHTML += "<td><a href='#' class='text-danger mr-2'><i class='nav-icon i-Close-Window font-weight-bold'></td>";
-                    noteHTML += "</tr>";
-                    $("#comments_table tbody").append(noteHTML);
-                    $("#notes_"+cdrid).removeClass('d-none');
-                    $("#add_note_"+cdrid).addClass('d-none');
+                    xajax_hide();
                     toastr.success(res.success);                
                 }
                
@@ -763,30 +716,12 @@
           });
         });
 
-        //delete comment
-        $(".delete_comment").click(function() { 
-            var id = this.id;
-            if (confirm('Are you sure you want to delete this Comment?')) {
-                $.ajax({
-                    url: "delete_comment/"+id,
-                    type: 'DELETE',
-                    success: function (res) {
-
-                        if(res.status == 1) {
-                           $("#cmnt_row_"+id).remove();
-                           toastr.success('Comment delete successfully.')
-                        }
-                        
-                    }
-                });
-            } 
-        }); 
      });
-//$(document).ready(functon(){
 
     $('.add_contact').click(function() {
         $("#contact_form").removeClass('hide');
     });
+
     $(document).on("change","#date_select",function(){
         var date_val = $(this).val();
         $("#custom_date_div").hide();
@@ -812,26 +747,26 @@
         $("#cdr_filter_form")[0].reset();
         get_report_search(1);
     });
-//});
 
-function get_report_search(page)
-{
-    $.ajax({
-        type: 'POST',
-        url : "{{ url('getreportsearch') }}",
-       // url: '/ivrmanager/getreportsearch',
-        data: $("#cdr_filter_form").serialize()+'&page='+page,
-        success: function (data) {
-            if (data.success == 1) {
-                $("#div_table").replaceWith(data.view);
-                 $('#zero_configuration_table').DataTable();
-            } else if (data.error == 1) {
-                alert(data.errormsg);
+
+    function get_report_search(page)
+    {
+        $.ajax({
+            type: 'POST',
+            url : "{{ url('getreportsearch') }}",
+           // url: '/ivrmanager/getreportsearch',
+            data: $("#cdr_filter_form").serialize()+'&page='+page,
+            success: function (data) {
+                if (data.success == 1) {
+                    $("#div_table").replaceWith(data.view);
+                     $('#zero_configuration_table').DataTable();
+                } else if (data.error == 1) {
+                    alert(data.errormsg);
+                }
             }
-        }
 
-    });
-}
+        });
+    }
  </script>
 
 
