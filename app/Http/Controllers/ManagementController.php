@@ -311,7 +311,7 @@ class ManagementController extends Controller
     public function addGeneralFile(Request $request) {
         
         $lang = explode (",", $request->get('file_lang'));
-        //dd($lang);
+        //dd($request->get('file_lang'));
         $validator = Validator::make($request->all(), [
             'file_type' => 'required',
             'filename' => 'required|alpha_dash',
@@ -320,38 +320,24 @@ class ManagementController extends Controller
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
-            $accGroup = ['resellerid' => $request->get('resellerid'),
-                     'groupid' => $request->get('groupid'),
-                     'ivr_level_name'=> $request->get('ivr_level_name'),
-                     'ivr_level'=> $request->get('ivr_level'), 
-                     'ivroption' => $request->get('ivroption'),
-                     'operator_dept' => $request->get('operator_dept'),
+            $generalFile = ['file_type' => $request->get('file_type'),
+                     'filename' => $request->get('filename')
                     ];
 
-            $ivr_menu_id = DB::table('accountgroupdetails')->insertGetId($accGroup);
-            if (file_exists(config('constants.ivr_file'))) {
-                $file = config('constants.ivr_file').'/'.$ivr_menu_id;
+            $general_file_id = DB::table('voicefilesnames')->insertGetId($generalFile);
+            if (!empty($request->get('file_lang')) && file_exists(config('constants.general_file'))) {
+                $file = config('constants.general_file').'/'.$request->get('filename');
 
                 if(!file_exists($file)) {
                     File::makeDirectory($file);
                 }
 
                 foreach($lang as $listOne) {
-                    //echo $listOne;
                     $files = $request->file($listOne);
-            
-                    $ivrLanguage = ['ivr_menu_id' => $ivr_menu_id,
-                             'lang_id' => $listOne,
-                             'filename'=> $files->getClientOriginalName(),
-                             'orginalfilename'=> $files->getClientOriginalName(), 
-                            ];
-
                     $fileName = date('m-d-Y_hia').$files->getClientOriginalName();
                     $files->move($file, $fileName);
-                    DB::table('ast_ivrmenu_language')->insert($ivrLanguage);
                 } 
             }
-            $data['result'] = $accGroup;
             $data['success'] = 'Menu added successfully.';
         } 
          return $data;

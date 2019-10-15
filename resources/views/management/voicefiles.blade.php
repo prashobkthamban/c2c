@@ -19,7 +19,7 @@
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
                         <div class="card-body">
-                            <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#add_voice_file" class="btn btn-primary"> Add New Voicefile</a>
+                            <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#add_voice_file" class="btn btn-primary" id="add_voice"> Add New Voicefile</a>
                             <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
@@ -339,6 +339,7 @@
 
         $('.edit_voicefile').on('click',function(e)
         {
+            $("#exampleModalCenterTitle-2").text('Edit Voicefile');
             var id = $(this).attr("id");
             $.ajax({
             type: "GET",
@@ -374,6 +375,12 @@
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }
           });
+        });
+
+        $('#add_voice').click(function() {
+            $(".add_voicefile_form").trigger("reset");
+            $("#welcomemsg_value").text("");
+            $("#flanguagesection_value").text("");
         });
      });
  </script>
