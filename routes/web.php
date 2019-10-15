@@ -115,7 +115,7 @@ Route::get('get_voicefile/{id}', 'ManagementController@getVoicefile')->name('get
 
 /* generalfiles */
 Route::get('general_files', 'ManagementController@generalFiles')->name('generalFiles');
-Route::get('delete_file/{id}', 'ManagementController@deleteFile')->name('deleteFile');
+Route::get('delete_file/{id}/{filename}', 'ManagementController@deleteFile')->name('deleteFile');
 Route::post('add_general_file', 'ManagementController@addGeneralFile')->name('addGeneralFile');
 
 Route::get('moh_listings', 'ManagementController@mohListings')->name('mohListings');

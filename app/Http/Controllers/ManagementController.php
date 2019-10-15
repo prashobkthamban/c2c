@@ -301,8 +301,13 @@ class ManagementController extends Controller
         return view('management.generalfiles', compact('voicefiles', 'languages'));
     }
 
-    public function deleteFile($id)
+    public function deleteFile($id, $filename)
     {
+        $file = config('constants.general_file').'/'.$filename;
+        if(file_exists($file)) {
+            File::deleteDirectory($file);
+        }
+        
         DB::table('voicefilesnames')->where('id', $id)->delete();
         toastr()->success('Record deleted successfully.');
         return redirect()->route('generalFiles');

@@ -35,7 +35,7 @@
                                         <tr>
                                             <td>{{$listOne->file_type}}</td>
                                             <td>{{$listOne->filename}}</td>
-                                            <td><a href="{{ route('deleteFile', $listOne->id) }}" onclick="return confirm('Are you sure want to delete this record ?')" class="text-danger mr-2">
+                                            <td><a href="{{ route('deleteFile', [$listOne->id, $listOne->filename]) }}" onclick="return confirm('Are you sure want to delete this record ?')" class="text-danger mr-2">
                                                     <i class="nav-icon i-Close-Window font-weight-bold"></i>
                                                 </a></td>
                                         </tr>
