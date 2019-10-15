@@ -134,7 +134,7 @@
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_coperate/', // This is the url we gave in the route
+            url: '{{ URL::route("AddCoperate") }}', // This is the url we gave in the route
             data: $('#coperate_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
