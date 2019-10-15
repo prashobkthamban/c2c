@@ -1,5 +1,5 @@
  <!-- Footer Start -->
-            <div class="flex-grow-1"></div>
+            <!-- <div class="flex-grow-1"></div>
             <div class="app-footer">
                 <div class="row">
                     <div class="col-md-9">
@@ -21,5 +21,5 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <!-- fotter end -->

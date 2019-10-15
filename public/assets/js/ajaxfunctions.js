@@ -20,6 +20,32 @@ function loadForm( id,viewfile ) {
     });
 }
 
+function didList(groupid, did_id) {
+    //var groupid = $(this).val();
+    $.ajax({
+    type: "GET",
+    url: '/get_did/'+ groupid, // This is the url we gave in the route
+    success: function(res){ // What to do if we succeed
+        //console.log(res);
+      $('#did').find('option').not(':first').remove();
+        $.each(res, function (i, item) {
+            // $('#did').append($('<option>', { 
+            //     value: i,
+            //     text : item 
+            // }));
+            if(did_id == i) {
+                $('#did').append('<option value="'+ i +'" selected>'+ item +'</option>');
+            } else {
+               $('#did').append('<option value="'+ i +'">'+ item +'</option>'); 
+            }
+            
+        });
+    },
+    error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+    }
+  });
+}
+
 $(document).ready(function(){
     
     $('.lead-category').change(function (){

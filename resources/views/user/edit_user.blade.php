@@ -6,7 +6,7 @@
 
 @section('main-content')
   <div class="breadcrumb">
-                <h1> User </h1>
+                <h1> Edit User </h1>
 
             </div>
             <div class="separator-breadcrumb border-top"></div>

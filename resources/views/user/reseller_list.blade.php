@@ -16,7 +16,7 @@
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
                         <div class="card-body">
-                            <a title="Compact Sidebar" data-toggle="modal" data-target="#reseller_form" href="#" class="btn btn-primary"> Add Coperate </a>
+                            <a title="Compact Sidebar" data-toggle="modal" data-target="#reseller_form" href="#" class="btn btn-primary" id="add_coperate"> Add Coperate </a>
                             <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
@@ -34,7 +34,7 @@
                                             <td>{{$reseller->resellername}}</td>
                                             <td>{{$reseller->cdr_apikey}}</td>
                                             <td>{{ date('d-m-Y', strtotime($reseller->adddate)) }}</td>
-                                            <td><a  id="{{$reseller->id}}" href="javaScript:void(0);" class="text-success mr-2 edit_form">
+                                            <td><a  id="{{$reseller->id}}" data-toggle="modal" data-target="#reseller_form" href="javaScript:void(0);" class="text-success mr-2 edit_form">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                                 </a><a href="{{ route('destroyCoperate', $reseller->id) }}" onclick="return confirm('You want to delete this coperate?')" class="text-danger mr-2">
                                                     <i class="nav-icon i-Close-Window font-weight-bold"></i>
@@ -78,7 +78,7 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Coperate Name</label> 
+                                        <label for="firstName1">Coperate Name *</label> 
                                         <input type="text" class="form-control" placeholder="Coperate Name" name="resellername" id="resellername"> 
                                     </div>
                                 </div>
@@ -87,7 +87,7 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Username</label> 
+                                        <label for="firstName1">Username *</label> 
                                         <input type="text" class="form-control" placeholder="Username" name="username" id="username">
                                     </div>
                                 </div>
@@ -96,7 +96,7 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Password</label> 
+                                        <label for="firstName1">Password *</label> 
                                         <input type="text" class="form-control" placeholder="Password" name="password" id="password">  
                                     </div>
                                 </div>
@@ -105,8 +105,8 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">CDR API Key</label> 
-                                        <input type="text" class="form-control" placeholder="CDR API Key" name="cdr_apikey" id="cdr_apikey"> 
+                                        <label for="firstName1">CDR API Key *</label> 
+                                        <input type="text" class="form-control" value="{{$cdr_api_key}}" placeholder="CDR API Key" name="cdr_apikey" id="cdr_apikey"> 
                                     </div>
                                 </div>
                         </div>
@@ -148,8 +148,6 @@
                     });
                     toastr.error(errors);
                 } else {
-                    // $("#coperate_form").trigger("reset");
-                    // $("#reseller_form").modal('hide');
                     toastr.success(res.success);
                     setTimeout( function() { 
                         location.reload(true); 
@@ -164,7 +162,8 @@
           });
         });
 
-        $('.edit_form').click(function(){
+        $('.edit_form').click(function() {
+            $("#coperate_title").text('Edit Coperate account');
             $.ajax({
             url: '/edit_coperate/'+this.id, // This is the url we gave in the route
             success: function(res){ // What to do if we succeed
@@ -184,6 +183,10 @@
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }
           });
+        });
+
+        $('#add_coperate').click(function() {
+            $("#coperate_form").trigger("reset");
         });
         
     });

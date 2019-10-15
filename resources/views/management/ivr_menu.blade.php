@@ -177,9 +177,6 @@
             var fileLang = $(this).attr("name");
             langs.push(fileLang);
             $("#file_lang").val(langs);
-            // console.log('test');
-            // console.log(langs);
-           // $(".filename").html(fileName);
         });
 
         $( '.ivr_menu_form' ).on( 'submit', function(e) {
@@ -187,7 +184,7 @@
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_ivr_menu/', // This is the url we gave in the route
+            url: '{{ URL::route("addIvrmenu") }}', // This is the url we gave in the route
             data: new FormData(this),
             dataType:'JSON',
             contentType: false,

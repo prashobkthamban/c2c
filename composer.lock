@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d61f50a4ffe625d3ea9e103c42682a30",
+    "content-hash": "381b7ef300d9be9fde80c62d47448ae6",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -943,6 +943,55 @@
             ],
             "description": "Highlight PHP code in terminal",
             "time": "2018-09-29T18:48:56+00:00"
+        },
+        {
+            "name": "jenbuzz/laravel-uuid",
+            "version": "1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jenbuzz/laravel-uuid.git",
+                "reference": "d96490c36ef16b935bf36f5919884cc607273ae5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jenbuzz/laravel-uuid/zipball/d96490c36ef16b935bf36f5919884cc607273ae5",
+                "reference": "d96490c36ef16b935bf36f5919884cc607273ae5",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "^5.6",
+                "illuminate/support": "^5.6",
+                "php": "^7.1",
+                "ramsey/uuid": "^3.8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.0|^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Jenbuzz\\LaravelUuid\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "jenbuzz",
+                    "homepage": "https://github.com/jenbuzz/"
+                }
+            ],
+            "description": "Adds a uuid to a model using ramsey/uuid",
+            "keywords": [
+                "Universally unique identifier",
+                "eloquent",
+                "laravel",
+                "ramsey uuid",
+                "uuid"
+            ],
+            "time": "2018-11-15T18:11:38+00:00"
         },
         {
             "name": "laravel-admin-ext/media-player",

@@ -179,14 +179,6 @@ class ManagementController extends Controller
                     $files->move($file, $fileName);
                     DB::table('ast_ivrmenu_language')->insert($ivrLanguage);
                 } 
-                //die;
-                   // else {
-                   //      foreach ($files as $key => $value) {
-                   //          //echo $value->getClientOriginalExtension();
-                   //          $fileName = date('m-d-Y_hia').$value->getClientOriginalName();
-                   //          $value->move($file, $fileName);
-                   //      }
-                   // }
             }
             $data['result'] = $accGroup;
             $data['success'] = 'Menu added successfully.';
@@ -198,7 +190,7 @@ class ManagementController extends Controller
         $voicefiles = DB::table('did_voicefilesettings')
                     ->leftJoin('accountgroup', 'did_voicefilesettings.groupid', '=', 'accountgroup.id')
                     ->select('did_voicefilesettings.*', 'accountgroup.name')
-                    ->paginate(10);
+                    ->orderBy('id', 'desc')->paginate(10);
         $voicefilesnames = DB::table('voicefilesnames')->where('file_type', 'mainmenupress0')->pluck('filename', 'filename');
         $thank4calling = DB::table('voicefilesnames')->where('file_type', 'thank4caling')->pluck('filename', 'filename');
         $repeatoptions = DB::table('voicefilesnames')->where('file_type', 'repeatoptions')->pluck('filename', 'filename');
@@ -229,13 +221,23 @@ class ManagementController extends Controller
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
+            $welcomefile = $request->file('welcomemsg');
+            $langfile = $request->file('flanguagesection');
+            //dd($request->file('flanguagesection'));
+            if($request->file('welcomemsg') != null) {
+               $fileName1 = date('m-d-Y_hia').$welcomefile->getClientOriginalName();
+            }
+            if($request->file('flanguagesection') != null) {
+               $fileName2 = date('m-d-Y_hia').$langfile->getClientOriginalName(); 
+            }
+            
             $voicefile = [
                      'groupid' => $request->get('groupid'),
                      'did'=> $request->get('did'),
                      'wfile'=> $request->get('wfile'), 
-                     'welcomemsg' => 'welcomemsg',
+                     'welcomemsg' => isset($fileName1) ? $fileName1 : $request->get('old_welcomemsg'),
                      'languagesection' => $request->get('languagesection'),
-                     'flanguagesection' => 'flanguagesection',
+                     'flanguagesection' => isset($fileName2) ? $fileName2 : $request->get('old_flanguagesection'),
                      'mainmenupress0' => $request->get('mainmenupress0'),
                      'thank4caling' => $request->get('thank4caling'),
                      'repeatoptions' => $request->get('repeatoptions'),
@@ -255,16 +257,38 @@ class ManagementController extends Controller
                     ];
 
             if(empty($request->get('id'))) {
-                DB::table('did_voicefilesettings')->insert($voicefile);
+                $voice_file_id = DB::table('did_voicefilesettings')->insertGetId($voicefile);
+                $this->uploadVoicefile($voice_file_id, $welcomefile, $langfile, $fileName1 = null, $fileName2 = null);
                 $data['success'] = 'Voicefile added successfully.';
             } else {
                 DB::table('did_voicefilesettings')
                     ->where('id', $request->get('id'))
                     ->update($voicefile);
+                $this->uploadVoicefile($request->get('id'), $welcomefile, $langfile, $fileName1 = null, $fileName2 = null);
                 $data['success'] = 'Voicefile updated successfully.';
             }
         } 
          return $data;
+    }
+
+    private function uploadVoicefile($id, $welcomeFile, $langFile, $fileName1, $fileName2) {
+        if (!empty($id) && !empty($fileName1) && file_exists(config('constants.voice_welcome_file'))) {
+            $file = config('constants.voice_welcome_file').'/'.$id;
+
+            if(!file_exists($file)) {
+            File::makeDirectory($file);
+            }
+            $welcomeFile->move($file, $fileName1);
+        }
+        if (!empty($id) && !empty($fileName2) && file_exists(config('constants.voice_lang_file'))) {
+            $file = config('constants.voice_lang_file').'/'.$id;
+
+            if(!file_exists($file)) {
+                File::makeDirectory($file);
+            }
+            $langFile->move($file, $fileName2);
+        }
+        return true;
     }
 
     public function getVoicefile($id) {
@@ -272,9 +296,9 @@ class ManagementController extends Controller
     }
 
     public function generalFiles() { 
-        $voicefiles = DB::table('voicefilesnames')->paginate(10);
-        //dd($voicefiles);
-        return view('management.generalfiles', compact('voicefiles'));
+        $voicefiles = DB::table('voicefilesnames')->orderBy('id', 'desc')->paginate(10);
+        $languages = DB::table('languages')->get();
+        return view('management.generalfiles', compact('voicefiles', 'languages'));
     }
 
     public function deleteFile($id)
@@ -282,6 +306,55 @@ class ManagementController extends Controller
         DB::table('voicefilesnames')->where('id', $id)->delete();
         toastr()->success('Record deleted successfully.');
         return redirect()->route('generalFiles');
+    }
+
+    public function addGeneralFile(Request $request) {
+        
+        $lang = explode (",", $request->get('file_lang'));
+        //dd($lang);
+        $validator = Validator::make($request->all(), [
+            'file_type' => 'required',
+            'filename' => 'required|alpha_dash',
+        ]);    
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $accGroup = ['resellerid' => $request->get('resellerid'),
+                     'groupid' => $request->get('groupid'),
+                     'ivr_level_name'=> $request->get('ivr_level_name'),
+                     'ivr_level'=> $request->get('ivr_level'), 
+                     'ivroption' => $request->get('ivroption'),
+                     'operator_dept' => $request->get('operator_dept'),
+                    ];
+
+            $ivr_menu_id = DB::table('accountgroupdetails')->insertGetId($accGroup);
+            if (file_exists(config('constants.ivr_file'))) {
+                $file = config('constants.ivr_file').'/'.$ivr_menu_id;
+
+                if(!file_exists($file)) {
+                    File::makeDirectory($file);
+                }
+
+                foreach($lang as $listOne) {
+                    //echo $listOne;
+                    $files = $request->file($listOne);
+            
+                    $ivrLanguage = ['ivr_menu_id' => $ivr_menu_id,
+                             'lang_id' => $listOne,
+                             'filename'=> $files->getClientOriginalName(),
+                             'orginalfilename'=> $files->getClientOriginalName(), 
+                            ];
+
+                    $fileName = date('m-d-Y_hia').$files->getClientOriginalName();
+                    $files->move($file, $fileName);
+                    DB::table('ast_ivrmenu_language')->insert($ivrLanguage);
+                } 
+            }
+            $data['result'] = $accGroup;
+            $data['success'] = 'Menu added successfully.';
+        } 
+         return $data;
     }
 
     public function mohListings() { 

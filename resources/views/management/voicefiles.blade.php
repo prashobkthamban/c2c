@@ -112,6 +112,8 @@
                                     <div class="col-md-8 form-group mb-3">
                                         <!-- <label for="firstName1">Welcome File</label>  -->
                                          {!! Form::file('welcomemsg', array('class' => 'form-control', 'id' => 'welcomemsg')) !!}
+                                         {!! Form::hidden('old_welcomemsg', '', array('id' =>'old_welcomemsg')) !!}
+                                         <span id="welcomemsg_value"></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -119,7 +121,7 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Multi Language File *</label> 
+                                        <label for="firstName1">Multi Language File</label> 
                                          {!! Form::select('languagesection', array('' => 'Do not Play Language'), null,array('class' => 'form-control', 'id' => 'languagesection')) !!}
                                     </div>
                                 </div>  
@@ -130,6 +132,8 @@
                                     <div class="col-md-8 form-group mb-3">
                                         <!-- <label for="firstName1">Welcome File</label>  -->
                                          {!! Form::file('flanguagesection', array('class' => 'form-control', 'id' => 'flanguagesection')) !!}
+                                         {!! Form::hidden('old_flanguagesection', '', array('id' =>'old_flanguagesection')) !!}
+                                         <span id="flanguagesection_value"></span>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -302,7 +306,7 @@
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_voicefile/', // This is the url we gave in the route
+            url: '{{ URL::route("addVoicefile") }}', // This is the url we gave in the route
             data: new FormData(this),
             dataType:'JSON',
             contentType: false,
@@ -336,7 +340,6 @@
         $('.edit_voicefile').on('click',function(e)
         {
             var id = $(this).attr("id");
-            console.log(id);
             $.ajax({
             type: "GET",
             url: '/get_voicefile/'+ id, // This is the url we gave in the route
@@ -344,10 +347,29 @@
                 var res = result[0];
                 console.log(res);
                 $("#groupid").val(res.groupid);
-                $("#did").val(res.did);
+                didList(res.groupid, res.did);
+                //$("#did").val(res.did);
                 $("#voicefile_id").val(res.id);
                 $("#mainmenupress0").val(res.mainmenupress0);
                 $("#thank4caling").val(res.thank4caling);
+                $("#repeatoptions").val(res.repeatoptions);
+                $("#previousmenu").val(res.previousmenu);
+                $("#voicemailmsg").val(res.voicemailmsg);
+                $("#trasfringcall").val(res.trasfringcall);
+                $("#contactusoon").val(res.contactusoon);
+                $("#talktooperator9").val(res.talktooperator9);
+                $("#noinput").val(res.noinput);
+                $("#wronginput").val(res.wronginput);
+                $("#nonworkinghours").val(res.nonworkinghours);
+                $("#moh").val(res.MOH);
+                $("#transferingtodifferentagent").val(res.transferingtodifferentagent);
+                $("#holiday").val(res.holiday);
+                $("#aombefore").val(res.aombeforewelcome);
+                $("#aomafter").val(res.aomafterwelcome);
+                $("#old_flanguagesection").val(res.flanguagesection);
+                $("#flanguagesection_value").text(res.flanguagesection);
+                $("#old_welcomemsg").val(res.welcomemsg);
+                $("#welcomemsg_value").text(res.welcomemsg);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }

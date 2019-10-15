@@ -6,7 +6,7 @@
 
 @section('main-content')
   <div class="breadcrumb">
-                <h1> User </h1>
+                <h1> Add User </h1>
 
             </div>
             <div class="separator-breadcrumb border-top"></div>
@@ -92,25 +92,25 @@
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Operator Call Count</label>
-                                         {!! Form::number('try_count', null, ['class' => 'form-control', 'placeholder' => 'Operator Call Count']) !!}
+                                         {!! Form::number('try_count', 3, ['class' => 'form-control', 'placeholder' => 'Operator Call Count']) !!}
                                          <p class="text-danger ">{{ $errors->first('try_count') }}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Dialtime</label>
-                                         {!! Form::number('dial_time', null, ['class' => 'form-control', 'placeholder' => 'In Seconds']) !!}
+                                         {!! Form::number('dial_time', 30, ['class' => 'form-control', 'placeholder' => 'In Seconds']) !!}
                                          <p class="text-danger ">{{ $errors->first('dial_time') }}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Max Call Duration</label>
-                                        {!! Form::number('maxcall_dur', null, ['class' => 'form-control', 'placeholder' => 'In Seconds']) !!}
+                                        {!! Form::number('maxcall_dur', 300, ['class' => 'form-control', 'placeholder' => 'In Seconds']) !!}
                                          <p class="text-danger ">{{ $errors->first('maxcall_dur') }}</p>
                                     </div>
 
                                      <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Max Web Logins</label>
-                                         {!! Form::number('operator_no_logins', null, ['class' => 'form-control', 'placeholder' => 'In Seconds']) !!}
+                                         {!! Form::number('operator_no_logins', 10, ['class' => 'form-control', 'placeholder' => 'In Seconds']) !!}
                                          <p class="text-danger ">{{ $errors->first('operator_no_logins') }}</p>
                                     </div>
 
@@ -138,20 +138,20 @@
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="picker1">Click2Call</label>
                                         <div>
-                                            <label class="radio-inline"> {{ Form::radio('c2c', 'Yes') }} Yes</label>
-                                            <label class="radio-inline"> {{ Form::radio('c2c', 'No', true) }} No</label>
+                                            <label class="radio-inline"> {{ Form::radio('c2c', 'Yes', null, ['class' => 'click2call']) }} Yes</label>
+                                            <label class="radio-inline"> {{ Form::radio('c2c', 'No', true, ['class' => 'click2call']) }} No</label>
                                         </div>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Click2Call Channels</label>
-                                        {!! Form::number('c2c_channels', null, ['class' => 'form-control', 'placeholder' => 'Click2Call Channels']) !!} 
+                                        {!! Form::number('c2c_channels', 1, ['class' => 'form-control', 'placeholder' => 'Click2Call Channels', 'readonly']) !!} 
                                         <p class="text-danger ">{{ $errors->first('c2c_channels') }}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Clik2CallAPI</label>
-                                        {!! Form::text('c2cAPI', null, ['class' => 'form-control', 'placeholder' => 'Clik2CallAPI']) !!} 
+                                        {!! Form::text('c2cAPI', $c2capi, ['class' => 'form-control', 'placeholder' => 'Clik2CallAPI']) !!} 
                                         <p class="text-danger ">{{ $errors->first('c2cAPI') }}</p>
                                     </div>
 
@@ -195,7 +195,7 @@
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">CDR API key</label>
-                                        {!! Form::text('cdr_apikey', null, ['class' => 'form-control', 'placeholder' => 'CDR API key']) !!}
+                                        {!! Form::text('cdr_apikey', $cdr_api_key, ['class' => 'form-control', 'placeholder' => 'CDR API key']) !!}
                                         <p class="text-danger ">{{ $errors->first('cdr_apikey') }}</p>
                                     </div>
 
@@ -207,7 +207,7 @@
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Dialout conference members</label>
-                                        {!! Form::number('max_no_confrence', null, ['class' => 'form-control', 'placeholder' => 'Dialout conference members']) !!}
+                                        {!! Form::number('max_no_confrence', 5, ['class' => 'form-control', 'placeholder' => 'Dialout conference members']) !!}
                                         <p class="text-danger ">{{ $errors->first('max_no_confrence') }}</p>
                                     </div>
 
@@ -290,8 +290,22 @@
 
 @section('page-js')
 
- <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
-    <script src="{{asset('assets/js/datatables.script.js')}}"></script>
+<script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
+<script src="{{asset('assets/js/datatables.script.js')}}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(".click2call").click(function()
+        {
+            var call_value = $(this).val();
+            if(call_value == 'Yes') {
+               $('input[name=c2c_channels]').attr('readonly', false);
+            } else {
+               $('input[name=c2c_channels]').attr('readonly', true); 
+               $('input[name=c2c_channels]').val(1); 
+            }
+        });
+    });
+</script>
 
 @endsection
 

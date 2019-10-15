@@ -55,6 +55,10 @@ class UserController extends Controller
      */
     public function addUser()
     {
+        $apikey = \Ramsey\Uuid\Uuid::uuid1()->toString();
+        $c2capi = "http://ivrmanager.in/api/webc2c.php?apikey=$apikey&source=&number=";
+        $cdr_api_key = \Ramsey\Uuid\Uuid::uuid4()->toString();
+        //dd($c2capi);
         $account_group = new Accountgroup();
         $lang = $account_group->get_language();
         $lang = $lang->prepend('Select language', '0');
@@ -66,12 +70,13 @@ class UserController extends Controller
         
         $did_list = $did_list->prepend('Select Did', '');
         
-        return view('user.add_user', compact('lang', 'coperate', 'default', 'did_list', 'sms_gateway'));
+        return view('user.add_user', compact('lang', 'coperate', 'default', 'did_list', 'sms_gateway', 'c2capi', 'cdr_api_key'));
     }
 
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+
+        $rules = [
             'name' => 'required',
             'did' => 'required',
             'startdate' => 'required|date|before:enddate',
@@ -81,21 +86,21 @@ class UserController extends Controller
             'maxcall_dur' => 'required|integer|min:0',
             'c2c_channels' => 'required',
             'c2cAPI' => 'required',
-            'sms_api_gateway_id' => 'required',
-            'sms_api_user' => 'required',
-            'sms_api_pass' => 'required',
-            'sms_api_senderid' => 'required',
             'cdr_apikey' => 'required',
-            'API' => 'required',
-            'ip' => 'required',
             'max_no_confrence' => 'required|integer|min:0',
-        ]);
+        ];
 
+        if(!empty($request->get('sms_api_gateway_id'))) {
+            $rules['sms_api_user'] = 'required';
+            $rules['sms_api_pass'] = 'required';
+            $rules['sms_api_senderid'] = 'required';
+        }
+        $validator = Validator::make($request->all(), $rules);
         if($validator->fails()) {
             $messages = $validator->messages(); 
-            // dd($messages);
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
+
             $account_group = new Accountgroup([
                 'name' => $request->get('name'),
                 'resellerid'=> $request->get('resellerid'),
@@ -658,8 +663,9 @@ class UserController extends Controller
     }
 
     public function coperates() {
-        $resellers = DB::table('resellergroup')->paginate(10);
-        return view('user.reseller_list', compact('resellers'));
+        $cdr_api_key = \Ramsey\Uuid\Uuid::uuid4()->toString();
+        $resellers = DB::table('resellergroup')->orderBy('id', 'desc')->paginate(10);
+        return view('user.reseller_list', compact('resellers', 'cdr_api_key'));
     }
 
     public function editCoperate($id) {
@@ -706,7 +712,7 @@ class UserController extends Controller
                 $new_field = array('resellerid' => $id);
                 $account_1 = array_merge($account, $new_field);
                 if(!empty($id)) {
-                    DB::table('account')->insert($account);
+                    DB::table('account')->insert($account_1);
                     $data['success'] = 'Coperate added successfully.';
                 }
             } else {

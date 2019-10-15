@@ -201,7 +201,6 @@
         
         $( '.add_extra_did' ).on( 'submit', function(e) {
             e.preventDefault();
-            //var noteHTML = "";
             var errors = ''; 
           $.ajax({
             type: "post",

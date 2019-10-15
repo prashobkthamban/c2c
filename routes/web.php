@@ -112,8 +112,12 @@ Route::get('voicemail', 'ManagementController@voicemail')->name('Voicemail');
 Route::get('voice_files', 'ManagementController@voiceFiles')->name('voiceFiles');
 Route::post('add_voicefile', 'ManagementController@addVoicefile')->name('addVoicefile');
 Route::get('get_voicefile/{id}', 'ManagementController@getVoicefile')->name('getVoicefile');
+
+/* generalfiles */
 Route::get('general_files', 'ManagementController@generalFiles')->name('generalFiles');
 Route::get('delete_file/{id}', 'ManagementController@deleteFile')->name('deleteFile');
+Route::post('add_general_file', 'ManagementController@addGeneralFile')->name('addGeneralFile');
+
 Route::get('moh_listings', 'ManagementController@mohListings')->name('mohListings');
 Route::get('delete_moh/{id}/{classname}', 'ManagementController@deleteMoh')->name('deleteMoh');
 Route::post('add_moh', 'ManagementController@addMoh')->name('addMoh');
