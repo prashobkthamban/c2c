@@ -317,7 +317,7 @@
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_reminder/', // This is the url we gave in the route
+            url: '{{ URL::route("addReminder") }}', // This is the url we gave in the route
             data: $('.edit_reminder_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {

@@ -301,26 +301,6 @@
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
  <script type="text/javascript">
      $(document).ready(function() {
-        $('#resellerid').on('change',function(e)
-            {
-                var resellerid = $(this).val();
-                $.ajax({
-                type: "GET",
-                url: '/get_customer/admin/'+ resellerid, // This is the url we gave in the route
-                success: function(res){ // What to do if we succeed
-     
-                  $('#groupid').find('option').not(':first').remove();
-                    $.each(res, function (i, item) {
-                        $('#groupid').append($('<option>', { 
-                            value: i,
-                            text : item 
-                        }));
-                    });
-                },
-                error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
-                }
-              });
-            });
 
         $('#groupid').on('change',function(e)
                 {
@@ -349,7 +329,7 @@
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_operator/', // This is the url we gave in the route
+            url:  '{{ URL::route("addOperator") }}', // This is the url we gave in the route
             data: $('.add_operator_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {

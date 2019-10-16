@@ -176,7 +176,7 @@
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_account/', // This is the url we gave in the route
+            url: '{{ URL::route("addAccount") }}', // This is the url we gave in the route
             data: $('#add_login').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {

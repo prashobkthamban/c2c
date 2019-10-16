@@ -132,7 +132,7 @@
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_moh/', // This is the url we gave in the route
+            url: '{{ URL::route("addMoh") }}', // This is the url we gave in the route
             data: new FormData(this),
             dataType:'JSON',
             contentType: false,

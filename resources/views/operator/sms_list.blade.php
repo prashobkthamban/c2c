@@ -171,7 +171,7 @@
             var errors = ''; 
               $.ajax({
                 type: "POST",
-                url: '/add_sms/', // This is the url we gave in the route
+                url: '{{ URL::route("addSms") }}', // This is the url we gave in the route
                 data: $('.add_sms_form').serialize(),
                 success: function(res){ // What to do if we succeed
                     if(res.error) {

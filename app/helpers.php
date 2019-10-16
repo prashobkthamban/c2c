@@ -32,3 +32,12 @@ function getDidList($groupid = null) {
     }
     return $did_list;
 }
+
+function getDepartmentList($groupid) {
+    $dept_list = DB::table('operatordepartment')->where('groupid', $groupid)->where('complaint', 'Yes')->orderBy('adddate', 'desc')->pluck('dept_name', 'id'); 
+    if(Auth::user()->usertype == 'admin') {
+        $dept_list->prepend('Miss Call', '0');
+    }
+    
+    return $dept_list;
+}

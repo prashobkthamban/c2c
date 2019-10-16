@@ -612,11 +612,11 @@
             // $("#dial_submit").text('Dialing...');
             // $("#dial_submit").attr('disabled', 'disabled');
             //return false;
-            console.log('sap');
+
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_cdr/', // This is the url we gave in the route
+            url: '{{ URL::route("AddCdr") }}', // This is the url we gave in the route
             data: $('#dial_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
@@ -648,14 +648,10 @@
         
         $( '#msg_form' ).on( 'submit', function(e) {
             e.preventDefault();
-            // $("#msg_submit").text('Dialing...');
-            // $("#msg_submit").attr('disabled', 'disabled');
-            //return false;
-            console.log('sap');
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_cdr/', // This is the url we gave in the route
+            url: '{{ URL::route("AddCdr") }}', // This is the url we gave in the route
             data: $('#msg_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
@@ -691,7 +687,7 @@
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_reminder/', // This is the url we gave in the route
+            url: '{{ URL::route("addReminder") }}', // This is the url we gave in the route
             data: $('#'+this.id).serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {

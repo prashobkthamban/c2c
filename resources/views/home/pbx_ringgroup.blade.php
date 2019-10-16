@@ -171,7 +171,7 @@
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_ringgroup/', // This is the url we gave in the route
+            url: '{{ URL::route("addRinggroup") }}', // This is the url we gave in the route
             data: $('.add_ringgroup_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {

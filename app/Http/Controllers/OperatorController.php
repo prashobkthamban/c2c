@@ -118,9 +118,64 @@ class OperatorController extends Controller
             $query->where('nonoperatordepartment.groupid', Auth::user()->groupid);
         }
         $query->select('nonoperatordepartment.*', 'resellergroup.resellername', 'operatordepartment.dept_name', 'accountgroup.name');
-        $nonoperatordept = $query->paginate(10);
+        $nonoperatordept = $query->orderBy('id', 'desc')->paginate(10);
+        $languages = DB::table('languages')->get();
         //dd($nonoperatordept);
-        return view('operator.nonoperatordept_list', compact('nonoperatordept'));
+        return view('operator.nonoperatordept_list', compact('nonoperatordept', 'languages'));
+    }
+
+    public function getNonOperator($id) {
+        return $non_opt = DB::table('nonoperatordepartment')
+                ->leftJoin('operatordepartment', 'nonoperatordepartment.departmentid', '=', 'operatordepartment.id')
+                ->where('nonoperatordepartment.id', $id)->select('nonoperatordepartment.*', 'operatordepartment.dept_name')->get();
+    }
+
+    public function addNonOperator(Request $request) {
+        //dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'groupid' => 'required',
+            'departmentid' => 'required',
+        ]);    
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $nonDept = ['resellerid' => $request->get('resellerid'),
+                     'groupid' => $request->get('groupid'),
+                     'departmentid'=> $request->get('departmentid'),
+                     'sms_to_caller'=> $request->get('sms_to_caller'), 
+                     'sms_to_operator' => $request->get('sms_to_operator'),
+                     'operator_no' => $request->get('operator_no'),
+                     'generateticket' => $request->get('generateticket'),
+                     'record_com' => $request->get('record_com'),
+                     'operator_email' => $request->get('operator_email'),
+                     'sms_template_caller' => $request->get('sms_template_caller'),
+                     'sms_template_operator' => $request->get('sms_template_operator'),
+                     'email_to_operator' => $request->get('email_to_operator'),
+                    ];
+
+            if(empty($request->get('id'))) {
+                DB::table('nonoperatordepartment')->insert($nonDept);
+                $data['success'] = 'Non Operator department added successfully.';
+            } else {
+                DB::table('nonoperatordepartment')
+                    ->where('id', $request->get('id'))
+                    ->update($nonDept);
+                $data['success'] = 'Non Operator department updated successfully.';
+            }
+        } 
+         return $data;
+    }
+
+    public function deleteNonOperator($id)
+    {
+        $res = DB::table('nonoperatordepartment')->where('id',$id)->delete();
+        toastr()->success('Non Operator delete successfully.');
+        return redirect()->route('NonOperatorList');
+    }
+
+    public function getDepartment($groupid) {
+        return getDepartmentList($groupid);
     }
 
     public function sms() {

@@ -151,7 +151,13 @@ Route::get('get_ivr/{groupid}', 'OperatorController@getIvr')->name('getIvr');
 Route::post('add_operator', 'OperatorController@addOperator')->name('addOperator');
 Route::get('get_operator/{id}', 'OperatorController@getOperator')->name('getOperator');
 Route::get('delete_operator/{id}', 'OperatorController@deleteOperator')->name('deleteOperator');
+
 Route::get('nonoperator_list', 'OperatorController@nonOperatorList')->name('NonOperatorList');
+Route::get('get_non_operator/{id}', 'OperatorController@getNonOperator')->name('getNonOperator');
+Route::post('add_non_operator', 'OperatorController@addNonOperator')->name('addNonOperator');
+Route::get('get_department/{groupid}', 'OperatorController@getDepartment')->name('getDepartment');
+Route::get('delete_non_operator/{id}', 'OperatorController@deleteNonOperator')->name('deleteNonOperator');
+
 Route::get('sms_list', 'OperatorController@sms')->name('Sms');
 Route::post('add_sms', 'OperatorController@addSms')->name('addSms');
 Route::get('get_sms/{id}', 'OperatorController@getSms')->name('getSms');

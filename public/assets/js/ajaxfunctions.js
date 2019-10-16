@@ -77,7 +77,7 @@ $(document).ready(function(){
         var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '/add_note/', // This is the url we gave in the route
+            url: '{{ URL::route("addNote") }}', // This is the url we gave in the route
             data: $('#'+this.id).serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
@@ -120,7 +120,7 @@ $(document).ready(function(){
 
         $.ajax({
         type: "POST",
-        url: '/add_cdr_contact/', // This is the url we gave in the route
+        url: '{{ URL::route("addContact") }}', // This is the url we gave in the route
         data: $('#'+this.id).serialize(),
         success: function(res){ // What to do if we succeed
             if(res.error) {
@@ -155,7 +155,7 @@ $(document).ready(function(){
 
         $.ajax({
         type: "POST",
-        url: '/add_tag/', // This is the url we gave in the route
+        url: '{{ URL::route("addTag") }}', // This is the url we gave in the route
         data: $('#'+this.id).serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
@@ -220,5 +220,28 @@ $(document).ready(function(){
             }
           });
         }); 
+
+        $('#resellerid').on('change',function(e)
+            {
+                var resellerid = $(this).val();
+                $.ajax({
+                type: "GET",
+                url: '/get_customer/admin/'+ resellerid, // This is the url we gave in the route
+                success: function(res){ // What to do if we succeed
+     
+                  $('#groupid').find('option').not(':first').remove();
+                    $.each(res, function (i, item) {
+                        $('#groupid').append($('<option>', { 
+                            value: i,
+                            text : item 
+                        }));
+                    });
+                },
+                error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                }
+              });
+            });
+
+     
 });
 
