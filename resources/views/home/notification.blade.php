@@ -35,18 +35,18 @@
                                     <tbody>
                                     @if(!empty($result))
                                         @foreach($result as $row )
-                                        {{dd($row)}}
                                     <tr>
-                                        <td>
-                                           {{ $row->name }}
-
-                                        </td>
+                                        <td>{{ $row->name }}</td>
                                         <td>{{$row->fromusername}}</td>
                                         <td>{{$row->title}}</td>
                                         <td>{{$row->description}}</td>
                                         <td>{{$row->datetime}}</td>
                                         <td><a href="#" class="text-primary mr-2 view_modal" data-toggle="modal" data-target="#view" id="view_{{$row->id}}" onClick="replyModal({{$row->id}})">
-                                                <i class="nav-icon {{($row->grpreadstatus == '1') ? 'i-Folder-Open' :'i-Mail-2'}} font-weight-bold"></i>
+                                            @if(Auth::user()->usertype == 'admin')
+                                                <i class="nav-icon {{($row->adm_read_status == '1') ? 'i-Folder-Open' :'i-Mail-2'}} font-weight-bold"></i>
+                                            @else 
+                                                <i class="nav-icon {{($row->grp_readstatus == '1') ? 'i-Folder-Open' :'i-Mail-2'}} font-weight-bold"></i>
+                                            @endif
                                             </a>
                                             
                                             <a href="{{ route('deleteNotification', $row->id) }}" onclick="return confirm('Are you sure want to delete this notification ?')" class="text-danger mr-2">
@@ -290,7 +290,7 @@
         $( '.view_modal' ).on( 'click', function(e) {
             var id = this.id;
             var view_id = id.replace("view_", "");
-
+            var not_count = $(".notification_count").text();
             $.ajax({
             type: "POST",
             url: '{{ URL::route("updateStatus") }}', // This is the url we gave in the route
@@ -299,6 +299,8 @@
                 console.log(res);
                 if(res.status == true) {
                     $('#'+id).html('<i class="nav-icon i-Folder-Open font-weight-bold"></i>');
+                    $(".notification_count").text(not_count-1);
+                    $("#not_id_"+view_id).remove();
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail

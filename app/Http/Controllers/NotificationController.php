@@ -75,7 +75,7 @@ class NotificationController extends Controller
             if(Auth::user()->usertype == 'admin') {
                 Notification::where('id', $request->get('not_id'))->update(array('grp_readstatus' => 0));
             } else {
-                $this->did::where('id', $request->get('not_id'))->update(array('adm_read_status' => 0));
+                Notification::where('id', $request->get('not_id'))->update(array('adm_read_status' => '0'));
             }
 
             $subnotification = ['not_id' => $request->get('not_id'),
@@ -96,7 +96,10 @@ class NotificationController extends Controller
     public function updateStatus(Request $request) {
         $data['status'] = false;  
 
-        if(!empty($request->get('view_id')) && !empty($request->get('status'))) {
+        if(Auth::user()->usertype == 'admin') {
+            Notification::where('id', $request->get('view_id'))->update(array('adm_read_status' => $request->get('status')));
+            $data['status'] = true;
+        } else {
             Notification::where('id', $request->get('view_id'))->update(array('grp_readstatus' => $request->get('status')));
             $data['status'] = true;
         }

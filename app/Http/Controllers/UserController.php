@@ -18,6 +18,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
 use Hash;
+$string = 'c4ca4238a0b923820dcc';
+$encrypted = \Illuminate\Support\Facades\Crypt::encrypt($string);
+$decrypted_string = \Illuminate\Support\Facades\Crypt::decrypt($encrypted);
 
 class UserController extends Controller
 {
@@ -281,7 +284,10 @@ class UserController extends Controller
     public function loginAccounts() {
         $account_group = new Accountgroup();
         $coperate = $account_group->get_coperate();
-        $coperate = $coperate->prepend('Select coperate', '');
+        $coperate = $coperate->prepend('Select coperate', null);
+        $customer = getAccountgroups();
+        $customer = $customer->prepend('Select customer', '');
+        //dd($customer);
 
         $query = DB::table('account')
              ->leftJoin('accountgroup', 'account.groupid', '=', 'accountgroup.id')
@@ -298,13 +304,12 @@ class UserController extends Controller
         $query->select('account.*', 'accountgroup.name', 'resellergroup.resellername');
         $accounts = $query->orderBy('id', 'desc')->paginate(10);
         //dd($accounts);
-        return view('user.account_list', compact('accounts', 'coperate'));
+        return view('user.account_list', compact('accounts', 'coperate', 'customer'));
     }
 
     public function editAccount($id = null) {
         $account = new Account();
-        return $account->findOrFail($id);     
-        
+        return $account->findOrFail($id);       
     }
 
     public function getCustomer($usertype, $resellerid) {
@@ -318,16 +323,15 @@ class UserController extends Controller
     public function addAccount(Request $request) 
     {
         //dd($request->all());
-        $validator = Validator::make($request->all(), [
+        $rules = [
             'username' => 'required',
-            'password' => 'required',
             'usertype' => 'required',
-            // 'resellerid' => 'required',
-            // 'groupid' => 'required',
-            'phone_number' => 'required',
-            'email' => 'required',
-        ]);    
-
+        ];   
+        
+        if(empty($request->get('id'))) {
+             $rules['password'] = 'required';
+        }
+        $validator = Validator::make($request->all(), $rules);
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
@@ -344,6 +348,10 @@ class UserController extends Controller
                 DB::table('account')->insert($account);
                 $data['success'] = 'Account added successfully.';
             } else {
+                if(empty($request->get('password'))) {
+                    unset($account['password']);
+                }
+
                 DB::table('account')
                     ->where('id', $request->get('id'))
                     ->update($account);

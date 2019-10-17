@@ -131,12 +131,73 @@ class ReminderController extends Controller
     }
 
     public function pbxDid() {
-        //echo "sd";die;
         $pbx_did = DB::table('pbx_incoming')
                     ->select('pbx_incoming.*', 'accountgroup.name' )
                     ->join('accountgroup', 'pbx_incoming.groupid', '=', 'accountgroup.id')
                     ->orderBy('id', 'desc')->paginate(10);
         return view('home.pbx_did', ['pbx_did' => $pbx_did]);
+    }
+
+    public function getOptions($type, $groupid) {
+        $data['extensions'] = getExtensions($type, $groupid);
+        $data['ringgroups'] = getRinggroups($type, $groupid);
+        return $data;
+    }
+    
+    public function addPbxDid(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'groupid' => 'required',
+            'did' => 'required',
+            'outdptname' => 'required',
+            'indptname' => 'required',
+        ]);    
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $dest_num = $request->get('dest_num');
+            if($request->get('destination') == 'ringgroup') {
+                $dest_num = $request->get('rrnumber');
+                if(empty($request->get('rrnumber'))) {
+                    DB::table('pbx_ringgroups')->insert(['ringgroup' => '11'.$request->get('did'), 'description' => 'DID-PRIMARYGROUP', 'members' => '10000000', 'groupid' => $request->get('groupid'), 'strategy' => 'ringall', 'add' => '1', 'grptime' => '60']);
+                    $dest_num = '11'.$request->get('did');
+                }
+            }
+            $pbxDid = ['groupid' => $request->get('groupid'),
+                     'did' => $request->get('did'),
+                     'destination' => $request->get('destination'),
+                     'outdptname'=> $request->get('outdptname'),
+                     'indptname'=> $request->get('indptname'),
+                     'dest_num' => $dest_num,
+                     'add' => 1
+                    ];
+
+            if(empty($request->get('id'))) {
+                DB::table('pbx_incoming')->insert($pbxDid);
+                $data['success'] = 'Account added successfully.';
+            } else {
+                unset($pbxDid['add']);
+                $new_field = array('update' => 1);
+                $pbxDid_1 = array_merge($pbxDid, $new_field);
+
+                DB::table('pbx_incoming')
+                    ->where('id', $request->get('id'))
+                    ->update($pbxDid);
+                $data['success'] = 'Account updated successfully.';
+            }
+        } 
+         return $data;
+    }
+
+    public function deletePbxdid($id)
+    {
+        DB::table('pbx_incoming')->where('id', $id)->delete();
+        toastr()->success('Record deleted successfully.');
+        return redirect()->route('PbxDid');
+    }
+
+    public function getPbxdid($id) {
+        return DB::table('pbx_incoming')->where('id', $id)->get();
     }
     
 }

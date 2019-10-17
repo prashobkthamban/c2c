@@ -44,7 +44,10 @@ Route::get('delete_ringgroup/{id}', 'ReminderController@deleteRinggroup')->name(
 
 /* pbx did */
 Route::get('pbx_did', 'ReminderController@pbxDid')->name('PbxDid');
-
+Route::get('get_options/{admin}/{id}', 'ReminderController@getOptions')->name('getOptions');
+Route::post('add_pbx_did', 'ReminderController@addPbxDid')->name('addPbxDid');
+Route::get('delete_pbx_did/{id}', 'ReminderController@deletePbxdid')->name('deletePbxdid');
+Route::get('get_pbx_did/{id}', 'ReminderController@getPbxdid')->name('getPbxdid');
 
 Route::get('operator', 'ReportController@operator')->name('operator');
 Route::get('contacts', 'ReportController@contacts')->name('contacts');

@@ -30,34 +30,27 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('PbxExtension')}}">
-                                <i class="nav-icon i-Smartphone--Secure"></i>
-                                <span class="nav-text">PBX Extension</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('PbxDid')}}">
-                                <i class="nav-icon i-Smartphone--Secure"></i>
-                                <span class="nav-text">PBX DIDs</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('PbxRingGroups')}}">
-                                <i class="nav-icon i-Smartphone--Secure"></i>
-                                <span class="nav-text">PBX RingGroups</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="">
-                            <!-- <a href="{{url('cdrreportout')}}" class="{{ Route::currentRouteName()=='cdrreportout' ? 'open' : '' }}"> -->
+                       <!--  <li class="nav-item" data-item="">
+                            <a href="{{url('cdrreportout')}}" class="{{ Route::currentRouteName()=='cdrreportout' ? 'open' : '' }}"> 
                             <a href="{{url('cdrreportout')}}" class="nav-item-hold">
                                 <i class="nav-icon i-Clock-4"></i>
                                 <span class="item-name">Voice Out</span>
                             </a>
+                        </li> -->
+                        <li class="nav-item" data-item="pbx">
+                            <a class="nav-item-hold" href="#">
+                                <i class="nav-icon i-Headphone"></i>
+                                <span class="nav-text">Voice Out</span>
+                            </a>
+                            <div class="triangle"></div>
                         </li>
+                        <li class="nav-item" data-item="">
+                            <a href="{{url('cdrreportout')}}" class="{{ Route::currentRouteName()=='cdrreportout' ? 'open' : '' }}"> 
+                            <a href="{{url('cdrreportout')}}" class="nav-item-hold">
+                                <i class="nav-icon i-Clock-4"></i>
+                                <span class="item-name">Voice Out</span>
+                            </a>
+                        </li> 
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('ivr_menu')}}">
                                 <i class="nav-icon i-Arrow-From"></i>
@@ -351,6 +344,25 @@
                     <li class="nav-item">
                         <a href="{{url('sms_list')}}">
                             <span class="item-name">Operator Dpt Configure SMS</span>
+                        </a>
+                    </li>
+               
+                </ul>
+
+                <ul class="childNav" data-parent="pbx">
+                    <li class="nav-item">
+                        <a href="{{route('PbxExtension')}}">
+                            <span class="item-name">PBX Extension</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{route('PbxDid')}}">
+                            <span class="item-name">PBX DIDs</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{route('PbxRingGroups')}}">
+                            <span class="item-name">PBX RingGroups</span>
                         </a>
                     </li>
                

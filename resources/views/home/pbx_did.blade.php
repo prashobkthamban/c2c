@@ -9,7 +9,7 @@
 
 @section('main-content')
   <div class="breadcrumb">
-                <h1> PBX Extensions </h1>
+                <h1> PBX DIDs </h1>
 
             </div>
             <div class="separator-breadcrumb border-top"></div>
@@ -19,7 +19,7 @@
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
                         <div class="card-body">
-                            <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#add_extension" class="btn btn-primary"> Add New </a>
+                            <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#add_did" class="btn btn-primary new_did"> Add New </a>
                             <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
@@ -39,9 +39,9 @@
                                             <td>{{$listOne->outdptname}}</td>
                                             <td>{{$listOne->indptname}}</td>
                                             <td>{{$listOne->name}}</td>
-                                            <td><a href="#" data-toggle="modal" data-target="#add_extension" class="text-success mr-2 edit_extension" id="{{$listOne->id}}">
+                                            <td><a href="#" data-toggle="modal" data-target="#add_did" class="text-success mr-2 edit_did" id="{{$listOne->id}}">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                                </a><a href="{{ route('deletePbxexten', $listOne->id) }}" onclick="return confirm('Are you sure want to delete this record ?')" class="text-danger mr-2">
+                                                </a><a href="{{ route('deletePbxdid', $listOne->id) }}" onclick="return confirm('Are you sure want to delete this record ?')" class="text-danger mr-2">
                                                     <i class="nav-icon i-Close-Window font-weight-bold"></i>
                                                 </a></td>
                                         </tr>
@@ -68,25 +68,25 @@
             </div>
 
             <!-- add operator modal -->
-            <div class="modal fade" id="add_extension" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal fade" id="add_did" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle-2">Add Account</h5>
+                            <h5 class="modal-title" id="pbx_did_title">Add Account</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                         {!! Form::open(['class' => 'add_extension_form', 'method' => 'post']) !!} 
+                         {!! Form::open(['class' => 'add_did_form', 'method' => 'post']) !!} 
                         <div class="modal-body">
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
-                                        {!! Form::hidden('id', '', array('id' =>'extension_id')) !!}
+                                        {!! Form::hidden('id', '', array('id' =>'did_id')) !!}
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Customer *</label> 
-                                         {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'groupid')) !!}
+                                         {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'onChange' => 'setOptions()', 'id' => 'groupid')) !!}
                                     </div>
                                 </div>
                                 <div class="row">
@@ -94,8 +94,8 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">DNID ( This will be used for seting outgoing callerid) *</label> 
-                                         {!! Form::select('did_num', getDidList()->prepend('Select Did', ''), null,array('class' => 'form-control', 'id' => 'did')) !!}
+                                        <label for="firstName1">Inbound DNID *</label> 
+                                         {!! Form::text('did', null, ['class' => 'form-control', 'id' => 'did']) !!}
                                     </div>
                                 </div>   
                                 <div class="row">
@@ -103,8 +103,8 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Extension Number *</label> 
-                                        {!! Form::text('extension', null, ['class' => 'form-control', 'id' => 'extension']) !!}
+                                        <label for="firstName1">Incoming Destination</label> 
+                                        {!! Form::select('destination', ['ringgroup' => 'RingGroup', 'extension' => 'Direct Extension'], null,array('class' => 'form-control', 'id' => 'destination')) !!}
                                     </div>
                                 </div>  
                                 <div class="row">
@@ -112,10 +112,39 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Password *</label> 
-                                        {!! Form::text('password', null, ['class' => 'form-control', 'id' => 'password']) !!}
+                                        <label for="firstName1">Extension for direct Transfer</label> 
+                                        {!! Form::select('dest_num', ['' => 'Select Extension'], null,array('class' => 'form-control', 'id' => 'dest_num')) !!}
+
                                     </div>
-                                </div>               
+                                </div>   
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">RingGroups</label> 
+                                        {!! Form::select('rrnumber', ['' => 'Select RingGroup'], null,array('class' => 'form-control', 'id' => 'rrnumber')) !!}
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Out Department Name *</label> 
+                                         {!! Form::text('outdptname', null, ['class' => 'form-control', 'id' => 'outdptname']) !!}
+                                    </div>
+                                </div> 
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Inbound Department Name *</label> 
+                                         {!! Form::text('indptname', null, ['class' => 'form-control', 'id' => 'indptname']) !!}
+                                    </div>
+                                </div>              
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -135,15 +164,47 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
+    function setOptions(groupid = null, dest_num = null) {
+        if(groupid != null) {
+            var groupid = $("#groupid").val();
+        }
+
+        $.ajax({
+            type: "GET",
+            url: '/get_options/admin/'+ groupid, // This is the url we gave in the route
+            success: function(res){ // What to do if we succeed
+                $('#dest_num').empty();
+                $('#rrnumber').empty();
+                $('#dest_num').append('<option value="">Select Extension</option>');
+                $('#rrnumber').append('<option value="">Select RingGroup</option>');
+                $.each(res.extensions, function (i, item) {   
+                    if(dest_num !== null && dest_num == item.extension) {
+                        $('#dest_num').append('<option value="'+ item.extension +'" selected>'+ item.extension +'</option>');
+                    } else {
+                       $('#dest_num').append('<option value="'+ item.extension +'">'+ item.extension +'</option>'); 
+                    }
+                });
+                $.each(res.ringgroups, function (i, item) { 
+                    if(dest_num !== null && dest_num == item.ringgroup) {  
+                        $('#rrnumber').append('<option value="'+ item.ringgroup +'" selected>'+ item.description +'</option>'); 
+                    } else {
+                        $('#rrnumber').append('<option value="'+ item.ringgroup +'">'+ item.description +'</option>'); 
+                    }
+                });
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+            }
+        }); 
+    }
+
     $(document).ready(function() {
-        $( '.add_extension_form' ).on( 'submit', function(e) {
+        $( '.add_did_form' ).on( 'submit', function(e) {
             e.preventDefault();
-            //var noteHTML = "";
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '{{ URL::route("addExtension") }}', // This is the url we gave in the route
-            data: $('.add_extension_form').serialize(),
+            url: '{{ URL::route("addPbxDid") }}', // This is the url we gave in the route
+            data: $('.add_did_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
                     $.each(res.error, function(index, value)
@@ -156,9 +217,9 @@
                     });
                     toastr.error(errors);
                 } else {
-                    $("#add_extension").modal('hide');
+                    $("#add_did").modal('hide');
                     toastr.success(res.success); 
-                    setTimeout(function(){ location.reload() }, 3000);               
+                    setTimeout(function(){ location.reload() }, 2000);               
                 }
                
             },
@@ -168,25 +229,34 @@
           });
         });
 
-        $('.edit_extension').on('click',function(e)
+        $('.edit_did').on('click',function(e)
         {
             var id = $(this).attr("id");
-            console.log(id);
+            $("#pbx_did_title").text('Edit Account');
             $.ajax({
             type: "GET",
-            url: '/get_pbx_extension/'+ id, // This is the url we gave in the route
+            url: '/get_pbx_did/'+ id, // This is the url we gave in the route
             success: function(result){ // What to do if we succeed
                 var res = result[0];
-                console.log(res.extension)
-                $("#extension_id").val(res.id);
+                // console.log(result)
+                $("#did_id").val(res.id);
                 $("#groupid").val(res.groupid);
-                $("#did").val(res.did_num);
-                $("#extension").val(res.extension);
-                $("#password").val(res.password);
+                $("#did").val(res.did);
+                setOptions(res.groupid, res.dest_num);
+                $("#destination").val(res.destination);
+                $("#outdptname").val(res.outdptname);
+                $("#indptname").val(res.indptname);
+                $("#dest_num").val(res.dest_num);
+                $("#rrnumber").val(res.dest_num);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }
           });
+        });
+
+        $('.new_did').click(function() {
+            $(".add_did_form").trigger("reset");
+            $("#pbx_did_title").text('Add Account');
         });
     });
 </script>

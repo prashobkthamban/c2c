@@ -16,7 +16,7 @@
         <div class="col-md-12 mb-4">
             <div class="card text-left">
                 <div class="card-body">
-                    <a title="Add New Login" data-toggle="modal" data-target="#login_manager" href="#" class="btn btn-primary"> Add New Login </a>
+                    <a title="Add New Login" data-toggle="modal" data-target="#login_manager" href="#" class="btn btn-primary login_manager"> Add New Login </a>
                     <div class="table-responsive">
                         <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                            <thead>
@@ -90,7 +90,7 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">User Name</label> 
+                                        <label for="firstName1">User Name *</label> 
                                         <input type="text" class="form-control" placeholder="User Name" name="username">
                                     </div>
                                 </div>
@@ -99,7 +99,7 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Password</label> 
+                                        <label for="firstName1">Password *</label> 
                                         <input type="text" class="form-control" placeholder="Password" name="password" id="password">
                                     </div>
                                 </div>
@@ -108,7 +108,7 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">User Type</label> 
+                                        <label for="firstName1">User Type *</label> 
                                         {!! Form::select('usertype', array('' => 'Select UserType', 'admin' => 'Admin', 'reseller' => 'Coperate Admin', 'groupadmin' => 'Group Admin'), null,array('class' => 'form-control', 'id' => 'usertype')) !!}
                                     </div>
                                 </div>
@@ -127,7 +127,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Customer</label> 
-                                        {!! Form::select('groupid', ['' => 'Select Customer'], null,array('class' => 'form-control', 'id' => 'groupid')) !!} 
+                                        {!! Form::select('groupid', $customer, null,array('class' => 'form-control', 'id' => 'groupid')) !!} 
                                     </div>
                                 </div>
                                 <div class="row">
@@ -192,7 +192,7 @@
                 } else {
                     $("#login_manager").modal('hide');
                     toastr.success(res.success);  
-                    setTimeout(function(){ location.reload() }, 3000);               
+                    setTimeout(function(){ location.reload() }, 2000);               
                 }
                
             },
@@ -247,6 +247,11 @@
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }
           });
+        });
+        
+        $('.login_manager').click(function() {
+            $("#add_login").trigger("reset");
+            $("#login_title").text('Add New Login');
         });
     });
 </script>
