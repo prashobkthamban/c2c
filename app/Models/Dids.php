@@ -15,7 +15,12 @@ class Dids extends Model
     	return DB::table('prigateway')->where('delete_status', '0')->pluck('Gprovider', 'id');
     }
 
-    public function get_did() {
-    	return DB::table('dids')->where('assignedto', 0)->pluck('did', 'id');
+    public function get_did($id = null) {
+    	if(!empty($id)) {
+    		return DB::table('dids')->where('assignedto', $id)->pluck('did', 'id');
+    	} else {
+    		return DB::table('dids')->where('assignedto', 0)->pluck('did', 'id');
+    	}
+    	
     }
 }

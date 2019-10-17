@@ -171,8 +171,8 @@ class UserController extends Controller
         $coperate = $coperate->prepend('Select coperate', '0');
         $sms_gateway = $account_group->sms_api_gateway();
         $sms_gateway = $sms_gateway->prepend('Select gateway', '0');
-        $did_list = $did->get_did();
-        $did_list = $did_list->prepend('Select Did', '0');
+        $did_list = $did->get_did($id);
+        $did_list = $did_list->prepend('Select Did', '');
         return view('user.edit_user', compact('user_edit','lang', 'coperate', 'did_list', 'sms_gateway'));
     }
 
