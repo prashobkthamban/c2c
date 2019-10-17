@@ -189,7 +189,7 @@ class UserController extends Controller
         $did_list = $did->get_did();
         $did_list = $did_list->prepend('Select Did', '0');
         $user_edit = $account_group->findOrFail($id);
-        $validator = Validator::make($request->all(), [
+        $rules = [
             'name' => 'required',
             'did' => 'required',
             'startdate' => 'required|date|before:enddate',
@@ -199,16 +199,17 @@ class UserController extends Controller
             'maxcall_dur' => 'required|integer|min:0',
             'c2c_channels' => 'required',
             'c2cAPI' => 'required',
-            'sms_api_gateway_id' => 'required',
-            'sms_api_user' => 'required',
-            'sms_api_pass' => 'required',
-            'sms_api_senderid' => 'required',
             'cdr_apikey' => 'required',
-            'API' => 'required',
-            'ip' => 'required',
             'max_no_confrence' => 'required|integer|min:0',
-        ]);
+        ];
 
+
+        if(!empty($request->get('sms_api_gateway_id'))) {
+            $rules['sms_api_user'] = 'required';
+            $rules['sms_api_pass'] = 'required';
+            $rules['sms_api_senderid'] = 'required';
+        }
+        $validator = Validator::make($request->all(), $rules);
         if($validator->fails()) {
             $messages = $validator->messages();
             //dd($messages = $validator->messages());
@@ -734,6 +735,10 @@ class UserController extends Controller
         DB::table('account')->where('resellerid',$id)->delete();
         toastr()->success('Coperate delete successfully.');
         return redirect()->route('CoperateGroup');
+    }
+
+    public function myProfile() {
+        return view('user.my_profile',compact(''));
     }
 
 

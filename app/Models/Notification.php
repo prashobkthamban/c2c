@@ -7,11 +7,13 @@ use Illuminate\Support\Facades\Auth;
 class Notification extends Model
 {
     protected $table = 'notifications';
+    protected $fillable = ['groupid', 'sendfromusertype', 'title', 'description', 'grp_readstatus', 'sendtousertype', 'fromusername', 'adm_read_status'];
+    public $timestamps = false;
 
     public static function getReport( )
     {
         $data = Notification::select( 'notifications.*', 'name' )
-            ->leftJoin( 'accountgroup', 'accountgroup.id', '=', 'notifications.groupid' );
+            ->leftJoin('accountgroup', 'notifications.groupid', '=', 'accountgroup.id');
 
         if ( Auth::user()->usertype == 'groupadmin' )
         {

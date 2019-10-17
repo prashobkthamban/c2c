@@ -52,7 +52,16 @@ Route::get('voicemail', 'ReportController@voicemail')->name('voicemail');
 Route::get('blacklist', 'ReportController@blacklist')->name('blacklist');
 Route::get('holiday', 'ReportController@holiday')->name('holiday');
 Route::get('conference', 'ReportController@conference')->name('conference');
+
+/* Notification Manager */
 Route::get('notification', 'NotificationController@index')->name('notification');
+Route::get('destroy_notification/{id}', 'NotificationController@deleteNotification')->name('deleteNotification');
+Route::post('add_notifiaction', 'NotificationController@addNotification')->name('addNotification');
+Route::post('add_sub_notifiaction', 'NotificationController@addSubNotification')->name('addSubNotification');
+Route::post('update_status', 'NotificationController@updateStatus')->name('updateStatus');
+Route::get('get_all_notification/{id}', 'NotificationController@getNotification')->name('getNotification');
+
+
 Route::get('cdrtags', 'ReportController@cdrtags')->name('cdrtags');
 Route::get('operatorgrp', 'ReportController@operatorgrp')->name('operatorgrp');
 Route::get('livecalls', 'ReportController@livecalls')->name('livecalls');
@@ -63,6 +72,7 @@ Route::get('user/{id}', 'UserController@destroy')->name('deleteUser');
 Route::get('delete_account/{id}', 'UserController@deleteAccount')->name('deleteAccount');
 Route::get('edit/{id}', 'UserController@edit')->name('editUser');
 Route::patch('update/user/{id}', 'UserController@update')->name('updateUser');
+Route::get('my_profile', 'UserController@myProfile')->name('myProfile');
 
 /* ----------login account----------- */
 Route::get('account', 'UserController@loginAccounts')->name('loginAccounts');

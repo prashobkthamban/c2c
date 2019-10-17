@@ -93,6 +93,13 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('notification')}}">
+                                <i class="nav-icon i-Bell"></i>
+                                <span class="nav-text">Notifications</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
                     @endif
 
                     @if(Auth::user()->usertype == 'groupadmin')
@@ -147,6 +154,13 @@
                                 <i class="nav-icon i-Security-Block"></i>
                                 <span class="nav-text">Blacklist</span>
                             </a> 
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('notification')}}">
+                                <i class="nav-icon i-Bell"></i>
+                                <span class="nav-text">Notifications</span>
+                            </a>
+                            <div class="triangle"></div>
                         </li>
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('conference')}}">
