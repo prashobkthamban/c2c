@@ -160,7 +160,6 @@ class UserController extends Controller
 
     public function edit($id)
     {
-        //$user = new Users();
         $account_group = new Accountgroup();
         $did = new Dids();
         $user_edit = $account_group->findOrFail($id);     
@@ -186,7 +185,7 @@ class UserController extends Controller
         $coperate = $coperate->prepend('Select coperate', '0');
         $sms_gateway = $account_group->sms_api_gateway();
         $sms_gateway = $sms_gateway->prepend('Select gateway', '0');
-        $did_list = $did->get_did();
+        $did_list = $did->get_did($id);
         $did_list = $did_list->prepend('Select Did', '0');
         $user_edit = $account_group->findOrFail($id);
         $rules = [

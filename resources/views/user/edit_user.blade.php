@@ -203,7 +203,7 @@
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="firstName1">Sms api Password</label>
-                                        {!! Form::password('sms_api_pass', ['class' => 'form-control']) !!} 
+                                        {!! Form::text('sms_api_pass', null,['class' => 'form-control']) !!} 
                                         <p class="text-danger ">{!! !empty($messages) ? $messages->first('sms_api_pass', ':message') : '' !!}</p>
                                     </div> 
 
