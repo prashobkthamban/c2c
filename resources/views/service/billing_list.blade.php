@@ -329,9 +329,9 @@
                     });
                     toastr.error(errors);
                 } else {
-                    // $("#edit_billing").modal('hide');
-                    // setTimeout(function(){ location.reload() }, 3000);
-                    // toastr.success(res.success);                
+                    $("#edit_billing").modal('hide');
+                    setTimeout(function(){ location.reload() }, 3000);
+                    toastr.success(res.success);                
                 }
                
             },
