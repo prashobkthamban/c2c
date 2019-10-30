@@ -121,11 +121,11 @@ class ServiceController extends Controller
                      'creditlimit' => $limit,
                     ];
 
-            if($request->get('billingmode')=='postpaid')
-            {
-                unset($billing['main_balance']);
-            }
-            dd($request->all());
+            // if($request->get('billingmode')=='postpaid')
+            // {
+            //     unset($billing['main_balance']);
+            // }
+            //dd($request->all());
                 DB::table('billing')
                     ->where('id', $request->get('id'))
                     ->update($billing);

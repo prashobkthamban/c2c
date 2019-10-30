@@ -118,15 +118,12 @@
                                     <tr>
                                         <th>Amount</th>
                                         <th>Type</th>
-                                        <th>Date</th>
                                         <th>DateTime</th>
+                                        <th>Username</th>
+                                        <th>Comments</th>
                                     </tr>
                                 </thead>
                                 <tbody> 
-                                    <td>hgh</td>
-                                    <td>hgh</td>
-                                    <td>hgh</td>
-                                    <td>hgh</td>
                                 </tbody>
                             </table> 
                                                    
@@ -256,7 +253,6 @@
             while(i < 32)
             {
                 i="0"+i;
-                console.log(i);
                 $('#billdate').append($('<option>', { 
                         value: i,
                         text : i 
@@ -268,26 +264,23 @@
         billDateVals();
         $('.bill_details').click(function() {
             var groupid = this.id;
-            console.log(groupid);
+            var billHtml = '';
+            $("#bill_details_list tbody").empty();
             $.ajax({
             type: "GET",
             url: '/bill_details/'+groupid, // This is the url we gave in the route
             success: function(res){ // What to do if we succeed
-                if(res.error) {
-                    $.each(res.error, function(index, value)
+                    $.each(res, function(index, val)
                     {
-                        if (value.length != 0)
-                        {
-                            errors += value[0];
-                            errors += "</br>";
-                        }
+                        billHtml += "<tr>";
+                            billHtml += "<td>" + val.amount  + "</td>";
+                            billHtml += "<td>" + val.type  + "</td>";
+                            billHtml += "<td>" + val.datetime  + "</td>";
+                            billHtml += "<td>" + val.username  + "</td>";
+                            billHtml += "<td>" + val.comments  + "</td>";       
+                        billHtml += "</tr>";
                     });
-                    toastr.error(errors);
-                } else {
-                    $("#callerid_"+callerid).html("<i class='fa fa-phone'></i>"+res.fname);
-                    xajax_hide();
-                    toastr.success(res.success);                
-                }
+                    $("#bill_details_list tbody").append(billHtml);
             }
             });
         });
@@ -295,13 +288,12 @@
         $('.edit_billing').on('click',function(e)
         {
             var id = $(this).attr("id");
-            console.log(id);
             $.ajax({
             type: "GET",
             url: '/get_billing/'+ id, // This is the url we gave in the route
             success: function(res){ // What to do if we succeed
-                var result = res[0]
-                $("#id").val(result.id);
+                var result = res[0];
+                $("#billing_id").val(result.id);
                 $("#groupid").val(result.groupid);
                 $("#name").val(result.name);
                 $("#main_balance").val(result.main_balance);
@@ -318,7 +310,7 @@
           });
         });
 
-         $( '.billing_form' ).on( 'submit', function(e) {
+        $( '.billing_form' ).on( 'submit', function(e) {
             e.preventDefault();
             var errors = ''; 
           $.ajax({
