@@ -45,6 +45,13 @@
                             <div class="triangle"></div>
                         </li>
                         <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('Billing')}}">
+                                <i class="nav-icon i-Credit-Card"></i>
+                                <span class="nav-text">Recharge & Billing</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
                             <a href="{{url('cdrreportout')}}" class="{{ Route::currentRouteName()=='cdrreportout' ? 'open' : '' }}"> 
                             <a href="{{url('cdrreportout')}}" class="nav-item-hold">
                                 <i class="nav-icon i-Clock-4"></i>
@@ -86,6 +93,13 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
+                        <li class="nav-item" data-item="calldetails">
+                            <a class="nav-item-hold" href="#">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">Call & Reports</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('notification')}}">
                                 <i class="nav-icon i-Bell"></i>
@@ -99,7 +113,7 @@
                         <li class="nav-item" data-item="calldetails">
                             <a class="nav-item-hold" href="#">
                                 <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">Call Details</span>
+                                <span class="nav-text">Call & Reports</span>
                             </a>
                             <div class="triangle"></div>
                         </li>
@@ -234,6 +248,12 @@
                         <a class="{{ Route::currentRouteName()=='cdrreport' ? 'open' : '' }}" href="{{url('cdrreport')}}" >
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="item-name">CDR Report</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="{{ Route::currentRouteName()=='cdrreportarchive' ? 'open' : '' }}" href="{{url('cdrreportarchive')}}" >
+                            <i class="nav-icon i-Over-Time"></i>
+                            <span class="item-name">Archived CDR Report</span>
                         </a>
                     </li>
                     <li class="nav-item ">

@@ -120,7 +120,7 @@ $(document).ready(function(){
 
         $.ajax({
         type: "POST",
-        url: '{{ URL::route("addContact") }}', // This is the url we gave in the route
+        url: '/add_cdr_contact', // This is the url we gave in the route
         data: $('#'+this.id).serialize(),
         success: function(res){ // What to do if we succeed
             if(res.error) {
@@ -155,7 +155,7 @@ $(document).ready(function(){
 
         $.ajax({
         type: "POST",
-        url: '{{ URL::route("addTag") }}', // This is the url we gave in the route
+        url: '/add_tag', // This is the url we gave in the route
         data: $('#'+this.id).serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {

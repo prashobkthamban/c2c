@@ -44,7 +44,6 @@ class CdrReport extends Model
             $data->where('cdr.resellerid',Auth::user()->resellerid );
         }
         $result = $data->orderBy('datetime','DESC')->paginate(30);
-       //dd($result);
 
        return $result;
     }

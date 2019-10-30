@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\IUserService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 class ServiceController extends Controller
 {
     /**
@@ -13,6 +16,10 @@ class ServiceController extends Controller
      */
     public function __construct(IUserService $userService)
     {
+        $this->middleware('auth');
+        if(!Auth::check()){
+            return redirect('login');
+        }
         $this->userService = $userService;
     }
 
@@ -20,5 +27,111 @@ class ServiceController extends Controller
     {
         $users = $this->userService->getAllUsers();
         print_r($users);die;
+    }
+
+    public function billing() {
+    
+        $query = DB::table('billing')
+            ->leftJoin('accountgroup', 'billing.groupid', '=', 'accountgroup.id')
+            ->leftJoin('resellergroup', 'billing.resellerid', '=', 'resellergroup.id')
+            ->leftJoin('dids', 'billing.groupid', '=', 'dids.assignedto');
+
+        if(Auth::user()->usertype == 'reseller') {
+            $query->where('billing.resellerid', Auth::user()->resellerid)->orWhere('billing.resellerid', '0');
+        } elseif(Auth::user()->usertype != 'admin') {
+            $query->where('billing.groupid', Auth::user()->groupid);
+        }
+            
+        $query->select('billing.*', 'accountgroup.name', 'resellergroup.resellername', 'dids.rdins', 'dids.rdnid')->orderBy('id', 'desc');
+        $result = $query->paginate(10);
+        //dd($result);
+        return view('service.billing_list', compact('result'));
+    }
+
+    public function billDetails($groupid) {
+        return DB::table('billing_log')->where('billing_log.groupid', $groupid)->get();
+    } 
+
+    public function getBilling($id) {
+        return DB::table('billing')
+        ->leftJoin('accountgroup', 'billing.groupid', '=', 'accountgroup.id')
+        ->where('billing.id', $id)->select('billing.*', 'accountgroup.name')->get();
+    }
+
+    public function editBilling(Request $request) 
+    {
+        $rules = [
+            //'main_balance' => 'required',
+        ];   
+        //dd($request->all());
+        $validator = Validator::make($request->all(), $rules);
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $today = date("Y-m-d"); 
+            if($request->get('billingmode')=='prepaid')
+            {
+                if($request->get('creditlimit')!=NULL)
+                {
+                    if($request->get('main_bal')==NULL)
+                    {
+                        $prepaidbalance = $request->get('creditlimit');
+                        $reset='Reset Done';
+                    }
+                    else
+                    {
+                        $prepaidbalance = $request->get('main_bal') + $request->get('creditlimit');
+                        $reset='';
+                    }
+                    $limit = 0;
+                    $type = 'Recharge';
+                    $comments = 'Previous Balance='.$request->get('main_bal').' - Click to call balance '.$request->get('c2c_balance').' ---- '.$reset;
+                }
+            } else 
+            {
+                $limit=$request->get('creditlimit');
+                if($request->get('creditlimit')==NULL)
+                {
+                    $prepaidbalance='';
+                    $reset='Reset Done';
+                } else
+                {
+                    $prepaidbalance="";
+                    $reset='';
+                }
+                $type = 'Credit Limit';
+                $comments = 'Previous Balance='.$request->get('main_bal').' - Click to call balance '.$request->get('c2c_balance').' -- bill date='.$request->get('billdate').' ---- '.$reset;
+            }
+
+            $billing_log = ['groupid' => $request->get('groupid'),
+                            'amount' => $request->get('creditlimit'),
+                            'bill_cycle' => $today,
+                            'datetime' => NOW(),
+                            'type' => $type,
+                            'username' => Auth::user()->username,
+                            'comments' => $comments
+                        ];
+
+            $billing = ['main_balance' => $prepaidbalance,
+                     'call_pulse_setup'=> $request->get('call_pulse_setup'),
+                     'c2c_pulse_setup'=> $request->get('c2c_pulse_setup'), 
+                     'c2c_balance' => $request->get('c2c_balance'),
+                     'billingmode' => $request->get('billingmode'),
+                     'billdate' => $request->get('billdate'),
+                     'creditlimit' => $limit,
+                    ];
+
+            if($request->get('billingmode')=='postpaid')
+            {
+                unset($billing['main_balance']);
+            }
+            dd($request->all());
+                DB::table('billing')
+                    ->where('id', $request->get('id'))
+                    ->update($billing);
+                DB::table('billing_log')->insert($billing_log);
+                    $data['success'] = 'Billing updated successfully.';
+        } 
+         return $data;
     }
 }

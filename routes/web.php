@@ -19,7 +19,7 @@ Route::get('home', 'HomeController@index')->name('home');
 /* ----------Cdr Report----------- */
 Route::get('cdrreport', 'ReportController@index')->name('cdrreport');
 Route::post('add_cdr_contact', 'ReportController@addContact')->name('addContact');
-Route::post('add_tag', 'ReportController@addTag')->name('addTag');
+Route::post('add_tag', 'ReportController@addCdrTag')->name('addCdrTag');
 Route::post('add_note', 'ReportController@addNote')->name('addNote');
 Route::post('add_reminder', 'ReportController@addReminder')->name('addReminder');
 Route::get('get_reminder/{id}', 'ReportController@getReminder')->name('getReminder');
@@ -29,6 +29,12 @@ Route::get('download_file/{file}/{id}', 'ReportController@downloadFile')->name('
 Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('cdrreportarchive');
 Route::get('cdrreportout', 'ReportController@cdrreportout')->name('cdrreportout');
 Route::get('reminder', 'ReminderController@index')->name('Reminder');
+
+/* ----------Recharge && Billing----------- */
+Route::get('billing', 'ServiceController@billing')->name('Billing');
+Route::get('bill_details/{id}', 'ServiceController@billDetails')->name('billDetails');
+Route::get('get_billing/{id}', 'ServiceController@getBilling')->name('getBilling');
+Route::post('edit_billing', 'ServiceController@editBilling')->name('editBilling');
 
 /* pbx extension */
 Route::get('pbx_extension', 'ReminderController@pbxextension')->name('PbxExtension');
@@ -83,6 +89,9 @@ Route::post('add_account', 'UserController@addAccount')->name('addAccount');
 Route::get('edit_account/{id}', 'UserController@editAccount')->name('editAccount');
 Route::get('get_customer/{usertype}/{resellerid}', 'UserController@getCustomer')->name('getCustomer');
 Route::get('get_did/{groupid}', 'UserController@getDid')->name('getDid');
+Route::post('edit_profile', 'UserController@editProfile')->name('editProfile');
+Route::get('reset_password', 'UserController@resetPassword')->name('resetPassword');
+
 
 /* ----------Coperate Group----------- */
 Route::get('coperates', 'UserController@coperates')->name('CoperateGroup');

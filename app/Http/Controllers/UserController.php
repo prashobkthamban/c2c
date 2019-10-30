@@ -290,7 +290,7 @@ class UserController extends Controller
         //dd($customer);
 
         $query = DB::table('account')
-             ->leftJoin('accountgroup', 'account.groupid', '=', 'accountgroup.id')
+             // ->leftJoin('accountgroup', 'account.groupid', '=', 'accountgroup.id')
              ->leftJoin('resellergroup', 'account.resellerid', '=', 'resellergroup.id');
         if(Auth::user()->usertype == 'admin') {
         } elseif(Auth::user()->usertype == 'reseller') {
@@ -301,7 +301,7 @@ class UserController extends Controller
         } else {
             $query->where('groupid', Auth::user()->groupid);
         }
-        $query->select('account.*', 'accountgroup.name', 'resellergroup.resellername');
+        $query->select('account.*', 'resellergroup.resellername');
         $accounts = $query->orderBy('id', 'desc')->paginate(10);
         //dd($accounts);
         return view('user.account_list', compact('accounts', 'coperate', 'customer'));
@@ -309,7 +309,7 @@ class UserController extends Controller
 
     public function editAccount($id = null) {
         $account = new Account();
-        return $account->findOrFail($id);       
+        return $account->findOrFail($id); 
     }
 
     public function getCustomer($usertype, $resellerid) {
@@ -337,6 +337,7 @@ class UserController extends Controller
         } else {
             $account = ['username' => $request->get('username'),
                      'password'=> Hash::make($request->get('password')),
+                     'user_pwd'=> $request->get('password'),
                      'usertype'=> $request->get('usertype'), 
                      'resellerid' => $request->get('resellerid'),
                      'groupid' => $request->get('groupid'),
@@ -745,7 +746,53 @@ class UserController extends Controller
     }
 
     public function myProfile() {
-        return view('user.my_profile',compact(''));
+        $acGrp = $this->ac_group->where('id', Auth::user()->groupid)->get();
+        //dd($acGrp);
+        return view('user.my_profile',compact('acGrp'));
+    }
+
+    public function editProfile(Request $request) 
+    {
+        //dd($request->all());
+        $rules = [
+            'email' => 'required',
+            'password' => 'required',
+            'phone_number' => 'required',
+        ];   
+        
+        $validator = Validator::make($request->all(), $rules);
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $profile = ['email' => $request->get('email'),
+                     'password'=> Hash::make($request->get('password')),
+                     'user_pwd'=> $request->get('password'),
+                     'phone_number'=> $request->get('phone_number'), 
+                    ];
+            
+            $accGroup = ['office_start' => $request->get('office_start'),
+                     'office_end'=> $request->get('office_end'), 
+                    ];
+
+                DB::table('account')
+                    ->where('id', $request->get('id'))
+                    ->update($profile);
+
+                DB::table('accountgroup')
+                    ->where('id', Auth::user()->groupid)
+                    ->update($accGroup);
+
+                    $data['success'] = 'Profile updated successfully.';
+                    $data['data'] = $profile;
+                    $data['data'] = array_merge($data['data'], $accGroup);
+
+        } 
+         return $data;
+    }
+
+
+    public function resetPassword() {
+        return view('auth.passwords.reset');
     }
 
 

@@ -12,166 +12,164 @@
                 <h1>CDR Report </h1>   
             </div>
             <div class="separator-breadcrumb border-top"></div>
+            @if(Auth::user()->usertype == 'groupadmin')
+            <div class="row">
+              <div class="col-lg-12 col-md-12">
+                  <div class="card mb-2">
+                      <div class="card-body">
+                         <div class="col-md-2 mt-3 mt-md-0">
+                               
+                                <button class="btn btn-primary btn-block collapsed pull-right mt-3" data-toggle="collapse" data-target="#filter-panel">Filter</button>
 
-              <div class="row">
-                  <div class="col-lg-12 col-md-12">
-                      <div class="card mb-2">
-                          <div class="card-body">
-                             <div class="col-md-2 mt-3 mt-md-0">
-                                <!--
-                                    <button class="btn btn-default mt-3" id="btn_make_call">Make a call</button>
-                                   <button class="btn btn-default mt-3" id="btn_refresh">Refresh</button> -->
-                                   
-                                    <button class="btn btn-primary btn-block collapsed pull-right mt-3" data-toggle="collapse" data-target="#filter-panel">Filter</button>
-
-                              </div>
-                                    {{-- <button class="btn btn-secondary m-1" id="btn_make_call">Make a call</button> --}}
-                                   <button class="btn btn-secondary m-1" id="btn_refresh">Refresh</button> 
-                                   <a class="btn btn-secondary m-1" id="btn_download" href="{{ url('cdrexport') }}">Download</a> 
-                                   <button class="btn btn-primary collapsed m-1" data-toggle="collapse" data-target="#filter-panel">Filter</button>
-                                   <a href="#" class="btn btn-primary m-1 dropdown-toggle" data-toggle="dropdown">Assign To</a>
-                                   <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#dial_modal"><i class="i-Telephone"></i></a>
-                                   <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#msg_modal"><i class="i-Email"></i></a>
-                                   
-                                   <ul class="dropdown-menu" role="menu">
-                          <li> <a href="javascript:assignoper(5136,'Teena');">Teena</a><ul><li><a href="javascript:assignoper(5136,'Teena','S');">Notify By SMS</a></li><li><a href="javascript:assignoper(5136,'Teena','E');">Notify By Email</a></li></ul></li><li> <a href="javascript:assignoper(11496,'aab');">aab</a><ul><li><a href="javascript:assignoper(11496,'aab','S');">Notify By SMS</a></li><li><a href="javascript:assignoper(11496,'aab','E');">Notify By Email</a></li></ul></li><li><a href="javascript:assignoper(0);">Unassign</a></li>    
-                        </ul>
-
-                              <div class="row row-xs">
-
-
-
-                                  <div id="filter-panel" class="filter-panel collapse">
-                                        
-                                                <form class="form" role="form" id="cdr_filter_form">
-                                                    <div class="row"> 
-                                                    @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
-                                                    <div class="col-md-6 form-group mb-3">
-                                                        <label class="filter-col"  for="pref-perpage">Departments</label>
-                                                        <select name="department" class="form-control">
-                                                            <option value="">All</option>
-                                                            @if(!empty($departments))
-                                                                @foreach($departments as $dept )
-                                                                    <option value="{{$dept->dept_name}}">{{$dept->dept_name}}
-                                                                    </option>
-                                                                @endforeach
-                                                            @endif
-                                                            
-                                                        </select>                                
-                                                    </div> <!-- form group [rows] -->
-                                                    @endif
-                                                    @if( Auth::user()->usertype == 'groupadmin' )
-                                                    <div class="col-md-6 form-group mb-3">
-                                                        <label class="filter-col"  for="pref-perpage">Operators</label>
-                                                        <select name="operator" class="form-control">
-                                                             <option value="">All</option>
-                                                            @if(!empty($operators))
-                                                                @foreach($operators as $opr )
-                                                                    <option value="{{$opr->id}}">{{$opr->opername}}
-                                                                    </option>
-                                                                @endforeach
-                                                            @endif
-                                                            
-                                                        </select>                                
-                                                    </div> <!-- form group [rows] -->
-                                                     @endif
-                                                    <div class="col-md-6 form-group mb-3">
-                                                        <label class="filter-col"  for="pref-perpage">Date</label>
-                                                        <select class="form-control" name="date" id="date_select">
-                                                            <option value="">All</option>
-                                                            <option value="today">Today</option>
-                                                            <option value="yesterday">Yesterday</option>
-                                                            <option value="week">1 Week</option>
-                                                            <option value="month">1 Month</option>
-                                                            <option value="custom">Custom</option>
-                                                        </select>                                
-                                                    </div> 
-                                                    <div class="col-md-6 form-group mb-3" style="display: none;" id="custom_date_div">
-                                                        <label class="filter-col"  for="pref-search">Stardate </label>
-                                                        <input type="text" name="startdate" class="form-control input-sm datepicker" >
-                                                        <label class="filter-col"  for="pref-search">Enddate</label>
-                                                        <input type="text" class="form-control input-sm datepicker" name="enddate">
-                                                    </div>
-                                                    @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
-                                                     <div class="col-md-6 form-group mb-3">
-                                                        <label class="filter-col"  for="pref-perpage">Assigned To</label>
-                                                        <select  class="form-control" name="assigned_to">
-                                                            <option value="">All</option>
-                                                            @if(!empty($operators))
-                                                                @foreach($operators as $opr )
-                                                                    <option value="{{$opr->id}}">{{$opr->opername}}
-                                                                    </option>
-                                                                @endforeach
-                                                            @endif
-                                                            
-                                                        </select>                                
-                                                    </div> 
-                                                    @endif
-                                                    <div class="col-md-6 form-group mb-3 ">
-                                                        <label class="filter-col"  for="pref-perpage">Status</label>
-                                                        <select  class="form-control" name="status">
-                                                            <option value="">All</option>
-                                                            @if(!empty($statuses))
-                                                                @foreach($statuses as $stat )
-                                                                    <option value="{{$stat->status}}">{{$stat->status}}
-                                                                    </option>
-                                                                @endforeach
-                                                            @endif
-                                                            
-                                                        </select>                                
-                                                    </div> 
-                                                    <div class="col-md-6 form-group mb-3">
-                                                        <label class="filter-col"  for="pref-perpage">Dnid Name</label>
-                                                        <select  class="form-control" name="did_no">
-                                                            <option value="">All</option>
-                                                            @if(!empty($dnidnames))
-                                                                @foreach($dnidnames as $dnid )
-                                                                    <option value="{{$dnid->did_no}}">{{$dnid->did_no}}
-                                                                    </option>
-                                                                @endforeach
-                                                            @endif
-                                                            
-                                                        </select>                                
-                                                    </div> 
-                                                   
-                                                    <div class="col-md-6 form-group mb-3">
-                                                        <label class="filter-col"  for="pref-search">By Caller Number</label>
-                                                        <input type="text" class="form-control input-sm" name="caller_number">
-                                                    </div>
-
-                                                    <!-- <div class="form-group "> -->
-                                                    <div class="col-md-6 form-group mb-3 ">
-                                                        <label class="filter-col"  for="pref-perpage">Tags</label>
-                                                        {!! Form::select('tags', $tags->prepend('All', ''), null,array('class' => 'form-control')) !!}                        
-                                                    </div> 
-                                                    
-                                                   <div class="form-group">    
-                                                   <!-- {{--
-                                                    <div class="col-md-6 form-group mb-3">  
-                                                        <div class="">
-                                                          <label><input type="checkbox" value="1" name="unique_call"> Unique Calls</label>
-                                                        </div>
-                                                    </div>
-                                                    --}} -->
-                                                    <div class="col-md-6 form-group mb-3">    
-                                                        
-                                                        <button type="button" id="report_search_button" class="btn btn-default filter-col">
-                                                            <span class="glyphicon glyphicon-record"></span> Search
-                                                        </button>  
-                                                    </div>
-                                                <!-- </div> -->
-                                                </form>
-                                            
-                                    </div>
-
-
-                                 
-                              </div>
-                              
                           </div>
+                                {{-- <button class="btn btn-secondary m-1" id="btn_make_call">Make a call</button> --}}
+                               <button class="btn btn-secondary m-1" id="btn_refresh">Refresh</button> 
+                               <a class="btn btn-secondary m-1" id="btn_download" href="{{ url('cdrexport') }}">Download</a> 
+                               <button class="btn btn-primary collapsed m-1" data-toggle="collapse" data-target="#filter-panel">Filter</button>
+                               <a href="#" class="btn btn-primary m-1 dropdown-toggle" data-toggle="dropdown">Assign To</a>
+                               <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#dial_modal"><i class="i-Telephone"></i></a>
+                               <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#msg_modal"><i class="i-Email"></i></a>
+                               
+                               <ul class="dropdown-menu" role="menu">
+                      <li> <a href="javascript:assignoper(5136,'Teena');">Teena</a><ul><li><a href="javascript:assignoper(5136,'Teena','S');">Notify By SMS</a></li><li><a href="javascript:assignoper(5136,'Teena','E');">Notify By Email</a></li></ul></li><li> <a href="javascript:assignoper(11496,'aab');">aab</a><ul><li><a href="javascript:assignoper(11496,'aab','S');">Notify By SMS</a></li><li><a href="javascript:assignoper(11496,'aab','E');">Notify By Email</a></li></ul></li><li><a href="javascript:assignoper(0);">Unassign</a></li>    
+                    </ul>
+
+                          <div class="row row-xs">
+
+
+
+                              <div id="filter-panel" class="filter-panel collapse">
+                                    
+                                            <form class="form" role="form" id="cdr_filter_form">
+                                                <div class="row"> 
+                                                @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
+                                                <div class="col-md-6 form-group mb-3">
+                                                    <label class="filter-col"  for="pref-perpage">Departments</label>
+                                                    <select name="department" class="form-control">
+                                                        <option value="">All</option>
+                                                        @if(!empty($departments))
+                                                            @foreach($departments as $dept )
+                                                                <option value="{{$dept->dept_name}}">{{$dept->dept_name}}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                        
+                                                    </select>                                
+                                                </div> <!-- form group [rows] -->
+                                                @endif
+                                                @if( Auth::user()->usertype == 'groupadmin' )
+                                                <div class="col-md-6 form-group mb-3">
+                                                    <label class="filter-col"  for="pref-perpage">Operators</label>
+                                                    <select name="operator" class="form-control">
+                                                         <option value="">All</option>
+                                                        @if(!empty($operators))
+                                                            @foreach($operators as $opr )
+                                                                <option value="{{$opr->id}}">{{$opr->opername}}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                        
+                                                    </select>                                
+                                                </div> <!-- form group [rows] -->
+                                                 @endif
+                                                <div class="col-md-6 form-group mb-3">
+                                                    <label class="filter-col"  for="pref-perpage">Date</label>
+                                                    <select class="form-control" name="date" id="date_select">
+                                                        <option value="">All</option>
+                                                        <option value="today">Today</option>
+                                                        <option value="yesterday">Yesterday</option>
+                                                        <option value="week">1 Week</option>
+                                                        <option value="month">1 Month</option>
+                                                        <option value="custom">Custom</option>
+                                                    </select>                                
+                                                </div> 
+                                                <div class="col-md-6 form-group mb-3" style="display: none;" id="custom_date_div">
+                                                    <label class="filter-col"  for="pref-search">Stardate </label>
+                                                    <input type="text" name="startdate" class="form-control input-sm datepicker" >
+                                                    <label class="filter-col"  for="pref-search">Enddate</label>
+                                                    <input type="text" class="form-control input-sm datepicker" name="enddate">
+                                                </div>
+                                                @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
+                                                 <div class="col-md-6 form-group mb-3">
+                                                    <label class="filter-col"  for="pref-perpage">Assigned To</label>
+                                                    <select  class="form-control" name="assigned_to">
+                                                        <option value="">All</option>
+                                                        @if(!empty($operators))
+                                                            @foreach($operators as $opr )
+                                                                <option value="{{$opr->id}}">{{$opr->opername}}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                        
+                                                    </select>                                
+                                                </div> 
+                                                @endif
+                                                <div class="col-md-6 form-group mb-3 ">
+                                                    <label class="filter-col"  for="pref-perpage">Status</label>
+                                                    <select  class="form-control" name="status">
+                                                        <option value="">All</option>
+                                                        @if(!empty($statuses))
+                                                            @foreach($statuses as $stat )
+                                                                <option value="{{$stat->status}}">{{$stat->status}}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                        
+                                                    </select>                                
+                                                </div> 
+                                                <div class="col-md-6 form-group mb-3">
+                                                    <label class="filter-col"  for="pref-perpage">Dnid Name</label>
+                                                    <select  class="form-control" name="did_no">
+                                                        <option value="">All</option>
+                                                        @if(!empty($dnidnames))
+                                                            @foreach($dnidnames as $dnid )
+                                                                <option value="{{$dnid->did_no}}">{{$dnid->did_no}}
+                                                                </option>
+                                                            @endforeach
+                                                        @endif
+                                                        
+                                                    </select>                                
+                                                </div> 
+                                               
+                                                <div class="col-md-6 form-group mb-3">
+                                                    <label class="filter-col"  for="pref-search">By Caller Number</label>
+                                                    <input type="text" class="form-control input-sm" name="caller_number">
+                                                </div>
+
+                                                <!-- <div class="form-group "> -->
+                                                <div class="col-md-6 form-group mb-3 ">
+                                                    <label class="filter-col"  for="pref-perpage">Tags</label>
+                                                    {!! Form::select('tags', $tags->prepend('All', ''), null,array('class' => 'form-control')) !!}                        
+                                                </div> 
+                                                
+                                               <div class="form-group">    
+                                               <!-- {{--
+                                                <div class="col-md-6 form-group mb-3">  
+                                                    <div class="">
+                                                      <label><input type="checkbox" value="1" name="unique_call"> Unique Calls</label>
+                                                    </div>
+                                                </div>
+                                                --}} -->
+                                                <div class="col-md-6 form-group mb-3">    
+                                                    
+                                                    <button type="button" id="report_search_button" class="btn btn-default filter-col">
+                                                        <span class="glyphicon glyphicon-record"></span> Search
+                                                    </button>  
+                                                </div>
+                                            <!-- </div> -->
+                                            </form>
+                                        
+                                </div>
+
+
+                             
+                          </div>
+                          
                       </div>
                   </div>
               </div>
+            </div>
+            @endif
             <div class="row mb-4"  id="div_table">
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
@@ -200,9 +198,9 @@
                                     <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable">
                                         <td id="caller_{{$row->cdrid}}">
                                             @if(Auth::user()->usertype=='groupadmin')
-                                                <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                                <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
                                                 @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
-                                                {{ $row->contacts->fname ? $row->contacts->fname : $row->number }}
+                                                {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
                                                 @else
                                                 <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
                                             @endif
@@ -281,20 +279,20 @@
                                                             <form class="contact_form" id="add_contact{{$row->cdrid}}">
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-12">
-                                                                        <input type="hidden" name="contact_id" value="{{$row->contacts->id}}">
+                                                                        <input type="hidden" name="contact_id" value="{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}">
                                                                         <input type="hidden" name="phone" value="{{$row->number}}">
                                                                         <input type="hidden" name="groupid" value="{{$row->groupid}}">
-                                                                        <input type="text" class="form-control" name="fname" value="{{$row->contacts->fname}}" placeholder="First Name">
+                                                                        <input type="text" class="form-control" name="fname" value="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" placeholder="First Name">
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-12">
-                                                                        <input type="text" name="lname" value="{{$row->contacts->lname}}" class="form-control" placeholder="Last Name">
+                                                                        <input type="text" name="lname" value="{{$row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" class="form-control" placeholder="Last Name">
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row">
                                                                     <div class="col-sm-12">
-                                                                        <input type="email" name="email" value="{{$row->contacts->email}}" class="form-control" placeholder="Email">
+                                                                        <input type="email" name="email" value="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" class="form-control" placeholder="Email">
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row">

@@ -15,9 +15,9 @@
     @csrf
     <div class="auth-layout-wrap" style="background-image: url({{asset('assets/images/photo-wide-4.jpg')}})">
         <div class="auth-content">
-            <div class="card o-hidden">
+            <div class="card o-hidden" style="width: 299px;margin-left: 145px;">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="p-4">
                             <div class="auth-logo text-center mb-4">
                                 <img src="{{asset('assets/images/logo.png')}}" alt="">
@@ -51,7 +51,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-6 text-center " style="background-size: cover;background-image: url({{asset('assets/images/photo-long-3.jpg')}}">
+                    <!-- <div class="col-md-6 text-center " style="background-size: cover;background-image: url({{asset('assets/images/photo-long-3.jpg')}}">
                         <div class="pr-3 auth-right">
                             <a class="btn btn-rounded btn-outline-primary btn-outline-email btn-block btn-icon-text" href="signup.html">
                                 <i class="i-Mail-with-At-Sign"></i> Sign up with Email
@@ -63,7 +63,7 @@
                                 <i class="i-Facebook-2"></i> Sign up with Facebook
                             </a>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>

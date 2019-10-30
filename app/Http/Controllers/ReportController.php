@@ -19,6 +19,7 @@ use App\Models\CdrTag;
 use App\Models\CurChannelUsed;
 use App\Models\OperatorDepartment;
 use App\Models\Accountgroup;
+use App\Models\Dids;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -40,7 +41,7 @@ class ReportController extends Controller
     public function index(){
         $cdr = new CdrReport();
         $user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
-        //dd(Auth::user()->groupid);
+        //dd(CdrReport::getReport());
         // $cdr_details = $this->cdr->where('assignedto', Auth::user()->groupid)->first();
         
         return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag()]);
@@ -80,7 +81,7 @@ class ReportController extends Controller
          return $data;
     }
     
-    public function addTag(Request $request) 
+    public function addCdrTag(Request $request) 
     {
         //dd($request->all());
         $validator = Validator::make($request->all(), [
@@ -180,42 +181,30 @@ class ReportController extends Controller
 
     public function addCdr(Request $request) 
     {
-        //if(!empty($request->get('id'))) {
         $validator = Validator::make($request->all(), [
             'number' => 'required|max:12',
             'phone' => 'required|max:12'
+        ], [
+            'number.required' => 'Customer number field is required.',
+            'phone.required' => 'Operator number field is required.'
         ]);    
 
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
-            //$cdr_details = $this->cdr->where:('assignedto', Auth::user()->groupid)->first();
+            $did = Dids::where('assignedto' , Auth::user()->groupid)->select('c2cpri', 'c2ccallerid')->get();
+            $operatorid = (Auth::user()->usertype == 'groupadmin') ? '' : Auth::user()->id;
             $cdr = ['number' => $request->get('number'),
-                    'phone'=> $request->get('phone'),
-                    'did_no' => 'dfdf',
+                    'did_no' => $did[0]->c2ccallerid,
                     'groupid' => Auth::user()->groupid,
                     'resellerid' => Auth::user()->resellerid,
-                    'operatorid' => 'dfdf0',
-                    'datetime' => NOW(),
-                    'status' => 'dfdf',
-                    'number' => 'ssd'
+                    'operatorid' => $operatorid,
+                    'deptname' => 'C2C',
+                    'status' => 'DIALING',
                     ];
         
-            // if(empty($request->get('id'))) {
-            //     $id = DB::table('resellergroup')->insertGetId($reseller);
-            //     if(!empty($id)) {
-            //         DB::table('account')->insert($account);
-            //         $data['success'] = 'Coperate added successfully.';
-            //     }
-            // } else {
-            //     DB::table('resellergroup')
-            //         ->where('id', $request->get('id'))
-            //         ->update($reseller);
-            //     DB::table('account')
-            //         ->where('resellerid', $request->get('id'))
-            //         ->update($account);
+                DB::table('cdr')->insert($cdr);
                 $data['success'] = 'Cdr added successfully.';
-            //}
         } 
         return $data;
     }

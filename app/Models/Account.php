@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 
 class Account extends Authenticatable
 {
+    use Notifiable;
     protected $table = 'account';
     protected $primaryKey = 'id';
     protected $fillable = ['username', 'password', 'operator_id'];
-    protected $hidden = ['password'];
+    //protected $hidden = ['password'];
     public $timestamps = false;
 
 	public function accountdetails()

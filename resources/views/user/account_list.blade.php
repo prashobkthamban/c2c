@@ -22,10 +22,9 @@
                            <thead>
                                 <tr>
                                     <th>User Name</th>
-                                    <!-- <th>Password</th> -->
+                                    <th>Password</th>
                                     <th>User Type</th>
                                     <th>Corporate</th>
-                                    <th>Customer</th>
                                     <th>Phone Number</th>
                                     <th>Add Date</th>
                                     <th>Action</th>
@@ -36,10 +35,9 @@
                                 @foreach($accounts as $account)
                                 <tr>
                                     <td>{{$account->username}}</td>
-                                    <!-- <td>{{$account->password}}</td> -->
+                                    <td>{{$account->user_pwd}}</td>
                                     <td>{{$account->usertype}}</td>
                                     <td>{{$account->resellername}}</td>
-                                    <td></td>
                                     <td>{{$account->phone_number}}</td>
                                     <td>{{ date('d-m-Y', strtotime($account->adddate)) }}</td>
                                     <td><a href="#" data-toggle="modal" data-target="#login_manager" class="text-success mr-2 edit_login" id="{{$account->id}}">
@@ -228,8 +226,6 @@
           $.ajax({
             url: '/edit_account/'+this.id, // This is the url we gave in the route
             success: function(res){ // What to do if we succeed
-                //var response = JSON.stringify(res);
-                console.log(res);
                 if(res) {
                     $("input[name=email]").val(res.email);
                     $("input[name=phone_number]").val(res.phone_number);
@@ -237,7 +233,7 @@
                     $("#resellerid").val(res.resellerid);
                     $("#account_id").val(res.id);
                     $("#usertype").val(res.usertype);
-                    $("#password").val(res.password);
+                    $("#password").val(res.user_pwd);
                     $("input[name=username]").val(res.username);
                     $("#login_title").text('Edit Login');
                     $("#login_manager").modal('show');
