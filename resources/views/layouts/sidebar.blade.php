@@ -101,9 +101,44 @@
                             <div class="triangle"></div>
                         </li>
                         <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('AccessLogs')}}">
+                                <i class="nav-icon i-Security-Check"></i>
+                                <span class="nav-text">Access Logs</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('LiveCalls')}}">
+                                <i class="nav-icon i-Telephone"></i>
+                                <span class="nav-text">Live Calls</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('LiveCalls')}}">
+                                <i class="nav-icon i-Telephone"></i>
+                                <span class="nav-text">PRI Gateway</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('notification')}}">
                                 <i class="nav-icon i-Bell"></i>
                                 <span class="nav-text">Notifications</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('acc_call_summary')}}">
+                                <i class="nav-icon i-File-TXT"></i>
+                                <span class="nav-text">Account Call Summary</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('dashboard_note')}}">
+                                <i class="nav-icon i-File-TXT"></i>
+                                <span class="nav-text">Dashboard Announcement</span>
                             </a>
                             <div class="triangle"></div>
                         </li>
@@ -309,7 +344,6 @@
                             <span class="item-name">Set Office Hours</span>
                         </a>
                     </li>
-
                 </ul>
                 <ul class="childNav" data-parent="insightcrm">
                     <li class="nav-item">

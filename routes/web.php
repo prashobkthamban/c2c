@@ -15,12 +15,19 @@ Auth::routes();
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/test', 'ServiceController@test')->name('test');
 Route::get('home', 'HomeController@index')->name('home');
+Route::get('acc_call_summary', 'HomeController@callSummary')->name('callSummary');
+Route::get('dashboard_note', 'HomeController@dashboardNote')->name('dashboardNote');
+Route::post('add_announcement', 'HomeController@addAnnouncement')->name('addAnnouncement');
+Route::get('delete_announcement/{id}', 'HomeController@deleteAnnouncement')->name('deleteAnnouncement');
+
 
 /* ----------Cdr Report----------- */
 Route::get('cdrreport', 'ReportController@index')->name('cdrreport');
+Route::post('graph_report', 'ReportController@graphReport')->name('graphReport');
 Route::post('add_cdr_contact', 'ReportController@addContact')->name('addContact');
 Route::post('add_tag', 'ReportController@addCdrTag')->name('addCdrTag');
 Route::post('add_note', 'ReportController@addNote')->name('addNote');
+Route::get('notes/{id}', 'ReportController@notes')->name('notes');
 Route::post('add_reminder', 'ReportController@addReminder')->name('addReminder');
 Route::get('get_reminder/{id}', 'ReportController@getReminder')->name('getReminder');
 Route::get('delete_reminder/{id}', 'ReportController@deleteReminder')->name('deleteReminder');
@@ -35,6 +42,8 @@ Route::get('billing', 'ServiceController@billing')->name('Billing');
 Route::get('bill_details/{id}', 'ServiceController@billDetails')->name('billDetails');
 Route::get('get_billing/{id}', 'ServiceController@getBilling')->name('getBilling');
 Route::post('edit_billing', 'ServiceController@editBilling')->name('editBilling');
+Route::get('access_logs', 'ServiceController@accessLogs')->name('AccessLogs');
+Route::get('live_calls', 'ServiceController@liveCalls')->name('LiveCalls');
 
 /* pbx extension */
 Route::get('pbx_extension', 'ReminderController@pbxextension')->name('PbxExtension');

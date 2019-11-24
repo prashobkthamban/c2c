@@ -11,8 +11,6 @@
             </div>
             <div class="separator-breadcrumb border-top"></div>
 
-
-
               <div class="row">
                   <div class="col-lg-12 col-md-12">
                       <div class="card mb-2">
@@ -27,9 +25,6 @@
                              
 
                               <div class="row row-xs">
-
-
-
                                   <div id="filter-panel" class="filter-panel collapse">
                                         
                                                 <form class="form" role="form" id="cdr_filter_form">

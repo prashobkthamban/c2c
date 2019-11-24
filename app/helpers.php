@@ -70,3 +70,8 @@ function getRinggroups($usertype=null, $groupid= null) {
     }
     return $ring;
 }
+
+function getConatctName($callerid) {
+    $contact = DB::table('contacts')->where('groupid', Auth::user()->groupid)->where('phone', $callerid)->select('contacts.fname')->get(); 
+    return $contact;
+}

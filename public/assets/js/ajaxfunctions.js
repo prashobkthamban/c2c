@@ -71,14 +71,12 @@ $(document).ready(function(){
     //add note
     $( '.notes_form' ).on( 'submit', function(e) {
         e.preventDefault();
-        var cdrid = $('input[name="cdrid"]').val();
         var noteHTML = "";
-        console.log($('#'+this.id).serialize());
         var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '{{ URL::route("addNote") }}', // This is the url we gave in the route
-            data: $('#'+this.id).serialize(),
+            url: '/add_note', // This is the url we gave in the route
+            data: $('.notes_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
                     $.each(res.error, function(index, value)
@@ -91,16 +89,15 @@ $(document).ready(function(){
                     });
                     toastr.error(errors);
                 } else {
-                    //console.log(moment(new Date()).format('YYYY-MM-DD hh:mm:ss'));
-                    noteHTML += "<tr>";
+                    console.log(res);
+                    noteHTML += "<tr class='cmnt_row_" + res.id + "'>";
                     noteHTML += "<td>" + res.result.operator  + "</td>";
                     noteHTML += "<td>" + moment(res.result.datetime.date).format('YYYY-MM-DD hh:mm:ss')  + "</td>";
-                    noteHTML += "<td>" + res.result.note  + "</td>";
-                    noteHTML += "<td><a href='#' class='text-danger mr-2'><i class='nav-icon i-Close-Window font-weight-bold'></td>";
+                    noteHTML += "<td>" + res.result.note + "</td>";
+                    noteHTML += "<td><a href='#' class='text-danger mr-2 delete_comment' id='" + res.id + "'><i class='nav-icon i-Close-Window font-weight-bold'></td>";
                     noteHTML += "</tr>";
-                    $("#comments_table tbody").append(noteHTML);
-                    $("#notes_"+cdrid).removeClass('d-none');
-                    $("#add_note_"+cdrid).addClass('d-none');
+                    $("#notes_list_table tbody").append(noteHTML);
+                    $("#add_note_modal").modal('hide');
                     toastr.success(res.success);                
                 }
                
@@ -114,14 +111,12 @@ $(document).ready(function(){
     //add and update contact
     $( '.contact_form' ).on( 'submit', function(e) {
         e.preventDefault();
-        var cdrid = this.id;
-        var callerid = cdrid.replace("add_contact", "");
         var errors = ''; 
 
         $.ajax({
         type: "POST",
         url: '/add_cdr_contact', // This is the url we gave in the route
-        data: $('#'+this.id).serialize(),
+        data: $('.contact_form').serialize(),
         success: function(res){ // What to do if we succeed
             if(res.error) {
                 $.each(res.error, function(index, value)
@@ -134,9 +129,11 @@ $(document).ready(function(){
                 });
                 toastr.error(errors);
             } else {
-                $("#callerid_"+callerid).html("<i class='fa fa-phone'></i>"+res.fname);
-                xajax_hide();
-                toastr.success(res.success);                
+                $("#contact_modal").modal('hide');
+                toastr.success(res.success);    
+                setTimeout( function() { 
+                        location.reload(true); 
+                }, 800);            
             }
            
         },
@@ -146,17 +143,15 @@ $(document).ready(function(){
         });
         });
 
-    //add and update tag
+    //add and update tag in cdr report
     $( '.tag_form' ).on( 'submit', function(e) {
         e.preventDefault();
-        var cdrid = this.id;
-        var tagid = cdrid.replace("tag_form", "");
+        var cdrid = $("#cdrid").val();
         var errors = ''; 
-
         $.ajax({
         type: "POST",
         url: '/add_tag', // This is the url we gave in the route
-        data: $('#'+this.id).serialize(),
+        data: $('.tag_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
                     $.each(res.error, function(index, value)
@@ -169,8 +164,8 @@ $(document).ready(function(){
                     });
                     toastr.error(errors);
                 } else {
-                    $("#tag_"+tagid).text(res.tag);
-                    xajax_hide();
+                    $("#tag_"+cdrid).text(res.tag);
+                    $("#tag_modal").modal('hide');
                     toastr.success(res.success);                
                 }
                
@@ -182,7 +177,7 @@ $(document).ready(function(){
     });
 
     //delete comment
-    $(".delete_comment").click(function() { 
+    $(document).on('click', '.delete_comment', function(){
         var id = this.id;
         if (confirm('Are you sure you want to delete this Comment?')) {
             $.ajax({

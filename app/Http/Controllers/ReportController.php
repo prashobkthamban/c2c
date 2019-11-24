@@ -41,10 +41,33 @@ class ReportController extends Controller
     public function index(){
         $cdr = new CdrReport();
         $user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
-        //dd(CdrReport::getReport());
         // $cdr_details = $this->cdr->where('assignedto', Auth::user()->groupid)->first();
-        
+        //dd(CdrReport::getReport());
         return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag()]);
+    }
+
+    public function graphReport(Request $request) {
+        // $validator = Validator::make($request->all(), [
+        //     'fname' => 'required',
+        //     'lname' => 'required',
+        //     'email' => 'required|email',
+        // ]); 
+        $data = array();
+        $max = 0;
+        $result = CdrReport::getGraphReport($request->all());
+        //dd($result);
+        foreach($result as $row) {
+            if($request->get('status') == null)
+                $data['label'] = 'both';
+            else 
+                $data['label'] = ''; 
+            $data[$row->status][Carbon::parse($row->datetime)->format('Y-m-d')] = $row->total;
+            $max = ($max < $row->total) ? $row->total : $max;
+        }
+        //dd($data);
+        $data['max'] = $max;
+        return $data;
+    
     }
 
     public function addContact(Request $request) 
@@ -103,7 +126,6 @@ class ReportController extends Controller
 
     public function addNote(Request $request) 
     {
-        //dd($request->all());
         $validator = Validator::make($request->all(), [
             'note' => 'required',
         ]);    
@@ -116,13 +138,18 @@ class ReportController extends Controller
                      'uniqueid'=> $request->get('uniqueid'), 
                      'datetime' => NOW()
                     ];
-            //dd($note); 
-            DB::table('cdr_notes')->insert($note);
+            $id = DB::table('cdr_notes')->insertGetId($note);
             $data['result'] = $note;
+            $data['id'] = $id;
             $data['success'] = 'Note added successfully.';
-            //$data['fname'] = $request->get('fname');
         } 
          return $data;
+    }
+
+    public function notes($id) {
+        return $notes = DB::table('cdr_notes')
+            ->where('uniqueid', $id)
+            ->get();
     }
 
     public function addReminder(Request $request) 
@@ -130,7 +157,10 @@ class ReportController extends Controller
         $validator = Validator::make($request->all(), [
             'startdate' => 'required',
             'starttime' => 'required',
-        ]);    
+        ], [
+            'startdate.required' => 'Reminder date is required',
+            'starttime.required' => 'Reminder time is required'
+        ]);   
 
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 

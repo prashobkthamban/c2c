@@ -134,4 +134,78 @@ class ServiceController extends Controller
         } 
          return $data;
     }
+
+    public function accessLogs() {
+        //echo 'bfvgh';die;
+        $query = DB::table('ast_login_log')
+            ->leftJoin('accountgroup', 'ast_login_log.groupid', '=', 'accountgroup.id');
+
+        if(Auth::user()->usertype == 'reseller') {
+            $query->where('account.resellerid', Auth::user()->resellerid);
+        } elseif(Auth::user()->usertype != 'groupadmin') {
+            $query->where('ast_login_log.groupid', Auth::user()->groupid);
+            $query->where('ast_login_log.usertype', 'groupadmin');
+        } elseif(Auth::user()->usertype != 'admin') {
+
+        } else {
+           $query->where('ast_login_log.groupid', Auth::user()->groupid); 
+        }
+
+            
+        $query->select('ast_login_log.*', 'accountgroup.name')->orderBy('id', 'desc');
+        $result = $query->paginate(10);
+        //dd($result);
+        return view('service.access_logs', compact('result'));
+    }
+
+    public function liveCalls() {
+        $query = DB::table('cur_channel_used')
+            ->leftJoin('accountgroup', 'cur_channel_used.groupid', '=', 'accountgroup.id')
+            ->leftJoin('operatoraccount', 'cur_channel_used.operatorid', '=', 'operatoraccount.id')
+            ->leftJoin('operatordepartment', 'cur_channel_used.departmentid', '=', 'operatordepartment.id');
+
+        if(Auth::user()->usertype == 'reseller') {
+            $query->where('accountgroup.resellerid', Auth::user()->resellerid);
+            $query->where('cur_channel_used.calltype', 'ivr');
+        } elseif(Auth::user()->usertype != 'groupadmin') {
+            $query->where('accountgroup.id', Auth::user()->groupid);
+            $query->where('cur_channel_used.calltype', 'ivr');
+        } elseif(Auth::user()->usertype != 'admin') {
+
+        } else {
+           $query->where('cur_channel_used.operatorid', Auth::user()->id);
+           $query->where('cur_channel_used.calltype', 'ivr'); 
+        }
+
+            
+        $query->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name')->orderBy('id', 'desc');
+        $result = $query->paginate(10);
+        return view('service.live_calls', compact('result'));
+    }
+
+    public function priGateway() {
+        // $query = DB::table('cur_channel_used')
+        //     ->leftJoin('accountgroup', 'cur_channel_used.groupid', '=', 'accountgroup.id')
+        //     ->leftJoin('operatoraccount', 'cur_channel_used.operatorid', '=', 'operatoraccount.id')
+        //     ->leftJoin('operatordepartment', 'cur_channel_used.departmentid', '=', 'operatordepartment.id');
+
+        // if(Auth::user()->usertype == 'reseller') {
+        //     $query->where('accountgroup.resellerid', Auth::user()->resellerid);
+        //     $query->where('cur_channel_used.calltype', 'ivr');
+        // } elseif(Auth::user()->usertype != 'groupadmin') {
+        //     $query->where('accountgroup.id', Auth::user()->groupid);
+        //     $query->where('cur_channel_used.calltype', 'ivr');
+        // } elseif(Auth::user()->usertype != 'admin') {
+
+        // } else {
+        //    $query->where('cur_channel_used.operatorid', Auth::user()->id);
+        //    $query->where('cur_channel_used.calltype', 'ivr'); 
+        // }
+
+            
+        // $query->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name')->orderBy('id', 'desc');
+        // $result = $query->paginate(10);
+        // return view('service.live_calls', compact('result'));
+    }
+
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Contact;
+use Carbon\Carbon;
 
 
 class CdrReport extends Model
@@ -37,15 +38,43 @@ class CdrReport extends Model
         return $this->hasOne('App\Models\Contact', 'phone', 'number');
     }
 
-    public static function getReport(){
+    public function reminder()
+    {
+        return $this->hasOne('App\Models\Reminder', 'uniqueid', 'uniqueid');
+    }
 
-       $data = CdrReport::with(['cdrNotes', 'contacts']);
+    public static function getReport(){
+       $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder']);
         if( Auth::user()->usertype == 'reseller'){
             $data->where('cdr.resellerid',Auth::user()->resellerid );
         }
-        $result = $data->orderBy('datetime','DESC')->paginate(30);
+    
+        $result = $data->orderBy('datetime','DESC')->paginate(10);
 
        return $result;
+    }
+
+    public static function getGraphReport($params){
+        $data = CdrReport::select('*');
+        if( Auth::user()->usertype == 'reseller'){
+            $data->where('cdr.resellerid',Auth::user()->resellerid );
+        }
+        
+        if(!empty($params['startdate']) && !empty($params['enddate'])) {
+            $data->whereBetween('datetime', [Carbon::parse($params['startdate'])->format('Y-m-d'), Carbon::parse($params['enddate'])->format('Y-m-d')]);
+        }
+
+        if(!empty($params['status'])){
+            $data->where('cdr.status', $params['status'] );
+        }
+
+        if(!empty($params['department'])){
+            $data->where('cdr.deptname', $params['department'] );
+        }
+
+        $data->selectRaw("COUNT(*) total, DATE_FORMAT(datetime, '%Y %m %e') date")->groupBy('date');
+        $result = $data->get();
+        return $result;
     }
 
     public static function getContact( $rowid ){
