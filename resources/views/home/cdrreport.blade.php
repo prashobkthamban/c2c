@@ -5,6 +5,15 @@
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.date.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.time.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/css/bootstrap-timepicker.min.css')}}">
+<style>
+    .dropdown-menu>li>a {
+    margin: 4px;
+    padding-bottom: 7px;
+    padding-top: 7px;
+    border-radius: 3px;
+    line-height: 18px;
+}
+</style>
 @endsection
 
 @section('main-content')
@@ -19,23 +28,37 @@
               <div class="col-lg-12 col-md-12">
                   <div class="card mb-2">
                         <div class="card-body">
-                          <div class="col-md-2 mt-3 mt-md-0">
-                               
-                                <button class="btn btn-primary btn-block collapsed pull-right mt-3" data-toggle="collapse" data-target="#filter-panel">Filter</button>
-
+                          <div class="col-md-2 mt-3 mt-md-0"> 
+                            <button class="btn btn-primary btn-block collapsed pull-right mt-3" data-toggle="collapse" data-target="#filter-panel">Filter</button>
                           </div>
                                <button class="btn btn-secondary m-1" id="btn_make_call">Make a call</button>
                                <button class="btn btn-secondary m-1" id="btn_refresh">Refresh</button> 
                                <a class="btn btn-secondary m-1" id="btn_download" href="{{ url('cdrexport') }}">Download</a> 
                                <button class="btn btn-primary collapsed m-1" data-toggle="collapse" data-target="#filter-panel">Filter</button>
-                               <a href="#" class="btn btn-primary m-1 dropdown-toggle" data-toggle="dropdown">Assign To</a>
                                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#dial_modal"><i class="i-Telephone"></i></a>
                                <a href="#" class="btn btn-primary" data-toggle="modal" data-target="#msg_modal"><i class="i-Email"></i></a>
+                               <div class="btn-group" id="assign" name="assign" >
+                                <a href="#" class="btn btn-primary m-1 dropdown-toggle" data-toggle="dropdown">Assign To</a>
+                                <ul class="dropdown-menu" role="menu">
+                                  @foreach($operators as $operator)
+                                    <li> 
+                                        <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}});">{{$operator->opername}}</a>
+                                        <ul>
+                                        <li>
+                                            <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}},'S');">Notify By SMS</a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
+                                        </li>
+                                        </ul>
+                                    <li>
+                                  @endforeach
+                                  <?php echo '<li><a href="javascript:assignoper(0);">Unassign</a></li>'; ?>
+                                </ul> 
+                               </div>
                         </div>
                                
-                    <ul class="dropdown-menu" role="menu">
-                      <li> <a href="javascript:assignoper(5136,'Teena');">Teena</a><ul><li><a href="javascript:assignoper(5136,'Teena','S');">Notify By SMS</a></li><li><a href="javascript:assignoper(5136,'Teena','E');">Notify By Email</a></li></ul></li><li> <a href="javascript:assignoper(11496,'aab');">aab</a><ul><li><a href="javascript:assignoper(11496,'aab','S');">Notify By SMS</a></li><li><a href="javascript:assignoper(11496,'aab','E');">Notify By Email</a></li></ul></li><li><a href="javascript:assignoper(0);">Unassign</a></li>    
-                    </ul> 
+                    
 
                       <div class="row row-xs">
                         <!-- <div id="filter-panel" class="filter-panel collapse">

@@ -7,9 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use App\Models\CdrTag;
 
 class HomeController extends Controller
-{
+{ 
     /**
      * Create a new controller instance.
      *
@@ -79,5 +80,15 @@ class HomeController extends Controller
         DB::table('dashbord_annuounce')->where('id',$id)->delete();
         toastr()->success('Announcement delete successfully.');
         return redirect()->route('dashboardNote');
+    }
+
+    public function cdrTags() {
+        return view('home.cdrtags', ['result' => CdrTag::getReport()]);
+    }
+
+    public function deleteRecord($id, $name) {
+        DB::table($name)->where('id',$id)->delete();
+        toastr()->success('Record delete successfully.');
+        return redirect()->route('cdrTags');
     }
 }

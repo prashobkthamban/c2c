@@ -211,6 +211,15 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('cdr_tags')}}">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">Cdr Tags
+                                </span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+
 
                     @endif
 

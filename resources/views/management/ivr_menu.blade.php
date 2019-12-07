@@ -86,6 +86,7 @@
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
                                         {!! Form::hidden('file_lang', null, ['class' => 'form-control', 'id' => 'file_lang']) !!}
+                                        {!! Form::hidden('file_shortcode', null, ['id' => 'file_shortcode']) !!}
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
@@ -146,8 +147,8 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">File to play in {{$lang->Language}} *</label>
-                                        <span id="lang_id_{{$lang->id}}"></span> 
-                                        {!! Form::file($lang->id, null, ['class' => 'form-control file_play', 'id' => '$lang->id', 'enctype' => 'multipart/form-data', 'multiple' => true]) !!}
+                                        <span id="lang_id_{{$lang->id}}" data-short-code="{{$lang->shortcode}}"></span> 
+                                        {!! Form::file($lang->id, null, ['accept' => '.gsm', 'enctype' => 'multipart/form-data', 'multiple' => true]) !!}
                                     </div>
                                 </div> 
                                 @endforeach 
@@ -174,9 +175,17 @@
      $(document).ready(function() {
         var langs = [];
         $("input:file").change(function (){
-            var fileLang = $(this).attr("name");
-            langs.push(fileLang);
-            $("#file_lang").val(langs);
+            var ext = $('input:file').val().split('.').pop().toLowerCase();
+            if($.inArray(ext, ['gsm']) == -1) {
+                $("input:file").val('');
+                return false;
+            } else {
+                var fileLang = $(this).attr("name");
+                var shortcode = $("#lang_id_"+fileLang).attr("data-short-code");
+                langs.push(fileLang+'_'+shortcode);
+                $("#file_lang").val(langs);
+                $("#file_shortcode").val(shortcode);
+            }
         });
 
         $( '.ivr_menu_form' ).on( 'submit', function(e) {

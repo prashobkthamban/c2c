@@ -42,7 +42,8 @@ class ReportController extends Controller
         $cdr = new CdrReport();
         $user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
         // $cdr_details = $this->cdr->where('assignedto', Auth::user()->groupid)->first();
-        //dd(CdrReport::getReport());
+        //dd(Auth::user()->accountdetails);
+        //dd(OperatorAccount::getOperatorbygroup());
         return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag()]);
     }
 

@@ -16,6 +16,7 @@
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
 
+                    
                         <div class="card-body">
                            <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
@@ -32,10 +33,11 @@
                                     <tr>
                                         <td>
                                            {{ $row->tag }}
-
                                         </td>
 
-                                        <td></td>
+                                        <td><a href="{{ route('deleteRecord', [$row->id, 'cdr_tags']) }}" onclick="return confirm('Are you sure want to delete this tag ?')" class="text-danger mr-2">
+                                                    <i class="nav-icon i-Close-Window font-weight-bold"></i>
+                                            </a></td>
 
                                     </tr>
                                     @endforeach

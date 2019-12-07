@@ -21,7 +21,7 @@ class CdrTag extends Model
             $data->where( 'cdr_tags.groupid', Auth::user()->groupid );
         }
 
-        $result = $data->orderBy( 'id', 'DESC' )->paginate( 30 );
+        $result = $data->orderBy( 'id', 'DESC' )->paginate( 10 );
         return $result;
     }
 

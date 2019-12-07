@@ -19,6 +19,8 @@ Route::get('acc_call_summary', 'HomeController@callSummary')->name('callSummary'
 Route::get('dashboard_note', 'HomeController@dashboardNote')->name('dashboardNote');
 Route::post('add_announcement', 'HomeController@addAnnouncement')->name('addAnnouncement');
 Route::get('delete_announcement/{id}', 'HomeController@deleteAnnouncement')->name('deleteAnnouncement');
+Route::get('cdr_tags', 'HomeController@cdrTags')->name('cdrTags');
+Route::get('delete_record/{id}/{name}', 'HomeController@deleteRecord')->name('deleteRecord');
 
 
 /* ----------Cdr Report----------- */

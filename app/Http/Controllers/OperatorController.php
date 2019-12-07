@@ -31,7 +31,7 @@ class OperatorController extends Controller
 
     public function index() {
         $query = DB::table('operatordepartment')->where('operatordepartment.delete_status', '0')
-         ->leftJoin('accountgroupdetails', 'operatordepartment.ivrlevel_id', '=', 'accountgroupdetails.id')
+         ->leftJoin('ivr_menu', 'operatordepartment.ivrlevel_id', '=', 'ivr_menu.id')
          ->leftJoin('accountgroup', 'operatordepartment.groupid', '=', 'accountgroup.id')
          ->leftJoin('resellergroup', 'operatordepartment.resellerid', '=', 'resellergroup.id');
           if(Auth::user()->usertype == 'admin') {
@@ -40,7 +40,7 @@ class OperatorController extends Controller
         } else {
             $query->where('operatordepartment.groupid', Auth::user()->groupid);
         }
-        $query->select('operatordepartment.*', 'resellergroup.resellername', 'accountgroupdetails.ivr_level_name', 'accountgroup.name')->orderBy('id', 'desc');
+        $query->select('operatordepartment.*', 'resellergroup.resellername', 'ivr_menu.ivr_level_name', 'accountgroup.name')->orderBy('id', 'desc');
         $operatordept = $query->paginate(10);
         return view('operator.operatordept_list', compact('operatordept'));
     }
@@ -239,7 +239,7 @@ class OperatorController extends Controller
     }
 
     public function getIvr($groupid) {
-        return getAccountgroupdetails($groupid);
+        return getivr_menu($groupid);
     }
 
     
