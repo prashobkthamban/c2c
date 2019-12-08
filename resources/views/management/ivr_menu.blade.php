@@ -16,7 +16,7 @@
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
                         <div class="card-body">
-                            <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#ivr_modal" class="btn btn-primary"> Add Ivr Menu </a>
+                            <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#ivr_modal" id="add_ivr" class="btn btn-primary"> Add Ivr Menu </a>
                             <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
@@ -72,7 +72,7 @@
            </div>
 
             <!-- add ivr menu modal -->
-            <div class="modal fade" id="ivr_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal fade" id="ivr_modal" tabindex="-1" role="dialog" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -248,13 +248,12 @@
 
         $('.edit_ivr').on('click',function(e)
         {
+            $("#exampleModalCenterTitle-2").text('Edit Customer Ivr Menu');
             var id = $(this).attr("id");
-            //console.log(id);
             $.ajax({
             type: "GET",
             url: '/get_ivr_menu/'+ id, // This is the url we gave in the route
             success: function(res){ // What to do if we succeed
-                //console.log(res)
                 var result = res[0]
                 $("#resellerid").val(result.resellerid);
                 $("#groupid").val(result.groupid);
@@ -266,17 +265,19 @@
                 } else {
                     $("#operator_no").prop("checked", true);
                 } 
-                //$("#ivroption").val(result.ivroption);
-                //console.log(res.length);
+    
                 for(var i = 0; i < res.length;i++) {
-                    console.log(res[i].lang_id);
-                    console.log(res[i].orginalfilename);
-                    $("#lang_id_" + res[i].lang_id).text(res[i].orginalfilename);
+                    var lang_id = res[i].lang_id.split('_');
+                    $("#lang_id_" + lang_id[0]).text(res[i].orginalfilename);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }
           });
+        });
+
+        $('#add_ivr').click(function() {
+            $(".ivr_menu_form").trigger("reset");
         });
      });
  </script>
