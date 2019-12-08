@@ -1,8 +1,8 @@
 <?php 
 return [
-    'moh_file' => public_path("moh_file"),
+    'moh_file' =>  "/var/lib/asterisk/sounds/moh",
     'ivr_file' => "/var/lib/asterisk/sounds/IVRMANGER",
-    'general_file' => public_path("general_file"),
-    'voice_welcome_file' => public_path("voice_file/welcome_file"),
-    'voice_lang_file' => public_path("voice_file/multilanguage_file")
+    'general_file' => "/var/lib/asterisk/sounds/IVRMANGER",
+    'voice_welcome_file' => "/var/lib/asterisk/sounds/IVRMANGER",
+    'voice_lang_file' => "/var/lib/asterisk/sounds/IVRMANGER"
 ];
