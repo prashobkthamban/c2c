@@ -160,6 +160,7 @@ class ManagementController extends Controller
 
             $ivr_menu_id = DB::table('ivr_menu')->insertGetId($accGroup);
             if (file_exists(config('constants.ivr_file'))) { 
+                $file = config('constants.ivr_file');
                 foreach($lang as $listOne) {
                     $list_1 = explode ("_", $listOne);
                     $files = $request->file($list_1[0]);

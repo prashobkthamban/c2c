@@ -41,12 +41,9 @@ class DidController extends Controller
     }
 
     public function extra_did($id) {
-    // echo "sss";die();
         return $extra_dids = DB::table('extra_dids')
             ->where('did_id', $id)
             ->get();
-
-        //dd($dids);
     }
 
     public function add_extra_did(Request $request) {

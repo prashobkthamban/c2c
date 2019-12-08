@@ -115,8 +115,8 @@
                             <div class="triangle"></div>
                         </li>
                         <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('LiveCalls')}}">
-                                <i class="nav-icon i-Telephone"></i>
+                            <a class="nav-item-hold" href="{{route('GateWay')}}">
+                                <i class="nav-icon i-Arrow-X-Left"></i>
                                 <span class="nav-text">PRI Gateway</span>
                             </a>
                             <div class="triangle"></div>
