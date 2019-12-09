@@ -176,7 +176,7 @@
         var langs = [];
         $("input:file").change(function (){
             var ext = $('input:file').val().split('.').pop().toLowerCase();
-            if($.inArray(ext, ['gsm']) == -1) {
+            if($.inArray(ext, ['gsm', 'wav']) == -1) {
                 $("input:file").val('');
                 return false;
             } else {

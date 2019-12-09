@@ -17,9 +17,9 @@ function getAccountgroups($usertype=null, $reseller= null) {
 
 function getAccountgroupdetails($groupid = null) {
     if($groupid != null) {
-       $acc_details = DB::table('accountgroupdetails')->where('groupid', $groupid)->pluck('ivr_level_name', 'id'); 
+       $acc_details = DB::table('ivr_menu')->where('groupid', $groupid)->pluck('ivr_level_name', 'id'); 
     } else {
-        $acc_details = DB::table('accountgroupdetails')->pluck('ivr_level_name', 'id'); 
+        $acc_details = DB::table('ivr_menu')->pluck('ivr_level_name', 'id'); 
     } 
 	
     return $acc_details;

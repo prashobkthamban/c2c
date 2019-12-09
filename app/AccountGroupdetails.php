@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class AccountGroupdetails extends Model
 {
     //
-    protected $table = 'accountgroupdetails';
+    protected $table = 'ivr_menu';
 
 
 	public function account()

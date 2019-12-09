@@ -36,8 +36,8 @@
                                         @foreach($voicefiles as $listOne)
                                         <tr>
                                             <td>{{$listOne->name}}</td>
-                                            <td>{{$listOne->wfile}}</td>
-                                            <td></td>
+                                            <td>{{$listOne->welcomemsg}}</td>
+                                            <td>{{$listOne->flanguagesection}}</td>
                                             <td>{{$listOne->MOH}}</td>
                                             <td><a href="#" data-toggle="modal" data-target="#add_voice_file" class="text-success mr-2 edit_voicefile" id="{{$listOne->id}}">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
@@ -300,7 +300,14 @@
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
  <script type="text/javascript">
      $(document).ready(function() {
-
+        $("input:file").change(function (){
+            var ext = $('input:file').val().split('.').pop().toLowerCase();
+            if($.inArray(ext, ['gsm', 'wav']) == -1) {
+                $("input:file").val('');
+                return false;
+            }
+        });
+        
         $( '.add_voicefile_form' ).on( 'submit', function(e) {
             e.preventDefault();
             var errors = ''; 
