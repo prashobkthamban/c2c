@@ -91,7 +91,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Coperate Account</label> 
-                                         {!! Form::select('resellerid', getResellers()->prepend('Select coperate', ''), null,array('class' => 'form-control', 'id' => 'resellerid')) !!}
+                                         {!! Form::select('resellerid', getResellers()->prepend('Select coperate', '0'), null,array('class' => 'form-control', 'id' => 'resellerid')) !!}
                                     </div>
                                 </div>
                                 <div class="row">
@@ -175,7 +175,7 @@
      $(document).ready(function() {
         var langs = [];
         $("input:file").change(function (){
-            var ext = $('input:file').val().split('.').pop().toLowerCase();
+            var ext = $(this).val().split('.').pop().toLowerCase();
             if($.inArray(ext, ['gsm', 'wav']) == -1) {
                 $("input:file").val('');
                 return false;

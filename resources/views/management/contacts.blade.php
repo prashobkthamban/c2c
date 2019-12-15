@@ -16,7 +16,6 @@
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
                         <div class="card-body">
-                            <!-- <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#holiday_modal" class="btn btn-primary"> Add Holiday </a> -->
                             <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
@@ -55,8 +54,8 @@
                                             <th>Actions</th>
                                         </tr>
                                     </tfoot>
-
                                 </table>
+                                {{ $contacts->links() }}
                             </div>
 
                         </div>
@@ -74,7 +73,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                         {!! Form::open(['action' => 'ManagementController@editContact', 'method' => 'post']) !!} 
+                         {!! Form::open(['class' => 'edit_contact_form', 'method' => 'post']) !!} 
                         <div class="modal-body">
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
@@ -122,12 +121,44 @@
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
     function ContactUpdate(id,fname,lname,email) {
-        console.log(fname);
         $("#id").val(id);
         $("#f_name").val(fname);
         $("#l_name").val(lname);
         $("#e_mail").val(email);
     }
+
+    $(document).ready(function() {
+        $( '.edit_contact_form' ).on( 'submit', function(e) {
+            e.preventDefault();
+            var errors = ''; 
+          $.ajax({
+            type: "POST",
+            url: '{{ URL::route("EditContact") }}', // This is the url we gave in the route
+            data: $('.edit_contact_form').serialize(),
+            success: function(res){ // What to do if we succeed
+                if(res.error) {
+                    $.each(res.error, function(index, value)
+                    {
+                        if (value.length != 0)
+                        {
+                            errors += value[0];
+                            errors += "</br>";
+                        }
+                    });
+                    toastr.error(errors);
+                } else {
+                    $("#contact_update_modal").modal('hide');
+                    toastr.success(res.success); 
+                    setTimeout(function(){ location.reload() }, 500);               
+                }
+               
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                toastr.error('Some errors are occured');
+            }
+          });
+        });
+    });
 </script>
 
 @endsection

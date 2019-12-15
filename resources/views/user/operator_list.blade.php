@@ -36,7 +36,7 @@
                                             <td>{{$operator->oper_status}}</td>   
                                             <td><a href="{{ route('editOperator', $operator->id) }}" class="text-success mr-2">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                                </a><a href="{{ route('deleteOperator', $operator->id) }}" onclick="return confirm('You want to delete this operator?')" class="text-danger mr-2">
+                                                </a><a href="{{ route('deleteOperatorAccount', $operator->id) }}" onclick="return confirm('You want to delete this operator?')" class="text-danger mr-2">
                                                     <i class="nav-icon i-Close-Window font-weight-bold"></i>
                                                 </a></td>
                                         </tr>

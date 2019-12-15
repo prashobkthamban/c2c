@@ -84,17 +84,32 @@ class ManagementController extends Controller
 
     public function contacts() {
         
-        $contacts = Contact::all();
-        //dd($contacts);
+        $contacts = Contact::paginate(10);
         return view('management.contacts', compact('contacts'));
     }
 
-     public function editContact(Request $request)
+    public function editContact(Request $request)
     {
-        echo 'ds';die();
-        //$contacts = Contact::all();
-        //dd($contacts);
-        return view('management.contacts', compact('contacts'));
+        $validator = Validator::make($request->all(), [
+            'fname' => 'required',
+            'lname' => 'required',
+            'email' => 'required',
+        ]);    
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $contact = ['fname' => $request->get('fname'),
+                     'lname' => $request->get('lname'),
+                     'email'=> $request->get('email')
+                    ];
+                DB::table('contacts')
+                    ->where('id', $request->get('id'))
+                    ->update($contact);
+                $data['success'] = 'Contact updated successfully.';
+            
+        } 
+         return $data;
     }
 
     public function delete_contact($id)
@@ -210,7 +225,7 @@ class ManagementController extends Controller
     }
 
     public function addVoicefile(Request $request) {
-        //dd($request->all());
+        $fileName1 = $fileName2 = '';
         $validator = Validator::make($request->all(), [
             'groupid' => 'required',
             'did' => 'required',
@@ -221,12 +236,11 @@ class ManagementController extends Controller
         } else {
             $welcomefile = $request->file('welcomemsg');
             $langfile = $request->file('flanguagesection');
-            //dd($request->file('flanguagesection'));
             if($request->file('welcomemsg') != null) {
-               $fileName1 = $welcomefile->getClientOriginalName();
+               $fileName1 = $request->get('groupid').'_'.$welcomefile->getClientOriginalName();
             }
             if($request->file('flanguagesection') != null) {
-               $fileName2 = $langfile->getClientOriginalName(); 
+               $fileName2 = $request->get('groupid').'_'.$langfile->getClientOriginalName(); 
             }
             
             $voicefile = [
@@ -256,13 +270,13 @@ class ManagementController extends Controller
 
             if(empty($request->get('id'))) {
                 $voice_file_id = DB::table('did_voicefilesettings')->insertGetId($voicefile);
-                $this->uploadVoicefile($welcomefile, $langfile, $fileName1 = null, $fileName2 = null);
+                $this->uploadVoicefile($welcomefile, $langfile, $fileName1, $fileName2);
                 $data['success'] = 'Voicefile added successfully.';
             } else {
                 DB::table('did_voicefilesettings')
                     ->where('id', $request->get('id'))
                     ->update($voicefile);
-                $this->uploadVoicefile($welcomefile, $langfile, $fileName1 = null, $fileName2 = null);
+                $this->uploadVoicefile($welcomefile, $langfile, $fileName1, $fileName2);
                 $data['success'] = 'Voicefile updated successfully.';
             }
         } 
@@ -270,11 +284,11 @@ class ManagementController extends Controller
     }
 
     private function uploadVoicefile($welcomeFile, $langFile, $fileName1, $fileName2) {
-        if (!empty($id) && !empty($fileName1) && file_exists(config('constants.voice_welcome_file'))) {
+        if (!empty($fileName1) && file_exists(config('constants.voice_welcome_file'))) {
             $file = config('constants.voice_welcome_file');
             $welcomeFile->move($file, $fileName1);
         }
-        if (!empty($id) && !empty($fileName2) && file_exists(config('constants.voice_lang_file'))) {
+        if (!empty($fileName2) && file_exists(config('constants.voice_lang_file'))) {
             $file = config('constants.voice_lang_file');
             $langFile->move($file, $fileName2);
         }

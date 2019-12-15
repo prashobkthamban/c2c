@@ -122,11 +122,18 @@ Route::get('add_operator', 'UserController@addOperator')->name('addOperator');
 Route::post('operator_store', 'UserController@storeOperator')->name('operatorStore');
 Route::get('edit/operator/{id}', 'UserController@editOperator')->name('editOperator');
 Route::patch('update/operator/{id}', 'UserController@updateOperator')->name('updateOperator');
-Route::get('operator/{id}', 'UserController@destroyOperator')->name('deleteOperator');
+Route::get('operator/{id}', 'UserController@destroyOperator')->name('deleteOperatorAccount');
+Route::get('operator_shifts', 'UserController@operatorShifts')->name('OperatorShifts');
+Route::post('add_shift', 'UserController@addShift')->name('AddShift');
+Route::get('delete_shift/{id}', 'UserController@deleteShift')->name('DeleteShift');
+Route::get('get_shift/{id}', 'UserController@getShift')->name('GetShift');
 
 /* operatorgrp */
 Route::get('operatorgrp', 'UserController@operatorgrp')->name('OperatorGroup');
 Route::get('operatorgrp_details/{id}', 'UserController@operatorgrp_details')->name('OperatorGroupDetails');
+Route::post('add_opt_assign', 'UserController@addOptassign')->name('addOptassign');
+Route::post('add_num_assign', 'UserController@addNumassign')->name('addNumassign');
+Route::delete('delete_op_group/{opid}/{dpid}', 'UserController@deleteOpgroup')->name('deleteOpgroup');
 
 /* holiday */
 Route::get('holiday', 'ManagementController@holiday')->name('holiday');
@@ -160,7 +167,7 @@ Route::get('get_moh/{id}', 'ManagementController@getMoh')->name('getMoh');
 
 /* contacts */
 Route::get('contacts', 'ManagementController@contacts')->name('Contacts');
-Route::get('edit_contact', 'ManagementController@editContact')->name('editContact');
+Route::post('edit_contact', 'ManagementController@editContact')->name('EditContact');
 Route::get('delete_contact/{id}', 'ManagementController@delete_contact')->name('deleteContact');
 
 /* ---------- Did ----------- */

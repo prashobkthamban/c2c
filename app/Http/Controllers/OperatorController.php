@@ -103,7 +103,7 @@ class OperatorController extends Controller
         $ope_dept = OperatorDepartment::find($id);
         $ope_dept->delete();
         toastr()->success('Operator delete successfully.');
-        return redirect()->route('OptdeptList');
+        return redirect()->route('operators');
     }
 
     public function nonOperatorList() {

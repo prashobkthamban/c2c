@@ -101,7 +101,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Coperate Account</label> 
-                                         {!! Form::select('resellerid', getResellers()->prepend('Select coperate', ''), null,array('class' => 'form-control', 'id' => 'resellerid')) !!}
+                                         {!! Form::select('resellerid', getResellers()->prepend('Select Coperate', '0'), null,array('class' => 'form-control', 'id' => 'resellerid')) !!}
                                     </div>
                                 </div>
                                 <div class="row">

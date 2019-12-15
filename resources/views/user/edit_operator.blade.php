@@ -41,7 +41,7 @@
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Password</label>
-                                         <input type="password" class="form-control" placeholder="Password" name="password">
+                                         <input type="text" class="form-control" placeholder="Password" name="password" value="{{$operator_edit->accounts->user_pwd}}">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('password', ':message') : '' !!}</p>
                                     </div> 
 
@@ -57,7 +57,7 @@
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('livetrasferid', ':message') : '' !!}</p>
                                     </div>
 
-                                    <div class="col-md-6 form-group mb-3">
+                                    <!-- <div class="col-md-6 form-group mb-3">
                                         {!! Form::label('start_work', 'Start time (00:00:00)') !!}
                                         {!! Form::text('start_work', null, ['class' => 'form-control']) !!} 
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('start_work', ':message') : '' !!}</p>
@@ -67,6 +67,12 @@
                                         {!! Form::label('end_work', 'End time (23:59:59)') !!}
                                         {!! Form::text('end_work', null, ['class' => 'form-control']) !!} 
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('end_work', ':message') : '' !!}</p>
+                                    </div> -->
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="picker1">Shift</label>
+                                        {!! Form::select('shift_id', $opr_shift->prepend('Select Shift', ''), $operator_edit->shift_id,array('class' => 'form-control')) !!}
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('shift_id', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">

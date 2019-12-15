@@ -9,7 +9,7 @@ class OperatorAccount extends Model
 {
     protected $table = 'operatoraccount';
     protected $fillable = [
-        'phonenumber'
+        'phonenumber', 'groupid', 'opername', 'oper_status', 'livetrasferid', 'start_work', 'end_work', 'app_use', 'edit', 'download', 'play', 'shift_id'
         ];
     public $timestamps = false;
     public function accounts()

@@ -62,7 +62,7 @@
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('livetrasferid', ':message') : '' !!}</p>
                                     </div>
 
-                                    <div class="col-md-6 form-group mb-3">
+                                    <!-- <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Start time (00:00:00)</label>
                                          <input type="text" class="form-control datetimepicker5" placeholder="(00:00:00)" name="start_work">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('start_work', ':message') : '' !!}</p>
@@ -72,6 +72,11 @@
                                         <label for="picker1">End time (23:59:59)</label>
                                          <input type="text" class="form-control" placeholder="(23:59:59)" name="end_work">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('end_work', ':message') : '' !!}</p>
+                                    </div> -->
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="picker1">Shift</label>
+                                        {!! Form::select('shift_id', $opr_shift->prepend('Select Shift', ''), 0,array('class' => 'form-control')) !!}
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('shift_id', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">

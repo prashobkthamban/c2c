@@ -6,9 +6,8 @@
 
 @section('main-content')
   <div class="breadcrumb">
-                <h1> Operator Groups </h1>
-
-            </div>
+                <a href="{{route('OperatorGroup')}}"><h1> Operator Groups </h1></a>
+  </div>
             <div class="separator-breadcrumb border-top"></div>
 
 
@@ -54,6 +53,111 @@
             </div>
             <!-- end of row -->
 
+             <div class="modal fade" id="add_number" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle-2">Add Number</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                         {!! Form::open(['class' => 'add_number_form', 'method' => 'post']) !!} 
+                        <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                        <input type="hidden" name="departmentid" id="num_departmentid" />
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Phone Number
+                                         *</label> 
+                                         <input type="text" class="form-control" placeholder="Phone Number" name="phonenumber">
+                                    </div>
+                                </div>
+                                 <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Operator Name
+                                         *</label> 
+                                        <input type="text" class="form-control" placeholder="Operator Name" name="opname">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Priority
+                                         *</label> 
+                                        <input type="text" class="form-control" placeholder="Priority" name="priority" value="9">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Live Transfer No
+                                         *</label> 
+                                        <input type="text" class="form-control" placeholder="Live Transfer No" name="livetransfer" value="99">
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                         {!! Form::close() !!}
+                    </div>
+                </div>
+            </div>
+            <!-- add operator modal -->
+            <div class="modal fade" id="add_operator" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalCenterTitle-2">Add Operator</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                         {!! Form::open(['class' => 'add_operator_form', 'method' => 'post']) !!} 
+                        <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                        <input type="hidden" name="departmentid" id="departmentid" />
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Operator
+                                         *</label> 
+                                         {!! Form::select('operatorid', ['Select Operator'],  null,array('class' => 'form-control', 'id' => 'operatorid')) !!}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Priority
+                                         *</label> 
+                                        <input type="text" class="form-control" placeholder="Priority" name="priority" value="8">
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                         {!! Form::close() !!}
+                    </div>
+                </div>
+            </div>
+
 
 
 @endsection
@@ -65,18 +169,37 @@
 <script>
 
     function showDetails(id) {
-        console.log('sfd', id);
+        console.log('delete');
+        $("#operator_groups").hide();
+        $("#departmentid").val(id);
+        $("#num_departmentid").val(id);
         $.ajax({
             url: '/operatorgrp_details/'+id, // This is the url we gave in the route
             success: function(res){ // What to do if we succeed
                 //var response = JSON.stringify(res);
-                console.log(res);
+                console.log('json response', res);
                 var depHTML = "";
                 var settings = "";
                 $("#operator_groups_details").attr("style","display:table;");
                 if(res) {
-                    depHTML += '<tr><td><h4>Department Name :</h4></td><td colspan="2" ><h4>'+res.dept_name+'</h4></td></tr><tr><td colspan="3"></td></tr><tr><td><i class="fa fa-desktop" aria-hidden="true"></i>  Teena(8594049580)priority:3</td><td></td><td><a href="?" onclick="xajax_delete(5136,1);return false;"><i class="fa fa-trash-o " aria-hidden="true"></i></a></td></tr><tr><td colspan="3"> Total 1 Operators in DIRECT-C Department</td></tr><tr><td colspan="3" align="right"><button class="btn btn-success btn-sm" onclick="xajax_addoperator(1)">Add Operator</button><button class="btn btn-success btn-sm" onclick="xajax_addopertornum(1)">Add Number</button></td></tr>';
-                    settings += '<tr><td colspan="3"> <h4>Settings</h4></td></tr><tr><td>Call Distribution :  </td><td>Call_Hunting</td><td>    <a href="?" onclick="xajax_edit(1,1);return false;"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></td></tr><tr><td>Sticky Agent :  </td><td>No</td><td><a href="?" onclick="xajax_edit(1,2);return false;"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></td></tr><tr><td>Call Recording  :  </td><td>yes</td><td><a href="?" onclick="xajax_edit(1,3);return false;"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></td></tr><tr><td>Dial Time :   </td><td>25(In Seconds)</td><td><a href="?" onclick="xajax_edit(1,4);return false;"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></td></tr><tr><td>Working Hour Start :   </td><td>00:00:00</td><td><a href="?" onclick="xajax_edit(1,5);return false;"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></td></tr><tr><td>Working Hour End :   </td><td>23:59:59</td><td><a href="?" onclick="xajax_edit(1,6);return false;"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></td></tr>';
+                    depHTML += '<tr><td><h4>Department Name :</h4></td><td colspan="2" ><h4>'+res.details.dept_name+'</h4></td></tr>';
+                    $("#operatorid option").remove();
+                    $.each(res.operators, function(idx, obj) {                
+                        $('#operatorid').append($('<option>', { 
+                            value: obj.id,
+                            text : obj.opername 
+                        }));
+                    });
+               
+                    if(res.account_det.length > 0) {
+                        $.each(res.account_det, function(idx, obj) {
+                        depHTML += '<tr><td><i class="fa fa-desktop" aria-hidden="true"></i> '+obj.opername+'('+obj.phonenumber+') priority: '+obj.priority+'</td><td></td><td><a href="?" onclick="xajax_delete('+obj.id+','+id+');return false;">Delete</a></td></tr>';
+                        });
+                        depHTML += '<tr><td colspan="3"> Total '+ res.account_det.length +' Operators in '+res.details.dept_name+'</td></tr><tr><td colspan="3" align="right"><a href="#" data-toggle="modal" class="btn btn-success btn-sm"  data-target="#add_operator">Add Operator</a><a href="#" data-toggle="modal" class="btn btn-success btn-sm"  data-target="#add_number">Add Number</a></td></tr>';
+                    } else {
+                        depHTML += '<tr><td><center>No Data !!!</center></td><td></td><td></td></tr><tr><td colspan="3" align="right"><a href="#" data-toggle="modal" class="btn btn-success btn-sm"  data-target="#add_operator">Add Operator</a><a href="#" data-toggle="modal" class="btn btn-success btn-sm"  data-target="#add_number">Add Number</a></td></tr>';
+                    }
+                    settings += '<tr><td colspan="3"> <h4>Settings</h4></td></tr><tr><td>Call Distribution :  </td><td>'+res.details.opt_calltype+'</td><td>    <a href="?" onclick="xajax_edit(1,1);return false;"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></td></tr><tr><td>Sticky Agent :  </td><td>'+res.details.sticky_agent+'</td><td><a href="?" onclick="xajax_edit(1,2);return false;"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></td></tr><tr><td>Call Recording  :  </td><td>'+res.details.recordcall+'</td><td><a href="?" onclick="xajax_edit(1,3);return false;"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></td></tr><tr><td>Dial Time :   </td><td>'+res.details.dialtime+'(In Seconds)</td><td><a href="?" onclick="xajax_edit(1,4);return false;"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></td></tr><tr><td>Working Hour Start :   </td><td>'+res.details.starttime+'</td><td><a href="?" onclick="xajax_edit(1,5);return false;"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></td></tr><tr><td>Working Hour End :   </td><td>'+res.details.endtime+'</td><td><a href="?" onclick="xajax_edit(1,6);return false;"><i class="fa fa-pencil-square" aria-hidden="true"></i></a></td></tr>';
                 }
                
                 $("#department-basic tbody").html(depHTML);
@@ -86,6 +209,90 @@
             }
         });
     }
+
+    function xajax_delete(opid, dpid) {
+        var action = confirm('Are you sure you want to delete this?');
+        if (action == true) {
+                $.ajax({
+                    url: "delete_op_group/"+opid+"/"+dpid,
+                    type: 'DELETE',
+                    success: function (res) {
+                        showDetails(res.dpid);
+                        if(res.status == 1) {
+                           toastr.success('Row delete successfully.')
+                        }
+                        
+                    }
+                });
+            }
+    }
+
+    $(document).ready(function() {
+        $( '.add_operator_form' ).on( 'submit', function(e) {
+            e.preventDefault();
+            var errors = ''; 
+          $.ajax({
+            type: "POST",
+            url: '{{ URL::route("addOptassign") }}', // This is the url we gave in the route
+            data: $('.add_operator_form').serialize(),
+            success: function(res){ // What to do if we succeed
+                if(res.error) {
+                    $.each(res.error, function(index, value)
+                    {
+                        if (value.length != 0)
+                        {
+                            errors += value[0];
+                            errors += "</br>";
+                        }
+                    });
+                    toastr.error(errors);
+                } else {
+                    $("#add_operator").modal('hide');
+                    var departmentid = $("#departmentid").val();
+                    showDetails(departmentid);
+                    toastr.success(res.success);                
+                }
+               
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                toastr.error('Some errors are occured');
+            }
+          });
+        });
+
+        $( '.add_number_form' ).on( 'submit', function(e) {
+            e.preventDefault();
+            var errors = ''; 
+          $.ajax({
+            type: "POST",
+            url: '{{ URL::route("addNumassign") }}', // This is the url we gave in the route
+            data: $('.add_number_form').serialize(),
+            success: function(res){ // What to do if we succeed
+                if(res.error) {
+                    $.each(res.error, function(index, value)
+                    {
+                        if (value.length != 0)
+                        {
+                            errors += value[0];
+                            errors += "</br>";
+                        }
+                    });
+                    toastr.error(errors);
+                } else {
+                    $("#add_number").modal('hide');
+                    var departmentid = $("#departmentid").val();
+                    $(".add_number_form")[0].reset();
+                    showDetails(departmentid);
+                    toastr.success(res.success);                
+                }
+               
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                toastr.error('Some errors are occured');
+            }
+          });
+        });
+    });
 </script>
 
 
