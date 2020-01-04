@@ -424,15 +424,8 @@ class UserController extends Controller
         return view('user.operator_list', compact('operators'));
     }
 
-    public function addOperator()
+    public function addOprAccount(Request $request)
     {
-        $opr_shift = DB::table('operator_shifts')->pluck('shift_name','id');
-        return view('user.add_operator', compact('opr_shift'));
-    }
-
-    public function storeOperator(Request $request)
-    {
-        $opr_shift = DB::table('operator_shifts')->pluck('shift_name','id');
         $validator = Validator::make($request->all(), [
             'phonenumber' => 'required',
             'opername' => 'required',
@@ -440,109 +433,61 @@ class UserController extends Controller
             'password' => 'required',
             'livetrasferid' => 'required',
             'shift_id' => 'required',
-            // 'start_work' => 'required',
-            // 'end_work' => 'required',
-        ]);
+        ]);  
 
         if($validator->fails()) {
-            $messages = $validator->messages();
-            return view('user.add_operator', compact('messages', 'opr_shift'));
+            $data['error'] = $validator->messages(); 
         } else {
-            
-            $operator_data = new OperatorAccount([
+            $operator_data = [
                 'phonenumber' => $request->get('phonenumber'),
                 'groupid' => Auth::user()->groupid,
                 'opername'=> $request->get('opername'),
                 'oper_status'=> $request->get('oper_status'),
                 'livetrasferid'=> $request->get('livetrasferid'),
                 'shift_id'=> $request->get('shift_id'),
-                // 'start_work'=> $request->get('start_work'),
-                // 'end_work'=> $request->get('end_work'),
-                'app_use'=> $request->get('app_use'),
-                'edit'=> $request->get('edit'),
-                'download'=> $request->get('download'),
-                'play'=> $request->get('play'),
-            ]);
-            
-            $operator_data->save();
-            if(!empty($operator_data->id)){
-                $account_data = [
-                    'username'=> $request->get('username'),
-                    'password'=> Hash::make($request->get('password')),
-                    'user_pwd'=> $request->get('password'),
-                    'operator_id'=> $operator_data->id
-                ];
-                DB::table('account')->insert(
-                    $account_data
-                );
-            }
-
-            toastr()->success('Operator added successfully.');
-        } 
-        return redirect()->route('OperatorList');
-        
-    }
-
-    public function editOperator($id)
-    {
-        $operator = new OperatorAccount();     
-        $operator_edit = OperatorAccount::with(['accounts'])->find($id);  
-        $opr_shift = DB::table('operator_shifts')->pluck('shift_name','id');    
-        return view('user.edit_operator', compact('operator_edit', 'opr_shift'));
-    }
-
-    public function updateOperator($id, Request $request)
-    {
-        //dd($id);
-        $operator = new OperatorAccount();
-        $operator_edit = $operator->findOrFail($id);
-        $opr_shift = DB::table('operator_shifts')->pluck('shift_name','id');
-        $validator = Validator::make($request->all(), [
-            'phonenumber' => 'required',
-            'opername' => 'required',
-            'username' => 'required',
-            'password' => 'required',
-            'livetrasferid' => 'required',
-            'shift_id' => 'required',
-            // 'start_work' => 'required',
-            // 'end_work' => 'required',
-        ]);
-
-        if($validator->fails()) {
-            $messages = $validator->messages();
-            //dd($messages = $validator->messages());
-            return view('user.edit_operator', compact('messages', 'user_edit', 'operator_edit', 'opr_shift'));
-        } else {
-            $operator_data = [
-                'phonenumber' => $request->get('phonenumber'),
-                'opername'=> $request->get('opername'),
-                'oper_status'=> $request->get('oper_status'),
-                'livetrasferid'=> $request->get('livetrasferid'),
-                'shift_id'=> $request->get('shift_id'),
-                // 'start_work'=> $request->get('start_work'),
-                // 'end_work'=> $request->get('end_work'),
                 'app_use'=> $request->get('app_use'),
                 'edit'=> $request->get('edit'),
                 'download'=> $request->get('download'),
                 'play'=> $request->get('play'),
             ];
             
-            $operator_edit->fill($operator_data)->save();
-            if($operator_edit->fill($operator_data)->save()) {
+            if(!empty($request->get('id'))) {
+                OperatorAccount::where('id', $request->get('id'))->update($operator_data);
+
                 $account_data = [
                     'username'=> $request->get('username'),
                     'password'=> Hash::make($request->get('password')),
                     'user_pwd'=> $request->get('password'),
                 ];
-                //dd($account_data);
-                $operator_edit->accounts()->update($account_data);
+                    DB::table('account')
+                    ->where('operator_id', $request->get('id'))
+                    ->update($account_data);
+                $data['success'] = 'Operator update successfully.';
+            } else {
+                $operator_data = new OperatorAccount($operator_data);
+                $operator_data->save();
+                if(!empty($operator_data->id)){
+                    $account_data = [
+                        'username'=> $request->get('username'),
+                        'password'=> Hash::make($request->get('password')),
+                        'user_pwd'=> $request->get('password'),
+                        'operator_id'=> $operator_data->id
+                    ];
+                    DB::table('account')->insert(
+                        $account_data
+                    );
+                }
+                $data['success'] = 'Operator added successfully.';   
             }
-            toastr()->success('Operator update successfully.');
-            return redirect()->route('OperatorList');
-        }
-        
+                     
+        } 
+        return $data;
     }
 
+    public function getOprAccount($id) {
+        return DB::table('operatoraccount')->select('operatoraccount.id', 'phonenumber', 'opername', 'oper_status', 'livetrasferid', 'shift_id', 'app_use', 'edit', 'download', 'play', 'account.username', 'account.password', 'account.user_pwd', 'operator_shifts.shift_name')->leftJoin('account', 'operatoraccount.id', '=', 'account.operator_id')->leftJoin('operator_shifts', 'operatoraccount.shift_id', '=', 'operator_shifts.id')->where('operatoraccount.id', $id)->get();
+    }
+    
     public function destroyOperator($id)
     {
         $operator = OperatorAccount::find($id);
@@ -557,8 +502,7 @@ class UserController extends Controller
     }
     
     public function operatorShifts() {
-        $results = DB::table('operator_shifts')->paginate(10);
-        //dd($results);
+        $results = DB::table('operator_shifts')->where('groupid', Auth::user()->groupid)->paginate(10);
         return view('user.operator_shifts', compact('results'));
     }
 
@@ -567,6 +511,7 @@ class UserController extends Controller
             'shift_name' => 'required',
             'start_time' => 'required',
             'end_time' => 'required',
+            'end_time' => 'after:start_time'
         ]);    
 
         if($validator->fails()) {
@@ -574,7 +519,8 @@ class UserController extends Controller
         } else {
             $shift = ['shift_name' => $request->get('shift_name'),
                      'start_time' => $request->get('start_time'),
-                     'end_time'=> $request->get('end_time')
+                     'end_time'=> $request->get('end_time'),
+                     'groupid' => Auth::user()->groupid
                     ];
             if(empty($request->get('id'))) {
                 DB::table('operator_shifts')->insert($shift);

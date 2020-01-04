@@ -30,13 +30,6 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('OperatorShifts')}}">
-                                <i class="nav-icon i-Over-Time"></i>
-                                <span class="nav-text">Operator Shifts</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
                        <!--  <li class="nav-item" data-item="">
                             <a href="{{url('cdrreportout')}}" class="{{ Route::currentRouteName()=='cdrreportout' ? 'open' : '' }}"> 
                             <a href="{{url('cdrreportout')}}" class="nav-item-hold">
@@ -170,6 +163,13 @@
                             <a class="nav-item-hold" href="{{url('reminder')}}">
                                 <i class="nav-icon i-Bell"></i>
                                 <span class="nav-text">Reminders</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('OperatorShifts')}}">
+                                <i class="nav-icon i-Over-Time"></i>
+                                <span class="nav-text">Operator Shifts</span>
                             </a>
                             <div class="triangle"></div>
                         </li>

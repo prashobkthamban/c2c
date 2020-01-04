@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/perfect-scrollbar.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/css/themes/fontawesome5.9/css/all.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/css/themes/fontawesome5.9/css/fontawesome.min.css')}}">
+<link rel="stylesheet" href="{{asset('assets/styles/css/daterangepicker.css')}}">
 
  <!-- <link rel="stylesheet" href="{{asset('assets/styles/vendor/toastr.css')}}"> -->
  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
@@ -204,7 +205,6 @@
 
 
 
-    <script src="{{asset('assets/js/es5/customizer.script.min.js')}}"></script>
     <script type="text/javascript">
         $.ajaxSetup({
             headers: {

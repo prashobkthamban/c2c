@@ -85,7 +85,7 @@ Route::get('get_all_notification/{id}', 'NotificationController@getNotification'
 
 
 Route::get('cdrtags', 'ReportController@cdrtags')->name('cdrtags');
-Route::get('operatorgrp', 'ReportController@operatorgrp')->name('operatorgrp');
+//Route::get('operatorgrp', 'ReportController@operatorgrp')->name('operatorgrp');
 Route::get('livecalls', 'ReportController@livecalls')->name('livecalls');
 Route::get('users', 'UserController@index')->name('UserList');
 Route::get('adduser', 'UserController@addUser')->name('addUser');
@@ -118,11 +118,12 @@ Route::get('blacklist/{id}', 'UserController@destroyBlacklist')->name('deleteBla
 Route::post('blacklist_store', 'UserController@storeBlacklist')->name('blacklistStore');
 
 Route::get('operators', 'UserController@operators')->name('OperatorList');
-Route::get('add_operator', 'UserController@addOperator')->name('addOperator');
-Route::post('operator_store', 'UserController@storeOperator')->name('operatorStore');
-Route::get('edit/operator/{id}', 'UserController@editOperator')->name('editOperator');
-Route::patch('update/operator/{id}', 'UserController@updateOperator')->name('updateOperator');
+Route::post('add_operator_account', 'UserController@addOprAccount')->name('AddOperatorAccount');
+Route::get('get_operator_account/{id}', 'UserController@getOprAccount')->name('GetOperatorAccount');
 Route::get('operator/{id}', 'UserController@destroyOperator')->name('deleteOperatorAccount');
+
+
+
 Route::get('operator_shifts', 'UserController@operatorShifts')->name('OperatorShifts');
 Route::post('add_shift', 'UserController@addShift')->name('AddShift');
 Route::get('delete_shift/{id}', 'UserController@deleteShift')->name('DeleteShift');
@@ -186,6 +187,7 @@ Route::get('cdroutexport', 'ReportController@cdroutexport')->name('cdroutexport'
 Route::get('voicemailexport', 'ReportController@voicemailexport')->name('voicemailexport');
 Route::get('operatordept', 'ReportController@operatordept')->name('operatordept');
 Route::post('add_cdr', 'ReportController@addCdr')->name('AddCdr');
+Route::post('assign_cdr', 'ReportController@assignCdr')->name('AssignCdr');
 
 /* ---------- Operator Department ----------- */
 Route::get('optdept_list', 'OperatorController@index')->name('OptdeptList');

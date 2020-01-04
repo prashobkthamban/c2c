@@ -23,8 +23,8 @@ use App\Models\Dids;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
-
-//use Excel;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\PostExport;
 
 
 
@@ -38,13 +38,11 @@ class ReportController extends Controller
         }
         $this->cdr = new CdrReport();
     }
+
     public function index(){
         $cdr = new CdrReport();
         $user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
-        // $cdr_details = $this->cdr->where('assignedto', Auth::user()->groupid)->first();
-        //dd(Auth::user()->accountdetails);
-        //dd(OperatorAccount::getOperatorbygroup());
-        return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag()]);
+        return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup()]);
     }
 
     public function graphReport(Request $request) {
@@ -240,6 +238,49 @@ class ReportController extends Controller
         return $data;
     }
 
+    public function assignCdr(Request $request) 
+    {
+        foreach($_POST['cdr_id'] as $cdrid) {
+            DB::table('cdr')
+                        ->where('cdrid', $cdrid)
+                        ->update(['assignedto' => $_POST['opr_id']]);
+            $oprAccount = DB::table('operatoraccount')->select('deviceid')->where('id',$_POST['opr_id'])->get();
+            
+            if($oprAccount[0]->deviceid != null) {
+
+                $cdr = DB::table('cdr')->select('number', 'datetime', 'deptname', 'status')->where('cdrid', $cdrid)->get();
+                $cdrrow = $cdr[0];
+                
+                $message='There is new call assigned to you from ' .$cdrrow->number. ' called at ' .$cdrrow->datetime. ' to ' .$cdrrow->deptname. ' call status: ' .$cdrrow->status;
+                $assigncdr = ['message' => $message,
+                            'operatorid' => $_POST['opr_id'],
+                            'status' => 0,
+                            'deviceid' => $oprAccount[0]->deviceid,
+                            'cdrid' => $_POST['cdr_id']
+                        ];
+                DB::table('assigncdr_app_notify')->insert($assigncdr);
+            }
+
+            if($_POST['type'] == 'E') {
+                $qq="INSERT INTO assigncdr_email_operator(cdrid,operatorid)VALUES('$cdrid','$opr')";
+                $assign_email = ['cdrid' => $cdrid,
+                            'operatorid' => $_POST['opr_id']
+                        ];
+                DB::table('assigncdr_email_operator')->insert($assign_email);
+            }
+
+            if($_POST['type'] == 'S') {
+                $assign_sms  = ['cdrid' => $cdrid,
+                            'operatorid' => $_POST['opr_id'],
+                            'groupid' => Auth::user()->groupid
+                        ];
+                DB::table('assigncdr_sms_operator')->insert($assign_sms);
+            }
+        }
+        $data['success'] = 'Cdr Assign successfully.';
+        return $data;
+    }
+
     public function deleteComment($id) {
         $res = DB::table('cdr_notes')->where('id',$id)->delete();
         return response()->json([
@@ -286,106 +327,54 @@ class ReportController extends Controller
     }
     public function cdrexport()
     {
-           
-
-            if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller')
-            {
-                $columns = 'DiD_num,Customer, Caller, Date,Totaltime, Talktime, Status, Credit, Department, Operator,OperatorNumber';
-            }
-            elseif(Auth::user()->usertype ==  'groupadmin')
-            {
-                $columns = 'DID_no,Caller , Date ,Totaltime ,Talktime , Status , Credit, Department,Call_tag, Operator,Assignedto';
-            }
-            elseif(Auth::user()->usertype ==  'operator')
-            {
-                $columns = 'DID_no,Caller , Date, Totaltime ,Talktime, Status ,Credit, Department,Call_tag,Assignedto ';
-            }
-
-            $cdrexports = CdrReport::cdrExport();
-        
-        
-
-            $result_array = array( explode(',',$columns));
-            if(!empty($cdrexports))
-            {
-                foreach($cdrexports as $k=>$cdrr) {
-                    $array = array();
-                    if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller')
-                    {
-                        $array = array($cdrr->did_no,$cdrr->name,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->opername ,$cdrr->phonenumber);
-                    }
-                    elseif(Auth::user()->usertype ==  'groupadmin')
-                    {
-                        $array = array($cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg, $cdrr->status,($cdrr->creditused != '') ? $cdrr->creditused :"a" ,($cdrr->deptname != '') ? $cdrr->deptname : "s",($cdrr->tag != '' ) ? $cdrr->tag : "d",($cdrr->opername != '' ) ? $cdrr->opername : "f",($cdrr->assignedto != '') ? $cdrr->assignedto : "g");
-                    }
-                    elseif(Auth::user()->usertype ==  'operator')
-                    {
-                        $array = array($cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag,$cdrr->opername);
-                        
-                    }
-                   
-                    $result_array[] = $array;
-                }
-            }
-            //print "<pre>";
-           // print_r($result_array);
-         return;
-        // $collection = collect($result_array);
-        // return Excel::download($result_array, 'Report.csv');
-
-            
-            
+        return Excel::download(new PostExport(), "Report.csv");
     }
 
     public function cdroutexport()
     {
-           
+        if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller')
+        {
+            $columns = 'Unique_ID,DiD_num,Customer, Caller, Date,Totaltime, Talktime, Status, Credit, Department, Operator,OperatorNumber';
 
-            if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller')
-            {
-                $columns = 'Unique_ID,DiD_num,Customer, Caller, Date,Totaltime, Talktime, Status, Credit, Department, Operator,OperatorNumber';
+        }
+        elseif(Auth::user()->usertype ==  'groupadmin')
+        {
+            $columns = 'Unique_ID,DID_no,Caller , Date ,Totaltime ,Talktime , Status , Credit, Department, Operator,Assignedto';
+        }
+        elseif(Auth::user()->usertype ==  'operator')
+        {
+            $columns = 'Unique_ID,DID_no,Caller , Date, Totaltime ,Talktime, Status ,Credit, Department,Assignedto ';
+        }
 
-            }
-            elseif(Auth::user()->usertype ==  'groupadmin')
-            {
-                $columns = 'Unique_ID,DID_no,Caller , Date ,Totaltime ,Talktime , Status , Credit, Department, Operator,Assignedto';
-            }
-            elseif(Auth::user()->usertype ==  'operator')
-            {
-                $columns = 'Unique_ID,DID_no,Caller , Date, Totaltime ,Talktime, Status ,Credit, Department,Assignedto ';
-            }
+        $cdrexports = CdrPbx::cdroutExport();
+    
+ 
 
-            $cdrexports = CdrPbx::cdroutExport();
-        
-     
-
-            $result_array = array( $columns);
-            if(!empty($cdrexports))
-            {
-                foreach($cdrexports as $k=>$cdrr) {
-                    $array = array();
-                    if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller')
-                    {
-                        $array = array($cdrr->uniqueid,$cdrr->did_no,$cdr->name,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->opername ,$cdrr->phonenumber);
-                    }
-                    elseif(Auth::user()->usertype ==  'groupadmin')
-                    {
-                        $array = array($cdrr->uniqueid,$cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg, $cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->opername,$cdrr->assignedto);
-                    }
-                    elseif(Auth::user()->usertype ==  'operator')
-                    {
-                        $array = array($cdrr->uniqueid,$cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->opername);
-                        
-                    }
-                   
-                    $result_array[] = $array;
+        $result_array = array( $columns);
+        if(!empty($cdrexports))
+        {
+            foreach($cdrexports as $k=>$cdrr) {
+                $array = array();
+                if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller')
+                {
+                    $array = array($cdrr->uniqueid,$cdrr->did_no,$cdr->name,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->opername ,$cdrr->phonenumber);
                 }
+                elseif(Auth::user()->usertype ==  'groupadmin')
+                {
+                    $array = array($cdrr->uniqueid,$cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg, $cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->opername,$cdrr->assignedto);
+                }
+                elseif(Auth::user()->usertype ==  'operator')
+                {
+                    $array = array($cdrr->uniqueid,$cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->opername);
+                    
+                }
+               
+                $result_array[] = $array;
             }
-           //
-           // return;
-            $collection = collect($result_array);
-           
-            return Excel::download($collection, 'Report.csv');
+        }
+
+        $collection = collect($result_array);
+        return Excel::download($collection, 'Report.csv');
             
     }
 

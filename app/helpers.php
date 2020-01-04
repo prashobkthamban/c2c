@@ -15,6 +15,10 @@ function getAccountgroups($usertype=null, $reseller= null) {
     return $cust;
 }
 
+function shiftList() {
+    return $opr_shift = DB::table('operator_shifts')->where('groupid', Auth::user()->groupid)->pluck('shift_name','id');
+}
+
 function getAccountgroupdetails($groupid = null) {
     if($groupid != null) {
        $acc_details = DB::table('ivr_menu')->where('groupid', $groupid)->pluck('ivr_level_name', 'id'); 

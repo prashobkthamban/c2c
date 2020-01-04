@@ -20,6 +20,12 @@ class Accountgroup extends Model
         $result = $data->where('id',Auth::user()->groupid )->first();
         return $result;
     }
+    
+    public static function getservicebygroup( ){  
+        $data = Accountgroup::select('emailservice_assign_cdr','smsservice_assign_cdr');           
+        $result = $data->where('id',Auth::user()->groupid )->first();
+        return $result;
+    }
 
     public function get_language() {
     	return DB::table('languages')->pluck('Language', 'id');
