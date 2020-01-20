@@ -177,6 +177,63 @@ class UserController extends Controller
         $did_list = $did_list->prepend('Select Did', '');
         return view('user.edit_user', compact('user_edit','lang', 'coperate', 'did_list', 'sms_gateway'));
     }
+	
+ public function editSettings($id)
+    {
+        $account_group = new Accountgroup();
+        $user_edit = $account_group->findOrFail($id);
+        //dd($user_edit);
+        return view('user.edit_user_settings',compact('user_edit'));
+    }
+
+	public function updatesettings($id, Request $request)
+    {
+        //dd($id);
+        $account_group = new Accountgroup();
+        $user_edit = $account_group->findOrFail($id);
+        $rules = [
+            'maxcall_dur' => 'required|integer|min:0',
+            'c2c_channels' => 'required',
+            'c2cAPI' => 'required',
+            'cdr_apikey' => 'required',
+            'max_no_confrence' => 'required|integer|min:0',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if($validator->fails()) {
+            $messages = $validator->messages();
+            //dd($messages = $validator->messages());
+            return view('user.edit_user_settings', compact('messages','user_edit'));
+        } else {
+            $account_group = [
+                'operator_no_logins'=> $request->get('operator_no_logins'),
+                'emailservice_assign_cdr'=> $request->get('emailservice_assign_cdr'),
+                'smsservice_assign_cdr'=> $request->get('smsservice_assign_cdr'),
+                'c2c_channels'=> $request->get('c2c_channels'),
+                'c2cAPI'=> $request->get('c2cAPI'),
+                'operator_dpt'=> $request->get('operator_dpt'),
+                'API'=> $request->get('API'),
+                'cdr_apikey'=> $request->get('cdr_apikey'),
+                'ip'=> $request->get('ip'),
+                'cdr_tag'=> $request->get('cdr_tag'),
+                'crm'=> $request->get('crm'),
+                'cdr_chnunavil_log'=> $request->get('cdr_chnunavil_log'),
+                'max_no_confrence'=> $request->get('max_no_confrence'),
+                'servicetype'=> $request->get('servicetype'),
+                'andriodapp'=> $request->get('andriodapp'),
+                'web_sms'=> $request->get('web_sms'),
+                'dial_statergy'=> $request->get('dial_statergy'),
+                'pushapi'=> $request->get('pushapi'),
+                'pbxexten'=> $request->get('pbxexten'),
+                'c2c'=> $request->get('c2c')
+            ];
+            //dd($account_group);
+            $user_edit->fill($account_group)->save();
+            toastr()->success('User update successfully.');
+            return redirect()->route('UserList');
+        }
+        
+    }
+
 
     public function update($id, Request $request)
     {

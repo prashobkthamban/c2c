@@ -32,6 +32,10 @@ class CdrReport extends Model
     {
         return $this->hasMany('App\Models\CdrNote', 'uniqueid', 'uniqueid');
     }
+    
+    public function operatorAccount() {
+        return $this->hasOne('App\Models\OperatorAccount', 'id', 'assignedto');
+    }
 
     public function contacts()
     {
@@ -44,7 +48,7 @@ class CdrReport extends Model
     }
 
     public static function getReport(){
-       $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder']);
+       $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder', 'operatorAccount']);
         if( Auth::user()->usertype == 'reseller'){
             $data->where('cdr.resellerid',Auth::user()->resellerid );
         }
@@ -85,15 +89,15 @@ class CdrReport extends Model
 
     public static function getReport_search($post_data )
     {
-         $data = CdrReport::select('cdr.*','name','resellername','opername','phonenumber')
-              
+        //dd($post_data);
+        $data = CdrReport::select('cdr.*','name','resellername','opername','phonenumber')  
             ->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr.groupid')
             ->leftJoin('resellergroup', 'resellergroup.id', '=', 'cdr.resellerid')
             ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'cdr.operatorid');
         
         if(isset($post_data['department']) && $post_data['department'] != '')
         {
-            $data->where('cdr.deptname','LIKE','%' .$post_data['department'].'%'  );
+            $data->where('cdr.deptname', $post_data['department']);
         }
         if(isset($post_data['operator']) && $post_data['operator'] != '')
         {
@@ -150,7 +154,7 @@ class CdrReport extends Model
                 $data->where('cdr.datetime','<',$enddate.' 23:59:59');   
             }
         }
-        //
+      
         if(isset($post_data['did_no']) && $post_data['did_no'] != '')
         {
             $data->where('cdr.did_no',$post_data['did_no'] );

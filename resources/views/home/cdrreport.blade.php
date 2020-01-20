@@ -17,25 +17,117 @@
 @endsection
 
 @section('main-content')
-  <div class="breadcrumb">+
+<div class="breadcrumb">
+    <h1>CDR Report </h1>   
+</div>
 
-
-                <h1>CDR Report </h1>   
-            </div>
             <div class="separator-breadcrumb border-top"></div>
             @if(Auth::user()->usertype == 'groupadmin')
             <div class="row">
               <div class="col-lg-12 col-md-12">
                   <div class="card mb-2">
                         <div class="card-body">
+                    <div id="filter-panel" class="filter-panel collapse">
+                        <h5 class="ml-3
+                        ">Search Panel</h5></br>
+                        <form class="form" role="form" id="cdr_filter_form">
+                            <div class="row"> 
+                            @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
+                            <div class="col-md-3 form-group ml-5
+                            ">
+                                <label class="filter-col"  for="pref-perpage">Departments</label>
+                                <select name="department" class="form-control">
+                                    <option value="">All</option>
+                                    @if(!empty($departments))
+                                        @foreach($departments as $dept )
+                                            <option value="{{$dept->dept_name}}">{{$dept->dept_name}}
+                                            </option>
+                                        @endforeach
+                                    @endif
+                                    
+                                </select>                                
+                            </div> 
+                            @endif
+                            @if( Auth::user()->usertype == 'groupadmin' )
+                            <div class="col-md-3 form-group mb-5
+                            ">
+                            <label class="filter-col"  for="pref-perpage">Operators</label>
+                            <select name="operator" class="form-control">
+                                <option value="">All</option>
+                                @if(!empty($operators))
+                                    @foreach($operators as $opr )
+                                        <option value="{{$opr->id}}">{{$opr->opername}}
+                                        </option>
+                                    @endforeach
+                                @endif   
+                            </select>                                
+                            </div> 
+                            @endif
+                            @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
+                            <div class="col-md-3 form-group mb-3">
+                                <label class="filter-col"  for="pref-perpage">Assigned To</label>
+                                <select  class="form-control" name="assigned_to">
+                                    <option value="">All</option>
+                                    @if(!empty($operators))
+                                        @foreach($operators as $opr )
+                                            <option value="{{$opr->id}}">{{$opr->opername}}
+                                            </option>
+                                        @endforeach
+                                    @endif 
+                                </select>                                
+                            </div> 
+                            @endif
+                            <div class="col-md-3 form-group ml-5">
+                                <label class="filter-col"  for="pref-perpage">Dnid Name</label>
+                                <select  class="form-control" name="did_no">
+                                    <option value="">All</option>
+                                    @if(!empty($dnidnames))
+                                        @foreach($dnidnames as $dnid )
+                                            <option value="{{$dnid->did_no}}">{{$dnid->did_no}}
+                                            </option>
+                                        @endforeach
+                                    @endif   
+                                </select>                                
+                            </div>
+                            <div class="col-md-3 form-group mb-3">
+                                <label class="filter-col"  for="pref-search">By Caller Number</label>
+                                <input type="text" class="form-control input-sm" name="caller_number">
+                            </div>  
+                            <div class="col-md-3 form-group mb-3">
+                                <label class="filter-col"  for="pref-perpage">Date</label>
+                                <select class="form-control" name="date" id="date_select">
+                                    <option value="">All</option>
+                                    <option value="today">Today</option>
+                                    <option value="yesterday">Yesterday</option>
+                                    <option value="week">1 Week</option>
+                                    <option value="month">1 Month</option>
+                                    <option value="custom">Custom</option>
+                                </select>                                
+                            </div> 
+                            </div>
+                            <div class="row mt-4" style="display: none;" id="custom_date_div">
+                                <div class="col-md-3 form-group ml-5">
+                                <label class="filter-col"  for="pref-search">Stardate </label>
+                                <input type="text" name="startdate" class="form-control input-sm datepicker" >
+                                </div>
+                                <div class="col-md-3 form-group mb-3">
+                                <label class="filter-col"  for="pref-search">Enddate</label>
+                                <input type="text" class="form-control input-sm datepicker" name="enddate">
+                                </div>
+                            </div>
+                            <div class="mt-4 ml-5">    
+                                <button type="button" id="report_search_button" class="btn btn-primary">
+                                    <span class="glyphicon glyphicon-record"></span> Search
+                                </button> 
+                            </div>
+                        </form>      
+                    </div>
                           <div class="col-md-2 mt-3 mt-md-0"> 
-                            <button class="btn btn-primary btn-block collapsed pull-right mt-3" data-toggle="collapse" data-target="#filter-panel">Filter</button>
                           </div>
                                <!-- <a class="btn btn-secondary m-1" id="btn_download" href="{{ url('cdrexport') }}">Download</a>  -->
-                               <button class="btn btn-primary collapsed m-1" data-toggle="collapse" data-target="#filter-panel">Filter</button>
                                <div class="btn-group" id="assign" name="assign" >
-                                <a href="#" class="btn btn-primary m-1 dropdown-toggle" data-toggle="dropdown">Assign To</a>
-                                <ul class="dropdown-menu" role="menu">
+                               <!-- <a href="#" class="btn btn-primary m-1 dropdown-toggle" data-toggle="dropdown"><i class="i-Add-User"> </i></a> -->
+                                <!-- <ul class="dropdown-menu" role="menu">
                                   @foreach($operators as $operator)
                                   @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
                                     <li> 
@@ -61,128 +153,9 @@
                                   @endif
                                   @endforeach
                                   <?php echo '<li><a href="javascript:assignoper(0);">Unassign</a></li>'; ?>
-                                </ul> 
+                                </ul>  -->
                                </div>
                         </div>
-                               
-                    
-
-                      <div class="row row-xs">
-                        <!-- <div id="filter-panel" class="filter-panel collapse">
-                            <form class="form" role="form" id="cdr_filter_form">
-                                <div class="row"> 
-                                @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
-                                <div class="col-md-6 form-group mb-3">
-                                    <label class="filter-col"  for="pref-perpage">Departments</label>
-                                    <select name="department" class="form-control">
-                                        <option value="">All</option>
-                                        @if(!empty($departments))
-                                            @foreach($departments as $dept )
-                                                <option value="{{$dept->dept_name}}">{{$dept->dept_name}}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                        
-                                    </select>                                
-                                </div> 
-                                @endif
-                                @if( Auth::user()->usertype == 'groupadmin' )
-                                <div class="col-md-6 form-group mb-3">
-                                    <label class="filter-col"  for="pref-perpage">Operators</label>
-                                    <select name="operator" class="form-control">
-                                         <option value="">All</option>
-                                        @if(!empty($operators))
-                                            @foreach($operators as $opr )
-                                                <option value="{{$opr->id}}">{{$opr->opername}}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                        
-                                    </select>                                
-                                </div> 
-                                 @endif
-                                <div class="col-md-6 form-group mb-3">
-                                    <label class="filter-col"  for="pref-perpage">Date</label>
-                                    <select class="form-control" name="date" id="date_select">
-                                        <option value="">All</option>
-                                        <option value="today">Today</option>
-                                        <option value="yesterday">Yesterday</option>
-                                        <option value="week">1 Week</option>
-                                        <option value="month">1 Month</option>
-                                        <option value="custom">Custom</option>
-                                    </select>                                
-                                </div> 
-                                <div class="col-md-6 form-group mb-3" style="display: none;" id="custom_date_div">
-                                    <label class="filter-col"  for="pref-search">Stardate </label>
-                                    <input type="text" name="startdate" class="form-control input-sm datepicker" >
-                                    <label class="filter-col"  for="pref-search">Enddate</label>
-                                    <input type="text" class="form-control input-sm datepicker" name="enddate">
-                                </div>
-                                @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
-                                 <div class="col-md-6 form-group mb-3">
-                                    <label class="filter-col"  for="pref-perpage">Assigned To</label>
-                                    <select  class="form-control" name="assigned_to">
-                                        <option value="">All</option>
-                                        @if(!empty($operators))
-                                            @foreach($operators as $opr )
-                                                <option value="{{$opr->id}}">{{$opr->opername}}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                        
-                                    </select>                                
-                                </div> 
-                                @endif
-                                <div class="col-md-6 form-group mb-3 ">
-                                    <label class="filter-col"  for="pref-perpage">Status</label>
-                                    <select  class="form-control" name="status">
-                                        <option value="">All</option>
-                                        @if(!empty($statuses))
-                                            @foreach($statuses as $stat )
-                                                <option value="{{$stat->status}}">{{$stat->status}}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                        
-                                    </select>                                
-                                </div> 
-                                <div class="col-md-6 form-group mb-3">
-                                    <label class="filter-col"  for="pref-perpage">Dnid Name</label>
-                                    <select  class="form-control" name="did_no">
-                                        <option value="">All</option>
-                                        @if(!empty($dnidnames))
-                                            @foreach($dnidnames as $dnid )
-                                                <option value="{{$dnid->did_no}}">{{$dnid->did_no}}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                        
-                                    </select>                                
-                                </div> 
-                               
-                                <div class="col-md-6 form-group mb-3">
-                                    <label class="filter-col"  for="pref-search">By Caller Number</label>
-                                    <input type="text" class="form-control input-sm" name="caller_number">
-                                </div>
-
-                                
-                                <div class="col-md-6 form-group mb-3 ">
-                                    <label class="filter-col"  for="pref-perpage">Tags</label>
-                                    {!! Form::select('tags', $tags->prepend('All', ''), null,array('class' => 'form-control')) !!}                        
-                                </div> 
-                                
-                               <div class="form-group">    
-                              
-                                <div class="col-md-6 form-group mb-3">    
-                                    
-                                    <button type="button" id="report_search_button" class="btn btn-default filter-col">
-                                        <span class="glyphicon glyphicon-record"></span> Search
-                                    </button> 
-                                </div>
-                           
-                            </form>      
-                        </div>  -->
-                      </div>
                           
                    </div>
                   </div>
@@ -193,10 +166,9 @@
             <!-- 
              -->
             @endif
-            <div class="row mb-4">
+            <div class="row mb-4" id="div_table">
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
-
                         <div class="card-body">
                            <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-bordered" style="width:100%">
@@ -214,75 +186,96 @@
                                     <tbody>
                                     @if(!empty($result))
                                         @foreach($result as $row )
-
                                     <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable">
-                                        <td><input type="checkbox" name="cdr_checkbox" id="{{$row->cdrid}}" value="{{$row->cdrid}}" class="allselect"></td>
-                                        <td id="caller_{{$row->cdrid}}">
-                                            @if(Auth::user()->usertype=='groupadmin')
-                                                <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
-                                                @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
-                                                {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
-                                                @else
-                                                <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
-                                            @endif
+                                    <td><input type="checkbox" name="cdr_checkbox" id="{{$row->cdrid}}" value="{{$row->cdrid}}" class="allselect"></td>
+                                    <td id="caller_{{$row->cdrid}}">
+                                        @if(Auth::user()->usertype=='groupadmin')
+                                        <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                        @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
+                                        {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
+                                        @else
+                                        <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                        @endif
+                                    </td>
+                                    <td>{{$row->datetime}}</td>
+                                    <td><a>{{$row->status}}</a></td>
+                                    <td>{{$row->deptname}}</td>
+                                    <td id="assigned_{{$row->cdrid}}">{{$row->opername}}</td>
+                                    <td>
+                                        <a class="btn bg-gray-100" data-toggle="collapse" data-target="
+                                        #more{{$row->cdrid}}" aria-expanded="false" aria-controls="collapseExample"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
+                                       
+                                        @if($row->recordedfilename !== '')
+                                        <a href="javascript:toggleSound();" class="btn bg-gray-100" ><i class="i-Play-Music"></i></a>
+                                        <a href="{{ url('download_file/' .$row->recordedfilename) }}" class="btn bg-gray-100">
+                                        <i class="i-Download1"></i></a>
+                                        @endif                 
+                                        <a href="#" class="btn bg-gray-100 notes_list" data-toggle="modal" data-target="#notes_modal" id="notes_{{$row->uniqueid}}"><i class="i-Notepad"></i></a>
+                                        <a href="" class="btn bg-gray-100 history_list" data-toggle="modal" data-target="#history_modal" id="history_{{$row->number}}"><i class="i-Notepad-2"></i></a>
+                                        <a href="" class="btn bg-gray-100" data-toggle="dropdown" id="history_{{$row->number}}"><i class="  i-Add-User"></i></a>
 
-                                        </td>
-                                        <td>{{$row->datetime}}</td>
-                                        <td><a>{{$row->status}}</a></td>
-                                        <td>{{$row->deptname}}</td>
-                                        <td id="assigned_{{$row->cdrid}}">{{$row->opername}}</td>
-                                        <td>
-                                        <a class="btn bg-gray-100" data-toggle="collapse" data-target="#more{{$row->cdrid}}" aria-expanded="false" aria-controls="collapseExample"><i class="i-Arrow-Down-2" aria-hidden="true"></i>
-                                            </a>
-                                        <div class="dropdown dropleft text-right w-50 float-right">
+                                        <ul class="dropdown-menu" role="menu">
+                                          @foreach($operators as $operator)
+                                          @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
+                                            <li> 
+                                                <a href="#">{{$operator->opername}}</a><ul>
+                                          @else 
+                                            <li> 
+                                                <a href="#">{{$operator->opername}}</a>
+                                          @endif
+                                          @if($account_service['smsservice_assign_cdr'] =='Yes')
+                                            <li>
+                                                <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
+                                            </li>
+                                          @endif
+                                          @if($account_service['emailservice_assign_cdr'] =='Yes')
+                                            <li>
+                                                <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
+                                            </li>
+                                          @endif 
+                                          @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
+                                            </ul>
+                                          @else 
+                                            </li>
+                                          @endif
+                                          @endforeach
+                                          <?php echo '<li><a href="javascript:assignoper('.$row->cdrid.',0);">Unassign</a></li>'; ?>
+                                        </ul>
+                                        <span>
                                         <button class="btn bg-gray-100" type="button" id="action_{{$row->cdrid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="nav-icon i-Gear-2"></i>
                                         </button>
                                         <div class="dropdown-menu" aria-labelledby="action_{{$row->cdrid}}">
-                                            <a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" id="contact_{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-groupid="{{$row->groupid}}" data-phone="{{$row->number}}">{{isset($row->contacts->fname) ? 'Update Contact': 'Add Contact'}}</a>
-                                            <a class="dropdown-item edit_tag" href="#" data-toggle="modal" data-target="#tag_modal" id="tag_{{$row->cdrid}}" data-tag="{{$row->tag}}">{{$row->tag ? 'Update Tag': 'Add Tag'}}</a>
-                                            <a class="dropdown-item notes_list" href="#" data-toggle="modal" data-target="#notes_modal" id="notes_{{$row->uniqueid}}">Notes</a>
-                                            <a class="dropdown-item add_note" href="#" data-toggle="modal" data-target="#add_note_modal" id="add_note_{{$row->uniqueid}}">Add Notes
-                                            </a>
-                                            @if(!isset($row->reminder->id))
-                                            <a class="dropdown-item edit_reminder" href="#" data-toggle="modal" data-target="#add_reminder_modal" id="add_reminder_{{$row->cdrid}}">Add Reminder</a>
-                                            @endif
+                                        <a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" id="contact_{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-groupid="{{$row->groupid}}" data-phone="{{$row->number}}">{{isset($row->contacts->fname) ? 'Update Contact': 'Add Contact'}}</a>
+                                        <a class="dropdown-item edit_tag" href="#" data-toggle="modal" data-target="#tag_modal" id="tag_{{$row->cdrid}}" data-tag="{{$row->tag}}">{{$row->tag ? 'Update Tag': 'Add Tag'}}</a>
+                                        <a class="dropdown-item add_note" href="#" data-toggle="modal" data-target="#add_note_modal" id="add_note_{{$row->uniqueid}}">Add Notes
+                                        </a>
+                                        @if(!isset($row->reminder->id))
+                                        <a class="dropdown-item edit_reminder" href="#" data-toggle="modal" data-target="#add_reminder_modal" id="add_reminder_{{$row->cdrid}}">Add Reminder</a>
+                                        @endif
+                                        </span>
                                         </div>
-                                        </div>
-                                        </td>
+                                    </td>
                                     </tr>
                                     <tr id="more{{$row->cdrid}}" class="collapse">
-                                        
+                                        <td colspan='7'><p><b>DNID :</b> {{$row->did_no
+                                        }}</p>
+                                            <p><b>Duration :</b> {{$row->firstleg."(".$row->secondleg.")"}}</p>
+                                            <p><b>Coin :</b> {{$row->creditused}}</p>
+                                            <p><b>Assigned To :</b> <span id="assigned_{{$row->cdrid}}">{{$row->operatorAccount ? $row->operatorAccount->opername : ''}}</span></p>
+                                            <p><b>Tag :</b> {{$row->tag}}</p>
+                                        </td>
                                     </tr>
-                                    
                                     @endforeach
                                         @endif
 
                                     </tbody>
-                                  {{--  <tfoot>
-                                    <tr>
-                                        <th>Caller</th>
-                                        <th>DNID</th>
-                                        <th>Date</th>
-                                        <th>Duration</th>
-                                        <th>Status</th>
-                                        <th>Coin</th>
-                                        <th>Department</th>
-                                        <th>Operator</th>
-                                        <th></th>
-                                    </tr>
-
-                                    </tfoot> --}}
-
                                 </table>
                             </div>
-
                         </div>
                         <div class="pull-right">{{ $result->links() }}</div>
                     </div>
                 </div>
-                <!-- end of col -->
-
             </div>
             <!-- end of row -->
 
@@ -292,10 +285,9 @@
                     <div class="modal-content">
                         <div class="modal-body">
                                <audio controls id="play_file" class="">
-                                                  <source src="{{asset('voicefiles/1/3409081_09886080500.ogg')}}" type="audio/ogg">
-                                                  <source src="{{asset('voicefiles/1/3409081_09886080500.ogg')}}" type="audio/mpeg">
-                                                Your browser does not support the audio element.
-                                                </audio>
+                                      <source src="https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3" type="audio/mpeg">
+                                    Your browser does not support the audio element.
+                                    </audio>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -559,6 +551,36 @@
                     </div>
                 </div>
             <!--end of notes modal -->
+
+            <!-- notes modal -->
+                <div class="modal fade" id="history_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Call History</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <table id="history_list_table" class="display table table-striped table-bordered" style="width:100%">
+                                   <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Caller Id</th>
+                                            <th>Date & Time</th>
+                                            <th>Status</th>
+                                            <!-- <th>Action</th> -->
+                                        </tr>
+                                    </thead>
+                                    <tbody> 
+                                    </tbody>
+                                </table>  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <!--end of notes modal -->
     
             <!-- add note modal -->
                 <div class="modal fade" id="add_note_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
@@ -704,6 +726,45 @@
                   <i class="i-Download1"></i>
                 </div></a>
             </div>
+            <div class="customizer" style="top: 239px;">
+                <a href="#" data-toggle="collapse" data-target="#filter-panel"><div class="handle collapsed">
+                  <i class="i-Search-People"></i>
+                </div></a>
+            </div>
+            <div class="customizer" style="top: 280px;">
+                <div>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><div class="handle collapsed">
+                  <i class="i-Add-User"></i>
+                </div></a>
+                <ul class="dropdown-menu" role="menu">
+                  @foreach($operators as $operator)
+                  @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
+                    <li> 
+                        <a href="#">{{$operator->opername}}</a><ul>
+                  @else 
+                    <li> 
+                        <a href="#">{{$operator->opername}}</a>
+                  @endif
+                  @if($account_service['smsservice_assign_cdr'] =='Yes')
+                    <li>
+                        <a href="javascript:assignoper(0,{{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
+                    </li>
+                  @endif
+                  @if($account_service['emailservice_assign_cdr'] =='Yes')
+                    <li>
+                        <a href="javascript:assignoper(0,{{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
+                    </li>
+                  @endif 
+                  @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
+                    </ul>
+                  @else 
+                    </li>
+                  @endif
+                  @endforeach
+                  <?php echo '<li><a href="javascript:assignoper(0);">Unassign</a></li>'; ?>
+                </ul>
+                </div>
+            </div>
 @endsection
 
 @section('page-js')
@@ -719,11 +780,31 @@
     $('#timepicker1').timepicker();
  </script>
  <script type="text/javascript">
-    function assignoper(id, name, type) {
+ 
+    function toggleSound() {
+        //console.log(record);
+      var sourceUrl = 'https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3';
+      $("#oggSource").attr("src", sourceUrl);
+      var audioElem = document.getElementById('audioRecord');
+      console.log(audioElem.paused);
+      if (audioElem.paused)
+        audioElem.play();
+      else
+        audioElem.pause();
+    }
+
+    function assignoper(cdrid, id, name, type) {
+        console.log(cdrid);
+        console.log(id);
+        console.log(name);
         var cdr_id = new Array();
-        $('input[name="cdr_checkbox"]:checked').each(function() {
+        if(cdr_id !== 0) {
+            cdr_id.push(cdrid);
+        } else {
+            $('input[name="cdr_checkbox"]:checked').each(function() {
              cdr_id.push($(this).val());
-        });
+            }); 
+        }
 
         if(cdr_id.length > 0) {
             $.ajax({
@@ -732,7 +813,10 @@
                 data: {opr_id:id, type:type, cdr_id:cdr_id},
                 success: function(res){ 
                   $.each(cdr_id, function( index, value ) {
-                    $("#assigned_"+value).text(name);
+                    console.log('val', value);
+                    console.log('name', name);
+                    name == undefined ? $("#assigned_"+value).text(name) : $("#assigned_"+value).text('');
+                    
                   });  
                   $( ".allselect" ).prop( "checked", false );
                   $( "#allselect" ).prop( "checked", false );
@@ -747,7 +831,7 @@
         }
     }
 
-     function selectAll() {
+    function selectAll() {
         if ($('#allselect').is(":checked"))
         {
           $( ".allselect" ).prop( "checked", true );
@@ -1057,6 +1141,36 @@
                     noteHTML += "<tr><td colspan='3'><center>No Data Found</center></td></tr>";
                 } 
                 $("#notes_list_table tbody").html(noteHTML);
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+            }
+            });
+            
+        });
+
+        $('.history_list').on('click',function(e)
+        {
+            var id = $(this).attr("id");
+            var number = id.replace("history_", "");
+            $.ajax({
+            url: '/call_history/'+number, // This is the url we gave in the route
+            success: function(res){ // What to do if we succeed
+                var response = JSON.stringify(res);
+                var historyHTML = "";
+                if(res.length > 0) {
+                    $.each(res, function(idx, obj) {
+                        historyHTML += "<tr>";
+                        historyHTML += "<td>" + ++idx  + "</td>";
+                        historyHTML += "<td>" + obj.number  + "</td>";
+                        historyHTML += "<td>" + obj.datetime  + "</td>";
+                        historyHTML += "<td>" + obj.status  + "</td>";
+                        historyHTML += "</tr>";
+
+                    }); 
+                } else {
+                    historyHTML += "<tr><td colspan='3'><center>No Data Found</center></td></tr>";
+                } 
+                $("#history_list_table tbody").html(historyHTML);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }

@@ -42,6 +42,7 @@ class ReportController extends Controller
     public function index(){
         $cdr = new CdrReport();
         $user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
+        //dd(CdrReport::getReport());
         return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup()]);
     }
 
@@ -151,6 +152,10 @@ class ReportController extends Controller
             ->get();
     }
 
+    public function callHistory($number) {
+        return CdrReport::where('number', $number)->get();
+    }
+
     public function addReminder(Request $request) 
     {
         $validator = Validator::make($request->all(), [
@@ -240,10 +245,17 @@ class ReportController extends Controller
 
     public function assignCdr(Request $request) 
     {
+        //dd($_POST);
         foreach($_POST['cdr_id'] as $cdrid) {
+            if($_POST['opr_id'] !== 0) {
             DB::table('cdr')
                         ->where('cdrid', $cdrid)
                         ->update(['assignedto' => $_POST['opr_id']]);
+            } else {
+                DB::table('cdr')
+                        ->where('cdrid', $cdrid)
+                        ->update(['assignedto' => '']);
+            }
             $oprAccount = DB::table('operatoraccount')->select('deviceid')->where('id',$_POST['opr_id'])->get();
             
             if($oprAccount[0]->deviceid != null) {
@@ -288,8 +300,9 @@ class ReportController extends Controller
         ]);
     }
 
-    public function downloadFile($file, $id) {
-        $myFile = public_path("download_files/".$id."/".$file);
+    public function downloadFile($id, $file) {
+        //dd($file);
+        $myFile = '/var/spool/asterisk/monitorDONE/MP3/'.$id.'/'.$file;
         return response()->download($myFile);
     }
 

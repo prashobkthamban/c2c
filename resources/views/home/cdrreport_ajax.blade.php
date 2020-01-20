@@ -1,120 +1,111 @@
-
-            <div class="row mb-4" id="div_table">
+ <div class="row mb-4" id="div_table">
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
-
                         <div class="card-body">
                            <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                                <table id="zero_configuration_table" class="display table table-bordered" style="width:100%">
                                     <thead>
                                     <tr>
-                                        <th>Caller</th>
-                                        <th>DNID</th>
-                                        <th>Date</th>
-                                        <th>Duration</th>
+                                        <th><input type="checkbox" name="allselect" id="allselect" value="yes" onclick="selectAll();"></th>
+                                        <th>Caller Id</th>
+                                        <th>Date & Time</th>
                                         <th>Status</th>
-                                        <th>Coin</th>
                                         <th>Department</th>
-                                        <th>Operator</th>
-
+                                        <th>Agent</th>
+                                        <th>Actions</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @if(!empty($result))
                                         @foreach($result as $row )
                                     <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable">
-                                        <td>
-                                            @if(Auth::user()->usertype=='groupadmin')
-                                                <a href="?" data-toggle="modal" data-target="#formDiv" title="{{ $row->fname ? $row->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->fname ? $row->fname : $row->number }}</a>
-                                                @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
-                                                {{ $row->fname ? $row->fname : $row->number }}
-                                                @else
-                                                <a href="?" data-toggle="modal" data-target="#formDiv" title="{{ $row->fname ? $row->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->fname ? $row->fname : $row->number }}</a>
-                                            @endif
+                                    <td><input type="checkbox" name="cdr_checkbox" id="{{$row->cdrid}}" value="{{$row->cdrid}}" class="allselect"></td>
+                                    <td id="caller_{{$row->cdrid}}">
+                                        @if(Auth::user()->usertype=='groupadmin')
+                                        <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                        @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
+                                        {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
+                                        @else
+                                        <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                        @endif
+                                    </td>
+                                    <td>{{$row->datetime}}</td>
+                                    <td><a>{{$row->status}}</a></td>
+                                    <td>{{$row->deptname}}</td>
+                                    <td id="assigned_{{$row->cdrid}}">{{$row->opername}}</td>
+                                    <td>
+                                        <a class="btn bg-gray-100" data-toggle="collapse" data-target="
+                                        #more{{$row->cdrid}}" aria-expanded="false" aria-controls="collapseExample"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
+                                       
+                                        @if($row->recordedfilename !== '')
+                                        <a href="javascript:toggleSound();" class="btn bg-gray-100" ><i class="i-Play-Music"></i></a>
+                                        <a href="{{ url('download_file/' .$row->recordedfilename) }}" class="btn bg-gray-100">
+                                        <i class="i-Download1"></i></a>
+                                        @endif                 
+                                        <a href="#" class="btn bg-gray-100 notes_list" data-toggle="modal" data-target="#notes_modal" id="notes_{{$row->uniqueid}}"><i class="i-Notepad"></i></a>
+                                        <a href="" class="btn bg-gray-100 history_list" data-toggle="modal" data-target="#history_modal" id="history_{{$row->number}}"><i class="i-Notepad-2"></i></a>
+                                        <a href="" class="btn bg-gray-100" data-toggle="dropdown" id="history_{{$row->number}}"><i class="  i-Add-User"></i></a>
 
-                                        </td>
-                                        <td>{{$row->did_no}}</td>
-                                        <td>{{$row->datetime}}</td>
-                                        <td>{{$row->firstleg .'('. $row->secondleg.')'}}</td>
-                                        <td><a>{{$row->status}}</a></td>
-                                        <td>{{$row->creditused}}</td>
-                                        <td>{{$row->deptname}}</td>
-                                        <td>{{$row->opername}}</td>
-
+                                        <ul class="dropdown-menu" role="menu">
+                                          @foreach($operators as $operator)
+                                          @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
+                                            <li> 
+                                                <a href="#">{{$operator->opername}}</a><ul>
+                                          @else 
+                                            <li> 
+                                                <a href="#">{{$operator->opername}}</a>
+                                          @endif
+                                          @if($account_service['smsservice_assign_cdr'] =='Yes')
+                                            <li>
+                                                <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
+                                            </li>
+                                          @endif
+                                          @if($account_service['emailservice_assign_cdr'] =='Yes')
+                                            <li>
+                                                <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
+                                            </li>
+                                          @endif 
+                                          @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
+                                            </ul>
+                                          @else 
+                                            </li>
+                                          @endif
+                                          @endforeach
+                                          <?php echo '<li><a href="javascript:assignoper('.$row->cdrid.',0);">Unassign</a></li>'; ?>
+                                        </ul>
+                                        <span>
+                                        <button class="btn bg-gray-100" type="button" id="action_{{$row->cdrid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="nav-icon i-Gear-2"></i>
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="action_{{$row->cdrid}}">
+                                        <a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" id="contact_{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-groupid="{{$row->groupid}}" data-phone="{{$row->number}}">{{isset($row->contacts->fname) ? 'Update Contact': 'Add Contact'}}</a>
+                                        <a class="dropdown-item edit_tag" href="#" data-toggle="modal" data-target="#tag_modal" id="tag_{{$row->cdrid}}" data-tag="{{$row->tag}}">{{$row->tag ? 'Update Tag': 'Add Tag'}}</a>
+                                        <a class="dropdown-item add_note" href="#" data-toggle="modal" data-target="#add_note_modal" id="add_note_{{$row->uniqueid}}">Add Notes
+                                        </a>
+                                        @if(!isset($row->reminder->id))
+                                        <a class="dropdown-item edit_reminder" href="#" data-toggle="modal" data-target="#add_reminder_modal" id="add_reminder_{{$row->cdrid}}">Add Reminder</a>
+                                        @endif
+                                        </span>
+                                        </div>
+                                    </td>
                                     </tr>
-                                    <tr id="accordion_{{$row->cdrid}}" class="collapse">
-                                        <td colspan="7">
-                                            <div >
-                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.form',{{$row->number}})">Form</button>
-                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.tag')">Tag</button>
-                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.reminder')">Add Reminder</button>
-                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.assign')">Assign</button>
-                                                <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.contact')">Add Contact</button>
-                                                <button type="button" class="btn btn-info m-1">Play</button>
-                                                <button type="button" class="btn btn-info m-1">Download</button>
-
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn btn-info">More</button>
-                                                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                                                        <span class="caret"></span>
-                                                        <span class="sr-only">Toggle Dropdown</span>
-                                                    </button>
-                                                    <ul class="dropdown-menu" role="menu">
-                                                        <li>
-                                                            <a href="#" class="btn btn-outline-info m-1">Call Duration : {{$row->firstleg}}({{$row->secondleg}})</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="#" class="btn btn-outline-info m-1">Coin : {{$row->creditused}}</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="#" class="btn btn-outline-info m-1">Assign To : {{$row->assignedname}}</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="#" class="btn btn-outline-info m-1">Reminder : {{$row->creditused}}</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="#" class="btn btn-outline-info m-1">Tag : {{$row->tag}}</a>
-                                                        </li>
-                                                        <li>
-                                                            <a href="#" class="btn btn-outline-info m-1">Form Owner : {{$row->opername}}</a>
-                                                        </li>
-                                                        <li class="divider"></li>
-                                                        <li>
-                                                            <a href="#" class="btn btn-info m-1" data-toggle="modal" data-target="#ModalContent" onclick="loadForm({{$row->cdrid}},'cdr.callhistory')">For Call History</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-
-                                            </div>
+                                    <tr id="more{{$row->cdrid}}" class="collapse">
+                                        <td colspan='7'><p><b>DNID :</b> {{$row->did_no
+                                        }}</p>
+                                            <p><b>Duration :</b> {{$row->firstleg."(".$row->secondleg.")"}}</p>
+                                            <p><b>Coin :</b> {{$row->creditused}}</p>
+                                            <p><b>Assigned To :</b> <span id="assigned_{{$row->cdrid}}">{{$row->operatorAccount ? $row->operatorAccount->opername : ''}}</span></p>
+                                            <p><b>Tag :</b> {{$row->tag}}</p>
                                         </td>
                                     </tr>
                                     @endforeach
                                         @endif
 
                                     </tbody>
-                                {{--    <tfoot>
-                                    <tr>
-                                        <th>Caller</th>
-                                        <th>DNID</th>
-                                        <th>Date</th>
-                                        <th>Duration</th>
-                                        <th>Status</th>
-                                        <th>Coin</th>
-                                        <th>Department</th>
-                                        <th>Operator</th>
-                                        <th></th>
-                                    </tr>
-
-                                    </tfoot>
---}}
                                 </table>
                             </div>
-
                         </div>
                         <div class="pull-right">{{ $result->links() }}</div>
                     </div>
                 </div>
-                <!-- end of col -->
-
             </div>
-            <!-- end of row -->

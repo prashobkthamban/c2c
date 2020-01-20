@@ -30,6 +30,7 @@ Route::post('add_cdr_contact', 'ReportController@addContact')->name('addContact'
 Route::post('add_tag', 'ReportController@addCdrTag')->name('addCdrTag');
 Route::post('add_note', 'ReportController@addNote')->name('addNote');
 Route::get('notes/{id}', 'ReportController@notes')->name('notes');
+Route::get('call_history/{number}', 'ReportController@callHistory')->name('callHistory');
 Route::post('add_reminder', 'ReportController@addReminder')->name('addReminder');
 Route::get('get_reminder/{id}', 'ReportController@getReminder')->name('getReminder');
 Route::get('delete_reminder/{id}', 'ReportController@deleteReminder')->name('deleteReminder');
@@ -93,7 +94,9 @@ Route::post('user_store', 'UserController@store')->name('user_store');
 Route::get('user/{id}', 'UserController@destroy')->name('deleteUser');
 Route::get('delete_account/{id}', 'UserController@deleteAccount')->name('deleteAccount');
 Route::get('edit/{id}', 'UserController@edit')->name('editUser');
+Route::get('editSettings/{id}', 'UserController@editSettings')->name('editUserSettings');
 Route::patch('update/user/{id}', 'UserController@update')->name('updateUser');
+Route::patch('updatesettings/user/{id}', 'UserController@updatesettings')->name('updateUserSettings');
 Route::get('my_profile', 'UserController@myProfile')->name('myProfile');
 
 /* ----------login account----------- */

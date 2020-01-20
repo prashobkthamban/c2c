@@ -42,7 +42,9 @@
                                             <td>{{$user->did}}</td>
                                             <td>{{ date('d-m-Y', strtotime($user->created_at)) }}</td>
                                             <td>{{$user->status}}</td>
-                                            <td><a href="{{ route('editUser', $user->id) }}" class="text-success mr-2">
+                                            <td><a href="{{ route('editUserSettings', $user->id) }}" class="text-success mr-2" title="IVR User Permisions">
+							<i class="nav-icon i-Pen-2 "></i>
+                                           	<a href="{{ route('editUser', $user->id) }}" class="text-success mr-2" title=" Edit User">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                                 </a><a href="{{ route('deleteAccount', $user->id) }}" onclick="return confirm('Are you sure want to delete this user?')" class="text-danger mr-2">
                                                     <i class="nav-icon i-Close-Window font-weight-bold"></i>
