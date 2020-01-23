@@ -186,13 +186,10 @@ class UserController extends Controller
         return view('user.edit_user_settings',compact('user_edit'));
     }
 
-	public function updatesettings($id, Request $request)
-    {
-        //dd($id);
+public function updatesettings($id, Request $request) {
         $account_group = new Accountgroup();
-        $user_edit = $account_group->findOrFail($id);
+       	$user_edit = $account_group->findOrFail($id);
         $rules = [
-            'maxcall_dur' => 'required|integer|min:0',
             'c2c_channels' => 'required',
             'c2cAPI' => 'required',
             'cdr_apikey' => 'required',
@@ -201,11 +198,9 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if($validator->fails()) {
             $messages = $validator->messages();
-            //dd($messages = $validator->messages());
             return view('user.edit_user_settings', compact('messages','user_edit'));
         } else {
             $account_group = [
-                'operator_no_logins'=> $request->get('operator_no_logins'),
                 'emailservice_assign_cdr'=> $request->get('emailservice_assign_cdr'),
                 'smsservice_assign_cdr'=> $request->get('smsservice_assign_cdr'),
                 'c2c_channels'=> $request->get('c2c_channels'),
@@ -226,17 +221,14 @@ class UserController extends Controller
                 'pbxexten'=> $request->get('pbxexten'),
                 'c2c'=> $request->get('c2c')
             ];
-            //dd($account_group);
             $user_edit->fill($account_group)->save();
             toastr()->success('User update successfully.');
             return redirect()->route('UserList');
-        }
-        
-    }
+        }      
+}
 
 
-    public function update($id, Request $request)
-    {
+    public function update($id, Request $request) {
         //dd($id);
         $account_group = new Accountgroup();
         $did = new Dids();
