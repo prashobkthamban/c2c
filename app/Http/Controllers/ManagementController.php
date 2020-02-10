@@ -30,38 +30,38 @@ class ManagementController extends Controller
     }
 
     public function holiday() {
-        $holiday_list = Holiday::all()->where('groupid', 1);
+        $holiday_list = Holiday::all()->where('groupid', Auth::user()->groupid);
         return view('management.holiday', compact('holiday_list'));
     }
 
     public function holidayStore(Request $request)
     {
-        //echo "sds";die();
-        $holiday = new Holiday();
-        $holiday_list = Holiday::all()->where('groupid', 1);
-        $validator = Validator::make($request->all(), [
+        if($request->get('format') == 'day') {
+            $validator = Validator::make($request->all(), [
+            'reason' => 'required',
+            'day' => 'required'
+            ]);
+        } else {
+            $validator = Validator::make($request->all(), [
             'date' => 'required',
             'reason' => 'required',
-        ]);
+            ]);
+        }
 
         if($validator->fails()) {
-            $messages = $validator->messages(); 
-            //dd($messages);
-            return view('management.holiday', compact('messages', 'holiday_list'));
+            $data['error'] = $validator->messages(); 
         } else {
-            $holiday = new Holiday([
-                'date' => Carbon::parse($request->get('date'))->format('Y-m-d'),
+            $holiday = [
+                'date' => !empty($request->get('date')) ? Carbon::parse($request->get('date'))->format('Y-m-d') : null,
+                'day' => $request->get('day'),
                 'reason'=> $request->get('reason'),
-                'groupid'=> 1,
+                'groupid'=> Auth::user()->groupid,
                 'resellerid'=> 0,
-            ]);
-
-        //dd($holiday);
-        $holiday->save();
-        toastr()->success('Holiday added successfully.');
+            ];
+            DB::table('holiday')->insert($holiday); 
+            $data['success'] = 'Holiday added successfully.';
         } 
-        return view('management.holiday', compact('holiday_list'));
-        
+       return $data; 
     }
 
     public function delete_holiday($id)

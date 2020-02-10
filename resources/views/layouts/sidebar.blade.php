@@ -204,6 +204,12 @@
                                 <span class="nav-text">Blacklist</span>
                             </a> 
                         </li>
+                        <li class="nav-item">
+                            <a href="{{url('holiday')}}" class="nav-item-hold">
+                                <i class="nav-icon i-Clock-4"></i>
+                                <span class="nav-text">Holiday</span>
+                            </a>
+                        </li>
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('notification')}}">
                                 <i class="nav-icon i-Bell"></i>
