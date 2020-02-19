@@ -83,7 +83,6 @@ class ManagementController extends Controller
     }
 
     public function contacts() {
-        
         $contacts = Contact::paginate(10);
         return view('management.contacts', compact('contacts'));
     }
@@ -94,20 +93,28 @@ class ManagementController extends Controller
             'fname' => 'required',
             'lname' => 'required',
             'email' => 'required',
-        ]);    
+            'phone' => 'required'
+        ]); 
+        //dd($request->all());  
 
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
-            $contact = ['fname' => $request->get('fname'),
-                     'lname' => $request->get('lname'),
-                     'email'=> $request->get('email')
-                    ];
+            $contact = [ 'fname' => $request->get('fname'),
+                         'lname' => $request->get('lname'),
+                         'email'=> $request->get('email'),
+                         'phone'=> $request->get('phone'),
+                         'groupid' => Auth::user()->groupid
+                       ];
+            if(empty($request->get('id'))) {
+                DB::table('contacts')->insert($contact);
+                $data['success'] = 'Contact added successfully.';
+            } else {
                 DB::table('contacts')
                     ->where('id', $request->get('id'))
                     ->update($contact);
                 $data['success'] = 'Contact updated successfully.';
-            
+            } 
         } 
          return $data;
     }
@@ -174,23 +181,25 @@ class ManagementController extends Controller
                     ];
 
             $ivr_menu_id = DB::table('ivr_menu')->insertGetId($accGroup);
-            if (file_exists(config('constants.ivr_file'))) { 
+            if (file_exists(config('constants.ivr_file')) && $lang) { 
                 $file = config('constants.ivr_file');
+                //dd($files);
                 foreach($lang as $listOne) {
                     $list_1 = explode ("_", $listOne);
                     $files = $request->file($list_1[0]);
+                    //dd($files);
                     if(!empty($files)) {
-                      $ext=substr($files->getClientOriginalName(),-4);
-                      $newfilename=$list_1[1]."_".$vfilename."".$ext;
-                      $ivrLanguage = ['ivr_menu_id' => $ivr_menu_id,
-                               'lang_id' => $listOne,
-                               'filename'=> $newfilename,
-                               'orginalfilename'=> $files->getClientOriginalName(), 
-                              ];
-  
-                      $files->move($file, $newfilename);
-                      DB::table('ast_ivrmenu_language')->insert($ivrLanguage);
-                   }
+                        $ext=substr($files->getClientOriginalName(),-4);
+                        $newfilename=$list_1[1]."_".$vfilename."".$ext;
+                        $ivrLanguage = ['ivr_menu_id' => $ivr_menu_id,
+                             'lang_id' => $listOne,
+                             'filename'=> $newfilename,
+                             'orginalfilename'=> $files->getClientOriginalName(), 
+                            ];
+
+                    $files->move($file, $newfilename);
+                    DB::table('ast_ivrmenu_language')->insert($ivrLanguage);
+                    }   
                 } 
             }
             $data['result'] = $accGroup;
@@ -224,7 +233,7 @@ class ManagementController extends Controller
         return view('management.voicefiles', compact('voicefiles', 'voicefilesnames', 'thank4calling', 'repeatoptions', 'previousmenu', 'voicemailmsg', 'trasfringcall', 'contactusoon', 'talktooperator9', 'noinput', 'wronginput', 'nonworkinghours', 'moh', 'transferingagent', 'holiday', 'aombefore', 'aomafter'));
     }
 
-    public function addVoicefile(Request $request) {
+   public function addVoicefile(Request $request) {
         $fileName1 = $fileName2 = '';
         $validator = Validator::make($request->all(), [
             'groupid' => 'required',
@@ -353,7 +362,7 @@ class ManagementController extends Controller
     }
 
     public function mohListings() { 
-        $moh = DB::table('mohclassess')->orderBy('id', 'desc')->paginate(10);
+        $moh = DB::table('MOHclassess')->orderBy('id', 'desc')->paginate(10);
         //dd($moh);
         return view('management.mohlistings', compact('moh'));
     }
@@ -364,7 +373,7 @@ class ManagementController extends Controller
         if(file_exists($file)) {
             File::deleteDirectory($file);
         }
-        DB::table('mohclassess')->where('id', $id)->delete();
+        DB::table('MOHclassess')->where('id', $id)->delete();
         toastr()->success('Record deleted successfully.');
         return redirect()->route('mohListings');
     }

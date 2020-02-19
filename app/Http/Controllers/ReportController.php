@@ -42,7 +42,6 @@ class ReportController extends Controller
     public function index(){
         $cdr = new CdrReport();
         $user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
-        //dd(CdrReport::getReport());
         return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup()]);
     }
 
@@ -222,21 +221,23 @@ class ReportController extends Controller
             'number.required' => 'Customer number field is required.',
             'phone.required' => 'Operator number field is required.'
         ]);    
-
+          
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
             $did = Dids::where('assignedto' , Auth::user()->groupid)->select('c2cpri', 'c2ccallerid')->get();
+ 
+            //dd($did[0]->c2ccallerid);
             $operatorid = (Auth::user()->usertype == 'groupadmin') ? '' : Auth::user()->id;
             $cdr = ['number' => $request->get('number'),
-                    'did_no' => $did[0]->c2ccallerid,
+                    'did_no' => !empty($did[0]) ? $did[0]->c2ccallerid : '',
                     'groupid' => Auth::user()->groupid,
                     'resellerid' => Auth::user()->resellerid,
                     'operatorid' => $operatorid,
                     'deptname' => 'C2C',
                     'status' => 'DIALING',
                     ];
-        
+                
                 DB::table('cdr')->insert($cdr);
                 $data['success'] = 'Cdr added successfully.';
         } 
@@ -245,49 +246,50 @@ class ReportController extends Controller
 
     public function assignCdr(Request $request) 
     {
-        //dd($_POST);
         foreach($_POST['cdr_id'] as $cdrid) {
-            if($_POST['opr_id'] !== 0) {
-            DB::table('cdr')
-                        ->where('cdrid', $cdrid)
-                        ->update(['assignedto' => $_POST['opr_id']]);
-            } else {
-                DB::table('cdr')
-                        ->where('cdrid', $cdrid)
-                        ->update(['assignedto' => '']);
-            }
-            $oprAccount = DB::table('operatoraccount')->select('deviceid')->where('id',$_POST['opr_id'])->get();
+            if(isset($_POST['opr_id']) && $_POST['opr_id'] !== '0') {
+                 DB::table('cdr')
+                ->where('cdrid', $cdrid)
+                ->update(['assignedto' => $_POST['opr_id']]);
+
+                $oprAccount = DB::table('operatoraccount')->select('deviceid')->where('id',$_POST['opr_id'])->get();
             
-            if($oprAccount[0]->deviceid != null) {
+                if($oprAccount[0]->deviceid != null) {
 
-                $cdr = DB::table('cdr')->select('number', 'datetime', 'deptname', 'status')->where('cdrid', $cdrid)->get();
-                $cdrrow = $cdr[0];
-                
-                $message='There is new call assigned to you from ' .$cdrrow->number. ' called at ' .$cdrrow->datetime. ' to ' .$cdrrow->deptname. ' call status: ' .$cdrrow->status;
-                $assigncdr = ['message' => $message,
-                            'operatorid' => $_POST['opr_id'],
-                            'status' => 0,
-                            'deviceid' => $oprAccount[0]->deviceid,
-                            'cdrid' => $_POST['cdr_id']
-                        ];
-                DB::table('assigncdr_app_notify')->insert($assigncdr);
-            }
+                    $cdr = DB::table('cdr')->select('number', 'datetime', 'deptname', 'status')->where('cdrid', $cdrid)->get();
+                    $cdrrow = $cdr[0];
+                    
+                    $message='There is new call assigned to you from ' .$cdrrow->number. ' called at ' .$cdrrow->datetime. ' to ' .$cdrrow->deptname. ' call status: ' .$cdrrow->status;
+                    $assigncdr = ['message' => $message,
+                                'operatorid' => $_POST['opr_id'],
+                                'status' => 0,
+                                'deviceid' => $oprAccount[0]->deviceid,
+                                'cdrid' => $_POST['cdr_id']
+                            ];
+                    DB::table('assigncdr_app_notify')->insert($assigncdr);
+                }
 
-            if($_POST['type'] == 'E') {
-                $qq="INSERT INTO assigncdr_email_operator(cdrid,operatorid)VALUES('$cdrid','$opr')";
+                if($_POST['type'] == 'E') {
                 $assign_email = ['cdrid' => $cdrid,
                             'operatorid' => $_POST['opr_id']
                         ];
                 DB::table('assigncdr_email_operator')->insert($assign_email);
+                }
+
+                if($_POST['type'] == 'S') {
+                    $assign_sms  = ['cdrid' => $cdrid,
+                                'operatorid' => $_POST['opr_id'],
+                                'groupid' => Auth::user()->groupid
+                            ];
+                    DB::table('assigncdr_sms_operator')->insert($assign_sms);
+                }
+               
+            } else {
+                DB::table('cdr')
+                ->where('cdrid', $cdrid)
+                ->update(['assignedto' => '']);
             }
 
-            if($_POST['type'] == 'S') {
-                $assign_sms  = ['cdrid' => $cdrid,
-                            'operatorid' => $_POST['opr_id'],
-                            'groupid' => Auth::user()->groupid
-                        ];
-                DB::table('assigncdr_sms_operator')->insert($assign_sms);
-            }
         }
         $data['success'] = 'Cdr Assign successfully.';
         return $data;
@@ -317,9 +319,9 @@ class ReportController extends Controller
     public function operator(){
         return view('home.operator', ['result' => OperatorAccount::getReport(),'operators'=>OperatorAccount::getOperatorbygroup()]);
     }
-    public function contacts(){
-        return view('home.contacts', ['result' => Contact::getReport()]);
-    }
+    // public function contacts(){
+    //     return view('home.contacts', ['result' => Contact::getReport()]);
+    // }
     public function voicemail(){
         return view('home.voicemail', ['result' => VoiceEmail::getReport(),'departments'=> VoiceEmail::get_dept_by_group(),'dnidnames'=>VoiceEmail::getdids()]);
     }
@@ -335,9 +337,9 @@ class ReportController extends Controller
     public function cdrtags(){
         return view('home.cdrtags', ['result' => CdrTag::getReport()]);
     }
-    public function livecalls(){
-        return view('home.livecalls', ['result' => CdrTag::getReport()]);
-    }
+    // public function livecalls(){
+    //     return view('home.livecalls', ['result' => CdrTag::getReport()]);
+    // }
     public function cdrexport()
     {
         return Excel::download(new PostExport(), "Report.csv");

@@ -18,7 +18,7 @@
 
 @section('main-content')
 <div class="breadcrumb">
-    <h1>CDR Report </h1>   
+    <h1>CDR Report</h1> 
 </div>
 
             <div class="separator-breadcrumb border-top"></div>
@@ -200,13 +200,13 @@
                                     <td>{{$row->datetime}}</td>
                                     <td><a>{{$row->status}}</a></td>
                                     <td>{{$row->deptname}}</td>
-                                    <td id="assigned_{{$row->cdrid}}">{{$row->opername}}</td>
+                                    <td>{{$row->opername}}</td>
                                     <td>
                                         <a class="btn bg-gray-100" data-toggle="collapse" data-target="
                                         #more{{$row->cdrid}}" aria-expanded="false" aria-controls="collapseExample"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
                                        
                                         @if($row->recordedfilename !== '')
-                                        <a href="javascript:toggleSound();" class="btn bg-gray-100" ><i class="i-Play-Music"></i></a>
+                                        <a href="#" class="btn bg-gray-100 play_audio" data-toggle="modal" data-target="#play_modal" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
                                         <a href="{{ url('download_file/' .$row->recordedfilename) }}" class="btn bg-gray-100">
                                         <i class="i-Download1"></i></a>
                                         @endif                 
@@ -284,13 +284,10 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-body">
-                               <audio controls id="play_file" class="">
-                                      <source src="https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3" type="audio/mpeg">
-                                    Your browser does not support the audio element.
-                                    </audio>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <audio controls>
+                              <source id="play_src" src="" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                            </audio>
                         </div>
                     </div>
                 </div>
@@ -780,25 +777,11 @@
     $('#timepicker1').timepicker();
  </script>
  <script type="text/javascript">
- 
-    function toggleSound() {
-        //console.log(record);
-      var sourceUrl = 'https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3';
-      $("#oggSource").attr("src", sourceUrl);
-      var audioElem = document.getElementById('audioRecord');
-      console.log(audioElem.paused);
-      if (audioElem.paused)
-        audioElem.play();
-      else
-        audioElem.pause();
-    }
 
     function assignoper(cdrid, id, name, type) {
-        console.log(cdrid);
-        console.log(id);
-        console.log(name);
         var cdr_id = new Array();
-        if(cdr_id !== 0) {
+
+        if(cdrid !== 0) {
             cdr_id.push(cdrid);
         } else {
             $('input[name="cdr_checkbox"]:checked').each(function() {
@@ -815,7 +798,8 @@
                   $.each(cdr_id, function( index, value ) {
                     console.log('val', value);
                     console.log('name', name);
-                    name == undefined ? $("#assigned_"+value).text(name) : $("#assigned_"+value).text('');
+                   name !== undefined ? $("#assigned_"+value).text(name) : $("#assigned_"+value).text('');
+                   //$("#assigned_"+value).text('ghvgh')
                     
                   });  
                   $( ".allselect" ).prop( "checked", false );
@@ -837,24 +821,23 @@
           $( ".allselect" ).prop( "checked", true );
         } else {
           $( ".allselect" ).prop( "checked", false );
-        }
-        
-     } 
+        }    
+    } 
 
-     function xajax_show(id) {
+    function xajax_show(id) {
         $(".cdr_form").addClass('d-none');
         $("#"+id).removeClass('d-none');
-     } 
+    } 
 
-     function xajax_hide() {
+    function xajax_hide() {
         $(".cdr_form").addClass('d-none');
-     }
+    }
 
-     function xajax_play(id) {
+    function xajax_play(id) {
        $("#"+id).removeClass('d-none');
-     }
+    }
 
-     $(document).ready(function() {
+    $(document).ready(function() {
        
         $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });        
         $('.timepicker').pickatime();
@@ -1055,7 +1038,6 @@
         $('#graph').on('change',function(e) {
             e.preventDefault();
             var errors = ''; 
-            console.log('gfdfgc', $(this).val());
             $.ajax({
             type: "GET",
             url: '/search_cdr/' + $(this).val(), // This is the url we gave in the route
@@ -1101,6 +1083,19 @@
             } else {
                 $("#contact_title").text("Add Contact");
             }
+            
+        });
+
+        $('.play_audio').on('click',function(e)
+        {
+            var id = $(this).attr("id");
+            var groupid = id.replace("play_", "");
+            console.log(groupid);
+            var file = $(this).attr("data-file");
+            var sourceUrl = '/var/spool/asterisk/monitorDONE/MP3/' + file;
+            console.log(sourceUrl);
+            $("#play_src").attr("src", sourceUrl);
+            //console.log(file);
             
         });
 
@@ -1182,7 +1177,7 @@
 
     $('.add_contact').click(function() {
         $("#contact_form").removeClass('hide');
-    });
+    }); 
 
     $(document).on("change","#date_select",function(){
         var date_val = $(this).val();

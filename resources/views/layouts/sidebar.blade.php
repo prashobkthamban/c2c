@@ -2,12 +2,11 @@
   <div class="side-content-wrap">
             <div class="sidebar-left open rtl-ps-none" data-perfect-scrollbar data-suppress-scroll-x="true">
                 <ul class="navigation-left">
-                <li class="nav-item {{ request()->is('dashboard/*') ? 'active' : '' }}" data-item="dashboard">
-                        <a class="nav-item-hold" href="{{url('dashboard_version_1')}}">
+                    <li class="nav-item">
+                        <a class="nav-item-hold" href="{{route('home')}}">
                             <i class="nav-icon i-Bar-Chart"></i>
                             <span class="nav-text">Dashboard</span>
                         </a>
-                        <div class="triangle"></div>
                     </li>
                     @if(Auth::user()->usertype == 'admin')
                         <li class="nav-item" data-item="">
@@ -96,7 +95,7 @@
                         <li class="nav-item" data-item="calldetails">
                             <a class="nav-item-hold" href="#">
                                 <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">Call & Reports</span>
+                                <span class="nav-text">Calls & Reports</span>
                             </a>
                             <div class="triangle"></div>
                         </li>
@@ -148,12 +147,17 @@
                         <li class="nav-item" data-item="calldetails">
                             <a class="nav-item-hold" href="#">
                                 <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">Call & Reports</span>
+                                <span class="nav-text">Calls & Reports</span>
                             </a>
                             <div class="triangle"></div>
                         </li>
+                        <li class="nav-item ">
+                            <a class="nav-item-hold" href="{{route('LiveCalls')}}">
+                                <i class="nav-icon i-Clock-3"></i>
+                                <span class="item-name">Live Calls</span>
+                            </a>
+                        </li>
                         <li class="nav-item" data-item="">
-                            <!-- <a href="{{url('cdrreportout')}}" class="{{ Route::currentRouteName()=='cdrreportout' ? 'open' : '' }}"> -->
                             <a href="{{url('cdrreportout')}}" class="nav-item-hold">
                                 <i class="nav-icon i-Clock-4"></i>
                                 <span class="item-name">Voice Out</span>
@@ -313,12 +317,7 @@
                             <span class="item-name">Archived CDR Report</span>
                         </a>
                     </li>
-                    <li class="nav-item ">
-                        <a class="{{ Route::currentRouteName()=='livecalls' ? 'open' : '' }}" href="{{url('livecalls')}}">
-                            <i class="nav-icon i-Clock-3"></i>
-                            <span class="item-name">Incoming Calls</span>
-                        </a>
-                    </li>
+                    
                     
                     <li class="nav-item">
                         <a class="{{ Route::currentRouteName()=='voicemail' ? 'open' : '' }}" href="{{url('voicemail')}}" >

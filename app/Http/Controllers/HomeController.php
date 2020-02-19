@@ -111,18 +111,20 @@ class HomeController extends Controller
             ->leftJoin('accountgroup', 'cdr.groupid', '=', 'accountgroup.id')
             ->leftJoin('resellergroup', 'cdr.resellerid', '=', 'resellergroup.id')
             ->leftJoin('operatoraccount', 'cdr.operatorid', '=', 'operatoraccount.id')
-            ->whereIn('cdr.status', ['answrd','DIALING'])
+            ->whereIn('cdr.status', ['answrd','DIALING','MISSED'])
             ->where('cdr.groupid', Auth::user()->groupid)
             ->whereDate('cdr.datetime', '>=', $qsdate)
             ->whereDate('cdr.datetime', '<=', $qedate)
             ->groupBy('cdr.status')
             ->get();
+        
         $b_data = array();
         if( ! empty($barchart) ){
             foreach ($barchart as $pkey => $bvalue) {
                 $ind = array();
                 $b_data[$bvalue->status][] = $bvalue;
             }
+
             $series = array();
             foreach ($b_data as $pd => $bbvalue) {
                 $ind = array();
