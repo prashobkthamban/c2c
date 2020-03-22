@@ -10,7 +10,7 @@ use App\Models\CdrTag;
 use App\Models\Cdr;
 use App\Models\CdrSub;
 use App\CrmSubCategories;
-
+use App\Models\Accountgroup;
 use App\Models\CdrArchive;
 use App\Models\CdrPbx;
 use App\Models\OperatorAccount;
@@ -124,8 +124,9 @@ class CdrAjaxController extends Controller
         if ( $request->ajax() ) {
             $data = $request->all();
             
-            $array = array('result' => CdrReport::getReport_search($data));
-            $html               = view( 'home.cdrreport_ajax', $array );
+            $array = array('result' => CdrReport::getReport_search($data), 'operators' => OperatorAccount::getOperatorbygroup(), 'account_service'=> Accountgroup::getservicebygroup());
+            //$operators = OperatorAccount::getOperatorbygroup();
+            $html               = view( 'home.cdrreport_ajax', $array);
             $arr[ 'view' ]      = $html->__toString();
         }
         $arr[ 'success' ] = 1;

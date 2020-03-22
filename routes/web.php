@@ -121,6 +121,8 @@ Route::get('blacklist/{id}', 'UserController@destroyBlacklist')->name('deleteBla
 Route::post('blacklist_store', 'UserController@storeBlacklist')->name('blacklistStore');
 
 Route::get('operators', 'UserController@operators')->name('OperatorList');
+Route::get('stickey_list/{id}', 'UserController@stickey_list')->name('stickeyList');
+Route::delete('delete_stickey/{id}', 'UserController@delete_stickey')->name('deleteStickey');
 Route::post('add_operator_account', 'UserController@addOprAccount')->name('AddOperatorAccount');
 Route::get('get_operator_account/{id}', 'UserController@getOprAccount')->name('GetOperatorAccount');
 Route::get('operator/{id}', 'UserController@destroyOperator')->name('deleteOperatorAccount');
@@ -134,6 +136,7 @@ Route::get('get_shift/{id}', 'UserController@getShift')->name('GetShift');
 
 /* operatorgrp */
 Route::get('operatorgrp', 'UserController@operatorgrp')->name('OperatorGroup');
+Route::post('edit_operator_dept', 'UserController@editOprDept')->name('EditOperatorDept');
 Route::get('operatorgrp_details/{id}', 'UserController@operatorgrp_details')->name('OperatorGroupDetails');
 Route::post('add_opt_assign', 'UserController@addOptassign')->name('addOptassign');
 Route::post('add_num_assign', 'UserController@addNumassign')->name('addNumassign');

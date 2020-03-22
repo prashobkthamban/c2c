@@ -14,7 +14,7 @@ class OperatorAccount extends Model
     public $timestamps = false;
     public function accounts()
     {
-        return $this->hasOne('App\Models\Account', 'operator_id');
+        return $this->hasOne('\App\Models\Account', 'operator_id');
     }
 
     public static function getReport( $post_data=NULL){

@@ -472,6 +472,20 @@ public function updatesettings($id, Request $request) {
             ->get();
         return view('user.operator_list', compact('operators'));
     }
+    
+    public function stickey_list($id) {
+        return $stickey = DB::table('ast_sticky_agents')
+            ->select('ast_sticky_agents.id','ast_sticky_agents.caller','accountgroup.name','operatordepartment.dept_name','operatoraccount.opername')->leftJoin('accountgroup', 'ast_sticky_agents.groupid', '=', 'accountgroup.id')->leftJoin('operatordepartment', 'ast_sticky_agents.departmentid', '=', 'operatordepartment.id')->leftJoin('operatoraccount', 'ast_sticky_agents.operatorid', '=', 'operatoraccount.id')->where('operatorid', $id)->get();
+            //dd($stickey);die;
+    }
+
+    public function delete_stickey($id)
+    {
+        $res = DB::table('ast_sticky_agents')->where('id',$id)->delete();
+        return response()->json([
+            'status' => true
+        ]);
+    }
 
     public function addOprAccount(Request $request)
     {
@@ -482,6 +496,7 @@ public function updatesettings($id, Request $request) {
             'password' => 'required',
             'livetrasferid' => 'required',
             'shift_id' => 'required',
+		'working_days' => 'required',
         ]);  
 
         if($validator->fails()) {
@@ -498,6 +513,7 @@ public function updatesettings($id, Request $request) {
                 'edit'=> $request->get('edit'),
                 'download'=> $request->get('download'),
                 'play'=> $request->get('play'),
+		            'working_days' => json_encode($request->working_days)
             ];
             
             if(!empty($request->get('id'))) {
@@ -507,6 +523,8 @@ public function updatesettings($id, Request $request) {
                     'username'=> $request->get('username'),
                     'password'=> Hash::make($request->get('password')),
                     'user_pwd'=> $request->get('password'),
+                    'usertype' => 'operator',
+                    'groupid' => Auth::user()->groupid
                 ];
                     DB::table('account')
                     ->where('operator_id', $request->get('id'))
@@ -519,6 +537,8 @@ public function updatesettings($id, Request $request) {
                     $account_data = [
                         'username'=> $request->get('username'),
                         'password'=> Hash::make($request->get('password')),
+                        'usertype' => 'operator',
+                        'groupid' => Auth::user()->groupid,
                         'user_pwd'=> $request->get('password'),
                         'operator_id'=> $operator_data->id
                     ];
@@ -534,8 +554,10 @@ public function updatesettings($id, Request $request) {
     }
 
     public function getOprAccount($id) {
-        return DB::table('operatoraccount')->select('operatoraccount.id', 'phonenumber', 'opername', 'oper_status', 'livetrasferid', 'shift_id', 'app_use', 'edit', 'download', 'play', 'account.username', 'account.password', 'account.user_pwd', 'operator_shifts.shift_name')->leftJoin('account', 'operatoraccount.id', '=', 'account.operator_id')->leftJoin('operator_shifts', 'operatoraccount.shift_id', '=', 'operator_shifts.id')->where('operatoraccount.id', $id)->get();
-    }
+        $data=  DB::table('operatoraccount')->select('operatoraccount.id', 'phonenumber', 'opername', 'oper_status', 'livetrasferid', 'shift_id', 'app_use', 'edit', 'download', 'play','working_days', 'account.username', 'account.password', 'account.user_pwd', 'operator_shifts.shift_name')->leftJoin('account', 'operatoraccount.id', '=', 'account.operator_id')->leftJoin('operator_shifts', 'operatoraccount.shift_id', '=', 'operator_shifts.id')->where('operatoraccount.id', $id)->get();
+	//$data['working_days'] = json_decode($data['working_days'],true);
+	return $data;   
+ }
     
     public function destroyOperator($id)
     {
@@ -606,6 +628,41 @@ public function updatesettings($id, Request $request) {
            $operatordept = DB::table('operatordepartment')->where('groupid', Auth::user()->groupid)->where('DT', '0')->where('C2C', '0')->get(); 
         }
         return view('user.operatorgrp', compact('operatordept'));
+    }
+
+    public function editOprDept(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'opt_calltype' => 'required',
+            'sticky_agent' => 'required',
+            'recordcall' => 'required',
+            'dialtime' => 'required',
+            'starttime' => 'required',
+            'endtime' => 'required',
+        ]);  
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $operator_data = [
+                'opt_calltype' => $request->get('opt_calltype'),
+                'sticky_agent' => $request->get('sticky_agent'),
+                'recordcall'=> $request->get('recordcall'),
+                'dialtime'=> $request->get('dialtime'),
+                'starttime'=> $request->get('starttime'),
+                'endtime'=> $request->get('endtime'),
+                'id' => $request->get('oprid'),
+            ];
+            
+            if(!empty($request->get('oprid'))) {
+                OperatorDepartment::where('id', $request->get('oprid'))->update($operator_data);
+                $data['success'] = 'Operator Department update successfully.';
+            } else {
+                $data['error'] = 'Some error occured.';   
+            }
+                     
+        } 
+        return $data;
     }
 
     public function operatorgrp_details($id) {
@@ -891,19 +948,24 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
 
     public function myProfile() {
         $acGrp = $this->ac_group->where('id', Auth::user()->groupid)->get();
-        //dd($acGrp);
-        return view('user.my_profile',compact('acGrp'));
+		  //  $did = Auth::user()->load('dids')->dids->where('assignedto', Auth::user()->groupid)->get();
+        //$OpeAccount = Auth::user()->load('operators')->operators;
+        //return view('user.my_profile',compact('acGrp', 'accountGrp', 'OpeAccount'));
+        $days = Auth::user()->accountdetails->working_days;
+        //dd($days);
+        $did = Auth::user()->load('did')->did;
+        //dd(Auth::user()->accountdetails->working_days);
+        return view('user.my_profile',compact('acGrp','did', 'days'));
     }
 
     public function editProfile(Request $request) 
     {
-        //dd($request->all());
         $rules = [
             'email' => 'required',
             'password' => 'required',
             'phone_number' => 'required',
         ];   
-        
+        //dd($request);
         $validator = Validator::make($request->all(), $rules);
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
@@ -916,15 +978,18 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
             
             $accGroup = ['office_start' => $request->get('office_start'),
                      'office_end'=> $request->get('office_end'), 
+                     'aocalltransfer'=> $request->get('aocalltransfer'), 
+                     'playaom'=> $request->get('playaom'), 
+                     'working_days'=> json_encode($request->working_days)
                     ];
 
                 DB::table('account')
                     ->where('id', $request->get('id'))
                     ->update($profile);
-
                 DB::table('accountgroup')
                     ->where('id', Auth::user()->groupid)
                     ->update($accGroup);
+                
 
                     $data['success'] = 'Profile updated successfully.';
                     $data['data'] = $profile;

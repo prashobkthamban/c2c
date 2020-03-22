@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class OperatorDepartment extends Model
 {
     protected $table = 'operatordepartment';
-
+    public $timestamps = false;
     public static function getDepartmentbygroup( ){
         
         $data = OperatorDepartment::select('id','dept_name');           

@@ -34,18 +34,19 @@
                         </div>
                     </div>
                 </div>
-                <!-- Notificaiton -->
+                   <!-- Notificaiton -->
 
                 <div class="dropdown">
                     <div class="badge-top-container" role="button" id="dropdownNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <?php $notifyList = unreadNotification(); ?>
-                        <span class="badge badge-primary notification_count">  {{$notifyList->count()}}</span>
+                        <?php $notifyList = unreadNotification();
+                        //dd($notifyList); ?>
+                        <span class="badge badge-primary notification_count"><?php echo $notifyList['not_count']; ?></span>
                         <i class="i-Bell text-muted header-icon"></i>
                     </div>
                     <!-- Notification dropdown -->
                     
                     <div class="dropdown-menu dropdown-menu-right notification-dropdown rtl-ps-none" aria-labelledby="dropdownNotification" data-perfect-scrollbar data-suppress-scroll-x="true">
-                        @foreach($notifyList as $listOne)
+                        @foreach($notifyList['not_list'] as $listOne)
                         <div class="dropdown-item d-flex" id="not_id_{{$listOne->id}}">
                             <div class="notification-icon">
                                 <i class="i-Speach-Bubble-6 text-primary mr-1"></i>
@@ -55,7 +56,7 @@
                                     <span>New message</span>
                                     <span class="badge badge-pill badge-primary ml-1 mr-1">new</span>
                                     <span class="flex-grow-1"></span>
-                                    <span class="text-small text-muted ml-auto">10 sec ago</span>
+                                    <!-- <span class="text-small text-muted ml-auto">10 sec ago</span> -->
                                 </p>
                                 <p class="text-small text-muted m-0">{{$listOne->fromusername}}: {{$listOne->title}}</p>
                             </div>

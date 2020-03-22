@@ -62,17 +62,21 @@
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('livetrasferid', ':message') : '' !!}</p>
                                     </div>
 
-                                    <!-- <div class="col-md-6 form-group mb-3">
-                                        <label for="picker1">Start time (00:00:00)</label>
-                                         <input type="text" class="form-control datetimepicker5" placeholder="(00:00:00)" name="start_work">
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('start_work', ':message') : '' !!}</p>
-                                    </div>
-
-                                    <div class="col-md-6 form-group mb-3">
-                                        <label for="picker1">End time (23:59:59)</label>
-                                         <input type="text" class="form-control" placeholder="(23:59:59)" name="end_work">
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('end_work', ':message') : '' !!}</p>
-                                    </div> -->
+                                    <div class="form-group row">
+                                        <label for="inputEmail3" class="col-sm-3 col-form-label">Working Days</label>
+                                            <div class="col-sm-9">
+											<?php if($acGrp[0]->working_days) { $days = json_decode($acGrp[0]->working_days);} ?>
+                                                 <select class="form-control" id="working_days" name="working_days[]" multiple>
+														<option value="Mon" <?php  if(in_array('Mon',$days)){ echo 'SELECTED';} ?> > Monday </option>
+														<option value="Tue" <?php  if(in_array('Tue',$days)){ echo 'SELECTED';} ?>> Tuesday </option>
+														<option value="Wed" <?php  if(in_array('Wed',$days)){ echo 'SELECTED';} ?>> Wednesday </option>
+														<option value="Thu" <?php  if(in_array('Thu',$days)){ echo 'SELECTED';} ?>> Thursday </option>
+														<option value="Fri" <?php  if(in_array('Fri',$days)){ echo 'SELECTED';} ?>> Friday </option>
+														<option value="Sat" <?php  if(in_array('Sat',$days)){ echo 'SELECTED';} ?>> Saturday </option>
+														<option value="Sun" <?php  if(in_array('Sun',$days)){ echo 'SELECTED';} ?>> Sunday </option>
+														</select>
+													</div>
+                                                </div>
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Shift</label>
                                         {!! Form::select('shift_id', $opr_shift->prepend('Select Shift', ''), 0,array('class' => 'form-control')) !!}

@@ -11,8 +11,13 @@ class Accountgroup extends Model
     
     protected $table = 'accountgroup';
     protected $fillable = [
-        'name', 'resellerid', 'startdate', 'enddate', 'status', 'did', 'multi_lang', 'lang_file', 'try_count', 'record_call', 'dial_time', 'maxcall_dur', 'sms_support', 'no_channels', 'sms_api_gateway_id', 'sms_api_user', 'sms_api_pass', 'sms_api_senderid', 'operator_dpt', 'API', 'c2c', 'c2cAPI', 'servicetype', 'ip', 'cdr_apikey', 'andriodapp', 'max_no_confrence', 'web_sms', 'dial_statergy', 'c2c_channels', 'operator_no_logins', 'emailservice_assign_cdr', 'smsservice_assign_cdr', 'pushapi', 'pbxexten', 'cdr_tag', 'cdr_chnunavil_log'
+        'name', 'resellerid', 'startdate', 'enddate', 'status', 'did', 'multi_lang', 'lang_file', 'try_count', 'record_call', 'dial_time', 'maxcall_dur', 'sms_support', 'no_channels', 'sms_api_gateway_id', 'sms_api_user', 'sms_api_pass', 'sms_api_senderid', 'operator_dpt', 'API', 'c2c', 'c2cAPI', 'servicetype', 'ip', 'cdr_apikey', 'andriodapp', 'max_no_confrence', 'web_sms', 'dial_statergy', 'c2c_channels', 'operator_no_logins', 'emailservice_assign_cdr', 'smsservice_assign_cdr', 'pushapi', 'pbxexten', 'cdr_tag', 'cdr_chnunavil_log', 'working_days'
         ];
+        
+    public function account()
+    {
+        return $this->hasOne('App\Models\Account','groupid');
+    }
 
     public static function getdetailsbygroup( ){
         

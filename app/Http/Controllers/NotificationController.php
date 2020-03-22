@@ -39,28 +39,33 @@ class NotificationController extends Controller
 
     public function addNotification(Request $request) {
         $validator = Validator::make($request->all(), [
-            'groupid' => 'required',
+            'send_to_id' => 'required',
             'title' => 'required',
             'description' => 'required',
+        ], [
+            'send_to_id.required' => 'The Customer field is required.',
         ]);    
 
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
-            $notification = new Notification(['groupid' => $request->get('groupid'),
-                     'title' => $request->get('title'),
-                     'extension'=> $request->get('extension'),
-                     'description'=> $request->get('description'),
-                     'grp_readstatus'=> 0,
-                     'adm_read_status'=> 1,
-                     'sendfromusertype'=> (Auth::user()->usertype == 'admin') ? 'admin' : 'groupadmin',
-                     'sendtousertype'=> (Auth::user()->usertype == 'admin') ? 'groupadmin' : 'admin',
-                     'fromusername'=> Auth::user()->username,
-                    ]);
-
+            $sender = explode(',', $request->send_to_id);
+            $notification = new Notification([
+             'send_from_id' => Auth::user()->id,
+             'send_to_id' => $sender[0],
+             'title' => $request->get('title'),
+             'extension'=> $request->get('extension'),
+             'description'=> $request->get('description'),
+             'grp_readstatus'=> '0',
+             'adm_read_status'=> 1,
+             'sendfromusertype'=> Auth::user()->usertype,
+             'sendtousertype'=> $sender[1],
+             'fromusername'=> Auth::user()->username,
+            ]);
             $notification->save();
             $data['success'] = 'Notification added successfully.';
         } 
+
          return $data;
     }
 
@@ -72,8 +77,9 @@ class NotificationController extends Controller
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
-            if(Auth::user()->usertype == 'admin') {
-                Notification::where('id', $request->get('not_id'))->update(array('grp_readstatus' => 0));
+            $not = Notification::where('id', $request->get('not_id'))->get();
+            if(Auth::user()->usertype == $not[0]->sendfromusertype) {
+                Notification::where('id', $request->get('not_id'))->update(array('grp_readstatus' => '0'));
             } else {
                 Notification::where('id', $request->get('not_id'))->update(array('adm_read_status' => '0'));
             }
@@ -95,8 +101,8 @@ class NotificationController extends Controller
 
     public function updateStatus(Request $request) {
         $data['status'] = false;  
-
-        if(Auth::user()->usertype == 'admin') {
+        $not = Notification::where('id', $request->get('view_id'))->get();
+        if(Auth::user()->id == $not[0]->send_from_id) {
             Notification::where('id', $request->get('view_id'))->update(array('adm_read_status' => $request->get('status')));
             $data['status'] = true;
         } else {
@@ -113,69 +119,4 @@ class NotificationController extends Controller
         return $result;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

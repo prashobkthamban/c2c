@@ -34,6 +34,10 @@ class CdrReport extends Model
     }
     
     public function operatorAccount() {
+        return $this->hasOne('App\Models\OperatorAccount', 'id', 'operatorid');
+    }
+    
+    public function operatorAssigned() {
         return $this->hasOne('App\Models\OperatorAccount', 'id', 'assignedto');
     }
 
@@ -48,9 +52,12 @@ class CdrReport extends Model
     }
 
     public static function getReport(){
-       $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder', 'operatorAccount']);
+       $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder', 'operatorAccount', 'operatorAssigned']);
         if( Auth::user()->usertype == 'reseller'){
             $data->where('cdr.resellerid',Auth::user()->resellerid );
+        }
+        if( Auth::user()->usertype == 'operator'){
+            $data->where('cdr.operatorid',Auth::user()->id );
         }
     
         $result = $data->orderBy('datetime','DESC')->paginate(10);
@@ -105,7 +112,7 @@ class CdrReport extends Model
         }
         if(isset($post_data['assigned_to']) && $post_data['assigned_to'] != '')
         {
-             $data->where('cdr.assignedto',$post_data['operator'] );
+             $data->where('cdr.assignedto', $post_data['assigned_to'] );
         }
         if(isset($post_data['caller_number']) && $post_data['caller_number'] != '')
         {
@@ -173,6 +180,7 @@ class CdrReport extends Model
         
         $result = $data->orderBy('datetime','DESC')
         ->paginate(30);
+        //dd($result);
         return $result;
     }
 

@@ -15,6 +15,22 @@ function getAccountgroups($usertype=null, $reseller= null) {
     return $cust;
 }
 
+function getOperator() {
+    $opAcc =  DB::table('operatoraccount')->where('groupid', Auth::user()->groupid)->pluck('opername','id');
+    return $opAcc;
+}
+
+function getOperatorList() {
+    $opAcc =  DB::table('operatoraccount')->select('account.usertype', 'account.id', 'operatoraccount.opername', 'operatoraccount.groupid')->where('operatoraccount.groupid', Auth::user()->groupid)->leftJoin('account', 'operatoraccount.id', '=', 'account.operator_id')->get();
+    //dd($opAcc);
+    return $opAcc;
+}
+
+function getGroupList() {
+    $gpAcc =  DB::table('accountgroup')->select('accountgroup.name', 'account.id')->where('accountgroup.id', Auth::user()->groupid)->where('account.operator_id', NULL)->leftJoin('account', 'accountgroup.id', '=', 'account.groupid')->get();
+    return $gpAcc;
+}
+
 function shiftList() {
     return $opr_shift = DB::table('operator_shifts')->where('groupid', Auth::user()->groupid)->pluck('shift_name','id');
 }
@@ -48,15 +64,12 @@ function getDepartmentList($groupid) {
 }
 
 function unreadNotification() {
-    if(Auth::user()->usertype == 'admin') {
-        $not_list = DB::table('notifications')->where('groupid', Auth::user()->groupid)->where('adm_read_status', '0')->get(); 
-    } else {
-        $not_list = DB::table('notifications')->where('groupid', Auth::user()->groupid)->where('grp_readstatus', '0')->get(); 
-    }
-    //dd($data['not_list']->count());
-    return $not_list;
+    $not_list1 = DB::table('notifications')->where('send_to_id', Auth::user()->id)->where('send_to_id', Auth::user()->id)->where('grp_readstatus', '0')->get();
+    $not_list2 = DB::table('notifications')->where('send_from_id', Auth::user()->id)->where('adm_read_status', '0')->get();
+    $data['not_count'] = $not_list1->count() + $not_list2->count();
+    $data['not_list'] = array_merge($not_list1->toArray(),$not_list2->toArray());
+    return $data;
 }
-
 function getExtensions($usertype=null, $groupid= null) {
     if($usertype != 'reseller') {
         $ext =  DB::table('pbx_chan_sip_extensions')->where('groupid', $groupid)->select('pbx_chan_sip_extensions.extension')->get();

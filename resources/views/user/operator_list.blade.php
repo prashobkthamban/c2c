@@ -23,6 +23,7 @@
                                         <tr>
                                             <th>Operator name</th>
                                             <th>Phone</th>
+                                            <th>Stickey Agent</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -33,6 +34,7 @@
                                         <tr>
                                             <td>{{$operator->opername}}</td>
                                             <td>{{$operator->phonenumber}}</td>
+                                            <td><a href="#" data-toggle="modal" class="stickey_list" id="{{$operator->id}}" data-opername="{{$operator->opername}}" data-target="#stickey_modal"><i class="i-Administrator"></i></a></td>
                                             <td>{{$operator->oper_status}}</td>   
                                             <td><a href="#" data-toggle="modal" data-target="#operator_account" class="text-success mr-2 edit_account" id="{{$operator->id}}">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
@@ -47,6 +49,7 @@
                                         <tr>
                                             <th>Operator name</th>
                                             <th>Phone</th>
+                                            <th>Stickey Agent</th>
                                             <th>Status</th>
                                             <th>Action</th>
                                         </tr>
@@ -59,6 +62,33 @@
                     </div>
                 </div>
            </div>
+
+           <div class="modal fade" id="stickey_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Stickey Numbers</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <h6 class="text-center" id="operator_name"></h6>
+                            <table id="stickey_table" class="display table table-striped table-bordered" style="width:100%">
+                               <thead>
+                                    <tr>
+                                        <th>Department Name</th>
+                                        <th>CallerId</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody> 
+                                </tbody>
+                            </table> 
+                        </div>
+                    </div>
+                </div>
+            </div>
 
            <!-- add account modal -->
             <div class="modal fade" id="operator_account" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
@@ -129,7 +159,23 @@
                                         {!! Form::select('shift_id', 
                                         shiftList()->prepend('Select Shift', ''), 0,array('class' => 'form-control', 'id' => 'shift_id')) !!}
                                     </div>
-                                </div>
+                                </div>   
+							                  <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="picker1">Working Days</label>
+                                		<select class="form-control" id="working_days" name="working_days[]" multiple>
+                                		<option value="Mon" > Monday </option>
+                                		<option value="Tue" > Tuesday </option>
+                                		<option value="Wed" > Wednesday </option>
+                                		<option value="Thu" > Thursday </option>
+                                		<option value="Fri" > Friday </option>
+                                		<option value="Sat" > Saturday </option>
+                                		<option value="Sun" > Sunday </option>
+                                		</select>
+                                	</div>
+                                </div>    								
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
                                     </div>
@@ -234,7 +280,9 @@
                 $("#app_use").val(res.app_use);        
                 $("#edit").val(res.edit);        
                 $("#download").val(res.download);        
-                $("#play").val(res.play);        
+                $("#play").val(res.play);
+                var obj = JSON.parse(res.working_days);
+				        $("#working_days").val(obj);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }
@@ -245,6 +293,57 @@
             $("#modal-title").text('Add Operator Account');
             $(".add_account_form")[0].reset();
         });
+
+        $('.stickey_list').click(function() {
+            $("#operator_name").text('Operator Name : ' + $(this).attr("data-opername"));
+
+          $.ajax({
+            url: '/stickey_list/'+this.id, // This is the url we gave in the route
+            success: function(res){ // What to do if we succeed
+                var response = JSON.stringify(res);
+                console.log(res.length);
+                var stickeyHTML = "";
+                if(res.length > 0) {
+                    $.each(res, function(idx, obj) {
+                         console.log(obj);
+                        stickeyHTML += "<tr id='stickey_row_" + obj.id + "'>";
+                        stickeyHTML += "<td>" + obj.dept_name  + "</td>";
+                        stickeyHTML += "<td>" + obj.caller  + "</td>";
+                        stickeyHTML += "<td><a href='#' id='" + obj.id + "' class='delete_stickey text-danger mr-2'><i class='nav-icon i-Close-Window font-weight-bold'></i></a></td>";;
+                        stickeyHTML += "</tr>";
+
+                    }); 
+                } else {
+                    stickeyHTML += "<tr><td colspan='3'><center>No Data Found</center></td></tr>";
+                } 
+                $("#stickey_table tbody").html(stickeyHTML);
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+            }
+          });
+        });
+
+        $(document).on("click", ".delete_stickey", function(event)
+        {
+            var action = confirm('Are you sure you want to delete this stickey number?');
+            var stickeyId = this.id;
+            if (action == true) {
+                $.ajax({
+                    url: "delete_stickey/"+stickeyId,
+                    type: 'DELETE',
+                    success: function (res) {
+
+                        if(res.status == 1) {
+                           $("#stickey_row_" + stickeyId).remove();
+                           toastr.success('Stickey data delete successfully.')
+                        }
+                        
+                    }
+                });
+            }
+        });
+
+        
     });
 </script>
 @endsection

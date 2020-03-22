@@ -39,7 +39,7 @@ class ManagementController extends Controller
         if($request->get('format') == 'day') {
             $validator = Validator::make($request->all(), [
             'reason' => 'required',
-            'day' => 'required'
+            'day_input' => 'required'
             ]);
         } else {
             $validator = Validator::make($request->all(), [
@@ -47,13 +47,13 @@ class ManagementController extends Controller
             'reason' => 'required',
             ]);
         }
-
+dd($request->all());
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
             $holiday = [
                 'date' => !empty($request->get('date')) ? Carbon::parse($request->get('date'))->format('Y-m-d') : null,
-                'day' => $request->get('day'),
+                'day' => $request->get('day_input'),
                 'reason'=> $request->get('reason'),
                 'groupid'=> Auth::user()->groupid,
                 'resellerid'=> 0,

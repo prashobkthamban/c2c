@@ -189,25 +189,25 @@
                                     <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable">
                                     <td><input type="checkbox" name="cdr_checkbox" id="{{$row->cdrid}}" value="{{$row->cdrid}}" class="allselect"></td>
                                     <td id="caller_{{$row->cdrid}}">
-                                        @if(Auth::user()->usertype=='groupadmin')
-                                        <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
-                                        @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
-                                        {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
-                                        @else
-                                        <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
-                                        @endif
+                                    @if(Auth::user()->usertype=='groupadmin')
+                                    <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                    @elseif(Auth::user()->usertype=='admin' || Auth::user()->usertype=='reseller')
+                                    {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
+                                    @else
+                                    <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts != null && $row->contacts->fname  ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts != null && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                    @endif
                                     </td>
                                     <td>{{$row->datetime}}</td>
-                                    <td><a>{{$row->status}}</a></td>
+                                    <td>{{$row->status}}</td>
                                     <td>{{$row->deptname}}</td>
-                                    <td>{{$row->opername}}</td>
+                                    <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
                                     <td>
                                         <a class="btn bg-gray-100" data-toggle="collapse" data-target="
                                         #more{{$row->cdrid}}" aria-expanded="false" aria-controls="collapseExample"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
                                        
                                         @if($row->recordedfilename !== '')
                                         <a href="#" class="btn bg-gray-100 play_audio" data-toggle="modal" data-target="#play_modal" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
-                                        <a href="{{ url('download_file/' .$row->recordedfilename) }}" class="btn bg-gray-100">
+                                        <a href="{{ url('download_file/' .$row->recordedfilename.'/'.$row->groupid) }}" class="btn bg-gray-100">
                                         <i class="i-Download1"></i></a>
                                         @endif                 
                                         <a href="#" class="btn bg-gray-100 notes_list" data-toggle="modal" data-target="#notes_modal" id="notes_{{$row->uniqueid}}"><i class="i-Notepad"></i></a>
@@ -258,12 +258,10 @@
                                     </td>
                                     </tr>
                                     <tr id="more{{$row->cdrid}}" class="collapse">
-                                        <td colspan='7'><p><b>DNID :</b> {{$row->did_no
-                                        }}</p>
-                                            <p><b>Duration :</b> {{$row->firstleg."(".$row->secondleg.")"}}</p>
-                                            <p><b>Coin :</b> {{$row->creditused}}</p>
-                                            <p><b>Assigned To :</b> <span id="assigned_{{$row->cdrid}}">{{$row->operatorAccount ? $row->operatorAccount->opername : ''}}</span></p>
-                                            <p><b>Tag :</b> {{$row->tag}}</p>
+                                        <td></td>
+                                         <td colspan='7'>
+                                            <span style="margin-right:100px;"><b>DNID :</b> {{$row->did_no
+                                        }}</span><span style="margin-right:100px;"><b>Duration :</b> {{$row->firstleg."(".$row->secondleg.")"}}</span><span style="margin-right:100px;"><b>Coin :</b> {{$row->creditused}}</span><span style="margin-right:100px;"><b>Assigned To :</b> <span id="assigned_{{$row->cdrid}}">{{$row->operatorAssigned ? $row->operatorAssigned->opername : ''}}</span></span><span style="margin-right:100px;"><b>Tag :</b> {{$row->tag}}</span>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -271,9 +269,9 @@
 
                                     </tbody>
                                 </table>
+                                <div class="pull-right">{{ $result->links() }}</div>
                             </div>
                         </div>
-                        <div class="pull-right">{{ $result->links() }}</div>
                     </div>
                 </div>
             </div>
@@ -285,7 +283,7 @@
                     <div class="modal-content">
                         <div class="modal-body">
                             <audio controls>
-                              <source id="play_src" src="" type="audio/mpeg">
+                              <source src="https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3" type="audio/mpeg">
                             Your browser does not support the audio element.
                             </audio>
                         </div>
@@ -298,41 +296,41 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle-2">Dial A Number</h5>
+                            <h5 class="modal-title">Dial A Number</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                          {!! Form::open(['method' => 'post', 'id' => 'dial_form']) !!} 
                         <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> 
-                                    </div>
-
-                                    <div class="col-md-8 form-group mb-3">
-                                        <label for="number">Customer Number</label> 
-                                        <input type="text" class="form-control" placeholder="Customer Number" name="number">
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-2 form-group mb-3"> 
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> 
-                                    </div>
 
-                                    <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Operator Number</label> 
-                                        <input type="text" class="form-control" value="{{Auth::user()->phone_number}}" placeholder="Operator Number" name="phone">
-                                    </div>
+                                <div class="col-md-8 form-group mb-3">
+                                    <label for="number">Customer Number</label> 
+                                    <input type="number" id="customer_number" onpaste="return false;" class="form-control" placeholder="Customer Number" name="number">
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> 
-                                    </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 form-group mb-3"> 
+                                </div>
 
-                                    <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Call First</label> 
-                                        <label class="radio-inline"> {{ Form::radio('callf', 'cust') }} Customer</label>
-                                            <label class="radio-inline">{{ Form::radio('callf', 'oper', true) }} Operator</label>
-                                    </div>
+                                <div class="col-md-8 form-group mb-3">
+                                    <label for="firstName1">Operator Number</label> 
+                                    <input type="number" id="operator_number" onpaste="return false;" class="form-control" value="{{Auth::user()->phone_number}}" placeholder="Operator Number" name="phone">
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 form-group mb-3"> 
+                                </div>
+
+                                <div class="col-md-8 form-group mb-3">
+                                    <label for="firstName1">Call First</label> 
+                                    <label class="radio-inline"> {{ Form::radio('callf', 'cust') }} Customer</label>
+                                        <label class="radio-inline">{{ Form::radio('callf', 'oper', true) }} Operator</label>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" id="dial_submit" class="btn btn-primary">Dial Now</button>
@@ -362,7 +360,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="number">Customer Number</label> 
-                                        <input type="text" class="form-control" placeholder="Customer Number" name="number">
+                                        <input type="number" id="cust_m_number" onpaste="return false;" class="form-control" placeholder="Customer Number" name="number">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -371,7 +369,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Operator Number</label> 
-                                        <input type="text" class="form-control" value="{{Auth::user()->phone_number}}" placeholder="Operator Number" name="phone">
+                                        <input type="number" id="ope_m_number" onpaste="return false;" class="form-control" value="{{Auth::user()->phone_number}}" placeholder="Operator Number" name="phone">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -704,33 +702,33 @@
             <!-- customize sidebar -->
             <div class="customizer" style="top: 73px;">
                 <div class="handle">
-                  <i data-toggle="modal" data-target="#dial_modal" class="i-Telephone"></i>
+                  <i data-toggle="modal" title="Dial Now" data-target="#dial_modal" class="i-Telephone"></i>
                 </div>
             </div>
             <div class="customizer" style="top: 115px;">
                 <div class="handle">
-                  <i class="i-Email" data-toggle="modal" data-target="#msg_modal"></i>
+                  <i class="i-Email" title="Send Message" data-toggle="modal" data-target="#msg_modal"></i>
                 </div>
             </div>
             <div class="customizer" style="top: 156px;">
                 <div class="handle">
                   <i class="i-Bar-Chart-2
-                  " data-toggle="modal" data-target="#graph_search_modal"></i>
+                  " data-toggle="modal" title="Cdr Chart" data-target="#graph_search_modal"></i>
                 </div>
             </div>
-            <div class="customizer" style="top: 197px;">
-                <a href="{{ url('cdrexport') }}"><div class="handle">
+            <div class="customizer" style="top: 198px;">
+                <a href="{{ url('cdrexport') }}" title="Export Data"><div class="handle">
                   <i class="i-Download1"></i>
                 </div></a>
             </div>
             <div class="customizer" style="top: 239px;">
-                <a href="#" data-toggle="collapse" data-target="#filter-panel"><div class="handle collapsed">
+                <a href="#" title="Search" data-toggle="collapse" data-target="#filter-panel"><div class="handle collapsed">
                   <i class="i-Search-People"></i>
                 </div></a>
             </div>
             <div class="customizer" style="top: 280px;">
                 <div>
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><div class="handle collapsed">
+                <a href="#" title="Assign To" class="dropdown-toggle" data-toggle="dropdown"><div class="handle collapsed">
                   <i class="i-Add-User"></i>
                 </div></a>
                 <ul class="dropdown-menu" role="menu">
@@ -777,44 +775,6 @@
     $('#timepicker1').timepicker();
  </script>
  <script type="text/javascript">
-
-    function assignoper(cdrid, id, name, type) {
-        var cdr_id = new Array();
-
-        if(cdrid !== 0) {
-            cdr_id.push(cdrid);
-        } else {
-            $('input[name="cdr_checkbox"]:checked').each(function() {
-             cdr_id.push($(this).val());
-            }); 
-        }
-
-        if(cdr_id.length > 0) {
-            $.ajax({
-                type: "POST",
-                url: '{{ URL::route("AssignCdr") }}', 
-                data: {opr_id:id, type:type, cdr_id:cdr_id},
-                success: function(res){ 
-                  $.each(cdr_id, function( index, value ) {
-                    console.log('val', value);
-                    console.log('name', name);
-                   name !== undefined ? $("#assigned_"+value).text(name) : $("#assigned_"+value).text('');
-                   //$("#assigned_"+value).text('ghvgh')
-                    
-                  });  
-                  $( ".allselect" ).prop( "checked", false );
-                  $( "#allselect" ).prop( "checked", false );
-                  toastr.success(res.success);
-                },
-                error: function(jqXHR, textStatus, errorThrown) { 
-                    toastr.error('Some errors are occured');
-                }
-            });
-        } else {
-            toastr.error('Please select the checkbox.');
-        }
-    }
-
     function selectAll() {
         if ($('#allselect').is(":checked"))
         {
@@ -838,13 +798,18 @@
     }
 
     $(document).ready(function() {
-       
+        $('#customer_number, #operator_number, #cust_m_number, #ope_m_number').on('keypress', function(){
+            var maxLength = $(this).val().length;
+            if (maxLength >= 10) {
+                return false;
+            }
+        });
+
         $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });        
         $('.timepicker').pickatime();
 
         $( '#dial_form' ).on( 'submit', function(e) {
             e.preventDefault();
-
             var errors = ''; 
           $.ajax({
             type: "POST",
@@ -862,10 +827,11 @@
                     });
                     toastr.error(errors);
                 } else {
+                    $("#dial_modal").modal('hide');
                     toastr.success(res.success);
                     setTimeout( function() { 
                         location.reload(true); 
-                    }, 1000);
+                    }, 400);
                     
                 }
                
@@ -895,10 +861,11 @@
                     });
                     toastr.error(errors);
                 } else {
+                    $("#msg_modal").modal('hide');
                     toastr.success(res.success);
                     setTimeout( function() { 
                         location.reload(true); 
-                    }, 1000);
+                    }, 400);
                     
                 }
                
@@ -973,8 +940,8 @@
                     }
         
                     const max = res.max;
-                    $("#graph_modal").modal('show');
                     $("#graph_search_modal").modal('hide');
+                    $("#graph_modal").modal('show');
                      var echartElemBar = document.getElementById('echartBar');
                     if (echartElemBar) {
                         var echartBar = echarts.init(echartElemBar);
@@ -1092,10 +1059,7 @@
             var groupid = id.replace("play_", "");
             console.log(groupid);
             var file = $(this).attr("data-file");
-            var sourceUrl = '/var/spool/asterisk/monitorDONE/MP3/' + file;
-            console.log(sourceUrl);
-            $("#play_src").attr("src", sourceUrl);
-            //console.log(file);
+            console.log(file);
             
         });
 
@@ -1194,12 +1158,12 @@
     $(document).on("click","#report_search_button",function(){
         get_report_search(1);
     });
-    $(document).on("click",".page-link",function(event)
-    {
-        event.preventDefault();
-        var page = $(this).text();       
-        get_report_search(page);
-    });
+    //$(document).on("click",".page-link",function(event)
+    //{
+    //    event.preventDefault();
+    //    var page = $(this).text();       
+    //    get_report_search(page);
+    //});
     $(document).on("click","#btn_refresh",function(){
         $("#cdr_filter_form")[0].reset();
         get_report_search(1);

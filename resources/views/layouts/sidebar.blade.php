@@ -8,6 +8,13 @@
                             <span class="nav-text">Dashboard</span>
                         </a>
                     </li>
+                    <li class="nav-item" data-item="">
+                        <a class="nav-item-hold" href="{{url('notification')}}">
+                            <i class="nav-icon i-Bell"></i>
+                            <span class="nav-text">Help</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
                     @if(Auth::user()->usertype == 'admin')
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('DidList')}}">
@@ -215,13 +222,6 @@
                             </a>
                         </li>
                         <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{url('notification')}}">
-                                <i class="nav-icon i-Bell"></i>
-                                <span class="nav-text">Notifications</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('conference')}}">
                                 <i class="nav-icon i-Library"></i>
                                 <span class="nav-text">Dial Out Conference</span>
@@ -236,8 +236,37 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-
-
+                    @endif
+					@if(Auth::user()->usertype == 'reseller')
+						<li class="nav-item" data-item="calldetails">
+                            <a class="nav-item-hold" href="#">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">Calls & Reports</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+						<li class="nav-item ">
+                            <a class="nav-item-hold" href="{{route('LiveCalls')}}">
+                                <i class="nav-icon i-Clock-3"></i>
+                                <span class="item-name">Live Calls</span>
+                            </a>
+                        </li>
+						@endif
+                    @if(Auth::user()->usertype == 'operator')
+						<li class="nav-item" data-item="calldetails">
+                            <a class="nav-item-hold" href="#">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">Calls & Reports</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+						 <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('reminder')}}">
+                                <i class="nav-icon i-Bell"></i>
+                                <span class="nav-text">Reminders</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
                     @endif
 
                     <!-- 

@@ -40,8 +40,10 @@ class ReportController extends Controller
     }
 
     public function index(){
-        $cdr = new CdrReport();
-        $user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
+        //$cdr = new CdrReport();
+        //echo 'dfsdf00fdcgvb';die;
+        //$user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
+        //dd(CdrReport::getReport());
         return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup()]);
     }
 

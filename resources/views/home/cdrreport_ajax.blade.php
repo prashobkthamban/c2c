@@ -30,16 +30,16 @@
                                         @endif
                                     </td>
                                     <td>{{$row->datetime}}</td>
-                                    <td><a>{{$row->status}}</a></td>
+                                    <td>{{$row->status}}</td>
                                     <td>{{$row->deptname}}</td>
-                                    <td id="assigned_{{$row->cdrid}}">{{$row->opername}}</td>
+                                    <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
                                     <td>
                                         <a class="btn bg-gray-100" data-toggle="collapse" data-target="
                                         #more{{$row->cdrid}}" aria-expanded="false" aria-controls="collapseExample"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
                                        
                                         @if($row->recordedfilename !== '')
-                                        <a href="javascript:toggleSound();" class="btn bg-gray-100" ><i class="i-Play-Music"></i></a>
-                                        <a href="{{ url('download_file/' .$row->recordedfilename) }}" class="btn bg-gray-100">
+                                        <a href="#" class="btn bg-gray-100 play_audio" data-toggle="modal" data-target="#play_modal" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
+                                        <a href="{{ url('download_file/' .$row->recordedfilename.'/'.$row->groupid) }}" class="btn bg-gray-100">
                                         <i class="i-Download1"></i></a>
                                         @endif                 
                                         <a href="#" class="btn bg-gray-100 notes_list" data-toggle="modal" data-target="#notes_modal" id="notes_{{$row->uniqueid}}"><i class="i-Notepad"></i></a>
@@ -90,12 +90,10 @@
                                     </td>
                                     </tr>
                                     <tr id="more{{$row->cdrid}}" class="collapse">
-                                        <td colspan='7'><p><b>DNID :</b> {{$row->did_no
-                                        }}</p>
-                                            <p><b>Duration :</b> {{$row->firstleg."(".$row->secondleg.")"}}</p>
-                                            <p><b>Coin :</b> {{$row->creditused}}</p>
-                                            <p><b>Assigned To :</b> <span id="assigned_{{$row->cdrid}}">{{$row->operatorAccount ? $row->operatorAccount->opername : ''}}</span></p>
-                                            <p><b>Tag :</b> {{$row->tag}}</p>
+                                        <td></td>
+                                         <td colspan='7'>
+                                            <span style="margin-right:100px;"><b>DNID :</b> {{$row->did_no
+                                        }}</span><span style="margin-right:100px;"><b>Duration :</b> {{$row->firstleg."(".$row->secondleg.")"}}</span><span style="margin-right:100px;"><b>Coin :</b> {{$row->creditused}}</span><span style="margin-right:100px;"><b>Assigned To :</b> <span id="assigned_{{$row->cdrid}}">{{$row->operatorAssigned ? $row->operatorAssigned->opername : ''}}</span></span><span style="margin-right:100px;"><b>Tag :</b> {{$row->tag}}</span>
                                         </td>
                                     </tr>
                                     @endforeach
@@ -103,9 +101,9 @@
 
                                     </tbody>
                                 </table>
+                                <div class="pull-right">{{ $result->links() }}</div>
                             </div>
                         </div>
-                        <div class="pull-right">{{ $result->links() }}</div>
                     </div>
                 </div>
             </div>

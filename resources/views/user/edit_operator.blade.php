@@ -40,7 +40,7 @@
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
-                                        <label for="picker1">Password</label>
+                                        <label for="picker1">Password11</label>
                                          <input type="text" class="form-control" placeholder="Password" name="password" value="{{$operator_edit->accounts->user_pwd}}">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('password', ':message') : '' !!}</p>
                                     </div> 
@@ -57,18 +57,18 @@
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('livetrasferid', ':message') : '' !!}</p>
                                     </div>
 
-                                    <!-- <div class="col-md-6 form-group mb-3">
-                                        {!! Form::label('start_work', 'Start time (00:00:00)') !!}
-                                        {!! Form::text('start_work', null, ['class' => 'form-control']) !!} 
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('start_work', ':message') : '' !!}</p>
-                                    </div>
-
                                     <div class="col-md-6 form-group mb-3">
-                                        {!! Form::label('end_work', 'End time (23:59:59)') !!}
-                                        {!! Form::text('end_work', null, ['class' => 'form-control']) !!} 
-                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('end_work', ':message') : '' !!}</p>
-                                    </div> -->
-
+                                       <label for="picker1">working Days</label>    
+											     <select class="form-control" id="working_days" name="working_days[]" multiple>
+														<option value="Mon"  > Monday </option>
+														<option value="Tue" > Tuesday </option>
+														<option value="Wed" > Wednesday </option>
+														<option value="Thu" > Thursday </option>
+														<option value="Fri" > Friday </option>
+														<option value="Sat" > Saturday </option>
+														<option value="Sun" > Sunday </option>
+														</select>
+												</div>
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Shift</label>
                                         {!! Form::select('shift_id', $opr_shift->prepend('Select Shift', ''), $operator_edit->shift_id,array('class' => 'form-control')) !!}

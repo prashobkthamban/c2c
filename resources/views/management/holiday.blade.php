@@ -84,7 +84,7 @@
                                     </div>
                                     <div id="day_wise">
                                         <label for="firstName1">Day *</label> 
-                                         {!! Form::select('day', ['' => 'Select Day', 'monday' => 'Monday', 'tuesday' => 'Tuesday', 'wednesday' => 'Wednesday', 'thursday' => 'Thursday', 'friday' => 'Friday', 'saturday' => 'Saturday'], null,array('class' => 'form-control', 'id' => 'day_input')) !!}
+                                         {!! Form::select('day', ['' => 'Select Day', 'monday' => 'Monday', 'tuesday' => 'Tuesday', 'wednesday' => 'Wednesday', 'thursday' => 'Thursday', 'friday' => 'Friday', 'saturday' => 'Saturday','sunday' => 'Sundayy'], null,array('class' => 'form-control', 'id' => 'day_input')) !!}
                                     </div>
                                 </div>
                             </div>
