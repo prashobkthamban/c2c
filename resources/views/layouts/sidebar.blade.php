@@ -1,4 +1,29 @@
-
+<style type="text/css">
+    .nav-item-hold{
+            background-image: -webkit-linear-gradient(-154deg, #004e92 0%, #000428 100%);
+    background: linear-gradient(-154deg, #004e92 0%, #000428 100%);
+    color: white!important;
+    }
+    .btn-round {
+    color: #666;
+    padding: 3px 9px;
+    font-size: 13px;
+    line-height: 1.5;
+    background-color: #fff;
+    border-color: #ccc;
+    border-radius: 50px;
+}
+.mine
+{
+    z-index: 1000!important;
+    position: absolute!important;
+    right: 15px!important;
+    top: 104px!important;
+    width: 50%;
+}
+</style>
+ <!-- <script type="text/javascript"> var auto_refresh = setInterval( function() { $('.alt').load('sidebar.blede.php').fadeIn("slow"); }, 15000); // refreshing after every 15000 milliseconds 
+</script> -->
   <div class="side-content-wrap">
             <div class="sidebar-left open rtl-ps-none" data-perfect-scrollbar data-suppress-scroll-x="true">
                 <ul class="navigation-left">
@@ -15,6 +40,14 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
+                    <li class="nav-item" data-item="settings">
+                        <a class="nav-item-hold" href="#">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">CRM</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
+
                     @if(Auth::user()->usertype == 'admin')
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('DidList')}}">
@@ -148,6 +181,14 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
+
+                        <!-- <li class="nav-item" data-item="settings">
+                            <a class="nav-item-hold" href="#">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">CRM</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li> -->
                     @endif
 
                     @if(Auth::user()->usertype == 'groupadmin')
@@ -268,6 +309,14 @@
                             <div class="triangle"></div>
                         </li>
                     @endif
+
+                        <!-- <li class="nav-item" data-item="settings">
+                            <a class="nav-item-hold" href="#">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">CRM</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li> -->
 
                     <!-- 
                     <li class="nav-item" data-item="insight">
@@ -491,7 +540,170 @@
                
                 </ul>
 
+                <?php
+                if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') { ?>
+                    <ul class="childNav" data-parent="settings">
+                        <li class="nav-item">
+                            <a href="{{url('settings/category')}}">
+                                <span class="item-name">Category</span>
+                            </a>
+                        </li>  
+
+                        <li class="nav-item">
+                            <a href="{{url('product')}}">
+                                <span class="item-name">Products</span>
+                            </a>
+                        </li>  
+
+                        <li class="nav-item">
+                            <a href="{{url('cdrreport_lists')}}">
+                                <span class="item-name">List Lead</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{url('cdrreport/converted')}}">
+                                <span class="item-name">Customer</span>
+                            </a>
+                        </li>  
+
+                        <li class="nav-item">
+                            <a href="{{url('proposal/list')}}">
+                                <span class="item-name">Proposal</span>
+                            </a>
+                        </li>   
+
+                        <li class="nav-item">
+                            <a href="{{url('invoice/list')}}">
+                                <span class="item-name">Invoice</span>
+                            </a>
+                        </li> 
+
+                        <li class="nav-item">
+                            <a href="{{url('email_template/list')}}">
+                                <span class="item-name">Email Template</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{url('sms_template/list')}}">
+                                <span class="item-name">SMS Template</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{url('sms_api/list')}}">
+                                <span class="item-name">SMS Api</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{url('terms_condition/list')}}">
+                                <span class="item-name">Terms And Condition</span>
+                            </a>
+                        </li>
+
+
+                    </ul>    
+                <?php }else{ ?>
+                    <ul class="childNav" data-parent="settings">
+                        <li class="nav-item">
+                            <a href="{{url('cdrreport_lists')}}">
+                                <span class="item-name">List Lead</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{url('cdrreport/converted')}}">
+                                <span class="item-name">Customer</span>
+                            </a>
+                        </li>  
+
+                        <li class="nav-item">
+                            <a href="{{url('proposal/list')}}">
+                                <span class="item-name">Proposal</span>
+                            </a>
+                        </li>   
+
+                        <li class="nav-item">
+                            <a href="{{url('invoice/list')}}">
+                                <span class="item-name">Invoice</span>
+                            </a>
+                        </li> 
+
+                        <li class="nav-item">
+                            <a href="{{url('email_template/list')}}">
+                                <span class="item-name">Email Template</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{url('sms_template/list')}}">
+                                <span class="item-name">SMS Template</span>
+                            </a>
+                        </li> 
+  
+                    </ul> 
+                <?php }?>
+                
+
             </div>
             <div class="sidebar-overlay"></div>
         </div>
         <!--=============== Left side End ================-->
+        <?php
+        use Illuminate\Support\Facades\DB;
+        date_default_timezone_set('Asia/Kolkata'); 
+
+        $list_remainder = DB::table('lead_reminders')
+                    ->where('lead_reminders.user_id','=',Auth::user()->id)
+                    ->whereDate('lead_reminders.date', '>=', date('Y-m-d'))
+                    ->leftJoin('cdrreport_lead', 'cdrreport_lead.id', '=', 'lead_reminders.cdrreport_lead_id')
+                    ->select('lead_reminders.*','cdrreport_lead.email')
+                    ->get();
+
+        //print_r($list_remainder);
+
+        $time = date('H:i', strtotime("+30 minutes"));
+        $date = date('Y-m-d');
+       // echo $date."::".$time;
+        $i = 0;
+        foreach ($list_remainder as $key => $value) {
+            
+            if ($value->date == $date) {
+
+                //print_r($value);
+                //echo "<br>";
+                $cleantime=substr($value->time,0,5);
+                //echo $cleantime;
+                
+                if ($cleantime == $time) { ?>
+
+                    <div class="alert alert-danger mine" id="myDIV<?php echo $i;?>">
+                        <h3>Remainder</h3>
+                        <h4>Title is: <?php echo $value->title;?></h4>
+                        <p>
+                            Your Remainder is after 1/2 Hour
+                        </p>
+                        <p>
+                            Description : <?php echo $value->task;?>
+                        </p>
+                        <hr class="message-inner-separator">
+                        <button class="caption-helper btn btn-round" onclick="myFunctions('myDIV<?php echo $i;?>')">Get It</button>
+                    </div>
+                <?php }
+            } $i++;
+        }
+
+        ?>
+<script type="text/javascript">
+    function myFunctions(id) {
+      var x = document.getElementById(id);
+      if (x.style.display === "none") {
+        x.style.display = "block";
+      } else {
+        x.style.display = "none";
+      }
+    }
+
+</script>

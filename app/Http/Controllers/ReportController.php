@@ -26,7 +26,12 @@ use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\PostExport;
 
+use App\Models\Lead_Products;
+use App\Models\CdrReport_Lead;
+use App\Models\Product;
+use App\Models\lead_stages;
 
+date_default_timezone_set('Asia/Kolkata'); 
 
 class ReportController extends Controller
 {
@@ -40,11 +45,15 @@ class ReportController extends Controller
     }
 
     public function index(){
-        //$cdr = new CdrReport();
-        //echo 'dfsdf00fdcgvb';die;
-        //$user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
-        //dd(CdrReport::getReport());
-        return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup()]);
+        $cdr = new CdrReport();
+        $user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
+
+        $products = Product::select('*')->get();
+
+        $users_lists = DB::table('operatoraccount')
+                        ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
+                        ->get();
+        return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup(),'products' => $products,'users_lists' => $users_lists]);
     }
 
     public function graphReport(Request $request) {
@@ -459,5 +468,96 @@ class ReportController extends Controller
         $c2c = ($account_group->c2c == 'Yes') ? 1 : 0;
         $result =  OperatorDepartment::getReport($oper_dept,$c2c);
         return view('home.operator_dept', ['result' => $result]);
+    }
+
+    public function addLead(Request $request)
+    {
+        if (Auth::user()->id == $request->get('owner_name')) {
+            $operator_id = 0;
+            $owner_name = Auth::user()->usertype;
+        }
+        else{
+            $operator_id = $request->get('owner_name');
+            $owner_name = 'operator';
+        }
+        //echo $operator_id;
+        $now = date("Y-m-d H:i:s");
+        //print_r($request->all());exit;
+
+        $add_lead = new CdrReport_Lead([
+                'user_id' => Auth::user()->id,
+                'cdrreport_id' => $request->get('cdrreport_id') ? $request->get('cdrreport_id') : '',
+                'first_name' => $request->get('first_name'),
+                'last_name'=> $request->get('last_name'),
+                'company_name'=> $request->get('company_name') ? $request->get('company_name') : '',
+                'email'=> $request->get('email') ? $request->get('email') : '',
+                'owner_name'=> $owner_name,
+                'lead_stage'=> $request->get('lead_stage'),
+                'total_amount' => $request->get('total_amount'),
+                'phoneno' => $request->get('phoneno'),
+                'alt_phoneno' => $request->get('alt_phoneno') ? $request->get('alt_phoneno') : '',
+                'operatorid' => $operator_id,
+                'inserted_date' => $now,
+            ]);
+
+            //dd($add_lead);exit;
+            $add_lead->save();
+            $id = DB::getPdo()->lastInsertId();
+
+            $pro = $request->get('products');
+
+            if (empty($pro)) {
+                $count = 0;
+            }else{
+                 $count = count($request->get('products'));
+            }
+            //print_r($count);exit();
+            
+            for ($i=0; $i < $count; $i++) { 
+                 $lead_product = new Lead_Products([
+                    'cdrreport_lead_id' => $id,
+                    'product_id' => $request->get('products')[$i],
+                    'quantity' => $request->get('quantity')[$i],
+                    'pro_amount' => $request->get('pro_amount')[$i],
+                    'subtotal_amount' => $request->get('sub_amount')[$i],
+                ]); 
+             $lead_product->save();              
+            }  
+
+            $stage = $request->get('lead_stage');
+
+            if ($stage == 'New') {
+                $lead_id = 1;
+            }
+            elseif ($stage == 'Contacted') {
+                $lead_id = 2;
+            }
+            elseif ($stage == 'Interested') {
+                $lead_id = 3;
+            }
+            elseif ($stage == 'Under review') {
+                $lead_id = 4;
+            }
+            elseif ($stage == 'Demo') {
+                $lead_id = 5;
+            }
+            elseif ($stage == 'Unqualified') {
+                $lead_id = 6;
+            }          
+            else{
+                $lead_id = 7;
+            }
+
+            $lead_stages = new lead_stages([
+                'user_id' => Auth::user()->id,
+                'cdrreport_lead_id' => $id,
+                'levels' => $lead_id,
+                'status' => 'active',
+            ]); 
+
+            $lead_stages->save();
+
+            toastr()->success('Lead added successfully.');
+            return Redirect::back();
     }
 }

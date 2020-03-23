@@ -39,6 +39,7 @@ Route::get('download_file/{file}/{id}', 'ReportController@downloadFile')->name('
 Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('cdrreportarchive');
 Route::get('cdrreportout', 'ReportController@cdrreportout')->name('cdrreportout');
 Route::get('reminder', 'ReminderController@index')->name('Reminder');
+Route::post('cdrreport/store','ReportController@addLead')->name('store');
 
 /* ----------Recharge && Billing----------- */
 Route::get('billing', 'ServiceController@billing')->name('Billing');
@@ -338,6 +339,117 @@ Route::post('leadstore', 'UserController@storeLead')->name('leadstore');
 Route::get('leaddelete/{id}', 'UserController@destroyLead')->name('deleteLead');
 Route::get('editlead/{id}', 'UserController@editLead')->name('editLead');
 Route::patch('update/lead/{id}', 'UserController@updateLead')->name('updateLead');
+
+//Settings
+Route::get('/settings/category','CategoryController@index')->name('categoryIndex');
+Route::get('/settings/add_category', 'CategoryController@addCategory')->name('addCategory');
+Route::post('/settings/store', 'CategoryController@store')->name('store');
+
+//Products
+Route::get('/product','ProductController@index')->name('productIndex');
+Route::post('/product/store','ProductController@store')->name('store');
+Route::get('product/{id}', 'ProductController@destroy')->name('deleteProduct');
+Route::post('product/edit/', 'ProductController@edit')->name('editProduct');
+Route::patch('/product/update', 'ProductController@update')->name('update');
+
+//CDR Report Leads
+Route::post('cdrreport/store','ReportController@addLead')->name('store');
+Route::get('/cdrreport_lists','LeadController@index')->name('ListLeads');
+Route::post('/cdrreport_addlead','LeadController@addLead')->name('addLead');
+Route::post('/cdrreport_edit_lead', 'LeadController@editLead')->name('editLead');
+Route::post('/cdrreport_lead_product', 'LeadController@LeadProduct')->name('LeadProduct');
+Route::patch('/cdrreport_update', 'LeadController@update')->name('update');
+Route::post('/cdrreport_pro_amount', 'LeadController@ProductAmount')->name('ProductAmount');
+Route::get('/cdrreport_delete_lead/{id}', 'LeadController@deleteLead')->name('deleteLead');
+Route::get('/cdrreport/lead/{id}', 'LeadController@ViewLeadID')->name('ViewLeadID');
+Route::get('lead_stages/{lead_id}/{id}', [
+    'uses'  => 'LeadController@LeadStages',
+    'as'    => 'lead_stages'
+]);
+Route::patch('/cdrreport/lead_update/{id}', 'LeadController@update_lead')->name('update_lead');
+Route::post('/cdrreport_mail', 'LeadController@Mail')->name('Mail');
+Route::post('/cdrreport_call_log', 'LeadController@CallLog')->name('CallLog');
+Route::post('/cdrreport_msg', 'LeadController@SendMsg')->name('SendMsg');
+Route::post('/cdrreport_notes', 'LeadController@Notes')->name('Notes');
+Route::patch('/cdrreport_editnotes','LeadController@EditNotes')->name('EditNotes');
+Route::get('/cdrreport_notedelete/{id}', 'LeadController@NoteDelete')->name('NoteDelete');
+Route::post('/cdrreport_unquireason','LeadController@Unqui_reason')->name('Unqui_reason');
+Route::post('/cdrreport_converted','LeadController@Converted')->name('Converted');
+Route::post('/cdrreport/reminder','LeadController@Reminder')->name('Reminder');
+Route::get('/cdrreport/converted','ConvertedController@index')->name('ListConverted');
+Route::post('converted/store','ConvertedController@store')->name('store');
+Route::post('cdrreport/converted/edit/', 'ConvertedController@edit')->name('editConverted');
+Route::patch('/converted/update', 'ConvertedController@update')->name('update');
+Route::get('converted/{id}', 'ConvertedController@destroy')->name('deleteConverted');
+Route::post('/cdrreport/mail_temp', 'LeadController@selectmailtemplate')->name('SelectMailTemp');
+Route::post('/cdrreport/sms_temp', 'LeadController@selectsmstemplate')->name('SelectSMSTemp');
+Route::post('lead_assigned','LeadController@Assigned_Lead')->name('Assigned_Lead');
+Route::post('lead_proposal','LeadController@AddProposal')->name('AddProposal');
+Route::post('/cdrreport/filter_data','LeadController@FilterData')->name('FilterData');
+
+//Proposal
+Route::get('proposal/list','ProposalController@index')->name('ProposalIndex');
+Route::get('proposal/add', 'ProposalController@add')->name('ProposalAdd');
+Route::post('proposal/store','ProposalController@store')->name('ProposalStore');
+Route::get('proposal/{id}', 'ProposalController@destroy')->name('deleteProposal');
+Route::get('proposal/edit/{id}', 'ProposalController@edit')->name('editProposal');
+Route::patch('proposal/update/{id}', 'ProposalController@update')->name('updateProposal');
+
+//Invoice
+Route::get('invoice/list','InvoiceController@index')->name('InvoiceIndex');
+Route::get('invoice/add', 'InvoiceController@add')->name('InvoiceAdd');
+Route::post('invoice/store','InvoiceController@store')->name('InvoiveStore');
+Route::get('invoice/{id}', 'InvoiceController@destroy')->name('deleteInvoice');
+Route::post('invoice/CustomerAddress','InvoiceController@CustomerAddress')->name('CustomerAddress');
+Route::get('invoice/edit/{id}', 'InvoiceController@edit')->name('editInvoice');
+Route::patch('invoice/update/{id}', 'InvoiceController@update')->name('updateInvoice');
+Route::post('invoice/payment','InvoiceController@payment')->name('InvoicePayment');
+Route::post('/invoice/filter_data','InvoiceController@FilterDataInvoice')->name('FilterDataInvoice');
+Route::get('invoice/view/{id}','InvoiceController@ViewInvoice')->name('ViewInvoice');
+
+//ToDoList
+Route::post('home/todotask','HomeController@ToDoTaskAdd')->name('ToDoTaskAdd');
+Route::post('home/edit/todotask','HomeController@ToDoTaskEdit')->name('ToDoTaskEdit');
+Route::patch('home/todo/update', 'HomeController@ToDoTaskUpdate')->name('ToDoTaskUpdate');
+Route::get('home/delete_todo/{id}', 'HomeController@destroy')->name('deleteToDo');
+Route::get('home/update_status_todo/{id}', 'HomeController@UpdateStatus')->name('UpdateStatus');
+Route::get('home/update_todo/{id}', 'HomeController@UpdateToDo')->name('UpdateToDo');
+
+//Email Template
+Route::get('email_template/list','EmailTemplateController@index')->name('EmailTemplateIndex');
+Route::get('email_template/add','EmailTemplateController@add')->name('EmailTemplateAdd');
+Route::post('email_template/store','EmailTemplateController@store')->name('EmailTemplateStore');
+Route::get('email_template/edit/{id}', 'EmailTemplateController@edit')->name('EmailTemplateEdit');
+Route::patch('email_template/update/{id}', 'EmailTemplateController@update')->name('EmailTemplateUpdate');
+Route::get('email_template/delete/{id}', 'EmailTemplateController@destroy')->name('EmailTemplateDelete');
+
+//SMS Template
+Route::get('sms_template/list','SMSTemplateController@index')->name('SMSTemplateIndex');
+Route::get('sms_template/add','SMSTemplateController@add')->name('SMSTemplateAdd');
+Route::post('sms_template/store','SMSTemplateController@store')->name('SMSTemplateStore');
+Route::get('sms_template/edit/{id}', 'SMSTemplateController@edit')->name('SMSTemplateEdit');
+Route::patch('sms_template/update/{id}', 'SMSTemplateController@update')->name('SMSTemplateUpdate');
+Route::get('sms_template/delete/{id}', 'SMSTemplateController@destroy')->name('SMSTemplateDelete');
+
+//SMS Api
+Route::get('sms_api/list','SMSApiController@index')->name('SMSApiIndex');
+Route::get('sms_api/add','SMSApiController@add')->name('SMSApiAdd');
+Route::post('sms_api/store','SMSApiController@store')->name('SMSApiStore');
+Route::get('sms_api/edit/{id}', 'SMSApiController@edit')->name('SMSApiEdit');
+Route::patch('sms_api/update/{id}', 'SMSApiController@update')->name('SMSApiUpdate');
+Route::get('sms_api/delete/{id}', 'SMSApiController@destroy')->name('SMSApiDelete');
+
+//Remainder Show
+Route::get('remainder_show','ReminderShowController@index')->name('RemainderShowIndex');
+
+//Terms and Condition
+Route::get('terms_condition/list','TermsAndConditionController@index')->name('TermsAndConditionIndex');
+Route::get('terms_condition/add','TermsAndConditionController@add')->name('TermsAndConditionAdd');
+Route::post('terms_condition/store','TermsAndConditionController@store')->name('TermsAndConditionStore');
+Route::get('terms_condition/edit/{id}', 'TermsAndConditionController@edit')->name('TermsAndConditionEdit');
+Route::patch('terms_condition/update/{id}', 'TermsAndConditionController@update')->name('TermsAndConditionUpdate');
+Route::get('terms_condition/delete/{id}', 'TermsAndConditionController@destroy')->name('TermsAndConditionDelete');
+
 /*
 |--------------------------------------------------------------------------
 | Frontend Routes

@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.date.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.time.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/css/bootstrap-timepicker.min.css')}}">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
 <style>
     .dropdown-menu>li>a {
     margin: 4px;
@@ -13,6 +14,17 @@
     border-radius: 3px;
     line-height: 18px;
 }
+
+.customizer{
+    z-index: 0;
+}
+
+.select2-container {
+    width: 100%!important;
+}
+.lead_modal {
+    border-radius: 0px !important; 
+}
 </style>
 @endsection
 
@@ -20,6 +32,123 @@
 <div class="breadcrumb">
     <h1>CDR Report</h1> 
 </div>
+
+    <div class="modal fade" id="AddLead" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
+        <div class="col-md-12">
+            <div class="card mb-4 lead_modal">
+                <div class="card-body">
+                    <div class="card-title mb-3">Add Lead<a href="" class="btn btn-primary" style="float: right;">Back</a></div>
+                    {!! Form::open(['action' => 'ReportController@addLead', 'method' => 'post','enctype' => 'multipart/form-data']) !!}
+                    <form method="post">
+                         {{ csrf_field() }}
+                        <div class="row">
+                            <input type="hidden" name="cdrreport_id" id="cdrreport_id">
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="first_name">First Name*</label>
+                                <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter your First Name" required="" />  
+                            </div>
+
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="last_name">Last Name*</label>
+                                <input type="text" name="last_name" id="last_name" class="form-control"placeholder="Enter your Last Name" required="" />  
+                            </div>
+
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="company_name">Company Name</label>
+                                <input type="text" name="company_name" id="company_name" class="form-control"placeholder="Enter Company Name" />  
+                            </div>
+
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="email">Email</label>
+                                <input type="email" name="email" id="email" class="form-control"placeholder="Enter Email Address" />  
+                            </div>
+
+                           <div class="col-md-6 form-group mb-3">
+                                <label for="phoneno">Phone No*</label>
+                                <input type="text" name="phoneno" id="phoneno" class="form-control"placeholder="Enter Phone No" required="" />  
+                            </div>
+
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="alt_phoneno">Another Phone No</label>
+                                <input type="text" name="alt_phoneno" id="alt_phoneno" class="form-control"placeholder="Enter Another Phone No" />  
+                            </div>
+
+                            <div class="col-md-12">
+                                <label for="products">Products</label>
+                                    <div class="row">
+                                         <section class="container col-xs-12">
+                                            <div class="table table-responsive">
+                                            <!-- <h4>Select Details</h4> -->
+                                            <table id="ppsale" class="table table-striped table-bordered" border="0">
+                                              
+                                              <tbody id="TextBoxContainer">
+                                                <td style="width: 50%;">
+                                                  <select name="products[]" id="products" class="form-control js-example-basic-single products">
+                                                      <option>Select Products</option>
+                                                      @if(!empty($products))
+                                                        @foreach($products as $prod )
+                                                            <option value="{{$prod->id}}">{{$prod->name}}
+                                                            </option>
+                                                        @endforeach
+                                                    @endif 
+                                                  </select> 
+                                                  <input type="hidden" name="pro_amount[]" id="pro_amount" class="form-control pro_amount">
+                                                </td>
+                                                  <td>
+                                                    <input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" />  
+                                                  </td>
+                                                  <td>
+                                                      <input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount"readonly="" /> 
+                                                  </td>
+                                                </tr>
+                                              </tbody>
+                                              <tfoot>
+                                                <tr>
+                                                    <th>
+                                                        <label for="total_amount">Total Amount:</label>
+                                                        <input type="text" name="total_amount" id="total_amount" style="border: none;">
+                                                    </th>
+                                                  <th colspan="5">
+                                                  <button id="btnAdd" type="button" class="btn btn-success" data-toggle="tooltip" data-original-title="Add more" style="float: right;">+</button></th>
+                                                </tr>
+                                              </tfoot>
+                                            </table>
+                                            </div>
+                                          </section>
+                                    </div>
+                            </div>
+                            
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="owner_name">Owner Name</label>
+                                <select id="owner_name" name="owner_name" class="form-control">
+                                    <option value="<?php echo Auth::user()->id;?>"><?php echo Auth::user()->username;?></option>
+                                    @foreach($users_lists as $users_list)
+                                    <option value="{{$users_list->id}}">{{$users_list->opername}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="lead_stage">Lead Stage</label>  
+                                <select class="js-example-basic-single" name="lead_stage" id="lead_stage">
+                                    <option value="New">New</option>
+                                    <option value="Contacted">Contacted</option>
+                                    <option value="Interested">Interested</option>
+                                    <option value="Under review">Under review</option>
+                                    <option value="Demo">Demo</option>
+                                    <option value="Unqualified">Unqualified</option>
+                                </select>  
+                            </div>
+
+                            <div class="col-md-12">
+                                <button class="btn btn-primary">Submit</button>
+                            </div>
+                        </div>
+                    {!! Form::close() !!}
+                </div>
+            </div>
+        </div>
+    </div>
 
             <div class="separator-breadcrumb border-top"></div>
             @if(Auth::user()->usertype == 'groupadmin')
@@ -241,10 +370,14 @@
                                           @endforeach
                                           <?php echo '<li><a href="javascript:assignoper('.$row->cdrid.',0);">Unassign</a></li>'; ?>
                                         </ul>
+
                                         <span>
                                         <button class="btn bg-gray-100" type="button" id="action_{{$row->cdrid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="nav-icon i-Gear-2"></i>
                                         </button>
+
+                                        <a href="?" class="btn btn-success add_lead" id="add_lead" data-toggle="modal" data-number="{{$row->number}}" data-id="{{$row->cdrid}}" data-target="#AddLead"><i class="i-Notepad"></i></a>
+
                                         <div class="dropdown-menu" aria-labelledby="action_{{$row->cdrid}}">
                                         <a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" id="contact_{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-groupid="{{$row->groupid}}" data-phone="{{$row->number}}">{{isset($row->contacts->fname) ? 'Update Contact': 'Add Contact'}}</a>
                                         <a class="dropdown-item edit_tag" href="#" data-toggle="modal" data-target="#tag_modal" id="tag_{{$row->cdrid}}" data-tag="{{$row->tag}}">{{$row->tag ? 'Update Tag': 'Add Tag'}}</a>
@@ -771,8 +904,10 @@
  <script src="{{asset('assets/js/moment.min.js')}}"></script>
  <script src="{{asset('assets/js/bootstrap-timepicker.min.js')}}"></script>
  <script src="{{asset('assets/js/vendor/echarts.min.js')}}"></script>
+ <script src="{{asset('assets/js/select2.min.js')}}"></script>
  <script type="text/javascript">
     $('#timepicker1').timepicker();
+    $('#AddLead .js-example-basic-single').select2({dropdownParent: $("#AddLead")});
  </script>
  <script type="text/javascript">
     function selectAll() {
@@ -1190,5 +1325,87 @@
     }
  </script>
 
+<script type="text/javascript">
+    $('.add_lead').click(function(){
+        var number = $(this).data('number');
+        var id = $(this).data('id');
+        //alert("Number:"+number+' ID:'+id);
+        $("#AddLead").animate({width: 'toggle'}, "slow");
+        $("#AddLead #phoneno").val(number);
+        $("#AddLead #cdrreport_id").val(id);
+        
+    });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2({dropdownParent: $("#AddLead")});
+        
+        $("#btnAdd").bind("click", function () {
+            var div = $("<tr />");
+            div.html(GetDynamicTextBox(""));
+            $("#TextBoxContainer").append(div);
+            $('.js-example-basic-single').select2({dropdownParent: $("#AddLead")});
+            
+        });
+        $("body").on("click", ".remove", function () {
+
+            var sub = $(this).closest("tr").find("input.amount").val();
+            if (sub != '') {
+                $(this).closest("tr").remove();
+                total_amount();
+            }else{
+                $(this).closest("tr").remove();
+                total_amount();
+            }
+          
+        });
+
+        $("body").on("change", ".products", function () {
+            //alert($(this).val());
+            var pro_id = $(this).val();
+            var thiss = $(this);
+            jQuery.ajax({
+                type: "POST",
+                url: '{{ URL::route("ProductAmount") }}',
+                dataType: 'text',
+                data: {pro_id:pro_id},
+                success: function(data) 
+                {
+                    //console.log(data);
+                    var obj = jQuery.parseJSON(data);
+                    //console.log(obj[0].selling_cost);
+                   
+                    thiss.closest("td").find("input.pro_amount").val(parseFloat(obj[0].selling_cost).toFixed(2));
+                    /*$('.pro_amount').val(obj[0].selling_cost);*/
+                }
+            });
+        });
+
+        $("body").on("change", ".quantity", function () {
+            //alert($(this).val());
+            var quantity = $(this).val();
+            var am = $(this).closest("tr").find("input.pro_amount").val();
+            var sub_amount = quantity * am;
+            //alert(quantity*am);
+            $(this).closest("tr").find("input.sub_amount").val(parseFloat(sub_amount).toFixed(2));
+            total_amount();
+        });
+
+      });
+      function GetDynamicTextBox(value) 
+      {
+          return '<td><select name="products[]" id="products" class="form-control js-example-basic-single products"><option>Select Products</option>@if(!empty($products)) @foreach($products as $prod )<option value="{{$prod->id}}">{{$prod->name}}</option>@endforeach @endif</select><input type="hidden" name="pro_amount[]" id="pro_amount" class="form-control pro_amount"> </td><td><input type="number" name="quantity[]" id="quantity" class="form-control quantity"placeholder="Enter Quantity" min="1" /></td><td><input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount" readonly="" /></td><td><button type="button" class="btn btn-danger remove" data-toggle="tooltip" data-original-title="Remove"><i class="nav-icon i-Close-Window"></i></button></td>';
+      }
+
+      function total_amount(){
+                var sum = 0.0;
+                $('.sub_amount').each(function(){
+                    //alert($(this).val());
+                    sum += Number($(this).val()); 
+                });
+                $('#total_amount').val(parseFloat(sum).toFixed(2));
+            }
+</script>
 
 @endsection

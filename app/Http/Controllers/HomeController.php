@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use App\Models\CdrTag;
+use App\Models\ToDoTask;
+
+date_default_timezone_set('Asia/Kolkata'); 
 
 class HomeController extends Controller
 { 
@@ -39,6 +42,8 @@ class HomeController extends Controller
             ->where('status', 'Inactive')
             ->count(); 
         } 
+
+        $g_callstoday = $o_callstoday = $callstoday = $g_activecalls = $activecalls = 0;
 
         $activeoperator = DB::table('operatoraccount')
             ->where('operatoraccount.groupid', Auth::user()->groupid)
@@ -142,10 +147,106 @@ class HomeController extends Controller
                 $ind["bars"]    = array('fillColor' => $cl);
                 $series[] = $ind;
             }
-        }    
-        //dd($series);
-        //dd($piechart);
-        return view('home.dashboard', compact('activeoperator', 'g_callstoday', 'o_callstoday', 'callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'p_data', 'series', 'sdate', 'edate', 'nousers', 'inusers'));
+        } 
+
+        $level_1 = DB::table('lead_stages')->where('levels', '=', '1')->get()->count();
+        $level_2 = DB::table('lead_stages')->where('levels', '=', '2')->get()->count();
+        $level_3 = DB::table('lead_stages')->where('levels', '=', '3')->get()->count();
+        $level_4 = DB::table('lead_stages')->where('levels', '=', '4')->get()->count();
+        $level_5 = DB::table('lead_stages')->where('levels', '=', '5')->get()->count();
+        $level_6 = DB::table('lead_stages')->where('levels', '=', '6')->get()->count();
+        $level_7 = DB::table('lead_stages')->where('levels', '=', '7')->get()->count();
+
+        $todo_lists = DB::table('todotask')
+                    ->select('*')
+                    ->where('status','!=','Done')
+                    ->where('user_id','=',Auth::user()->id)
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
+                    
+            $users_list = DB::table('operatoraccount')
+                        ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
+                        ->get();
+
+            $lead_count = array();
+            
+            foreach ($users_list as $key => $value) {
+                
+                $lead_count[$value->id] = DB::table('cdrreport_lead')
+                        ->select('cdrreport_lead.operatorid')
+                        ->where('operatorid','=',$value->id)
+                        ->get()->count();
+            }
+
+        $remainders = DB::table('lead_reminders')
+                    ->where('user_id','=',Auth::user()->id)
+                    ->get();
+
+        if (Auth::user()->usertype == 'groupadmin') {
+
+            $users_list = DB::table('operatoraccount')
+                        ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
+                        ->get();
+
+            //echo "<pre>";
+            //print_r($users_list);
+
+            $lead_count = array();
+            foreach ($users_list as $key => $value) {
+                
+                $lead_count[$value->id] = DB::table('cdrreport_lead')
+                        ->select('cdrreport_lead.operatorid')
+                        ->where('operatorid','=',$value->id)
+                        ->get()->count();
+
+                $operator_lead_stage[$value->id] = DB::table('cdrreport_lead')
+                        ->select(DB::raw('COUNT(lead_stage) as lead_count'),'lead_stage','operatoraccount.opername')
+                        ->where('operatorid','=',$value->id)
+                        ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
+                        ->groupBy('cdrreport_lead.lead_stage','operatoraccount.opername')
+                        ->get();
+
+                $predict_cost[$value->id] = DB::table('cdrreport_lead')
+                                ->select(DB::raw('SUM(total_amount) as pre_cost'),'operatoraccount.opername')
+                                ->where('operatorid','=',$value->id)
+                                ->whereNotIn('lead_stage', ['converted'])
+                                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
+                                ->get();
+
+                foreach ($predict_cost as $key => $pc) {
+                    if ($pc[0]->opername == '') {
+                        $pc[0]->pre_cost = 0;
+                        $pc[0]->opername = $value->opername;
+                    }
+                }
+
+            }
+            //print_r($operator_lead_stage);exit;
+
+            $remainders = DB::table('lead_reminders')
+                        ->where('user_id','=',Auth::user()->id)
+                        ->get();
+
+        }
+        else if (Auth::user()->usertype == '') {
+            $level_1 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '1')->get()->count();
+            $level_2 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '2')->get()->count();
+            $level_3 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '3')->get()->count();
+            $level_4 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '4')->get()->count();
+            $level_5 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '5')->get()->count();
+            $level_6_7 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '>=', '6')->get()->count();
+            
+            $users_list = '';
+
+            $remainders = DB::table('lead_reminders')
+                        ->where('user_id','=',Auth::user()->id)
+                        ->get();
+
+            $lead_count = '';
+        }
+        $nousers = '';
+        $inusers = '';
+        return view('home.dashboard', compact('activeoperator', 'g_callstoday', 'o_callstoday', 'callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'p_data', 'series', 'sdate', 'edate', 'nousers', 'inusers','level_1','level_2','level_3','level_4','level_5','level_6','level_7','todo_lists','users_list','remainders','lead_count','operator_lead_stage','predict_cost'));
     }
 
     public function callSummary() {
@@ -203,5 +304,80 @@ class HomeController extends Controller
         DB::table($name)->where('id',$id)->delete();
         toastr()->success('Record delete successfully.');
         return redirect()->route('cdrTags');
+    }
+
+    public function ToDoTaskAdd(Request $request)
+    {
+        //print_r($request->all());exit;
+
+        $now = date("Y-m-d H:i:s");
+
+        $add_todo = new ToDoTask([
+                'user_id' => Auth::user()->id,
+                'title' => $request->get('task'),
+                'inserted_date' => $now,
+            ]);
+
+            //dd($add_todo);exit;
+            $add_todo->save();
+            toastr()->success('ToDo added successfully.');
+            return Redirect::back();
+    }
+
+    public function ToDoTaskEdit(Request $request)
+    {
+        //print_r($request->all());
+        $edit = DB::table('todotask')->where('id', $request->get('myid'))->get();
+        echo json_encode($edit);
+    }
+
+    public function ToDoTaskUpdate(Request $request)
+    {
+        print_r($request->all());
+        $id = $request->get('todo_id');
+        //print_r($request->all());
+        $edit_todo = ToDoTask::find($id);
+    
+        $edit_todo->title = $request->task;
+        $edit_todo->date = $request->date;
+
+        //print_r($edit_todo);exit;
+        $edit_todo->save();
+        toastr()->success('ToDo Updated successfully.');
+        return Redirect::back();
+    }
+
+    public function destroy($id)
+    {
+        DB::table('todotask')->where('id',$id)->delete();
+        $message = toastr()->success('Deleted successfully.');
+        return Redirect::back();
+    }
+
+    public function UpdateStatus($id)
+    {
+        $check_data = DB::table('todotask')->where('id',$id)->get();
+        //print_r($check_data[0]->status);exit;
+        if ($check_data[0]->status == 'Hold') {
+            $status = 'Pending';
+        }
+        else{
+            $status = 'Hold';
+        }
+        $edit_todo = ToDoTask::find($id);
+        $edit_todo->status = $status;
+        $edit_todo->save();
+        toastr()->success('Status Updated successfully.');
+        return Redirect::back();
+    }
+
+    public function UpdateToDo($id)
+    {
+        $edit_todo = ToDoTask::find($id);
+
+        $edit_todo->status = 'Done';
+        $edit_todo->save();
+        toastr()->success('Status Updated successfully.');
+        return Redirect::back();
     }
 }

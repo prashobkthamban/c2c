@@ -47,7 +47,8 @@ class ManagementController extends Controller
             'reason' => 'required',
             ]);
         }
-dd($request->all());
+
+
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {

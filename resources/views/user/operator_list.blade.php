@@ -237,14 +237,16 @@
             data: $('.add_account_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
+                    //alert(data);
                     $.each(res.error, function(index, value)
-                    {
+                    { 
                         if (value.length != 0)
                         {
                             errors += value[0];
                             errors += "</br>";
                         }
                     });
+                    //alert(value);
                     toastr.error(errors);
                 } else {
                     $("#operator_account").modal('hide');
