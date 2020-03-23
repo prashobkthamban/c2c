@@ -336,6 +336,63 @@ class ReportController extends Controller
     public function conference(){
         return view('home.conference', ['result' => Conference::getReport()]);
     }
+    public function addConference(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'moderator' => 'required|max:12',
+        ]);  
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $conference_data = [
+                'moderator' => $request->get('moderator'),
+                'groupid' => Auth::user()->groupid,
+                'resellerid' => Auth::user()->resellerid,
+                'comments' => $request->get('comments'),
+                'status' => 'LIVE',
+            ];
+            
+            $conference = new Conference($conference_data);
+            $conference->save();
+            if(!empty($conference->id)) {
+                $max_conf = Auth::user()->load('accountdetails')->accountdetails->max_no_confrence;
+                for($i = 0; $i < $max_conf; $i++)
+                {  $j = $i + 1;
+                    if($request->get($j) > 6 && is_numeric($request->get($j)))
+                    {
+                        $conf_log = [
+                            'member' => $request->get($j),
+                            'confrence_id' => $conference->id,
+                            'dialstatus' => 'NOT Dialed'  
+                        ];
+                        DB::table('confrence_member_log')->insert(
+                            $conf_log
+                        );
+                    }
+                }
+            }
+            $data['success'] = 'Conference added successfully.';   
+        }
+                      
+        return $data;
+    }
+
+    public function editComment(Request $request) {
+        if(!empty($request->get('conf_id'))) {
+            Conference::where('id', $request->get('conf_id'))->update(['comments' => $request->get('comments')]);
+            $data['success'] = 'Comment update successfully.';
+        } else {
+            $data['error'] = 'Some error occured.';   
+        }
+
+        return $data;
+    }
+    public function callDetails($id) {
+        return $callDetails = DB::table('confrence_member_log')
+            ->where('confrence_id', $id)
+            ->get();
+    }
+
     public function cdrtags(){
         return view('home.cdrtags', ['result' => CdrTag::getReport()]);
     }

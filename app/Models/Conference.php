@@ -8,11 +8,17 @@ use Illuminate\Support\Facades\Auth;
 class Conference extends Model
 {
     protected $table = 'dialout_confrence';
+    protected $fillable = ['moderator', 'groupid', 'resellerid', 'comments', 'status'];
+    public $timestamps = false;
+
+    public function conferenceLog()
+    {
+        return $this->hasMany('App\Models\ConferenceMemberLog', 'confrence_id');
+    }
 
     public static function getReport( )
     {
-
-        $data = Conference::select('dialout_confrence.*', 'name', 'resellername')
+        $data = Conference::select('dialout_confrence.*', 'name', 'resellername')->with(['conferenceLog'])
             ->leftJoin('accountgroup', 'accountgroup.id', '=', 'dialout_confrence.groupid')
             ->leftJoin('resellergroup', 'resellergroup.id', '=', 'dialout_confrence.resellerid');
 

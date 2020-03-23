@@ -75,6 +75,9 @@ Route::get('voicemail', 'ReportController@voicemail')->name('voicemail');
 Route::get('blacklist', 'ReportController@blacklist')->name('blacklist');
 Route::get('holiday', 'ReportController@holiday')->name('holiday');
 Route::get('conference', 'ReportController@conference')->name('conference');
+Route::post('add_conference', 'ReportController@addConference')->name('AddConference');
+Route::post('edit_comment', 'ReportController@editComment')->name('EditComment');
+Route::get('call_list/{id}', 'ReportController@callDetails')->name('CallDetails');
 
 /* Notification Manager */
 Route::get('notification', 'NotificationController@index')->name('notification');
