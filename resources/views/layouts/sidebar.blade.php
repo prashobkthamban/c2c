@@ -24,6 +24,10 @@
 </style>
  <!-- <script type="text/javascript"> var auto_refresh = setInterval( function() { $('.alt').load('sidebar.blede.php').fadeIn("slow"); }, 15000); // refreshing after every 15000 milliseconds 
 </script> -->
+<?php 
+// dd(Auth::user()->load('opeartor')->opeartor->crm_access);
+// dd(Auth::user()->load('accountdetails')->accountdetails->crm); 
+?>
   <div class="side-content-wrap">
             <div class="sidebar-left open rtl-ps-none" data-perfect-scrollbar data-suppress-scroll-x="true">
                 <ul class="navigation-left">
@@ -40,13 +44,17 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
-                    <li class="nav-item" data-item="settings">
-                        <a class="nav-item-hold" href="#">
-                            <i class="nav-icon i-Library"></i>
-                            <span class="nav-text">CRM</span>
-                        </a>
-                        <div class="triangle"></div>
-                    </li>
+                    @if(Auth::user()->usertype == 'groupadmin')
+                        @if(Auth::user()->load('accountdetails')->accountdetails->crm == 1)
+                        <li class="nav-item" data-item="settings">
+                            <a class="nav-item-hold" href="#">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">CRM</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        @endif
+                    @endif
 
                     @if(Auth::user()->usertype == 'admin')
                         <li class="nav-item" data-item="">

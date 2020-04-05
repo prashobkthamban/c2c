@@ -47,7 +47,13 @@ function didList(groupid, did_id) {
 }
 
 $(document).ready(function(){
-    
+    // phone number validation
+    $('.phone_number').on('keypress', function(){
+        var maxLength = $(this).val().length;
+        if (maxLength >= 10) {
+            return false;
+        }
+    });
     $('.lead-category').change(function (){
         $.ajax({
             type: 'POST',

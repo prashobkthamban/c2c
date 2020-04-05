@@ -179,10 +179,20 @@
                             <div class="card-title mb-3">Invoice<a href="" style="float: right;">X</a></div>
                             {!! Form::open(['action' => 'InvoiceController@store', 'method' => 'post','autocomplete' => 'off']) !!} 
                                 <div class="row">
-                                    <div class="col-md-6 form-group mb-3">
+                                    <!-- <div class="col-md-6 form-group mb-3">
                                         <label for="subject">Subject*</label>
                                         <input type="text" class="form-control" id="subject" placeholder="subject" name="subject" value="<?php echo $proposal->subject;?>">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('subject', ':message') : '' !!}</p>
+                                    </div> -->
+
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="invoice_number">Invoice Number</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">INV-</span>
+                                            </div>
+                                           <input type="text" name="invoice_number" id="invoice_number" value="00{{$invoice_number+1}}" class="form-control">
+                                        </div>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">

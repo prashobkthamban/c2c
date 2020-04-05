@@ -113,6 +113,21 @@
                                         <label for="address">Address</label>
                                        <textarea name="address" id="address" class="form-control"></textarea> 
                                     </div>
+                                    <div class="form-group mb-3 col-md-12">
+                                        <p>Lead Deatils</p>
+                                    <table border="1" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <td>First Name</td>
+                                                <td>Last Name</td>
+                                                <td>Email</td>
+                                                <td>Company Name</td>
+                                                <td>Phone No</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="lead_details"></tbody>
+                                    </table>
+                                    </div>
                                     
                                     <div class="col-md-12">
                                         <button class="btn btn-primary">Submit</button>
@@ -217,6 +232,7 @@
             {
                 //console.log(edit_data);
                 var obj = jQuery.parseJSON(edit_data);
+                var html = '';
                 //console.log(obj);
                 $(".editConverted #company_name_converted").val(obj.company_name);
                 $(".editConverted #first_name").val(obj.first_name);
@@ -225,6 +241,15 @@
                 $(".editConverted #phone_no").val(obj.mobile_no);
                 $(".editConverted #email").val(obj.email);
                 $(".editConverted #address").val(obj.address);
+
+                if (obj.cdr_firstname != null) {
+                    html = '<tr><td>'+obj.cdr_firstname+'</td><td>'+obj.cdr_lastname+'</td><td>'+obj.cdr_email+'</td><td>'+obj.cdr_companyname+'</td><td>'+obj.cdr_phn+'</td></tr>';    
+                }
+                else {
+                    html = '';
+                }
+                
+                $(".editConverted #lead_details").html(html);
             }
         });
     });

@@ -18,9 +18,14 @@ class Account extends Authenticatable
 	public function accountdetails()
 	{
 	    return $this->belongsTo('App\Models\Accountgroup', 'groupid');
+    }
+    
+    public function opeartor()
+	{
+	    return $this->belongsTo('App\Models\OperatorAccount', 'operator_id');
 	}
  
-  public function did()
+    public function did()
     {
         return $this->belongsTo('App\Models\Dids', 'groupid', 'assignedto');
     }

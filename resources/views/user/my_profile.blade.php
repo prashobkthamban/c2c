@@ -49,20 +49,20 @@
                                         <span>{{ Auth::user()->usertype }}</span>
                                     </div>
                                 </div>
-								<div class="col-md-4 col-6">
+                                <div class="col-md-4 col-6">
                                     <div class="mb-4">
                                         <p class="text-primary mb-1"><i class="i-Telephone text-16 mr-1"></i>Identity Number</p>
                                         <span id="phone_info">{{ Auth::user()->did->did }} ({{ Auth::user()->did->rdins }})</span>
                                     </div>
                                 </div>
                                 @if(Auth::user()->usertype == 'groupadmin')
-								 <div class="col-md-4 col-6">
+                                 <div class="col-md-4 col-6">
                                     <div class="mb-4">
                                         <p class="text-primary mb-1"><i class="i-Telephone text-16 mr-1"></i> Account Name</p>
                                         <span id="phone_info">{{ Auth::user()->name }}</span>
                                     </div>
                                 </div>
-								
+                                
                                 <div class="col-md-4 col-6">
                                     <div class="mb-4">
                                         <p class="text-primary mb-1"><i class="i-Telephone text-16 mr-1"></i> Phone</p>
@@ -87,13 +87,13 @@
                                         <span id="office_end_info">{{ isset($acGrp[0]) ? $acGrp[0]->office_end : '' }}</span>
                                     </div>
                                 </div>
-								<div class="col-md-4 col-6">
+                                <div class="col-md-4 col-6">
                                     <div class="mb-4">
                                         <p class="text-primary mb-1"><i class="i-Telephone text-16 mr-1"></i>After Office Call trasfer to</p>
                                         <span id="phone_info">{{ $acGrp[0]->aocalltransfer }}</span>
                                     </div>
                                 </div>
-								<div class="col-md-4 col-6">
+                                <div class="col-md-4 col-6">
                                     <div class="mb-4">
                                         <p class="text-primary mb-1"><i class="i-Telephone text-16 mr-1"></i>Play Message</p>
                                         <span id="phone_info">{{ $acGrp[0]->playaom }}</span>
@@ -113,9 +113,9 @@
                                         <div class="card-body">
                                             {!! Form::open(['id' => 'edit_profile']) !!}
                                                 <input type="hidden" name="id" value="{{ Auth::user()->id }}" />
-												<input type="hidden" name="usertype" value="{{ Auth::user()->usertype }}" />			
+                                                <input type="hidden" name="usertype" value="{{ Auth::user()->usertype }}" />            
                                                 @if(Auth::user()->usertype == 'groupadmin')
-													<input type="hidden" name="groupid" value="{{ Auth::user()->groupid }}" />
+                                                    <input type="hidden" name="groupid" value="{{ Auth::user()->groupid }}" />
                                                 <div class="form-group row">
                                                     <label for="inputEmail3" class="col-sm-3 col-form-label">Email</label>
                                                     <div class="col-sm-9">
@@ -128,7 +128,7 @@
                                                         <input type="text" class="form-control" id="phone" name="phone_number" placeholder="Mobile" value="{{ Auth::user()->phone_number }}">
                                                     </div>
                                                 </div>
-												<div class="form-group row">
+                                                <div class="form-group row">
                                                     <label for="inputEmail3" class="col-sm-3 col-form-label">Office Open From</label>
                                                     <div class="col-sm-9">
                                                         <input type="text" class="form-control timepicker" id="office_start" data-rel="timepicker" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" name="office_start" placeholder="00:00:00" value="{{ isset($acGrp[0]) ? $acGrp[0]->office_start : '' }}">
@@ -140,40 +140,48 @@
                                                         <input type="text" class="form-control timepicker" data-rel="timepicker" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" id="office_end" name="office_end" placeholder="23:59:59" value="{{ isset($acGrp[0]) ? $acGrp[0]->office_end : '' }}">
                                                     </div>
                                                 </div>
-												<div class="form-group row">
+                                                <div class="form-group row">
                                                     <label for="inputEmail3" class="col-sm-3 col-form-label">After Office Call trasfer to</label>
                                                     <div class="col-sm-9">
                                                         <Select class="form-control"  id="aocalltransfer" name="aocalltransfer" >
-														<option value="message"  {{ $acGrp[0]->aocalltransfer =='message'?'SELECTED':'' }} > Message </option>
-														<option value="voicemail" {{ $acGrp[0]->aocalltransfer =='voicemail'?'SELECTED':'' }} > Voicemail</option>
-														</select>
-							                        </div>
+                                                        <option value="message"  {{ $acGrp[0]->aocalltransfer =='message'?'SELECTED':'' }} > Message </option>
+                                                        <option value="voicemail" {{ $acGrp[0]->aocalltransfer =='voicemail'?'SELECTED':'' }} > Voicemail</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-												<div class="form-group row">
+                                                <div class="form-group row">
                                                     <label for="inputEmail3" class="col-sm-3 col-form-label">Play Message</label>
                                                     <div class="col-sm-9">
                                                        <Select class="form-control"  id="playaom" name="playaom" >
-														<option value="Before"  {{ $acGrp[0]->playaom =='Before'?'SELECTED':'' }} > Before </option>
-														<option value="After" {{ $acGrp[0]->playaom =='After'?'SELECTED':'' }} > After</option>
-														</select>
-													</div>
+                                                        <option value="Before"  {{ $acGrp[0]->playaom =='Before'?'SELECTED':'' }} > Before </option>
+                                                        <option value="After" {{ $acGrp[0]->playaom =='After'?'SELECTED':'' }} > After</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
-												<div class="form-group row">
+                                                <div class="form-group row">
                                                     <label for="inputEmail3" class="col-sm-3 col-form-label">Working Days</label>
                                                     <div class="col-sm-9">
-														<?php if($acGrp[0]->working_days) { $days = json_decode($acGrp[0]->working_days);} ?>
+                                                      <!--   <?php if($acGrp[0]->working_days !== null) { $days = json_decode($acGrp[0]->working_days);} ?>
                                                        <select class="form-control" id="working_days" name="working_days[]" multiple>
-														<option value="Mon" <?php  if(in_array('Mon',$days)){ echo 'SELECTED';} ?> > Monday </option>
-														<option value="Tue" <?php  if(in_array('Tue',$days)){ echo 'SELECTED';} ?>> Tuesday </option>
-														<option value="Wed" <?php  if(in_array('Wed',$days)){ echo 'SELECTED';} ?>> Wednesday </option>
-														<option value="Thu" <?php  if(in_array('Thu',$days)){ echo 'SELECTED';} ?>> Thursday </option>
-														<option value="Fri" <?php  if(in_array('Fri',$days)){ echo 'SELECTED';} ?>> Friday </option>
-														<option value="Sat" <?php  if(in_array('Sat',$days)){ echo 'SELECTED';} ?>> Saturday </option>
-														<option value="Sun" <?php  if(in_array('Sun',$days)){ echo 'SELECTED';} ?>> Sunday </option>
-														</select>
-													</div>
+                                                        <option value="Mon" <?php  if($days != "" && in_array('Mon',$days)){ echo 'SELECTED';} ?> > Monday </option>
+                                                        <option value="Tue" <?php  if($days != "" && in_array('Tue',$days)){ echo 'SELECTED';} ?>> Tuesday </option>
+                                                        <option value="Wed" <?php  if($days != "" && in_array('Wed',$days)){ echo 'SELECTED';} ?>> Wednesday </option>
+                                                        <option value="Thu" <?php  if($days != "" && in_array('Thu',$days)){ echo 'SELECTED';} ?>> Thursday </option>
+                                                        <option value="Fri" <?php  if($days != "" && in_array('Fri',$days)){ echo 'SELECTED';} ?>> Friday </option>
+                                                        <option value="Sat" <?php  if($days != "" && in_array('Sat',$days)){ echo 'SELECTED';} ?>> Saturday </option>
+                                                        <option value="Sun" <?php  if($days != "" && in_array('Sun',$days)){ echo 'SELECTED';} ?>> Sunday </option>
+                                                        </select> -->
+                                                             <button type="button" id="sun" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('sun',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('sun');">S</button>
+                                        <button type="button" id="mon" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('mon',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('mon');">M</button>
+                                        <button type="button" id="tue" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('tue',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('tue');">T</button>
+                                        <button type="button" id="wed" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('wed',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('wed');">W</button>
+                                        <button type="button" id="thu" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('thu',$days)){ echo 'btn-primary';} ?>"onClick="selectDay('thu');">T</button>
+                                        <button type="button" id="fri" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('fri',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('fri');">F</button>
+                                        <button type="button" id="sat" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('sat',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('sat');">S</button>
+                                        <input type='hidden' id="working_days" name='working_days' value="" />
+                                                    </div>
                                                 </div>
-												<!--  need to update working day settings  -->
+                                                <!--  need to update working day settings  -->
                                                 @endif
                                                 <div class="form-group row">
                                                     <label for="inputEmail3" class="col-sm-3 col-form-label">Password</label>
@@ -209,6 +217,22 @@
 <script src="{{asset('assets/js/bootstrap-timepicker.min.js')}}"></script>
 
 <script type="text/javascript">
+    var days = [];
+    <?php foreach($days as $key => $val){ ?>
+        days.push('<?php echo $val; ?>');
+    <?php } ?>
+   
+    function selectDay(day) {
+        if(!$("#" + day).hasClass('btn-primary')) {
+            $("#" + day).addClass('btn-primary');
+            days.push(day);
+        } else {
+            $("#" + day).removeClass('btn-primary');
+            var dayIndex = days.indexOf(day); 
+            days.splice(dayIndex, 1);
+        }
+        $("#working_days").val(days);
+    }
     $(document).ready(function() {
         $('.timepicker').timepicker();
         $( '#edit_profile' ).on( 'submit', function(e) {

@@ -31,16 +31,46 @@
                            <table border="0" cellspacing="0" cellpadding="2" style="width: 90%;margin-left: 30px;margin-top: 30px;" class="show_print">
 								<tbody>
 									<tr>
-										<td>Company Name</td>
+										<td><b>Company Name</b></td>
 										<td>Test</td>
 										<td><b>Invoice Number</b></td>
 										<td><b>INV-{{$invoice->invoice_number}}</b></td>			
 									</tr>
 									<tr>
-										<td>Address</td>
+										<td><b>Address</b></td>
 										<td style="width: 60%;">{{$invoice->billing_address}}</td>
-										<td>Invoice Date</td>
+										<td><b>Invoice Date</b></td>
 										<td>{{$invoice->date}}</td>
+									</tr>
+									<tr>
+										<td><b>First Name</b></td>
+										<td>{{$invoice->first_name}}</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td><b>Last Name</b></td>
+										<td>{{$invoice->last_name}}</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td><b>Email Address</b></td>
+										<td>{{$invoice->email}}</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td><b>Phone Number</b></td>
+										<td>{{$invoice->mobile_no}}</td>
+										<td></td>
+										<td></td>
+									</tr>
+									<tr>
+										<td><b>GST Number</b></td>
+										<td>{{$invoice->gst_no}}</td>
+										<td></td>
+										<td></td>
 									</tr>
 								</tbody>
 							</table>

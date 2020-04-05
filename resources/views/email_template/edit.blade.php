@@ -46,7 +46,7 @@
 
                                     <div class="col-md-12 form-group mb-3">
                                         <div class="mx-auto col-md-12">
-                                            <div id="full-editor" style="height: 150px;"></div>
+                                            <div id="full-editor" style="height: 150px;">{!!$mail->body!!}</div>
                                         </div>
                                     </div>
                                     <textarea name="mail_body" id="mail_body" class="form-control" hidden="">{{$mail->body}}</textarea>

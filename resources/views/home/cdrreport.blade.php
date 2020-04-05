@@ -25,6 +25,9 @@
 .lead_modal {
     border-radius: 0px !important; 
 }
+audio {
+    margin-left: 82px;
+}
 </style>
 @endsection
 
@@ -335,8 +338,8 @@
                                         #more{{$row->cdrid}}" aria-expanded="false" aria-controls="collapseExample"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
                                        
                                         @if($row->recordedfilename !== '')
-                                        <a href="#" class="btn bg-gray-100 play_audio" data-toggle="modal" data-target="#play_modal" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
-                                        <a href="{{ url('download_file/' .$row->recordedfilename.'/'.$row->groupid) }}" class="btn bg-gray-100">
+                                        <a href="#" class="btn bg-gray-100 play_audio" data-toggle="modal" data-target="#play_modal" data-dummy="https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
+                                        <a href="{{ url('download_file/' .$row->recordedfilename) }}" class="btn bg-gray-100">
                                         <i class="i-Download1"></i></a>
                                         @endif                 
                                         <a href="#" class="btn bg-gray-100 notes_list" data-toggle="modal" data-target="#notes_modal" id="notes_{{$row->uniqueid}}"><i class="i-Notepad"></i></a>
@@ -414,11 +417,13 @@
             <div class="modal fade" id="play_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
-                        <div class="modal-body">
-                            <audio controls>
-                              <source src="https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3" type="audio/mpeg">
-                            Your browser does not support the audio element.
-                            </audio>
+                        <div class="modal-header">
+                                <!-- <h5 class="modal-title">Dial A Number</h5> -->
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                        </div>
+                        <div class="modal-body" id="play_src">
                         </div>
                     </div>
                 </div>
@@ -933,12 +938,6 @@
     }
 
     $(document).ready(function() {
-        $('#customer_number, #operator_number, #cust_m_number, #ope_m_number').on('keypress', function(){
-            var maxLength = $(this).val().length;
-            if (maxLength >= 10) {
-                return false;
-            }
-        });
 
         $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });        
         $('.timepicker').pickatime();
@@ -1190,14 +1189,15 @@
 
         $('.play_audio').on('click',function(e)
         {
-            var id = $(this).attr("id");
-            var groupid = id.replace("play_", "");
-            console.log(groupid);
             var file = $(this).attr("data-file");
-            console.log(file);
-            
+            file = 'voicefiles/' + file;
+            $("#play_src").html('<audio controls id="audioSource"><source src="' + file + '" type="video/mp4"></source></audio>' );
         });
 
+        $(document).on('hide.bs.modal','#play_modal', function () {
+            $("#audioSource").remove();
+        });
+        
         $('.edit_reminder').on('click',function(e)
         {
             var id = $(this).attr("id");

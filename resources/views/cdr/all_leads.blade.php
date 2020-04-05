@@ -651,7 +651,8 @@
 
 <script type="text/javascript">
     $('#timepicker1').timepicker();
-    $('.edit_lead').click(function(){
+    /*$('.edit_lead').click(function(){*/
+        $(document).on("click", ".edit_lead", function () {
         myid = $(this).data('id');
         //alert(myid);
         $(".EditLead").animate({width: 'toggle'}, "slow");
@@ -873,7 +874,7 @@
                // alert('qwerty');
                 //console.log(data);
                 var obj = jQuery.parseJSON(data);
-                //console.log(obj);
+                console.log(obj);
                 var html = '';
 
                 $.each(obj,function(index,data){

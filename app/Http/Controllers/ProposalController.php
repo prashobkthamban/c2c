@@ -15,6 +15,7 @@ use App\Models\Converted;
 use App\Models\Product;
 use App\Models\Product_details;
 use App\Models\Lead_activity;
+use App\Models\Invoice;
 
 date_default_timezone_set('Asia/Kolkata'); 
 
@@ -74,7 +75,9 @@ class ProposalController extends Controller
 
     public function store(Request $request)
     {
-        //print_r($request->all());exit;
+        /*print_r(Auth::user());exit;*/
+
+        $now = date("Y-m-d H:i:s");
 
         $add_proposal = new Proposal([
                 'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
@@ -86,6 +89,7 @@ class ProposalController extends Controller
                 'grand_total' => $request->get('grand_total'),
                 'discount' => $request->get('dis_val'),
                 'total_tax_amount' => $request->get('total_tax'),
+                'inserted_date' => $now,
             ]);
 
             //dd($add_proposal);exit;
@@ -149,7 +153,10 @@ class ProposalController extends Controller
         $products = Product::select('*')->get();
         $customers = Converted::select('*')->get();
 
-        return view('proposal.edit',compact('proposal','proposal_details','products','customers'));
+        $invoice_number = Invoice::max('id');
+        //print_r($invoice_number);exit;
+
+        return view('proposal.edit',compact('proposal','proposal_details','products','customers','invoice_number'));
     }
 
     public function update(Request $request,$id){

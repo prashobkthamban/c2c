@@ -891,7 +891,7 @@
                                               </div>
                                             </div>
                                             <div class="ul-widget__body">
-                                                @if(!$lead_mails->isempty() || !$call_logs->isempty() || !$msgs->isempty())
+                                                @if(!$lead_mails->isempty() || !$call_logs->isempty() || !$msgs->isempty() || !$proposal->isempty())
                                                 <div class="tab-content">
                                                     <div class="tab-pane active show" id="__g-widget-s7-tab1-content">
                                                         <div class="ul-widget-s7n">
@@ -937,6 +937,24 @@
                                                                 </div>
                                                                 <div class="ul-widget-s7__item-text">
                                                                     {{$msg->message}}
+                                                                </div>
+                                                            </div>
+                                                            @endforeach
+                                                            @foreach($proposal as $pro)
+                                                            <div class="ul-widget-s7__items">
+                                                                <span class="ul-widget-s7__item-time ul-middle"  style="width: 20%;font-size: .813rem;"><?php $time_ago = strtotime($pro->inserted_date);
+                                                                    echo to_time_ago($time_ago); ?></span>
+                                                                <div class="ul-widget-s7__item-circle">
+                                                                    <p class="ul-vertical-line bg-warning "></p>
+                                                                </div>
+                                                                <div class="ul-widget-s7__item-text">
+                                                                    First Name: {{$pro->first_name}} &nbsp;&nbsp;
+                                                                    Last Name: {{$pro->last_name}} <br>
+                                                                    Subject: {{$pro->subject}} &nbsp;&nbsp;
+                                                                    Grand Total: {{$pro->grand_total}} <br>
+                                                                    Email: {{$pro->email}} &nbsp;&nbsp;
+                                                                    Phone No: {{$pro->mobile_no}} <br>
+                                                                    <a href="{{ route('editProposal', $pro->id) }}">Click Here to see full detail of proposal</a>
                                                                 </div>
                                                             </div>
                                                             @endforeach

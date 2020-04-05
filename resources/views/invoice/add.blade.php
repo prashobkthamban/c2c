@@ -35,7 +35,7 @@
                                             <option value="">Select Customer</option>
                                             @if(!empty($customers))
                                                 @foreach($customers as $customer )
-                                                    <option value="{{$customer->id}}">{{$customer->first_name.' '.$customer->last_name}}
+                                                    <option value="{{$customer->id}}">{{$customer->company_name}}
                                                     </option>
                                                 @endforeach
                                             @endif 
@@ -47,6 +47,21 @@
                                         <label for="address">Address*</label>
                                         <textarea id="address" name="address" class="form-control"></textarea>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('address', ':message') : '' !!}</p>
+                                    </div>
+
+                                    <div class="col-md-12 form-group mb-3">
+                                        <table border="1" cellspacing="3" cellpadding="0" style="width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <td>First Name</td>
+                                                    <td>Last Name</td>
+                                                    <td>Email</td>
+                                                    <td>Mobile Number</td>
+                                                    <td>GST Number</td>
+                                                </tr>
+                                            </thead>
+                                            <tfoot id="customer_detail"></tfoot>
+                                        </table>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
@@ -183,9 +198,12 @@
                 success: function(data) 
                 {
                     //console.log(data);
+                    var html = '';
                     var obj = jQuery.parseJSON(data);
                     //console.log(obj.address);
                     $('#address').html(obj.address);
+                    html = '<tr><td>'+obj.first_name+'</td><td>'+obj.last_name+'</td><td>'+obj.email+'</td><td>'+obj.mobile_no+'</td><td>'+obj.gst_no+'</td></tr>';
+                    $('#customer_detail').html(html);
                 }
             });
     });

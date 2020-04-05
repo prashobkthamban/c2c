@@ -48,6 +48,7 @@ class LeadController extends Controller
 
     public function index(){
 
+        //print_r(Auth::user()->load('accountdetails')->accountdetails->crm);exit;
         $result = CdrReport_Lead::getReport();
 
         if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') 
@@ -59,12 +60,14 @@ class LeadController extends Controller
             ->latest('cdrreport_lead.id')
             ->paginate(10);
 
-            $level_1 = DB::table('lead_stages')->where('levels', '=', '1')->get()->count();
-            $level_2 = DB::table('lead_stages')->where('levels', '=', '2')->get()->count();
-            $level_3 = DB::table('lead_stages')->where('levels', '=', '3')->get()->count();
-            $level_4 = DB::table('lead_stages')->where('levels', '=', '4')->get()->count();
-            $level_5 = DB::table('lead_stages')->where('levels', '=', '5')->get()->count();
-            $level_6_7 = DB::table('lead_stages')->where('levels', '>=', '6')->get()->count();
+            //print_r(Auth::user()->id);exit;
+
+            $level_1 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '1')->get()->count();
+            $level_2 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '2')->get()->count();
+            $level_3 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '3')->get()->count();
+            $level_4 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '4')->get()->count();
+            $level_5 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '5')->get()->count();
+            $level_6_7 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '>=', '6')->get()->count();
 
             $products = Product::select('*')->get();
 
@@ -76,9 +79,12 @@ class LeadController extends Controller
         {
             $list_leads = DB::table('cdrreport_lead')
             ->where('user_id','=',Auth::user()->id)
+            ->orWhere('operatorid','=',Auth::user()->operator_id)
             ->select('*')
             ->orderBy('id', 'DESC')
             ->paginate(10);
+
+            /*print_r($list_leads);exit;*/
 
             $level_1 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '1')->get()->count();
             $level_2 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '2')->get()->count();
@@ -265,6 +271,7 @@ class LeadController extends Controller
     	$msgs = DB::table('lead_msg')->where('cdrreport_lead_id', $id)->get();
     	$notes = DB::table('lead_notes')->where('cdrreport_lead_id', $id)->orderBy('inserted_date', 'DESC')->get();
         $recent_activities = DB::table('lead_recent_activities')->where('cdrreport_lead_id', $id)->limit(6)->orderBy('inserted_date', 'DESC')->get();
+        $proposal = DB::table('proposal')->where('proposal.cdrreport_lead_id', $id)->leftJoin('converted','converted.id','=','proposal.cutomer_id')->select('converted.first_name','converted.last_name','converted.email','converted.mobile_no','converted.id','proposal.*')->get();
         $products = Product::select('*')->get();
         if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin') {
             $mail_template = DB::table('email_template')->where('user_type','=','admin')->orWhere('user_type','=','groupadmin')->select('id','name')->get();
@@ -273,7 +280,7 @@ class LeadController extends Controller
             $mail_template = DB::table('email_template')->select('id','name')->get();
             $sms_template = DB::table('sms_template')->select('id','name')->get();
         }
-    	return view('cdr.parti_lead',compact('lead','id','lead_stages','message','lead_mails','call_logs','msgs','notes','recent_activities','mail_template','sms_template','products'));
+    	return view('cdr.parti_lead',compact('lead','id','lead_stages','message','lead_mails','call_logs','msgs','notes','recent_activities','mail_template','sms_template','products','proposal'));
     }
 
     public function LeadStages($lead_id,$id)
@@ -281,6 +288,36 @@ class LeadController extends Controller
     	$check_data = DB::table('lead_stages')->where('cdrreport_lead_id',$lead_id)->get();
     	//print_r($check_data);
         $now = date("Y-m-d H:i:s");
+
+        if ($id == 1) {
+            $stage = 'New';
+        }
+        elseif ($id == 2) {
+            $stage = 'Contacted';
+        }
+        elseif ($id == 3) {
+            $stage = 'Interested';
+        }
+        elseif ($id == 4) {
+            $stage = 'Under review';
+        }
+        elseif ($id == 5) {
+            $stage = 'Demo';
+        }
+        elseif ($id == 6) {
+            $stage = 'Unqualified';
+        }
+        elseif ($id == 7) {
+            $stage = 'Converted';
+        }
+
+        $update_stage_cdrlead = CdrReport_Lead::find($lead_id);
+
+        $update_stage_cdrlead->lead_stage = $stage;
+
+        $update_stage_cdrlead->save();
+
+        //print_r($update_stage_cdrlead);exit;
 
     	if ($check_data->isempty()) {
 
@@ -301,6 +338,7 @@ class LeadController extends Controller
             ]); 
 
             $active->save();
+
 	        $message = toastr()->success('Lead Updated successfully.');
        	 	/*return redirect()->route('ListLeads');*/
        	 	return Redirect::back()->with('message');
@@ -728,7 +766,8 @@ class LeadController extends Controller
                 ->where('inserted_date','>=', $date_from)
                 ->where('inserted_date','<=', $date_to)
                 ->where('lead_stage',$lead)
-                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
+                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
+                ->select('operatoraccount.opername','cdrreport_lead.*')
                 ->get();
         }
         echo json_encode($filter_data);

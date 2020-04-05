@@ -173,7 +173,7 @@ class InvoiceController extends Controller
         $invoice = DB::table('invoice')
                     ->where('invoice.id', $id)
                     ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
-                    ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name')
+                    ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','converted.company_name','converted.gst_no','converted.email','converted.mobile_no')
                     ->first();
         $invoice_details = DB::table('invoice_details')
                             ->where('invoice_id',$id)
@@ -286,7 +286,7 @@ class InvoiceController extends Controller
         $invoice = DB::table('invoice')
                     ->where('invoice.id', $id)
                     ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
-                    ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name')
+                    ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','converted.company_name','converted.gst_no','converted.email','converted.mobile_no')
                     ->first();
 
         $invoice_details = DB::table('invoice_details')

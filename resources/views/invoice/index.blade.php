@@ -169,7 +169,8 @@
 <script src="{{asset('assets/js/jquery.table2excel.min.js')}}"></script>
 
 <script type="text/javascript">
-    $('#payment_modal').click(function(){
+    /*$('#payment_modal').click(function(){*/
+    $(document).on("click", "#payment_modal", function () {
         var myid = $(this).data('id');
         var amount = parseFloat($(this).data('amount')).toFixed(2);
         $(".Payment #invoice_id").val(myid);

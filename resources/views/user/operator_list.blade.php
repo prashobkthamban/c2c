@@ -108,7 +108,7 @@
                                     </div>
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="picker1">Phone number *</label>
-                                         <input type="text" class="form-control" placeholder="Phone number" name="phonenumber" id="phonenumber">
+                                         <input type="number" class="form-control phone_number" onpaste="return false;" placeholder="Phone number" name="phonenumber" id="phonenumber">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -160,22 +160,20 @@
                                         shiftList()->prepend('Select Shift', ''), 0,array('class' => 'form-control', 'id' => 'shift_id')) !!}
                                     </div>
                                 </div>   
-							                  <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> 
-                                    </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"></div>
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="picker1">Working Days</label>
-                                		<select class="form-control" id="working_days" name="working_days[]" multiple>
-                                		<option value="Mon" > Monday </option>
-                                		<option value="Tue" > Tuesday </option>
-                                		<option value="Wed" > Wednesday </option>
-                                		<option value="Thu" > Thursday </option>
-                                		<option value="Fri" > Friday </option>
-                                		<option value="Sat" > Saturday </option>
-                                		<option value="Sun" > Sunday </option>
-                                		</select>
-                                	</div>
-                                </div>    								
+                                        <label for="picker1">Working Days</label></br>
+                                        <button type="button" id="sun" class="btn btn-rounded m-1" onClick="selectDay('sun');">S</button>
+                                        <button type="button" id="mon" class="btn btn-rounded m-1" onClick="selectDay('mon');">M</button>
+                                        <button type="button" id="tue" class="btn btn-rounded m-1" onClick="selectDay('tue');">T</button>
+                                        <button type="button" id="wed" class="btn btn-rounded m-1" onClick="selectDay('wed');">W</button>
+                                        <button type="button" id="thu" class="btn btn-rounded m-1"onClick="selectDay('thu');">T</button>
+                                        <button type="button" id="fri" class="btn btn-rounded m-1" onClick="selectDay('fri');">F</button>
+                                        <button type="button" id="sat" class="btn btn-rounded m-1" onClick="selectDay('sat');">S</button>
+                                        <input type='hidden' id="working_days" name='working_days' value="" />
+                                    </div>
+                                </div>                                  
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
                                     </div>
@@ -227,17 +225,29 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script>
+    var days = [];
+    function selectDay(day) {
+        if(!$("#" + day).hasClass('btn-primary')) {
+            $("#" + day).addClass('btn-primary');
+            days.push(day);
+        } else {
+            $("#" + day).removeClass('btn-primary');
+            var dayIndex = days.indexOf(day); 
+            days.splice(dayIndex, 1);
+        }
+        $("#working_days").val(days);
+    }
+
     $(document).ready(function() {
         $( '.add_account_form' ).on( 'submit', function(e) {
             e.preventDefault();
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '{{ URL::route("AddOperatorAccount") }}', // This is the url we gave in the route
+            url: '{{ URL::route("AddOperatorAccount") }}',
             data: $('.add_account_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
-                    //alert(data);
                     $.each(res.error, function(index, value)
                     { 
                         if (value.length != 0)
@@ -246,7 +256,6 @@
                             errors += "</br>";
                         }
                     });
-                    //alert(value);
                     toastr.error(errors);
                 } else {
                     $("#operator_account").modal('hide');
@@ -269,7 +278,7 @@
             $.ajax({
             type: "GET",
             url: '/get_operator_account/'+ id, // This is the url we gave in the route
-            success: function(result){ // What to do if we succeed
+            success: function(result) { 
                 var res = result[0];
                 $("#account_id").val(res.id);
                 $("#phonenumber").val(res.phonenumber);
@@ -284,7 +293,12 @@
                 $("#download").val(res.download);        
                 $("#play").val(res.play);
                 var obj = JSON.parse(res.working_days);
-				        $("#working_days").val(obj);
+                days = obj;
+                $("#working_days").val(obj);
+                $.each(obj, function(index, value)
+                {
+                    $("#" + value).addClass('btn-primary');
+                });
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }

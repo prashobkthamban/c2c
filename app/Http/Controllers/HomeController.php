@@ -213,6 +213,18 @@ class HomeController extends Controller
                                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
                                 ->get();
 
+                $proposal[$value->id] = DB::table('proposal')
+                                ->select(DB::raw('SUM(grand_total) as proposal_total'),'operatoraccount.opername')
+                                ->where('operator_id','=',$value->id)
+                                ->leftJoin('operatoraccount','operatoraccount.id','=','proposal.operator_id')
+                                ->get();
+
+                $invoice[$value->id] = DB::table('invoice')
+                                ->select(DB::raw('SUM(grand_total) as invoice_total'),'operatoraccount.opername')
+                                ->where('operator_id','=',$value->id)
+                                ->leftJoin('operatoraccount','operatoraccount.id','=','invoice.operator_id')
+                                ->get();
+
                 foreach ($predict_cost as $key => $pc) {
                     if ($pc[0]->opername == '') {
                         $pc[0]->pre_cost = 0;
@@ -220,8 +232,22 @@ class HomeController extends Controller
                     }
                 }
 
+                foreach ($proposal as $key => $pro) {
+                    if ($pro[0]->opername == '') {
+                        $pro[0]->pre_cost = 0;
+                        $pro[0]->opername = $value->opername;
+                    }
+                }
+
+                foreach ($invoice as $key => $pro) {
+                    if ($pro[0]->opername == '') {
+                        $pro[0]->pre_cost = 0;
+                        $pro[0]->opername = $value->opername;
+                    }
+                }
+
             }
-            //print_r($operator_lead_stage);exit;
+            //print_r($invoice);exit;
 
             $remainders = DB::table('lead_reminders')
                         ->where('user_id','=',Auth::user()->id)
@@ -246,7 +272,7 @@ class HomeController extends Controller
         }
         $nousers = '';
         $inusers = '';
-        return view('home.dashboard', compact('activeoperator', 'g_callstoday', 'o_callstoday', 'callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'p_data', 'series', 'sdate', 'edate', 'nousers', 'inusers','level_1','level_2','level_3','level_4','level_5','level_6','level_7','todo_lists','users_list','remainders','lead_count','operator_lead_stage','predict_cost'));
+        return view('home.dashboard', compact('activeoperator', 'g_callstoday', 'o_callstoday', 'callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'p_data', 'series', 'sdate', 'edate', 'nousers', 'inusers','level_1','level_2','level_3','level_4','level_5','level_6','level_7','todo_lists','users_list','remainders','lead_count','operator_lead_stage','predict_cost','proposal','invoice'));
     }
 
     public function callSummary() {

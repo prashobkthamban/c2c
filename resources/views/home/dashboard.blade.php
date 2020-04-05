@@ -563,7 +563,7 @@
             <?php } ?>
         </div>
 
-        <div class="col-lg-6 col-xl-6 mt-4">
+        <div class="col-lg-4 col-xl-4 mt-4">
             <?php
             if (Auth::user()->usertype == 'groupadmin' /*|| Auth::user()->usertype == 'admin'*/) { ?>
                 <div class="col-md-12">
@@ -609,7 +609,100 @@
                     </div>
                 </div>
             <?php } ?>
+        </div>    
+
+        <div class="col-lg-4 col-xl-4 mt-4">
+            <?php
+            if (Auth::user()->usertype == 'groupadmin' /*|| Auth::user()->usertype == 'admin'*/) { ?>
+                <div class="col-md-12">
+                    <div class="card o-hidden mb-4">
+                        <div class="card-header d-flex align-items-center border-0">
+                            <h3 class="w-50 float-left card-title m-0">Proposal Amount Details</h3>
+                        </div>
+                        <?php //print_r($predict_cost);?>
+                        <div class="">
+                            <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                                <table id="user_table" class="table  text-center">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Username</th>
+                                            <th scope="col">Total Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $i = 1; 
+                                        foreach ($proposal as $row) {
+                                            foreach ($row as $key => $value) { 
+                                                ?>
+                                                <tr>
+                                                    <td>{{$i}}</td>
+                                                    <td>{{$value->opername}}</td>
+                                                    <td>
+                                                        <?php
+                                                            echo sprintf("%.2f", $value->proposal_total);
+                                                        ?> 
+                                                    </td>
+                                                </tr>        
+                                            <?php $i++; }
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
         </div>
+
+        <div class="col-lg-4 col-xl-4 mt-4">
+            <?php
+            if (Auth::user()->usertype == 'groupadmin' /*|| Auth::user()->usertype == 'admin'*/) { ?>
+                <div class="col-md-12">
+                    <div class="card o-hidden mb-4">
+                        <div class="card-header d-flex align-items-center border-0">
+                            <h3 class="w-50 float-left card-title m-0">Invoice Amount Details</h3>
+                        </div>
+                        <?php //print_r($predict_cost);?>
+                        <div class="">
+                            <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                                <table id="user_table" class="table  text-center">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Username</th>
+                                            <th scope="col">Total Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $i = 1; 
+                                        foreach ($invoice as $row) {
+                                            foreach ($row as $key => $value) { 
+                                                ?>
+                                                <tr>
+                                                    <td>{{$i}}</td>
+                                                    <td>{{$value->opername}}</td>
+                                                    <td>
+                                                        <?php
+                                                            echo sprintf("%.2f", $value->invoice_total);
+                                                        ?> 
+                                                    </td>
+                                                </tr>        
+                                            <?php $i++; }
+                                        }
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+
 
 @endsection
 

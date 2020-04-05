@@ -187,6 +187,8 @@ class UserController extends Controller
     }
 
 public function updatesettings($id, Request $request) {
+
+        //print_r($request->all());exit();
         $account_group = new Accountgroup();
        	$user_edit = $account_group->findOrFail($id);
         $rules = [
@@ -229,6 +231,7 @@ public function updatesettings($id, Request $request) {
 
 
     public function update($id, Request $request) {
+        //print_r($request->all());exit;
         //dd($id);
         $account_group = new Accountgroup();
         $did = new Dids();
@@ -306,7 +309,7 @@ public function updatesettings($id, Request $request) {
                 'pbxexten'=> $request->get('pbxexten'),
                 'c2c'=> $request->get('c2c')
             ];
-            //dd($account_group);
+            /*dd($account_group);exit;*/
             $user_edit->fill($account_group)->save();
             $this->did::where('id', $request->get('did'))->update(array('assignedto' => $id));
             toastr()->success('User update successfully.');
@@ -502,6 +505,7 @@ public function updatesettings($id, Request $request) {
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
+	     $workingDays = explode(',', $request->working_days);
             $operator_data = [
                 'phonenumber' => $request->get('phonenumber'),
                 'groupid' => Auth::user()->groupid,
@@ -513,7 +517,7 @@ public function updatesettings($id, Request $request) {
                 'edit'=> $request->get('edit'),
                 'download'=> $request->get('download'),
                 'play'=> $request->get('play'),
-		            'working_days' => json_encode($request->working_days)
+		'working_days' => json_encode($workingDays)
             ];
             
             if(!empty($request->get('id'))) {
@@ -948,13 +952,14 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
 
     public function myProfile() {
         $acGrp = $this->ac_group->where('id', Auth::user()->groupid)->get();
-		  //  $did = Auth::user()->load('dids')->dids->where('assignedto', Auth::user()->groupid)->get();
-        //$OpeAccount = Auth::user()->load('operators')->operators;
-        //return view('user.my_profile',compact('acGrp', 'accountGrp', 'OpeAccount'));
-        $days = Auth::user()->accountdetails->working_days;
-        //dd($days);
-        $did = Auth::user()->load('did')->did;
-        //dd(Auth::user()->accountdetails->working_days);
+        // my profile is mainly for groupadmin  and operator
+	if(Auth::user()->usertype == 'groupadmin' ||  Auth::user()->usertype == 'operator'){
+		$days = Auth::user()->accountdetails->working_days;
+        	$did = Auth::user()->load('did')->did;
+	} else {
+		$days = [];
+		$did = [];
+	}
         return view('user.my_profile',compact('acGrp','did', 'days'));
     }
 
@@ -965,7 +970,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
             'password' => 'required',
             'phone_number' => 'required',
         ];   
-        //dd($request);
+
         $validator = Validator::make($request->all(), $rules);
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
@@ -975,12 +980,12 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                      'user_pwd'=> $request->get('password'),
                      'phone_number'=> $request->get('phone_number'), 
                     ];
-            
+            $workingDays = explode(',', $request->working_days);
             $accGroup = ['office_start' => $request->get('office_start'),
                      'office_end'=> $request->get('office_end'), 
                      'aocalltransfer'=> $request->get('aocalltransfer'), 
                      'playaom'=> $request->get('playaom'), 
-                     'working_days'=> json_encode($request->working_days)
+                     'working_days'=> json_encode($workingDays)
                     ];
 
                 DB::table('account')
@@ -998,7 +1003,6 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         } 
          return $data;
     }
-
 
     public function resetPassword() {
         return view('auth.passwords.reset');
