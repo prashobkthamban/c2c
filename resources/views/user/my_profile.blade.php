@@ -49,13 +49,13 @@
                                         <span>{{ Auth::user()->usertype }}</span>
                                     </div>
                                 </div>
+								@if(Auth::user()->usertype == 'groupadmin')
                                 <div class="col-md-4 col-6">
                                     <div class="mb-4">
                                         <p class="text-primary mb-1"><i class="i-Telephone text-16 mr-1"></i>Identity Number</p>
                                         <span id="phone_info">{{ Auth::user()->did->did }} ({{ Auth::user()->did->rdins }})</span>
                                     </div>
                                 </div>
-                                @if(Auth::user()->usertype == 'groupadmin')
                                  <div class="col-md-4 col-6">
                                     <div class="mb-4">
                                         <p class="text-primary mb-1"><i class="i-Telephone text-16 mr-1"></i> Account Name</p>
@@ -161,23 +161,14 @@
                                                 <div class="form-group row">
                                                     <label for="inputEmail3" class="col-sm-3 col-form-label">Working Days</label>
                                                     <div class="col-sm-9">
-                                                      <!--   <?php if($acGrp[0]->working_days !== null) { $days = json_decode($acGrp[0]->working_days);} ?>
-                                                       <select class="form-control" id="working_days" name="working_days[]" multiple>
-                                                        <option value="Mon" <?php  if($days != "" && in_array('Mon',$days)){ echo 'SELECTED';} ?> > Monday </option>
-                                                        <option value="Tue" <?php  if($days != "" && in_array('Tue',$days)){ echo 'SELECTED';} ?>> Tuesday </option>
-                                                        <option value="Wed" <?php  if($days != "" && in_array('Wed',$days)){ echo 'SELECTED';} ?>> Wednesday </option>
-                                                        <option value="Thu" <?php  if($days != "" && in_array('Thu',$days)){ echo 'SELECTED';} ?>> Thursday </option>
-                                                        <option value="Fri" <?php  if($days != "" && in_array('Fri',$days)){ echo 'SELECTED';} ?>> Friday </option>
-                                                        <option value="Sat" <?php  if($days != "" && in_array('Sat',$days)){ echo 'SELECTED';} ?>> Saturday </option>
-                                                        <option value="Sun" <?php  if($days != "" && in_array('Sun',$days)){ echo 'SELECTED';} ?>> Sunday </option>
-                                                        </select> -->
-                                                             <button type="button" id="sun" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('sun',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('sun');">S</button>
-                                        <button type="button" id="mon" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('mon',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('mon');">M</button>
-                                        <button type="button" id="tue" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('tue',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('tue');">T</button>
-                                        <button type="button" id="wed" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('wed',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('wed');">W</button>
-                                        <button type="button" id="thu" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('thu',$days)){ echo 'btn-primary';} ?>"onClick="selectDay('thu');">T</button>
-                                        <button type="button" id="fri" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('fri',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('fri');">F</button>
-                                        <button type="button" id="sat" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('sat',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('sat');">S</button>
+							<?php $days = json_decode($acGrp[0]->working_days); ?>
+                                                             <button type="button" id="Sun" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Sun',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('Sun');" title="Sunday">S</button>
+                                        <button type="button" id="Mon" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Mon',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('Mon');" title="Monday">M</button>
+                                        <button type="button" id="Tue" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Tue',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('Tue');" title="Tuesday">T</button>
+                                        <button type="button" id="Wed" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Wed',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('Wed');" title="Wednesday">W</button>
+                                        <button type="button" id="Thu" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Thu',$days)){ echo 'btn-primary';} ?>"onClick="selectDay('Thu');" title="Thursday">T</button>
+                                        <button type="button" id="Fri" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Fri',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('Fri');" title="Friday">F</button>
+                                        <button type="button" id="Sat" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Sat',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('Sat');" title="Saturday">S</button>
                                         <input type='hidden' id="working_days" name='working_days' value="" />
                                                     </div>
                                                 </div>

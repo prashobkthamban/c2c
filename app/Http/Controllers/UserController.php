@@ -345,6 +345,8 @@ public function updatesettings($id, Request $request) {
              // ->leftJoin('accountgroup', 'account.groupid', '=', 'accountgroup.id')
              ->leftJoin('resellergroup', 'account.resellerid', '=', 'resellergroup.id');
         if(Auth::user()->usertype == 'admin') {
+		// dont want list operator
+		$query->where('usertype','<>', 'operator');
         } elseif(Auth::user()->usertype == 'reseller') {
            $query->where('resellerid', Auth::user()->usertype);
         } elseif(Auth::user()->usertype == 'groupadmin') {
