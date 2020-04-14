@@ -57,6 +57,7 @@ class DidController extends Controller
         } else {
             $extra_did_data = [
                 'did_id' => $request->get('did_id'),
+                'groupid' => $request->get('groupid'),
                 'did_no'=> $request->get('did_no'),
                 'did_name'=> $request->get('did_name'),
                 'set_pri_callerid'=> $request->get('set_pri_callerid'),
@@ -98,13 +99,6 @@ class DidController extends Controller
         $validator = Validator::make($request->all(), [
             'did' => 'required',
             'rdins' => 'required',
-            // 'dnid_name' => 'required',
-            // 'gatewayid' => 'required',
-            // 'outgoing_gatewayid' => 'required',
-            // 'c2cpri' => 'required',
-            // 'c2ccallerid' => 'required',
-            // 'outgoing_callerid' => 'required',
-            // 'set_did_no' => 'required',
         ]);
         $attributeNames = array(
            'rdins' => 'Mobile Number',     
@@ -154,13 +148,6 @@ class DidController extends Controller
         $validator = Validator::make($request->all(), [
             'did' => 'required',
             'rdins' => 'required',
-            // 'dnid_name' => 'required',
-            // 'gatewayid' => 'required',
-            // 'outgoing_gatewayid' => 'required',
-            // 'c2cpri' => 'required',
-            // 'c2ccallerid' => 'required',
-            // 'outgoing_callerid' => 'required',
-            // 'set_did_no' => 'required',
         ]);
         $attributeNames = array(
            'rdins' => 'Mobile Number',     

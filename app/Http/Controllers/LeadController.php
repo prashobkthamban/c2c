@@ -118,16 +118,30 @@ class LeadController extends Controller
         return redirect()->route('ListLeads');
      }
      else{
+
              if($data->count() > 0)
              {
               foreach($data->toArray() as $key => $value)
               {
+                if (Auth::user()->id == $value['owner_name']) {
+                    $operator_id = 0;
+                    $owner_name = Auth::user()->usertype;
+                }
+                else{
+                    $operator_id = $value['owner_name'];
+                    $owner_name = 'operator';
+                }
+        
                 $insert_data[] = array(
                  'first_name'  => $value['first_name'],
                  'last_name'   => $value['last_name'],
                  'company_name'   => $value['company_name'],
                  'email'    => $value['email'],
+                 'phoneno' => $value['phoneno'],
+                 'alt_phoneno' => $value['alt_phoneno'],
                  'total_amount'  => $value['total_amount'],
+                 'owner_name' => $owner_name,
+                 'operatorid' => $operator_id,
                  'lead_stage'   => $value['lead_stage']
                 );
                 DB::table('cdrreport_lead')->insert($insert_data);
@@ -482,6 +496,25 @@ class LeadController extends Controller
     {
     	//print_r($request->all());exit;
     	$now = date("Y-m-d H:i:s");
+
+        $username = 'demosms';
+        $apiKey = '624AD-63599';
+        $apiRequest = 'Text';
+        // Message details
+        $numbers = $request->get('msg_to'); // Multiple numbers separated by comma
+        $sender = 'DEMOAC';
+        $message = $request->get('msg_text');
+        // Route details
+        $apiRoute = 'DND';
+        // Prepare data for POST request
+        $data = 'username='.$username.'&apikey='.$apiKey.'&apirequest='.$apiRequest.'&route='.$apiRoute.'&mobile='.$numbers.'&sender='.$sender."&message=".$message;
+        // Send the GET request with cURL
+        $url = 'http://smsdnd.voiceetc.co.in/sms-panel/api/http/index.php?'.$data;
+        $url = preg_replace("/ /", "%20", $url);
+        //print_r($url);
+        $response = file_get_contents($url);
+        // Process your response here
+       // echo $response;exit();
 
     	$add_msg = new Lead_Msg([
                 'cdrreport_lead_id' => $request->get('lead_id'),

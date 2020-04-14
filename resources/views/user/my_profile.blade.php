@@ -62,7 +62,6 @@
                                         <span id="phone_info">{{ Auth::user()->name }}</span>
                                     </div>
                                 </div>
-                                
                                 <div class="col-md-4 col-6">
                                     <div class="mb-4">
                                         <p class="text-primary mb-1"><i class="i-Telephone text-16 mr-1"></i> Phone</p>
@@ -97,6 +96,27 @@
                                     <div class="mb-4">
                                         <p class="text-primary mb-1"><i class="i-Telephone text-16 mr-1"></i>Play Message</p>
                                         <span id="phone_info">{{ $acGrp[0]->playaom }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-6">
+                                    <div class="mb-4">
+                                        <p class="text-primary mb-1"><i class="i-Notepad text-16 mr-1"></i> <a href="#" data-toggle="modal" data-target="#list_modal">Extra Did</a></p>
+                                        <table id="extra_did_table" class="display table table-bordered" style="width:20%">
+                               <thead>
+                                    <tr>
+                                        <th>Did No</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                     @foreach($did as $listOne) 
+                                    <tr>
+                                        <td>{{$listOne->did_no}}</td>
+                                        <td>{{$listOne->did_name}}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table> 
                                     </div>
                                 </div>
                                 @endif

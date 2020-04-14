@@ -29,7 +29,7 @@
                                             <th>Operator no</th>
                                             <th>Datetime</th>
                                             <th>Action</th>
-                                            <!-- <th>Upload File</th> -->
+                                            <th>Upload File</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -53,7 +53,7 @@
                                                 </a><a href="{{ route('deleteNonOperator', $listOne->id) }}" onclick="return confirm('Are you sure want to delete this non-operator?')" class="text-danger mr-2">
                                                     <i class="nav-icon i-Close-Window font-weight-bold"></i>
                                                 </a></td>
-                                            <!-- <td><a href="#" class="text-success mr-2 upload_complaints" data-toggle="modal" data-target="#upload_comp" id="upload_{{$listOne->id}}"><i class="nav-icon i-Upload1 font-weight-bold"></i></a></td> -->
+                                            <td><a href="#" class="text-success mr-2 upload_complaints" data-toggle="modal" data-target="#upload_comp" id="upload_{{$listOne->id}}"><i class="nav-icon i-Upload1 font-weight-bold"></i></a></td>
                                         </tr>
                                         @endforeach
                                       
@@ -68,7 +68,7 @@
                                             <th>Operator no</th>
                                             <th>Datetime</th>
                                             <th>Action</th>
-                                            <!-- <th>Upload File</th> -->
+                                            <th>Upload File</th>
                                         </tr>
                                     </tfoot>
 
@@ -109,7 +109,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Customer *</label> 
-                                         {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'groupid', 'onChange' => 'setDepartment()')) !!}
+                                         {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'customerId', 'onChange' => 'setDepartment()')) !!}
                                     </div>
                                 </div>  
                                 <div class="row">
@@ -254,7 +254,7 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-                         {!! Form::open(['class' => 'upload_form', 'method' => 'post']) !!} 
+                         {!! Form::open(['class' => 'upload_form', 'method' => 'post', 'files' => true]) !!} 
                         <div class="modal-body">
                             <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                 <tbody><tr>
@@ -264,7 +264,8 @@
                                 </tbody>
                             </table>
                             {!! Form::hidden('file_lang', null, ['class' => 'form-control', 'id' => 'file_lang']) !!}
-                            {!! Form::hidden('id', '', array('id' =>'upload_id')) !!}
+                            {!! Form::hidden('file_shortcode', null, ['id' => 'file_shortcode']) !!}
+                            {!! Form::hidden('nonopt_id', '', array('id' =>'nonopt_id')) !!}
                             @foreach($languages as $lang)
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
@@ -272,7 +273,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">File to play in {{$lang->Language}} *</label>
-                                        <span id="lang_id_{{$lang->id}}"></span> 
+                                        <span id="lang_id_{{$lang->id}}" data-short-code="{{$lang->shortcode}}"></span> 
                                         {!! Form::file($lang->id, null, ['class' => 'form-control file_play', 'id' => '$lang->id', 'enctype' => 'multipart/form-data', 'multiple' => true]) !!}
                                     </div>
                                 </div> 
@@ -302,8 +303,7 @@
     }
 
     function setDepartment(dept_id) {
-        var groupid = $("#groupid").val();
-        console.log(dept_id);
+        var groupid = $("#customerId").val();
         $.ajax({
             type: "GET",
             url: '/get_department/'+ groupid, // This is the url we gave in the route
@@ -324,9 +324,53 @@
     $(document).ready(function() {
         var langs = [];
         $("input:file").change(function (){
-            var fileLang = $(this).attr("name");
-            langs.push(fileLang);
-            $("#file_lang").val(langs);
+            var ext = $(this).val().split('.').pop().toLowerCase();
+            if($.inArray(ext, ['gsm', 'wav']) == -1) {
+                $("input:file").val('');
+                return false;
+            } else {
+                var fileLang = $(this).attr("name");
+                var shortcode = $("#lang_id_"+fileLang).attr("data-short-code");
+                langs.push(fileLang+'_'+shortcode);
+                $("#file_lang").val(langs);
+                $("#file_shortcode").val(shortcode);
+            }
+        });
+
+        $( '.upload_form' ).on( 'submit', function(e) {
+            e.preventDefault();
+            var errors = ''; 
+          $.ajax({
+            type: "POST",
+            url: '{{ URL::route("addFiles") }}', // This is the url we gave in the route
+            data: new FormData(this),
+            dataType:'JSON',
+            contentType: false,
+            enctype: 'multipart/form-data',
+            cache: false,
+            processData: false, 
+            success: function(res){ // What to do if we succeed
+                if(res.error) {
+                    $.each(res.error, function(index, value)
+                    {
+                        if (value.length != 0)
+                        {
+                            errors += value[0];
+                            errors += "</br>";
+                        }
+                    });
+                    toastr.error(errors);
+                } else {
+                    // $("#upload_comp").modal('hide');
+                    // setTimeout(function(){ location.reload() }, 500);
+                    // toastr.success(res.success);                
+                }
+               
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                toastr.error('Some errors are occured');
+            }
+          });
         });
 
         $( '.non_operator_form' ).on( 'submit', function(e) {
@@ -351,7 +395,7 @@
                 } else {
                     $("#add_non_operator").modal('hide');
                     toastr.success(res.success); 
-                    setTimeout(function(){ location.reload() }, 3000);               
+                    setTimeout(function(){ location.reload() }, 500);               
                 }
                
             },
@@ -365,6 +409,7 @@
         {
             var uploadid = this.id;
             var upload_val = uploadid.replace("upload_", "");
+            $("#nonopt_id").val(upload_val);
             $.ajax({
             type: "GET",
             url: '/get_non_operator/'+ upload_val, // This is the url we gave in the route
@@ -374,7 +419,7 @@
                 },
                 error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                 }
-            });                //alert(upload_val);
+            });             
         });
         
         $('.edit_non_operator').on('click',function(e)
@@ -389,7 +434,7 @@
                 var res = result[0];
                 $("#non_operator_id").val(res.id);
                 $("#resellerid").val(res.resellerid);
-                $("#groupid").val(res.groupid);
+                $("#customerId").val(res.groupid);
                 setDepartment(groupid);
                 $("#departmentid").val(res.departmentid);
                 $("#sms_to_caller").val(res.sms_to_caller);

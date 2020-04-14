@@ -26,6 +26,7 @@ class NotificationController extends Controller
      */
     public function index()
     {
+       // dd( Notification::getReport());
         return view('home.notification', ['result' => Notification::getReport()]);
     }
 

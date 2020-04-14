@@ -49,13 +49,18 @@ class OperatorController extends Controller
         //dd($request->all());
         $validator = Validator::make($request->all(), [
             'groupid' => 'required',
+            'dept_name' => 'required',
             'ivrlevel_id' => 'required',
             'opt_calltype' => 'required',
             'starttime' => 'required',
             'endtime' => 'required',
             'call_transfer' => 'required'
+        ], [
+            'groupid.required' => 'Customer is required',
+            'dept_name.required' => 'Department Name is required',
+            'ivrlevel_id.required' => 'Ivr Level is required',
         ]);    
-
+        
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
@@ -178,6 +183,47 @@ class OperatorController extends Controller
         return getDepartmentList($groupid);
     }
 
+    public function addFiles(Request $request) {
+         $lang = explode (",", $request->get('file_lang'));
+         //dd($lang);
+        // $validator = Validator::make($request->all(), [
+        //     'groupid' => 'required',
+        //     'ivr_level_name' => 'required',
+        //     'ivr_level' => 'required',
+        //     'ivroption' => 'required',
+        //     'operator_dept' => 'required',
+        // ]);    
+
+        // if($validator->fails()) {
+        //     $data['error'] = $validator->messages(); 
+        // } else { 
+            $vfilename=$request->get('nonopt_id');
+            if (file_exists(config('constants.ivr_file')) && $lang) { 
+                $file = config('constants.ivr_file');
+                foreach($lang as $listOne) {
+                    $list_1 = explode ("_", $listOne);
+                    $files = $request->file($list_1[0]);
+                    if(!empty($files)) {
+                        $ext=substr($files->getClientOriginalName(),-4);
+                        $newfilename=$list_1[1]."_".$vfilename."".$ext;
+                        $ivrLanguage = [
+                             'lang_id' => $list_1[0],
+                             'nonopt_id' => $request->get('nonopt_id'),
+                             'filename'=> $newfilename,
+                             'orginalfilename'=> $files->getClientOriginalName(), 
+                            ];
+
+                    $files->move($file, $newfilename);
+                    DB::table('ast_nooptfile_language')->insert($ivrLanguage);
+                    }   
+                } 
+            }
+            //$data['result'] = $accGroup;
+            $data['success'] = 'Upload files successfully.';
+        //} 
+         return $data;
+    }
+
     public function sms() {
         $query = DB::table('sms_content')
          ->leftJoin('operatordepartment', 'sms_content.departmentid', '=', 'operatordepartment.id')
@@ -239,7 +285,7 @@ class OperatorController extends Controller
     }
 
     public function getIvr($groupid) {
-        return getivr_menu($groupid);
+        return getAccountgroupdetails($groupid);
     }
 
     

@@ -1,5 +1,7 @@
+ function copyval(param, content){
+     document.getElementById(content).value = document.getElementById(content).value + $("#"+param ).val() ;
+ }
 function loadForm( id,viewfile ) {
-    console.log('sap');
     $("#modal-wrapper").html('Please wait...');
     $.ajax({
         type: 'POST',
@@ -18,6 +20,25 @@ function loadForm( id,viewfile ) {
         }
 
     });
+}
+
+function deleteItem(id, table) {
+    if (confirm('Are you sure want to delete this item ?')) {
+        $.ajax({
+            type: "DELETE",
+            url: '/delete_item/'+ id +'/' + table, // This is the url we gave in the route
+            success: function(result) { 
+                if(result) {
+                    $("#row_"+id).remove(); 
+                    toastr.success('Delete item successfully.'); 
+                } else {
+                    toastr.error('Some errors are occured.');
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+            }
+        });
+    }
 }
 
 function didList(groupid, did_id) {

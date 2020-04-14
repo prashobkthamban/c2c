@@ -27,7 +27,17 @@ function getOperatorList() {
 }
 
 function getGroupList() {
-    $gpAcc =  DB::table('accountgroup')->select('accountgroup.name', 'account.id')->where('accountgroup.id', Auth::user()->groupid)->where('account.operator_id', NULL)->leftJoin('account', 'accountgroup.id', '=', 'account.groupid')->get();
+    if(Auth::user()->usertype == 'operator') {
+        $gpAcc =  DB::table('accountgroup')->select('accountgroup.name', 'account.id')
+        ->where('accountgroup.id', Auth::user()->groupid)
+        ->leftJoin('account', 'accountgroup.id', '=', 'account.groupid')->get();
+    } else {
+        $gpAcc =  DB::table('accountgroup')->select('accountgroup.name', 'account.id')
+        ->leftJoin('account', 'accountgroup.id', '=', 'account.groupid')
+        ->where('account.usertype', 'groupadmin')
+        ->get();
+    }
+    
     return $gpAcc;
 }
 

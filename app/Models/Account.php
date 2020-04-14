@@ -30,6 +30,11 @@ class Account extends Authenticatable
         return $this->belongsTo('App\Models\Dids', 'groupid', 'assignedto');
     }
 
+    public function extradid()
+    {
+        return $this->hasMany('App\Models\Extra_dids', 'groupid', 'groupid');
+    }
+
 	public function operators()
     {
         return $this->belongsTo('App\Models\OperatorAccount', 'operator_id');

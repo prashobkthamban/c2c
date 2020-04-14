@@ -20,8 +20,9 @@
                    <div class="table-responsive">
                         <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                             <thead>
-                            <tr><?php if(Auth::user()->usertype == 'admin' || Auth::user()->usertype =='reseller'){ ?>
-                                <th>IVR User</th> <?php } ?>
+                            <tr>
+                            <!-- <?php //if(Auth::user()->usertype == 'admin' || Auth::user()->usertype =='reseller'){ ?>
+                                <th>IVR User</th> <?php //} ?> -->
                                 <th>Username</th>
                                 <th>Title</th>
                                 <th>Description</th>
@@ -33,14 +34,15 @@
                             <tbody>
                             @if(!empty($result))
                                 @foreach($result as $row )
-                            <tr><?php if(Auth::user()->usertype == 'admin' || Auth::user()->usertype =='reseller'){ ?>
-                                <td>{{$row->name}}</td> <?php } ?>
+                            <tr>
+                            <!-- <?php //if(Auth::user()->usertype == 'admin' || Auth::user()->usertype =='reseller'){ ?>
+                                <td>{{$row->name}}</td> <?php //} ?> -->
                                 <td>{{$row->fromusername}}</td>
                                 <td>{{$row->title}}</td>
                                 <td>{{$row->description}}</td>
                                 <td>{{$row->datetime}}</td>
                                 <td><a href="#" title="View Notification" class="text-primary mr-2 view_modal" data-toggle="modal" data-target="#view" id="view_{{$row->id}}" onClick="replyModal({{$row->id}})">
-                                    @if(Auth::user()->id == $row->send_from_id && ($row->sendfromusertype == 'operator' || $row->sendfromusertype == 'groupadmin' || $row->sendtousertype == 'admin'))
+                                    @if(Auth::user()->id == $row->send_from_id && ($row->sendfromusertype == 'operator' || $row->sendfromusertype == 'groupadmin' || $row->sendfromusertype == 'admin'))
                                         <i class="nav-icon vghv {{($row->adm_read_status == '1') ? 'i-Folder-Open' :'i-Mail-2'}} font-weight-bold"></i>
                                     @elseif(Auth::user()->id == $row->send_to_id && ( $row->sendtousertype == 'operator' || $row->sendtousertype == 'groupadmin') || $row->sendtousertype == 'admin') 
                                         <i class="nav-icon jhg {{($row->grp_readstatus == '1') ? 'i-Folder-Open' :'i-Mail-2'}} font-weight-bold"></i>
@@ -62,8 +64,9 @@
 
                             </tbody>
                             <tfoot>
-                            <tr><?php if(Auth::user()->usertype == 'admin' || Auth::user()->usertype =='reseller'){ ?>
-                                <th>IVR User </th> <?php  } ?>
+                            <tr>
+                            <!-- <?php //if(Auth::user()->usertype == 'admin' || Auth::user()->usertype =='reseller'){ ?>
+                                <th>IVR User </th> <?php // } ?> -->
                                 <th>Username</th>
                                 <th>Title</th>
                                 <th>Description</th>
@@ -103,7 +106,7 @@
                                 <?php if(Auth::user()->usertype == 'groupadmin') { 
                                     $oprList = getOperatorList(); ?>
                                  <select name="send_to_id" class="form-control">
-                                    <option value="1,admin">Admin</option>
+                                    <option value="631,admin">Admin</option>
                                     @if(!empty($oprList))
                                         @foreach($oprList as $opr )
                                             <option value="{{$opr->id}},{{$opr->usertype}}">{{$opr->opername}}
@@ -112,10 +115,13 @@
                                     @endif   
                                 </select>  
                                 <?php } ?> 
-                                <?php if(Auth::user()->usertype == 'operator') { 
+                                <?php if(Auth::user()->usertype == 'operator' || Auth::user()->usertype == 'admin') { 
                                     $grpList = getGroupList(); ?>
                                 <select name="send_to_id" class="form-control">
-                                    <option value="1,admin">Admin</option>
+                                    <option value="">Select Customer</option>
+                                    @if(Auth::user()->usertype == 'operator')
+                                    <option value="631,admin">Admin</option>
+                                    @endif
                                     @if(!empty($grpList))
                                         @foreach($grpList as $grp )
                                             <option value="{{$grp->id}},groupadmin">{{$grp->name}}

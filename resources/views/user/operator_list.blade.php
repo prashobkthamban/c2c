@@ -17,6 +17,7 @@
                     <div class="card text-left">
                         <div class="card-body">
                             <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#operator_account" class="btn btn-primary add_account">Add Operator</a>
+                            <p><center><b id="crm_error" style="display:none;color: red;">CRM Access Limit is over.Please contact to Administration!!!</b></center></p>
                             <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
@@ -97,6 +98,7 @@
                         <div class="modal-header">
                             <h5 class="modal-title" id="modal-title">Add Operator Account</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
@@ -164,13 +166,13 @@
                                     <div class="col-md-2 form-group mb-3"></div>
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="picker1">Working Days</label></br>
-                                        <button type="button" id="sun" class="btn btn-rounded m-1" onClick="selectDay('sun');">S</button>
-                                        <button type="button" id="mon" class="btn btn-rounded m-1" onClick="selectDay('mon');">M</button>
-                                        <button type="button" id="tue" class="btn btn-rounded m-1" onClick="selectDay('tue');">T</button>
-                                        <button type="button" id="wed" class="btn btn-rounded m-1" onClick="selectDay('wed');">W</button>
-                                        <button type="button" id="thu" class="btn btn-rounded m-1"onClick="selectDay('thu');">T</button>
-                                        <button type="button" id="fri" class="btn btn-rounded m-1" onClick="selectDay('fri');">F</button>
-                                        <button type="button" id="sat" class="btn btn-rounded m-1" onClick="selectDay('sat');">S</button>
+                                        <button type="button" id="Sun" class="btn btn-rounded m-1" onClick="selectDay('Sun');" title="Sunday">S</button>
+                                        <button type="button" id="Mon" class="btn btn-rounded m-1" onClick="selectDay('Mon');">M</button>
+                                        <button type="button" id="Tue" class="btn btn-rounded m-1" onClick="selectDay('Tue');">T</button>
+                                        <button type="button" id="Wed" class="btn btn-rounded m-1" onClick="selectDay('Wed');">W</button>
+                                        <button type="button" id="Thu" class="btn btn-rounded m-1"onClick="selectDay('Thu');">T</button>
+                                        <button type="button" id="Fri" class="btn btn-rounded m-1" onClick="selectDay('Fri');">F</button>
+                                        <button type="button" id="Sat" class="btn btn-rounded m-1" onClick="selectDay('Sat');">S</button>
                                         <input type='hidden' id="working_days" name='working_days' value="" />
                                     </div>
                                 </div>                                  
@@ -204,6 +206,14 @@
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="picker1">Rec Play</label>
                                         {!! Form::select('play', array('1' => 'Yes', '0' => 'No'), 0,array('class' => 'form-control', 'id' => 'play')) !!}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3">
+                                    </div>
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="crm_access">CRM Access</label>
+                                        {!! Form::select('crm_access', array('yes' => 'Yes', 'no' => 'No'), 0,array('class' => 'form-control', 'id' => 'crm_access')) !!}
                                     </div>
                                 </div>
                         </div>
@@ -258,10 +268,17 @@
                     });
                     toastr.error(errors);
                 } else {
+                    //console.log(res);
                     $("#operator_account").modal('hide');
                     $(".add_account_form")[0].reset();
-                    toastr.success(res.success); 
-                    setTimeout(function(){ location.reload() }, 500);               
+                    toastr.success(res.success);
+                    if (res.crm_access_error == 1) {
+                        $('#crm_error').css('display','block');
+                    }
+                    else{
+                     $('#crm_error').css('display','none');   
+                    }
+                    setTimeout(function(){ location.reload() }, 2000);               
                 }
                
             },
@@ -292,6 +309,7 @@
                 $("#edit").val(res.edit);        
                 $("#download").val(res.download);        
                 $("#play").val(res.play);
+                $("#crm_access").val(res.crm_access);
                 var obj = JSON.parse(res.working_days);
                 days = obj;
                 $("#working_days").val(obj);

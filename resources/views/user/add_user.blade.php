@@ -273,6 +273,11 @@
                                         </div>
                                     </div>
 
+                                    <div class="col-md-4 form-group mb-3">
+                                        <label for="crm_users">Number of CRM Users</label>
+                                        <input type="number" name="crm_users" id="crm_users" class="form-control">
+                                    </div>     
+
                                     <div class="col-md-12">
                                          <button class="btn btn-primary">Submit</button>
                                     </div>

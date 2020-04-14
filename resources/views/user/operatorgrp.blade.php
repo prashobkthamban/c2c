@@ -8,6 +8,7 @@
     <div class="breadcrumb">
         <a href="{{route('OperatorGroup')}}"><h1> Operator Groups </h1></a>
     </div>
+
     <div class="separator-breadcrumb border-top"></div>
 
     <div class="row">
@@ -151,7 +152,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save changes</button>
+                    <button type="submit" class="btn btn-primary" id="add_button">Save changes</button>
                 </div>
                  {!! Form::close() !!}
             </div>
@@ -342,6 +343,7 @@
                     url: "delete_op_group/"+opid+"/"+dpid,
                     type: 'DELETE',
                     success: function (res) {
+                        console.log('hgfg', res);
                         showDetails(res.dpid);
                         if(res.status == 1) {
                            toastr.success('Row delete successfully.')
@@ -354,13 +356,14 @@
 
     $(document).ready(function() {
         $( '.add_operator_form' ).on( 'submit', function(e) {
+            $("#add_button").prop('disabled', true);
             e.preventDefault();
             var errors = ''; 
           $.ajax({
             type: "POST",
-            url: '{{ URL::route("addOptassign") }}', // This is the url we gave in the route
+            url: '{{ URL::route("addOptassign") }}', 
             data: $('.add_operator_form').serialize(),
-            success: function(res){ // What to do if we succeed
+            success: function(res){ 
                 if(res.error) {
                     $.each(res.error, function(index, value)
                     {
@@ -375,9 +378,9 @@
                     $("#add_operator").modal('hide');
                     var departmentid = $("#departmentid").val();
                     showDetails(departmentid);
+                    $("#add_button").prop('disabled', false);
                     toastr.success(res.success);                
-                }
-               
+                } 
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                 toastr.error('Some errors are occured');

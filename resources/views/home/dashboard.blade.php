@@ -9,7 +9,19 @@
             </div>
 
             <div class="separator-breadcrumb border-top"></div>
-
+            @if(count($announcements))
+            <div class="row">
+            <div class="col-lg-12 col-md-12">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        @foreach($announcements as $listOne)
+                            <div class="card-title">{{$listOne->msg}}</div>    
+                        @endforeach                      
+                    </div>
+                </div>
+            </div>
+            </div>
+            @endif
             <div class="row">
                 <?php if(Auth::user()->usertype == 'admin'): ?>
                 <div class="col-lg-3 col-md-6 col-sm-6">
@@ -111,7 +123,7 @@
                 <div class="col-md-6"></div>
             </div>
 
-            <div class="row">
+            <!-- <div class="row">
                 <div class="col-lg-6 col-sm-12">
                     <div class="card mb-4">
                         <div class="card-body">
@@ -128,7 +140,91 @@
                         </div>
                     </div>
                 </div>       
-            </div>
+            </div> -->
+            
+            <?php if (Auth::user()->usertype == 'groupadmin') { ?>
+                <div class="row">
+                <div class="col-lg-6 col-xl-6 mt-4">
+                    <div class="col-md-12">
+                        <div class="card o-hidden mb-4">
+                            <div class="card-header d-flex align-items-center border-0">
+                                <h3 class="w-50 float-left card-title m-0">Incoming Call</h3>
+                            </div>
+                            <?php //print_r($lead_count);?>
+                            <div class="">
+                                <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                                    <table id="user_table" class="table  text-center">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Calls</th>
+                                                <th scope="col">Forms</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($incoming_calls as $row)
+                                            <tr>
+                                                <td>{{$row->status}}</td>
+                                                <td>{{$row->count}}</td>
+                                                <td>{{$row->leadCdr->count()}}</td>
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-xl-6 mt-4">
+                    <div class="col-md-12">
+                        <div class="card o-hidden mb-4">
+                            <div class="card-header d-flex align-items-center border-0">
+                                <h3 class="w-50 float-left card-title m-0">Forms</h3>
+                            </div>
+                            <div class="">
+                                <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                                    <table id="user_table" class="table  text-center">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach($operator_leads as $row)
+                                            <tr>
+                                                <td>{{$row->status}}</td>
+                                                <td>{{$row->leadOperator->count()}}</td>
+                                                <!-- <td>{{$row->phonenumber}}</td> -->
+                                            </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-12 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="mb-2 text-muted">Insight Ivr</h6>
+                            <p class="text-22 font-weight-light mb-1"><i class="i-Up text-success"></i> By Department</p>
+                            <!-- <div class="text-white purple-500 rounded-circle p-2 mr-3" >52</div> -->
+                            <div class="row mt-4">
+                            @foreach($insight_ivr as $row)
+                                <div class="col-md-3">
+                                <button class="btn btn-sm rounded-circle btn-icon btn-outline-primary text-white purple-500">{{$row->count}}</button>
+                                </br></br>
+                                <span style="margin:7px;">{{$row->deptname}}</span>
+                                </div>
+                            @endforeach
+                            <div id="echart9" style="height: 60px; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1586745275835"><div style="position: relative; overflow: hidden; width: 528px; height: 60px; padding: 0px; margin: 0px; border-width: 0px; cursor: default;"><canvas data-zr-dom-id="zr_0" width="528" height="60" style="position: absolute; left: 0px; top: 0px; width: 528px; height: 60px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas></div><div></div></div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
 
             <div class="row">
                 <h1>CRM</h1>
@@ -703,6 +799,214 @@
             <?php } ?>
         </div>
 
+        <div class="col-md-12 col-xl-12 mt-4">
+        	<?php
+            if (Auth::user()->usertype == 'reseller') { ?>
+        	<div class="row">
+        		<div class="col-md-4">
+	        		<label for="date_from">Date From:</label>
+	        		<input type="date" name="date_from" id="date_from" class="form-control">
+        		</div>
+        		<div class="col-md-4">
+        			<label for="date_to">Date To:</label>
+        			<input type="date" name="date_to" id="date_to" class="form-control">
+        		</div>
+        		<div class="col-md-4">
+        			<label for="groupadmin_id">Select Group</label>
+        			<select id="groupadmin_id" name="groupadmin_id" class="form-control">
+        				<option value="">select Admin</option>
+        				<?php
+        				foreach ($group_admin as $key => $value) { ?>
+        					<option value="<?php echo $value->id;?>"><?php echo $value->name;?></option>
+        				<?php } ?>
+        			</select>
+        		</div>
+        		<div class="col-md-6">
+        			<br><br>
+        			<button id="btn" class="btn btn-primary">Submit</button>
+        		</div>
+        	</div>
+        	<?php } ?>
+        </div>
+
+        <div class="col-lg-6 col-xl-6 mt-4">
+            <?php
+            if (Auth::user()->usertype == 'reseller') { ?>
+                <div class="col-md-12">
+                    <div class="card o-hidden mb-4">
+                        <div class="card-header d-flex align-items-center border-0">
+                            <h3 class="w-50 float-left card-title m-0">Users Details</h3>
+                        </div>
+                        <?php //print_r($lead_count);?>
+                        <div class="">
+                            <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                                <table id="user_table" class="table  text-center">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Username</th>
+                                            <th scope="col">Phone No</th>
+                                            <th scope="col">Lead Count</th>
+                                            <th scope="col">View Leads</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="user_details">
+                                    	
+                                        <?php
+                                        $i = 1; 
+                                        foreach($users_list as $row)
+                                        { ?>
+                                        <tr>
+                                            <td>{{$i}}</td>
+                                            <td>{{$row->opername}}</td>
+                                            <td>{{$row->phonenumber}}</td>
+                                            <td>
+                                                <?php
+                                                echo $lead_count[$row->id];
+                                                ?>
+
+                                            </td>
+                                            <td>
+                                                <a href="{{ route('ListLeads') }}" class="text-success mr-2">
+                                            <i class="nav-icon i-Pen-2 font-weight-bold"></i>
+                                        </a>
+                                            </td>
+                                        </tr>
+                                        <?php $i++;
+                                        } 
+                                        ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+
+        <div class="col-lg-12 col-xl-12 mt-4">
+            <?php
+            if (Auth::user()->usertype == 'reseller') { ?>
+                <div class="col-md-12">
+                    <div class="card o-hidden mb-4">
+                        <div class="card-header d-flex align-items-center border-0">
+                            <h3 class="w-50 float-left card-title m-0">Users Lead Details</h3>
+                        </div>
+                        <?php //print_r($operator_lead_stage);?>
+                        <div class="">
+                            <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                                <table id="user_table" class="table  text-center">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Username</th>
+                                            <th scope="col">New</th>
+                                            <th scope="col">Contacted</th>
+                                            <th scope="col">Interested</th>
+                                            <th scope="col">Under review</th>
+                                            <th scope="col">Demo</th>
+                                            <th scope="col">Unqualified</th>
+                                            <th scope="col">Converted</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="user_lead_details">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+
+        <div class="col-lg-4 col-xl-4 mt-4">
+            <?php
+            if (Auth::user()->usertype == 'reseller') { ?>
+                <div class="col-md-12">
+                    <div class="card o-hidden mb-4">
+                        <div class="card-header d-flex align-items-center border-0">
+                            <h3 class="w-50 float-left card-title m-0">Predicted Amount Details</h3>
+                        </div>
+                        <?php //print_r($predict_cost);?>
+                        <div class="">
+                            <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                                <table id="user_table" class="table  text-center">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Username</th>
+                                            <th scope="col">Predicted Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="predicted_amount_details">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+
+        <div class="col-lg-4 col-xl-4 mt-4">
+            <?php
+            if (Auth::user()->usertype == 'reseller') { ?>
+                <div class="col-md-12">
+                    <div class="card o-hidden mb-4">
+                        <div class="card-header d-flex align-items-center border-0">
+                            <h3 class="w-50 float-left card-title m-0">Proposal Amount Details</h3>
+                        </div>
+                        <?php //print_r($predict_cost);?>
+                        <div class="">
+                            <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                                <table id="user_table" class="table  text-center">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Username</th>
+                                            <th scope="col">Total Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="proposal_amount_details">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+
+        <div class="col-lg-4 col-xl-4 mt-4">
+            <?php
+            if (Auth::user()->usertype == 'reseller') { ?>
+                <div class="col-md-12">
+                    <div class="card o-hidden mb-4">
+                        <div class="card-header d-flex align-items-center border-0">
+                            <h3 class="w-50 float-left card-title m-0">Invoice Amount Details</h3>
+                        </div>
+                        <?php //print_r($predict_cost);?>
+                        <div class="">
+                            <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                                <table id="user_table" class="table  text-center">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Username</th>
+                                            <th scope="col">Total Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="invoice_amount_details">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php } ?>
+        </div>
+        
+
 
 @endsection
 
@@ -907,6 +1211,156 @@
             });
         });
 
+     </script>
+     <script type="text/javascript">
+     	$('#btn').click(function(){
+     		var date_from = $('#date_from').val();
+     		var date_to = $('#date_to').val();
+     		var groupadmin_id = $('#groupadmin_id').val();
+     		//alert(date_from+'-'+date_to+'-'+groupadmin_id);
+     		jQuery.ajax({
+                type: "POST",
+                url: "home/crm_data",
+                dataType: 'text',
+                data: {date_from:date_from,date_to:date_to,groupadmin_id:groupadmin_id},
+                success: function(data) 
+                {
+                    //console.log(data);
+                    var html = '';
+                    var html1 = '';
+                    var html2 = '';
+                    var html3 = '';
+                    var html4 = '';
+
+                    var i = 1;
+                    var j = 1;
+                    var k = 1;
+                    var x = 1;
+                    var y = 1;
+
+                    var new1 = '';
+					var contacted = '';
+					var interested = '';
+					var under_review = '';
+					var demo = '';
+					var unqualified = '';
+					var converted = '';
+                    
+                    var obj = jQuery.parseJSON(data);
+                    console.log(obj);
+                    
+                    $.each(obj['users_list'], function( index, value ) {
+					  
+					  html += '<tr><td>'+i+'</td><td>'+value.opername+'</td><td>'+value.phonenumber+'</td><td>'+obj['lead_count'][value.id]+'</td><td><a href="{{ route('ListLeads') }}" class="text-success mr-2"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a></td></tr>';
+					  i++;
+					});
+
+					$('#user_details').html(html);
+
+					$.each(obj['operator_lead_stage'],function( index, value ) {
+						$.each(value, function( index1, value1 ) {
+
+							/*switch(value1.lead_stage) {
+								case 'new':
+									new1 = value1.lead_count;
+									break;
+								case 'Contacted':
+									contacted = value1.lead_count;
+									break; 
+								case 'Interested':
+									interested = value1.lead_count;
+									break; 
+								case 'Under review':
+									under_review = value1.lead_count;
+									break; 
+								case 'Demo':
+									demo = value1.lead_count;
+									break; 
+								case 'Unqualified':
+									unqualified = value1.lead_count;
+									break; 
+								case 'Converted':
+									converted = value1.lead_count;
+									break; 
+							}*/
+							
+							if (value1.lead_stage == 'new') {
+								new1 = value1.lead_count;
+							}
+							else{
+								new1 = 0;
+							}
+							
+							if (value1.lead_stage == 'Contacted') { 
+                               contacted =  value1.lead_count;
+                           	}else{
+                           		contacted = 0;
+                           	}
+
+                           	if (value1.lead_stage == 'Interested') {
+                           		interested = value1.lead_count;
+                           	}
+                           	else{
+                           		interested = 0;
+                           	}
+
+                           	if (value1.lead_stage == 'Under review') {
+                           		under_review = value1.lead_count;
+                           	}
+                           	else{
+                           		under_review = 0;
+                           	}
+
+                           	if (value1.lead_stage == 'Demo') {
+                           		demo = value1.lead_count;
+                           	}
+                           	else{
+                           		demo = 0;
+                           	}
+
+                           	if (value1.lead_stage == 'Unqualified') {
+                           		unqualified = value1.lead_count;
+                           	}
+                           	else{
+                           		unqualified = 0;
+                           	}
+
+                           	if (value1.lead_stage == 'Converted') {
+                           		converted = value1.lead_count;
+                           	}
+                           	else{
+                           		converted = 0;
+                           	}
+							html1 += '<tr><td>'+j+'</td><td>'+value1.opername+'</td><td>'+new1+'</td><td>'+contacted+'</td><td>'+interested+'</td><td>'+under_review+'</td><td>'+demo+'</td><td>'+unqualified+'</td><td>'+converted+'</td></tr>';
+							
+						});
+						j++;
+					});
+					$('#user_lead_details').html(html1);
+
+					$.each(obj['predict_cost'],function( index, value ) {
+
+						html2 += '<tr><td>'+k+'</td><td>'+value[0].opername+'</td><td>'+parseFloat(value[0].pre_cost).toFixed(2)+'</td></tr>';
+						k++;
+					});
+					$('#predicted_amount_details').html(html2);
+
+					$.each(obj['proposal'],function( index, value ) {
+
+						html3 += '<tr><td>'+x+'</td><td>'+value[0].opername+'</td><td>'+parseFloat(value[0].proposal_total).toFixed(2)+'</td></tr>';
+						x++;
+					});
+					$('#proposal_amount_details').html(html3);
+
+					$.each(obj['invoice'],function( index, value ) {
+
+						html4 += '<tr><td>'+y+'</td><td>'+value[0].opername+'</td><td>'+parseFloat(value[0].invoice_total).toFixed(2)+'</td></tr>';
+						y++;
+					});
+					$('#invoice_amount_details').html(html4);
+                }
+            });
+     	});
      </script>
 @endsection
 <form id="dhid" style="display:none;">

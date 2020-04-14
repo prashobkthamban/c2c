@@ -22,6 +22,15 @@ Route::get('delete_announcement/{id}', 'HomeController@deleteAnnouncement')->nam
 Route::get('cdr_tags', 'HomeController@cdrTags')->name('cdrTags');
 Route::get('delete_record/{id}/{name}', 'HomeController@deleteRecord')->name('deleteRecord');
 
+/* --- Sms Api ----- */
+Route::get('sms_api', 'HomeController@smsApi')->name('smsApi');
+Route::post('add_sms_api', 'HomeController@addSmsApi')->name('addSmsApi');
+Route::delete('delete_item/{id}/{table}', 'HomeController@deleteItem')->name('deleteItem');
+Route::get('push_api', 'HomeController@pushApi')->name('pushApi');
+Route::get('get_data/{table}/{id}', 'HomeController@getData')->name('getData');
+Route::post('add_push_api', 'HomeController@addPushApi')->name('addPushApi');
+
+
 
 /* ----------Cdr Report----------- */
 Route::get('cdrreport', 'ReportController@index')->name('cdrreport');
@@ -208,6 +217,7 @@ Route::get('delete_operator/{id}', 'OperatorController@deleteOperator')->name('d
 
 Route::get('nonoperator_list', 'OperatorController@nonOperatorList')->name('NonOperatorList');
 Route::get('get_non_operator/{id}', 'OperatorController@getNonOperator')->name('getNonOperator');
+Route::post('addFiles', 'OperatorController@addFiles')->name('addFiles');
 Route::post('add_non_operator', 'OperatorController@addNonOperator')->name('addNonOperator');
 Route::get('get_department/{groupid}', 'OperatorController@getDepartment')->name('getDepartment');
 Route::get('delete_non_operator/{id}', 'OperatorController@deleteNonOperator')->name('deleteNonOperator');
@@ -449,6 +459,12 @@ Route::post('terms_condition/store','TermsAndConditionController@store')->name('
 Route::get('terms_condition/edit/{id}', 'TermsAndConditionController@edit')->name('TermsAndConditionEdit');
 Route::patch('terms_condition/update/{id}', 'TermsAndConditionController@update')->name('TermsAndConditionUpdate');
 Route::get('terms_condition/delete/{id}', 'TermsAndConditionController@destroy')->name('TermsAndConditionDelete');
+
+//Reseller Dashboard
+Route::post('home/crm_data','HomeController@CRMData')->name('CRMData');
+
+//Tranfer Leads
+Route::get('transfer_leads/index','TranferLeadsController@index')->name('TranferLeadIndex');
 
 /*
 |--------------------------------------------------------------------------

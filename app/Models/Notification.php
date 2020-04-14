@@ -23,7 +23,7 @@ class Notification extends Model
         }
         if ( Auth::user()->usertype == 'admin' )
         {
-            $data->where('notifications.send_from_id', Auth::user()->id );
+            $data->where('notifications.send_from_id', Auth::user()->id);
             $data->orWhere('notifications.send_to_id', Auth::user()->id);
             $data->leftJoin('account', 'notifications.send_from_id', '=', 'account.groupid');
         }

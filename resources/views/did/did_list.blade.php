@@ -44,7 +44,7 @@
                                                 <a href="#" data-toggle="modal" class="did_list" id="{{$did->id}}" data-target="#list_modal">
                                                     List
                                                 </a>
-                                                <a href="#" data-toggle="modal" class="did_list_form" id="{{$did->id}}" data-target="#extra_did_modal">
+                                                <a href="#" data-toggle="modal" class="did_list_form" id="{{$did->id}}" data-groupid="{{$did->assignedto}}" data-target="#extra_did_modal">
                                                      Extra
                                                 </a>
 
@@ -117,11 +117,12 @@
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
                                         <input type="hidden" name="did_id" id="did_id"> 
+                                        <input type="hidden" name="groupid" id="groupid"> 
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">DID Number *</label> 
-                                        <input type="text" class="form-control" placeholder="Did Number" name="did_no">
+                                        <input type="number" class="form-control phone_number" placeholder="Did Number" name="did_no">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -139,7 +140,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Outgoing Callerid</label>
-                                        <input type="text" class="form-control" placeholder="Outgoing Callerid" name="set_pri_callerid">
+                                        <input type="number" class="form-control phone_number" placeholder="Outgoing Callerid" name="set_pri_callerid">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -181,7 +182,6 @@
                 var didHTML = "";
                 if(res.length > 0) {
                     $.each(res, function(idx, obj) {
-                         console.log(obj);
                         didHTML += "<tr>";
                         didHTML += "<td>" + obj.did_no  + "</td>";
                         didHTML += "<td>" + obj.did_name  + "</td>";
@@ -220,7 +220,7 @@
                 } else {
                     $("#extra_did_modal").modal('hide');
                     toastr.success(res.success); 
-                    setTimeout(function(){ location.reload() }, 3000);               
+                    setTimeout(function(){ location.reload() }, 500);               
                 }
                
             },
@@ -232,6 +232,7 @@
 
         $('.did_list_form').click(function() {
             $("#did_id").val(this.id);
+            $("#groupid").val($(this).attr("data-groupid"));
         });
 
 

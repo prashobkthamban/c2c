@@ -22,13 +22,7 @@
     width: 50%;
 }
 </style>
- <!-- <script type="text/javascript"> var auto_refresh = setInterval( function() { $('.alt').load('sidebar.blede.php').fadeIn("slow"); }, 15000); // refreshing after every 15000 milliseconds 
-</script> -->
-<?php 
-// dd(Auth::user()->load('opeartor')->opeartor->crm_access);
-// dd(Auth::user()->load('accountdetails')->accountdetails->crm); 
-?>
-  <div class="side-content-wrap">
+    <div class="side-content-wrap">
             <div class="sidebar-left open rtl-ps-none" data-perfect-scrollbar data-suppress-scroll-x="true">
                 <ul class="navigation-left">
                     <li class="nav-item">
@@ -162,19 +156,26 @@
                             <div class="triangle"></div>
                         </li>
                         <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('smsApi')}}">
+                                <i class="nav-icon i-Arrow-X-Left"></i>
+                                <span class="nav-text">Sms Api</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('GateWay')}}">
                                 <i class="nav-icon i-Arrow-X-Left"></i>
                                 <span class="nav-text">PRI Gateway</span>
                             </a>
                             <div class="triangle"></div>
                         </li>
-                        <li class="nav-item" data-item="">
+                        <!-- <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('notification')}}">
                                 <i class="nav-icon i-Bell"></i>
                                 <span class="nav-text">Notifications</span>
                             </a>
                             <div class="triangle"></div>
-                        </li>
+                        </li> -->
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('acc_call_summary')}}">
                                 <i class="nav-icon i-File-TXT"></i>
@@ -186,6 +187,13 @@
                             <a class="nav-item-hold" href="{{url('dashboard_note')}}">
                                 <i class="nav-icon i-File-TXT"></i>
                                 <span class="nav-text">Dashboard Announcement</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('pushApi')}}">
+                                <i class="nav-icon i-Arrow-X-Left"></i>
+                                <span class="nav-text">Push Notification</span>
                             </a>
                             <div class="triangle"></div>
                         </li>
@@ -608,6 +616,12 @@
                         <li class="nav-item">
                             <a href="{{url('terms_condition/list')}}">
                                 <span class="item-name">Terms And Condition</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="{{url('transfer_leads/index')}}">
+                                <span class="item-name">Transfer Leads</span>
                             </a>
                         </li>
 

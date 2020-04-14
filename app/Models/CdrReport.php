@@ -32,6 +32,16 @@ class CdrReport extends Model
     {
         return $this->hasMany('App\Models\CdrNote', 'uniqueid', 'uniqueid');
     }
+
+    public function leadOperator()
+    {
+        return $this->hasMany('App\Models\CdrReport_Lead', 'operatorid', 'operatorid');
+    }
+
+    public function leadCdr()
+    {
+        return $this->hasMany('App\Models\CdrReport_Lead', 'id', 'cdrreport_id');
+    }
     
     public function operatorAccount() {
         return $this->hasOne('App\Models\OperatorAccount', 'id', 'operatorid');

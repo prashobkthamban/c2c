@@ -19,7 +19,7 @@
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
                         <div class="card-body">
-                            <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#add_operator" class="btn btn-primary"> Add New </a>
+                            <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#add_operator" class="btn btn-primary add_operator_dept"> Add New </a>
                             <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
@@ -45,8 +45,8 @@
                                             <td>{{$listOne->dept_name}}</td>
                                             <td>{{$listOne->ivr_option}}</td>
                                             <td>{{$listOne->opt_calltype}}</td>
-                                            <td>{{ $listOne->starttime }}</td>
-                                            <td>{{ $listOne->endtime }}</td>
+                                            <td>{{$listOne->starttime}}</td>
+                                            <td>{{$listOne->endtime}}</td>
                                             <td>{{$listOne->sticky_agent}}</td>
                                             <td>{{$listOne->adddate}}</td>
                                             <td><a href="#" data-toggle="modal" data-target="#add_operator" class="text-success mr-2 edit_operator" id="{{$listOne->id}}">
@@ -87,7 +87,7 @@
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle-2">Add Operator Department</h5>
+                            <h5 class="modal-title" id="modal-title">Add Operator Department</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -110,7 +110,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Customer *</label> 
-                                         {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'groupid')) !!}
+                                         {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'customerId', 'onClick' => 'selectIvr()')) !!}
                                     </div>
                                 </div>  
                                 <div class="row">
@@ -118,8 +118,8 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">IVR Level*</label> 
-                                        {!! Form::select('ivrlevel_id', getAccountgroupdetails()->prepend('Select IVR Level', ''), null,array('class' => 'form-control', 'id' => 'ivr_level')) !!}
+                                        <label for="firstName1">IVR Level *</label> 
+                                        {!! Form::select('ivrlevel_id', ['' => 'Select Ivr Level'], null,array('class' => 'form-control', 'id' => 'ivr_level')) !!}
                                     </div>
                                 </div>  
                                 <div class="row">
@@ -127,7 +127,7 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Department</label> 
+                                        <label for="firstName1">Department *</label> 
                                         {!! Form::text('dept_name', null, ['class' => 'form-control', 'id' => 'dept_name']) !!}
                                     </div>
                                 </div>  
@@ -136,8 +136,8 @@
                                     </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">IVR Option</label> 
-                                        {!! Form::text('ivr_option', null, ['class' => 'form-control', 'id' => 'ivr_option']) !!}
+                                        <label for="firstName1">IVR Option</label>
+                                        {!! Form::select('ivr_option', ['0' => 'Select Option', '1' => '1', '2' => '2','3' => '3', '4' => '4','5' => '5', '6' => '6','7' => '7', '8' => '8','9' => '9'], null,array('class' => 'form-control', 'id' => 'ivr_option')) !!} 
                                     </div>
                                 </div> 
                                 <div class="row">
@@ -300,28 +300,27 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
  <script type="text/javascript">
-     $(document).ready(function() {
-
-        $('#groupid').on('change',function(e)
-                {
-                    var groupid = $(this).val();
-                    $.ajax({
-                    type: "GET",
-                    url: '/get_ivr/'+ groupid, // This is the url we gave in the route
-                    success: function(res){ // What to do if we succeed
-                        console.log(res)
-                      $('#ivr_level').find('option').not(':first').remove();
-                        $.each(res, function (i, item) {
-                            $('#ivr_level').append($('<option>', { 
-                                value: i,
-                                text : item 
-                            }));
-                        });
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
-                    }
-                  });
+    function selectIvr(ivrLevel) {
+        var groupid = $("#customerId").val();
+        $.ajax({
+            type: "GET",
+            url: '/get_ivr/'+ groupid, // This is the url we gave in the route
+            success: function(res){ // What to do if we succeed
+               // $('#ivr_level').find('option').remove();
+               $('#ivr_level').find('option').not(':first').remove();
+                $.each(res, function (i, item) {
+                        $('#ivr_level').append($('<option>', { 
+                            value: i,
+                            text : item 
+                        }));
+                        $("#ivr_level").val(ivrLevel);
                 });
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+            }
+        });
+    }
+     $(document).ready(function() {
      
         $( '.add_operator_form' ).on( 'submit', function(e) {
             e.preventDefault();
@@ -345,7 +344,7 @@
                 } else {
                     $("#add_operator").modal('hide');
                     toastr.success(res.success); 
-                    setTimeout(function(){ location.reload() }, 3000);               
+                    setTimeout(function(){ location.reload() }, 500);               
                 }
                
             },
@@ -358,16 +357,16 @@
         $('.edit_operator').on('click',function(e)
         {
             var id = $(this).attr("id");
-            console.log(id);
+            $("#modal-title").text('Edit Operator Department');
             $.ajax({
             type: "GET",
             url: '/get_operator/'+ id, // This is the url we gave in the route
             success: function(res){ // What to do if we succeed
-                console.log(res)
+               // $('#ivr_level').append(ivr_menu);
                 $("#operator_id").val(res.id);
                 $("#resellerid").val(res.resellerid);
-                $("#groupid").val(res.groupid);
-                $("#ivr_level").val(res.ivrlevel_id);
+                $("#customerId").val(res.groupid);
+                selectIvr(res.ivrlevel_id);
                 $("#dept_name").val(res.dept_name);
                 $("#ivr_option").val(res.ivr_option);
                 $("#complaint").val(res.complaint);
@@ -381,6 +380,7 @@
                 $("#default_sms_no").val(res.default_sms_no);
                 $("#sticky_agent").val(res.sticky_agent);
                 $("#misscallalert").val(res.misscallalert);
+                
                 if(res.generateticket == 'Yes') {
                     $("#ticket_yes").prop("checked", true);
                 } else {
@@ -407,6 +407,11 @@
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }
           });
+        });
+
+        $('.add_operator_dept').on('click',function(e) {
+            $("#modal-title").text('Add Operator Department');
+            $(".add_operator_form")[0].reset();
         });
      });
  </script>
