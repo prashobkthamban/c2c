@@ -39,7 +39,7 @@ class ManagementController extends Controller
         if($request->get('format') == 'day') {
             $validator = Validator::make($request->all(), [
             'reason' => 'required',
-            'day_input' => 'required'
+            'day' => 'required'
             ]);
         } else {
             $validator = Validator::make($request->all(), [
@@ -54,7 +54,7 @@ class ManagementController extends Controller
         } else {
             $holiday = [
                 'date' => !empty($request->get('date')) ? Carbon::parse($request->get('date'))->format('Y-m-d') : null,
-                'day' => $request->get('day_input'),
+                'day' => $request->get('day'),
                 'reason'=> $request->get('reason'),
                 'groupid'=> Auth::user()->groupid,
                 'resellerid'=> 0,
@@ -63,14 +63,6 @@ class ManagementController extends Controller
             $data['success'] = 'Holiday added successfully.';
         } 
        return $data; 
-    }
-
-    public function delete_holiday($id)
-    {
-        $holiday = Holiday::find($id);
-        $holiday->delete();
-        toastr()->success('Holiday delete successfully.');
-        return redirect()->route('holiday');
     }
 
     public function voicemail() {
@@ -120,14 +112,6 @@ class ManagementController extends Controller
          return $data;
     }
 
-    public function delete_contact($id)
-    {
-        $contact= Contact::find($id);
-        $contact->delete();
-        toastr()->success('Contact delete successfully.');
-        return redirect()->route('Contacts');
-    }
-
     public function ivrMenu() {
         $customers = DB::table('ivr_menu')
             ->select('ivr_menu.*', 'accountgroup.name', 'resellergroup.resellername' )
@@ -136,25 +120,17 @@ class ManagementController extends Controller
             ->leftJoin('resellergroup', 'ivr_menu.resellerid', '=', 'resellergroup.id')
             ->orderBy('id', 'desc')->paginate(10);
         $languages = DB::table('languages')->get();
-        // dd($customers);
+        //dd($customers);
         return view('management.ivr_menu', compact('customers', 'languages'));
     }
 
     public function getIvrMenu($id) {
         return $ivr_menu = DB::table('ivr_menu')
-            ->select('ivr_menu.*', 'ast_ivrmenu_language.*')
+            ->select('ivr_menu.*', 'resellergroup.resellername','ast_ivrmenu_language.ivr_menu_id', 'ast_ivrmenu_language.lang_id', 'ast_ivrmenu_language.filename', 'ast_ivrmenu_language.orginalfilename')
             ->where('ivr_menu.id', $id)
-            ->join('ast_ivrmenu_language', 'ivr_menu.id', '=', 'ast_ivrmenu_language.ivr_menu_id')
-            // ->leftJoin('resellergroup', 'ivr_menu.resellerid', '=', 'resellergroup.id')
+            ->leftJoin('ast_ivrmenu_language', 'ivr_menu.id', '=', 'ast_ivrmenu_language.ivr_menu_id')
+            ->leftJoin('resellergroup', 'ivr_menu.resellerid', '=', 'resellergroup.id')
             ->get(); 
-        //dd($ivr_menu);
-    }
-
-    public function deleteIvr($id)
-    {
-        DB::table('ivr_menu')->where('id', $id)->delete();
-        toastr()->success('Record deleted successfully.');
-        return redirect()->route('ivrMenu');
     }
 
     public function addIvrmenu(Request $request) {
@@ -172,23 +148,27 @@ class ManagementController extends Controller
             $data['error'] = $validator->messages(); 
         } else {
             $vfilename=$request->get('groupid')."_".$request->get('ivr_level');
-            $accGroup = ['resellerid' => (!empty($request->get('resellerid') ? $request->get('resellerid') : NULL)),
-                     'groupid' => $request->get('groupid'),
-                     'ivr_level_name'=> $request->get('ivr_level_name'),
-                     'ivr_level'=> $request->get('ivr_level'), 
-                     'ivroption' => $request->get('ivroption'),
-                     'operator_dept' => $request->get('operator_dept'),
-                     'voicefilename' => $vfilename
-                    ];
+            $accGroup = ['resellerid' => $request->get('resellerid'),
+                'groupid' => $request->get('groupid'),
+                'ivr_level_name'=> $request->get('ivr_level_name'),
+                'ivr_level'=> $request->get('ivr_level'), 
+                'ivroption' => $request->get('ivroption'),
+                'operator_dept' => $request->get('operator_dept'),
+                'voicefilename' => $vfilename
+            ];
 
-            $ivr_menu_id = DB::table('ivr_menu')->insertGetId($accGroup);
+            if(empty($request->get('id'))) { 
+                $ivr_menu_id = DB::table('ivr_menu')->insertGetId($accGroup);
+            } else {
+                DB::table('ivr_menu')->where('id', $request->get('id'))->update($accGroup);
+                $ivr_menu_id = $request->get('id');
+            }
+           
             if (file_exists(config('constants.ivr_file')) && $lang) { 
                 $file = config('constants.ivr_file');
-                //dd($files);
                 foreach($lang as $listOne) {
                     $list_1 = explode ("_", $listOne);
                     $files = $request->file($list_1[0]);
-                    //dd($files);
                     if(!empty($files)) {
                         $ext=substr($files->getClientOriginalName(),-4);
                         $newfilename=$list_1[1]."_".$vfilename."".$ext;
@@ -230,7 +210,6 @@ class ManagementController extends Controller
         $aombefore = DB::table('voicefilesnames')->where('file_type', 'aombefore')->pluck('filename', 'filename');
         $aomafter = DB::table('voicefilesnames')->where('file_type', 'aomafter')->pluck('filename', 'filename');
         $moh = DB::table('mohclassess')->pluck('classname', 'classname');
-        //dd($voicefilesnames);
         return view('management.voicefiles', compact('voicefiles', 'voicefilesnames', 'thank4calling', 'repeatoptions', 'previousmenu', 'voicemailmsg', 'trasfringcall', 'contactusoon', 'talktooperator9', 'noinput', 'wronginput', 'nonworkinghours', 'moh', 'transferingagent', 'holiday', 'aombefore', 'aomafter'));
     }
 
@@ -330,7 +309,6 @@ class ManagementController extends Controller
     public function addGeneralFile(Request $request) {
         
         $lang = explode (",", $request->get('file_lang'));
-        //dd($request->get('file_lang'));
         $validator = Validator::make($request->all(), [
             'file_type' => 'required',
             'filename' => 'required|alpha_dash',

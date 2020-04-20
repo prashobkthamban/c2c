@@ -268,7 +268,7 @@
                
                     if(res.account_det.length > 0) {
                         $.each(res.account_det, function(idx, obj) {
-                        depHTML += '<tr><td><i class="fa fa-desktop" aria-hidden="true"></i> '+obj.opername+'('+obj.phonenumber+') priority: '+obj.priority+'</td><td></td><td><a href="?" onclick="xajax_delete('+obj.id+','+id+');return false;">Delete</a></td></tr>';
+                        depHTML += '<tr><td><i class="fa fa-desktop" aria-hidden="true"></i> '+obj.opername+'('+obj.phonenumber+') priority: '+obj.priority+'</td><td></td><td><a href="?" onclick="xajax_delete('+obj.oprId+','+obj.id+','+id+');return false;">Delete</a></td></tr>';
                         });
                         depHTML += '<tr><td colspan="3"> Total '+ res.account_det.length +' Operators in '+res.details.dept_name+'</td></tr><tr><td colspan="3" align="right"><a href="#" data-toggle="modal" class="btn btn-success btn-sm"  data-target="#add_operator">Add Operator</a><a href="#" data-toggle="modal" class="btn btn-success btn-sm"  data-target="#add_number">Add Number</a></td></tr>';
                     } else {
@@ -336,22 +336,21 @@
           });
     });
 
-    function xajax_delete(opid, dpid) {
+    function xajax_delete(opid, opacc, dpid) {
         var action = confirm('Are you sure you want to delete this?');
         if (action == true) {
-                $.ajax({
-                    url: "delete_op_group/"+opid+"/"+dpid,
-                    type: 'DELETE',
-                    success: function (res) {
-                        console.log('hgfg', res);
-                        showDetails(res.dpid);
-                        if(res.status == 1) {
-                           toastr.success('Row delete successfully.')
-                        }
-                        
+            $.ajax({
+                url: "delete_op_group/"+opid+"/"+opacc,
+                type: 'DELETE',
+                success: function (res) {
+                    showDetails(dpid);
+                    if(res.status == 1) {
+                        toastr.success('Row delete successfully.')
                     }
-                });
-            }
+                    
+                }
+            });
+        }
     }
 
     $(document).ready(function() {

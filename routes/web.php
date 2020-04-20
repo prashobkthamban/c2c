@@ -153,16 +153,14 @@ Route::post('edit_operator_dept', 'UserController@editOprDept')->name('EditOpera
 Route::get('operatorgrp_details/{id}', 'UserController@operatorgrp_details')->name('OperatorGroupDetails');
 Route::post('add_opt_assign', 'UserController@addOptassign')->name('addOptassign');
 Route::post('add_num_assign', 'UserController@addNumassign')->name('addNumassign');
-Route::delete('delete_op_group/{opid}/{dpid}', 'UserController@deleteOpgroup')->name('deleteOpgroup');
+Route::delete('delete_op_group/{opid}/{opacc}', 'UserController@deleteOpgroup')->name('deleteOpgroup');
 
 /* holiday */
 Route::get('holiday', 'ManagementController@holiday')->name('holiday');
 Route::post('holiday_store', 'ManagementController@holidayStore')->name('holidayStore');
-Route::get('delete_holiday/{id}', 'ManagementController@delete_holiday')->name('deleteHoliday');
 
 /* ivr menu */
 Route::get('ivr_menu', 'ManagementController@ivrMenu')->name('ivrMenu');
-Route::get('delete_ivr/{id}', 'ManagementController@deleteIvr')->name('deleteIvr');
 Route::post('add_ivr_menu', 'ManagementController@addIvrmenu')->name('addIvrmenu');
 Route::get('get_ivr_menu/{id}', 'ManagementController@getIvrMenu')->name('getIvrMenu');
 
@@ -188,7 +186,6 @@ Route::get('get_moh/{id}', 'ManagementController@getMoh')->name('getMoh');
 /* contacts */
 Route::get('contacts', 'ManagementController@contacts')->name('Contacts');
 Route::post('edit_contact', 'ManagementController@editContact')->name('EditContact');
-Route::get('delete_contact/{id}', 'ManagementController@delete_contact')->name('deleteContact');
 
 /* ---------- Did ----------- */
 Route::get('did_list', 'DidController@index')->name('DidList');

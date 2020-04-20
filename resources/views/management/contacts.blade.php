@@ -29,7 +29,7 @@
                             </thead>
                             <tbody>   
                                 @foreach($contacts as $contact)
-                                <tr>
+                                <tr id="row_{{ $contact->id }}">
                                     <td>{{$contact->fname}}</td>
                                     <td>{{$contact->lname}}</td>
                                     <td>{{$contact->phone}}</td>
@@ -37,9 +37,9 @@
                                     <td><a href="#" data-toggle="modal" onClick="ContactUpdate( '{{$contact->id}}', '{{$contact->fname}}', '{{$contact->lname}}', '{{$contact->email}}', '{{$contact->phone}}')" class="contact_update" id="{{$contact->id}}" data-target="#contact_update_modal">
                                              <i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                         </a>
-                                        <a href="{{ route('deleteContact', $contact->id) }}" onclick="return confirm('Are you sure you want to delete this Contact?')" class="text-danger mr-2">
+                                        <a href="javascript:void(0)" onClick="deleteItem({{$contact->id}}, 'contacts')" class="text-danger mr-2">
                                             <i class="nav-icon i-Close-Window font-weight-bold"></i>
-                                        </a>
+                                    </a>
                                     </td>
 
                                 </tr>

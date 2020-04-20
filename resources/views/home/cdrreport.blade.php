@@ -306,9 +306,17 @@ audio {
                                 <table id="zero_configuration_table" class="display table table-bordered" style="width:100%">
                                     <thead>
                                     <tr>
+                                        @if(Auth::user()->usertype == 'groupadmin')
                                         <th><input type="checkbox" name="allselect" id="allselect" value="yes" onclick="selectAll();"></th>
+                                        @elseif(Auth::user()->usertype == 'admin')
+                                        <th>Customer</th>
+                                        @endif
                                         <th>Caller Id</th>
                                         <th>Date & Time</th>
+                                        @if(Auth::user()->usertype == 'admin')
+                                        <th>Duration</th>
+                                        <th>Coin</th>
+                                        @endif
                                         <th>Status</th>
                                         <th>Department</th>
                                         <th>Agent</th>
@@ -318,8 +326,12 @@ audio {
                                     <tbody>
                                     @if(!empty($result))
                                         @foreach($result as $row )
-                                    <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable">
+                                    <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable" id="row_{{ $row->cdrid }}">
+                                    @if(Auth::user()->usertype == 'groupadmin')
                                     <td><input type="checkbox" name="cdr_checkbox" id="{{$row->cdrid}}" value="{{$row->cdrid}}" class="allselect"></td>
+                                    @elseif(Auth::user()->usertype == 'admin')
+                                    <th>{{$row->name}}</th>
+                                    @endif
                                     <td id="caller_{{$row->cdrid}}">
                                     @if(Auth::user()->usertype=='groupadmin')
                                     <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
@@ -330,10 +342,15 @@ audio {
                                     @endif
                                     </td>
                                     <td>{{$row->datetime}}</td>
+                                    @if(Auth::user()->usertype == 'admin')
+                                        <td>{{$row->firstleg."(".$row->secondleg.")"}}</td>
+                                        <td>{{$row->creditused}}</td>
+                                    @endif
                                     <td>{{$row->status}}</td>
                                     <td>{{$row->deptname}}</td>
                                     <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
                                     <td>
+                                    @if(Auth::user()->usertype=='groupadmin')
                                         <a class="btn bg-gray-100" data-toggle="collapse" data-target="
                                         #more{{$row->cdrid}}" aria-expanded="false" aria-controls="collapseExample"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
                                        
@@ -391,6 +408,11 @@ audio {
                                         @endif
                                         </span>
                                         </div>
+                                        @elseif(Auth::user()->usertype=='admin')
+                                        <a href="javascript:void(0)" onClick="deleteItem({{$row->cdrid}}, 'cdr')" class="text-danger mr-2">
+                                            <i class="nav-icon i-Close-Window font-weight-bold"></i>
+                                        </a>
+                                        @endif
                                     </td>
                                     </tr>
                                     <tr id="more{{$row->cdrid}}" class="collapse">
@@ -838,6 +860,7 @@ audio {
             <!-- end of add contact -->
 
             <!-- customize sidebar -->
+            @if(Auth::user()->usertype == 'groupadmin')
             <div class="customizer" style="top: 73px;">
                 <div class="handle">
                   <i data-toggle="modal" title="Dial Now" data-target="#dial_modal" class="i-Telephone"></i>
@@ -853,16 +876,6 @@ audio {
                   <i class="i-Bar-Chart-2
                   " data-toggle="modal" title="Cdr Chart" data-target="#graph_search_modal"></i>
                 </div>
-            </div>
-            <div class="customizer" style="top: 198px;">
-                <a href="{{ url('cdrexport') }}" title="Export Data"><div class="handle">
-                  <i class="i-Download1"></i>
-                </div></a>
-            </div>
-            <div class="customizer" style="top: 239px;">
-                <a href="#" title="Search" data-toggle="collapse" data-target="#filter-panel"><div class="handle collapsed">
-                  <i class="i-Search-People"></i>
-                </div></a>
             </div>
             <div class="customizer" style="top: 280px;">
                 <div>
@@ -895,9 +908,22 @@ audio {
                   @endif
                   @endforeach
                   <?php echo '<li><a href="javascript:assignoper(0);">Unassign</a></li>'; ?>
-                </ul>
+                    </ul>
                 </div>
             </div>
+            <div class="customizer" style="top: 239px;">
+                <a href="#" title="Search" data-toggle="collapse" data-target="#filter-panel"><div class="handle collapsed">
+                  <i class="i-Search-People"></i>
+                </div></a>
+            </div>
+            @endif
+            <div class="customizer" style=<?php (Auth::user()->usertype == 'groupadmin') ? "top: 198px;" : "top: 73px;" ?>>
+                <a href="{{ url('cdrexport') }}" title="Export Data"><div class="handle">
+                  <i class="i-Download1"></i>
+                </div></a>
+            </div>
+           
+            
 @endsection
 
 @section('page-js')

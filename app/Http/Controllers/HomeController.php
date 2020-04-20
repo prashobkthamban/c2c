@@ -589,8 +589,11 @@ class HomeController extends Controller
     }
 
     public function deleteItem($id, $table) {
-
-        $res = DB::table($table)->where('id',$id)->delete();
+        $field = ($table == 'cdr') ? 'cdrid' : 'id';
+        $res = DB::table($table)->where($field,$id)->delete();
+        if($table == 'ivr_menu') {
+            DB::table('ast_ivrmenu_language')->where('ivr_menu_id',$id)->delete();
+        }
         return $res;
     }
 

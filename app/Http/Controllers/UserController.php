@@ -740,14 +740,14 @@ public function updatesettings($id, Request $request) {
 
     public function operatorgrp_details($id) {
         $data['details'] = OperatorDepartment::find($id);
-        $sql = "SELECT operatoraccount.id,operatoraccount.opername,phonenumber,priority,operatortype FROM  `operatoraccount`
-LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN operator_dept_assgin ON operator_dept_assgin.operatorid = operatoraccount.id LEFT JOIN operatordepartment ON operator_dept_assgin.departmentid = operatordepartment.id  "; 
+        $sql = "SELECT operatoraccount.id,operatoraccount.opername,phonenumber,priority,operatortype,operator_dept_assgin.id as oprId FROM  `operatoraccount`
+LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN operator_dept_assgin ON operator_dept_assgin.operatorid = operatoraccount.id LEFT JOIN operatordepartment ON operator_dept_assgin.departmentid = operatordepartment.id"; 
         if(Auth::user()->usertype == 'groupadmin') {
             $sql .= " WHERE departmentid=" .$id ." and accountgroup.id = ".Auth::user()->groupid." ";
         } 
         $query = DB::select($sql);
         $data['operators'] =  DB::table('operatoraccount')->where('groupid', Auth::user()->groupid)->select('id', 'opername')->get(); 
-        
+        //dd($query);
         $data['account_det'] = $query;
         return $data;
     }
@@ -810,21 +810,20 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
          return $data;
     }
 
-    public function deleteOpgroup($opid, $dpid)
+    public function deleteOpgroup($opid, $opacc)
     {
         //$s="Select * from operatoraccount where id='$opid'";
-        $operator = OperatorAccount::find($opid);
+        $operator = OperatorAccount::find($opacc);
         if($operator->operatortype == 'web') {
-            DB::table('operator_dept_assgin')->where('departmentid',$dpid)->where('operatorid', $opid)->delete();
+            DB::table('operator_dept_assgin')->where('id',$opid)->delete();
 
         } 
         if($operator->operatortype == 'mob') {
-            DB::table('operatoraccount')->where('id',$opid)->delete();
-            DB::table('operator_dept_assgin')->where('departmentid',$dpid)->where('operatorid', $opid)->delete();
+            DB::table('operatoraccount')->where('id',$opacc)->delete();
+            DB::table('operator_dept_assgin')->where('id', $opid)->delete();
         }
         return response()->json([
-            'status' => 'true',
-            'dpid' => $dpid
+            'status' => true,
         ]);
     }
 
