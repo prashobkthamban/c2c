@@ -917,7 +917,7 @@ audio {
                 </div></a>
             </div>
             @endif
-            <div class="customizer" style=<?php (Auth::user()->usertype == 'groupadmin') ? "top: 198px;" : "top: 73px;" ?>>
+            <div class="customizer" style="{{Auth::user()->usertype == 'groupadmin' ?  'top:198px' : 'top:73px'}}">>
                 <a href="{{ url('cdrexport') }}" title="Export Data"><div class="handle">
                   <i class="i-Download1"></i>
                 </div></a>

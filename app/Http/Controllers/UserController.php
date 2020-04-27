@@ -145,7 +145,8 @@ class UserController extends Controller
                 'pushapi'=> $request->get('pushapi'),
                 'pbxexten'=> $request->get('pbxexten'),
                 'c2c'=> $request->get('c2c'),
-                'crm_users'=>$request->get('crm_users')
+                'crm_users'=>$request->get('crm_users'),
+                'leads_access'=>$request->get('leads_access'),
             ]);
 
         $account_group->save();
@@ -311,7 +312,8 @@ public function updatesettings($id, Request $request) {
                 'pushapi'=> $request->get('pushapi'),
                 'pbxexten'=> $request->get('pbxexten'),
                 'c2c'=> $request->get('c2c'),
-                'crm_users'=>$request->get('crm_users')
+                'crm_users'=>$request->get('crm_users'),
+                'leads_access'=>$request->get('leads_access'),
             ];
             /*dd($account_group);exit;*/
             $user_edit->fill($account_group)->save();
@@ -516,8 +518,7 @@ public function updatesettings($id, Request $request) {
             print_r(Auth::user()->load('accountdetails')->accountdetails['crm_users']);*/
 
             if (count($crm_users) >= Auth::user()->load('accountdetails')->accountdetails['crm_users']) {
-                //echo "if";exit;
-
+                dd($request->all());
                 $workingDays = explode(',', $request->working_days);
                 $operator_data = [
                     'phonenumber' => $request->get('phonenumber'),
@@ -532,6 +533,7 @@ public function updatesettings($id, Request $request) {
                     'play'=> $request->get('play'),
                     'working_days' => json_encode($workingDays),
                     'crm_access' => 'no',
+                    'lead_access' => $request->get('lead_access'),
                 ];
                 
                 if(!empty($request->get('id'))) {
@@ -584,6 +586,7 @@ public function updatesettings($id, Request $request) {
                     'play'=> $request->get('play'),
                     'working_days' => json_encode($workingDays),
                     'crm_access' => $request->get('crm_access'),
+                    'leads_access' => $request->get('leads_access'),
                 ];
                 
                 if(!empty($request->get('id'))) {
@@ -628,7 +631,7 @@ public function updatesettings($id, Request $request) {
     }
 
     public function getOprAccount($id) {
-        $data=  DB::table('operatoraccount')->select('operatoraccount.id', 'phonenumber', 'opername', 'oper_status', 'livetrasferid', 'shift_id', 'app_use', 'edit', 'download', 'play','working_days', 'account.username', 'account.password', 'account.user_pwd', 'operator_shifts.shift_name')->leftJoin('account', 'operatoraccount.id', '=', 'account.operator_id')->leftJoin('operator_shifts', 'operatoraccount.shift_id', '=', 'operator_shifts.id')->where('operatoraccount.id', $id)->get();
+        $data=  DB::table('operatoraccount')->select('operatoraccount.id', 'lead_access', 'crm_access', 'phonenumber', 'opername', 'oper_status', 'livetrasferid', 'shift_id', 'app_use', 'edit', 'download', 'play','working_days', 'account.username', 'account.password', 'account.user_pwd', 'operator_shifts.shift_name')->leftJoin('account', 'operatoraccount.id', '=', 'account.operator_id')->leftJoin('operator_shifts', 'operatoraccount.shift_id', '=', 'operator_shifts.id')->where('operatoraccount.id', $id)->get();
 	return $data;   
  }
     

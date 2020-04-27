@@ -62,14 +62,14 @@ class CdrReport extends Model
     }
 
     public static function getReport(){
-       $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder', 'operatorAccount', 'operatorAssigned'])->select('cdr.*', 'accountgroup.name');
+       $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder', 'operatorAccount', 'operatorAssigned']);
         if( Auth::user()->usertype == 'reseller'){
             $data->where('cdr.resellerid',Auth::user()->resellerid );
         }
         else if( Auth::user()->usertype == 'operator' ){
             $data->where('cdr.operatorid',Auth::user()->id );
         } else if(Auth::user()->usertype == 'admin') {
-            $data->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr.groupid');
+            $data->select('cdr.*', 'accountgroup.name')->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr.groupid');
         }
     
         $result = $data->orderBy('datetime','DESC')->paginate(10);

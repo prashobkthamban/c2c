@@ -60,6 +60,10 @@ class LeadController extends Controller
             ->latest('cdrreport_lead.id')
             ->paginate(10);
 
+            $lead_count = DB::table('cdrreport_lead')
+            ->where('user_id','=',Auth::user()->id)
+            ->count();
+
             //print_r(Auth::user()->id);exit;
 
             $level_1 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '1')->get()->count();
@@ -84,7 +88,13 @@ class LeadController extends Controller
             ->orderBy('id', 'DESC')
             ->paginate(10);
 
-            /*print_r($list_leads);exit;*/
+            $lead_count = DB::table('cdrreport_lead')
+            ->where('user_id','=',Auth::user()->id)
+            ->orWhere('operatorid','=',Auth::user()->operator_id)
+            ->select('*')
+            ->count();
+
+            //print_r($lead_count);exit;
 
             $level_1 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '1')->get()->count();
             $level_2 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '2')->get()->count();
@@ -100,7 +110,7 @@ class LeadController extends Controller
                         ->get();
         }
 
-        return view('cdr.all_leads',compact('list_leads','products','level_1','level_2','level_3','level_4','level_5','level_6_7','users_lists','result'));
+        return view('cdr.all_leads',compact('list_leads','products','level_1','level_2','level_3','level_4','level_5','level_6_7','users_lists','result','lead_count'));
     }
 
     public function addLead(Request $request)

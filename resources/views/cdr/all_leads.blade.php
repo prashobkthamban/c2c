@@ -367,7 +367,7 @@
                     <div class="card text-left">
                         <div class="card-body">
                             <a href="?" class="btn btn-primary add_lead" id="add_lead" data-toggle="modal" data-target="#AddLead">Add Lead </a>
-
+                            <p id="error_msg" style="font-size: 15px;color: red;text-align: center;"></p>
                             <a href="?" class="btn btn-primary" id="import_lead" data-toggle="modal" data-target="#Import_Lead" style="float: right;">Import Lead</a>
                             <br><br>
                             <div class="row">
@@ -402,7 +402,8 @@
                                 </div>
                             </div>
                             <br><br>
-                            {{$list_leads}}
+                            <input type="hidden" name="lead_count" id="lead_count" value="<?php echo $lead_count;?>">
+                            <input type="hidden" name="total_leads" id="total_leads" value="<?php echo Auth::user()->load('accountdetails')->accountdetails->leads_access;?>">
                             <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
@@ -718,6 +719,16 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
+        //alert($('#lead_count').val());
+        var lead_count = $('#lead_count').val();
+        var lead_total = $('#total_leads').val();
+        //alert(lead_count);
+        //alert(lead_total);
+        if (lead_count > lead_total) {
+            //alert('if');
+            $('.add_lead').prop('disabled',true);
+            $('#error_msg').html('Lead Limit access!!! Please contact to admin');
+        }
         $('.js-example-basic-single').select2();
         
         $("#btnAdd").bind("click", function () {

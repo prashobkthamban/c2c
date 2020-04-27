@@ -216,6 +216,14 @@
                                         {!! Form::select('crm_access', array('yes' => 'Yes', 'no' => 'No'), 0,array('class' => 'form-control', 'id' => 'crm_access')) !!}
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3">
+                                    </div>
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="lead_access">No of Lead Access</label>
+                                        <input type="number" class="form-control" placeholder="No of Leads" name="lead_access" id="lead_access">
+                                    </div>
+                                </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -268,7 +276,6 @@
                     });
                     toastr.error(errors);
                 } else {
-                    //console.log(res);
                     $("#operator_account").modal('hide');
                     $(".add_account_form")[0].reset();
                     toastr.success(res.success);
@@ -278,7 +285,7 @@
                     else{
                      $('#crm_error').css('display','none');   
                     }
-                    setTimeout(function(){ location.reload() }, 2000);               
+                    setTimeout(function(){ location.reload() }, 300);               
                 }
                
             },
@@ -310,6 +317,7 @@
                 $("#download").val(res.download);        
                 $("#play").val(res.play);
                 $("#crm_access").val(res.crm_access);
+                $('#lead_access').val(res.lead_access);
                 var obj = JSON.parse(res.working_days);
                 days = obj;
                 $("#working_days").val(obj);

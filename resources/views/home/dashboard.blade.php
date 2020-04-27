@@ -162,13 +162,19 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                        @if(sizeof($incoming_calls) > 0)    
                                             @foreach($incoming_calls as $row)
                                             <tr>
                                                 <td>{{$row->status}}</td>
                                                 <td>{{$row->count}}</td>
                                                 <td>{{$row->leadCdr->count()}}</td>
                                             </tr>
-                                            @endforeach
+                                            @endforeach 
+                                        @else 
+                                            <tr>
+                                                <td  colspan="3">No Data Found</td>
+                                            </tr>
+                                        @endif
                                         </tbody>
                                     </table>
                                 </div>
@@ -187,17 +193,23 @@
                                     <table id="user_table" class="table  text-center">
                                         <thead>
                                             <tr>
+                                                <th scope="col">#</th>
                                                 <th scope="col">Total</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            @if(sizeof($operator_leads) > 0)
                                             @foreach($operator_leads as $row)
                                             <tr>
-                                                <td>{{$row->status}}</td>
-                                                <td>{{$row->leadOperator->count()}}</td>
-                                                <!-- <td>{{$row->phonenumber}}</td> -->
+                                                <td>{{$row->lead_stage}}</td>
+                                                <td>{{$row->total}}</td>
                                             </tr>
                                             @endforeach
+                                            @else 
+                                            <tr>
+                                                <td  colspan="2">No Data Found</td>
+                                            </tr>
+                                            @endif
                                         </tbody>
                                     </table>
                                 </div>
@@ -221,6 +233,52 @@
                                 </div>
                             @endforeach
                             <div id="echart9" style="height: 60px; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1586745275835"><div style="position: relative; overflow: hidden; width: 528px; height: 60px; padding: 0px; margin: 0px; border-width: 0px; cursor: default;"><canvas data-zr-dom-id="zr_0" width="528" height="60" style="position: absolute; left: 0px; top: 0px; width: 528px; height: 60px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas></div><div></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-xl-12 mt-4">
+                        <div class="col-md-12">
+                            <div class="card o-hidden mb-4">
+                                <div class="card-header d-flex align-items-center border-0">
+                                    <h3 class="w-50 float-left card-title m-0">Incoming Calls</h3>
+                                </div>
+                                <div class="">
+                                    <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                                        <table id="user_table" class="table  text-center">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">User</th>
+                                                    <th scope="col">Total</th>
+                                                    <th scope="col">Answered</th>
+                                                    <th scope="col">Missed</th>
+                                                    <th scope="col">Forms</th>
+                                                    <th scope="col">Completed</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            @if(sizeof($opcallList) > 0)
+                                                @foreach($opcallList as $key => $row)
+                                                <tr>
+                                                    <td>{{$key}}</td>
+                                                    <td>{{$row['ANSWERED'] + $row['MISSED']}}</td>
+                                                    <td>{{$row['ANSWERED']}}</td>
+                                                    <td>{{$row['MISSED']}}</td>
+                                                    <td>{{$row['lead_count']}}</td>
+                                                    <td>{{$row['completed']}}</td>
+                                                </tr>
+                                                @endforeach
+                                            @else
+                                            <tr>
+                                                <td  colspan="6">No Data Found</td>
+                                            </tr>
+                                            @endif
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

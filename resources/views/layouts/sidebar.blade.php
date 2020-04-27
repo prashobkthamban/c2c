@@ -38,7 +38,7 @@
                         </a>
                         <div class="triangle"></div>
                     </li>
-                    @if(Auth::user()->usertype == 'groupadmin')
+                    @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
                         @if(Auth::user()->load('accountdetails')->accountdetails->crm == 1)
                         <li class="nav-item" data-item="settings">
                             <a class="nav-item-hold" href="#">
