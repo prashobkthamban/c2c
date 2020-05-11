@@ -243,7 +243,7 @@ class HomeController extends Controller
             //echo "<pre>";
             //print_r($users_list);
 
-            $lead_count = array();
+            $lead_count = $operator_lead_stage = $predict_cost  = $proposal = $invoice = array();
             foreach ($users_list as $key => $value) {
                 
                 $lead_count[$value->id] = DB::table('cdrreport_lead')
@@ -332,7 +332,7 @@ class HomeController extends Controller
         $nousers = '';
         $inusers = '';
         $announcements = DB::table('dashbord_annuounce')->orderBy('id', 'desc')->get();
-
+        //dd($operator_lead_stage);
         return view('home.dashboard', compact('incoming_calls', 'operator_leads', 'opcallList', 'insight_ivr', 'announcements', 'activeoperator', 'g_callstoday', 'o_callstoday', 'callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'sdate', 'edate', 'nousers', 'inusers','level_1','level_2','level_3','level_4','level_5','level_6','level_7','todo_lists','users_list','remainders','lead_count','operator_lead_stage','predict_cost','proposal','invoice','group_admin'));
     }
 

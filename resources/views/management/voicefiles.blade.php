@@ -334,7 +334,7 @@
                 } else {
                     $("#add_voice_file").modal('hide');
                     toastr.success(res.success); 
-                    setTimeout(function(){ location.reload() }, 3000);               
+                    setTimeout(function(){ location.reload() }, 300);               
                 }
                
             },
@@ -385,9 +385,11 @@
         });
 
         $('#add_voice').click(function() {
-            $(".add_voicefile_form").trigger("reset");
+            $(".add_voicefile_form")[0].reset();
             $("#welcomemsg_value").text("");
             $("#flanguagesection_value").text("");
+            $("exampleModalCenterTitle-2").text('Add Voicefile');
+            $("#did").find('option').not(':first').remove();
         });
      });
  </script>

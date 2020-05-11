@@ -223,22 +223,11 @@ class ManagementController extends Controller
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
-            $welcomefile = $request->file('welcomemsg');
-            $langfile = $request->file('flanguagesection');
-            if($request->file('welcomemsg') != null) {
-               $fileName1 = $request->get('groupid').'_'.$welcomefile->getClientOriginalName();
-            }
-            if($request->file('flanguagesection') != null) {
-               $fileName2 = $request->get('groupid').'_'.$langfile->getClientOriginalName(); 
-            }
-            
             $voicefile = [
                      'groupid' => $request->get('groupid'),
                      'did'=> $request->get('did'),
                      'wfile'=> $request->get('wfile'), 
-                     'welcomemsg' => isset($fileName1) ? $fileName1 : $request->get('old_welcomemsg'),
                      'languagesection' => $request->get('languagesection'),
-                     'flanguagesection' => isset($fileName2) ? $fileName2 : $request->get('old_flanguagesection'),
                      'mainmenupress0' => $request->get('mainmenupress0'),
                      'thank4caling' => $request->get('thank4caling'),
                      'repeatoptions' => $request->get('repeatoptions'),
@@ -256,20 +245,43 @@ class ManagementController extends Controller
                      'aombeforewelcome' => $request->get('aombefore'),
                      'aomafterwelcome' => $request->get('aomafter'),
                     ];
-
+                    $welcomefile = $request->file('welcomemsg');
+                    $langfile = $request->file('flanguagesection');
+                    $old_welcomefile = $request->get('old_welcomemsg');
+                    $old_langfile = $request->get('old_flanguagesection');
+                    $groupid = $request->get('groupid');
+                    
             if(empty($request->get('id'))) {
                 $voice_file_id = DB::table('did_voicefilesettings')->insertGetId($voicefile);
-                $this->uploadVoicefile($welcomefile, $langfile, $fileName1, $fileName2);
+                $this->saveVoicefile($welcomefile, $langfile, $old_welcomefile, $old_langfile, $voice_file_id, $groupid);
                 $data['success'] = 'Voicefile added successfully.';
             } else {
                 DB::table('did_voicefilesettings')
                     ->where('id', $request->get('id'))
                     ->update($voicefile);
-                $this->uploadVoicefile($welcomefile, $langfile, $fileName1, $fileName2);
+                $this->saveVoicefile($welcomefile, $langfile, $old_welcomefile, $old_langfile, $request->get('id'), $groupid);
                 $data['success'] = 'Voicefile updated successfully.';
             }
         } 
          return $data;
+    }
+
+    private function saveVoicefile($welcomefile, $langfile, $old_welcomefile, $old_langfile, $voice_file_id, $groupid) {
+        $fileName1 = $fileName2 = null;
+        if($welcomefile != null) {
+            $fileName1 = $voice_file_id.'_'.$groupid.'_'.$welcomefile->getClientOriginalName();
+        }
+        if($langfile != null) {
+            $fileName2 = $voice_file_id.'_'.$groupid.'_'.$langfile->getClientOriginalName(); 
+        }
+        $files = [
+            'welcomemsg' => isset($fileName1) ? $fileName1 : $old_welcomefile,
+            'flanguagesection' => isset($fileName2) ? $fileName2 : $old_langfile
+        ];
+        DB::table('did_voicefilesettings')
+            ->where('id', $voice_file_id)
+            ->update($files);
+        $this->uploadVoicefile($welcomefile, $langfile, $fileName1, $fileName2);
     }
 
     private function uploadVoicefile($welcomeFile, $langFile, $fileName1, $fileName2) {
@@ -341,7 +353,7 @@ class ManagementController extends Controller
     }
 
     public function mohListings() { 
-        $moh = DB::table('MOHclassess')->orderBy('id', 'desc')->paginate(10);
+        $moh = DB::table('mohclassess')->orderBy('id', 'desc')->paginate(10);
         //dd($moh);
         return view('management.mohlistings', compact('moh'));
     }
@@ -352,7 +364,7 @@ class ManagementController extends Controller
         if(file_exists($file)) {
             File::deleteDirectory($file);
         }
-        DB::table('MOHclassess')->where('id', $id)->delete();
+        DB::table('mohclassess')->where('id', $id)->delete();
         toastr()->success('Record deleted successfully.');
         return redirect()->route('mohListings');
     }
@@ -410,7 +422,7 @@ class ManagementController extends Controller
     }
 
     public function getMoh($id) {
-        return $moh = DB::table('MOHclassess')->where('id', $id)->get();
+        return $moh = DB::table('mohclassess')->where('id', $id)->get();
     }
 
 

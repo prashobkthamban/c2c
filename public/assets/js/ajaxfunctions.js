@@ -47,17 +47,12 @@ function didList(groupid, did_id) {
     type: "GET",
     url: '/get_did/'+ groupid, // This is the url we gave in the route
     success: function(res){ // What to do if we succeed
-        //console.log(res);
       $('#did').find('option').not(':first').remove();
         $.each(res, function (i, item) {
-            // $('#did').append($('<option>', { 
-            //     value: i,
-            //     text : item 
-            // }));
-            if(did_id == i) {
-                $('#did').append('<option value="'+ i +'" selected>'+ item +'</option>');
+            if(did_id == item.id) {
+                $('#did').append('<option value="'+ item.id +'" selected>'+ item.did +'</option>');
             } else {
-               $('#did').append('<option value="'+ i +'">'+ item +'</option>'); 
+               $('#did').append('<option value="'+ item.id +'">'+ item.did +'</option>'); 
             }
             
         });
@@ -233,8 +228,8 @@ $(document).ready(function(){
               $('#did').find('option').not(':first').remove();
                 $.each(res, function (i, item) {
                     $('#did').append($('<option>', { 
-                        value: i,
-                        text : item 
+                        value: item.id,
+                        text : item.did 
                     }));
                 });
             },

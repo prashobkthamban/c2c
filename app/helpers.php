@@ -56,12 +56,21 @@ function getAccountgroupdetails($groupid = null) {
 }
 
 function getDidList($groupid = null) {
+    $data = [];
     if($groupid != null) {
-        $did_list = DB::table('dids')->where('assignedto', $groupid)->pluck('did', 'id'); 
+        $did_list = App\Models\Dids::with(['extradid'])->where('assignedto', $groupid)->get();
+        foreach($did_list as $key => $listItem) {
+            $data[$key]['id'] = $listItem->id;
+            $data[$key]['did'] = $listItem->did;
+            foreach($listItem->extradid as $key => $extraItem) {
+                $data[$key+1]['id'] = $extraItem->id;
+                $data[$key+1]['did'] = $extraItem->did_no;
+            }
+        }
     } else {
-        $did_list = DB::table('dids')->pluck('did', 'id'); 
+        $data = DB::table('dids')->pluck('did', 'id'); 
     }
-    return $did_list;
+    return $data;
 }
 
 function getDepartmentList($groupid) {

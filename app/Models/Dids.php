@@ -23,4 +23,9 @@ class Dids extends Model
     	}
     	
     }
+
+    public function extradid()
+    {
+        return $this->hasMany('\App\Models\Extra_dids', 'did_id');
+    }
 }
