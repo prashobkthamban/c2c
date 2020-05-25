@@ -55,7 +55,7 @@ class ProposalController extends Controller
         else
         {
             $list_proposals = DB::table('proposal')
-            ->where('user_id','=', Auth::user()->id)
+            ->where('proposal.user_id','=', Auth::user()->id)
             ->leftJoin('converted', 'converted.id', '=', 'proposal.cutomer_id')
             ->select('proposal.*','converted.id as c_id','converted.first_name','converted.last_name','converted.address')
             ->orderBy('id', 'desc')

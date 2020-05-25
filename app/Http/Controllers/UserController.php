@@ -478,7 +478,10 @@ public function updatesettings($id, Request $request) {
     }
 
     public function operators() {
-        $operators = OperatorAccount::with(['accounts'])->where('groupid', Auth::user()->groupid)->orderBy('adddate','DESC')->paginate(10);
+        $operators = OperatorAccount::with(['accounts'])
+        ->where('groupid', Auth::user()->groupid)
+        ->orderBy('adddate','DESC')->paginate();
+        //dd($operators);
         return view('user.operator_list', compact('operators'));
     }
     
@@ -548,7 +551,7 @@ public function updatesettings($id, Request $request) {
                     $operator_data = new OperatorAccount($operator_data);
                     $operator_data->save();
                     if(!empty($operator_data->id)){
-                        $account_data = array_push($account_data, ['operator_id'=> $operator_data->id]);
+                        $account_data = array_merge($account_data, ['operator_id'=> $operator_data->id]);
                         DB::table('account')->insert(
                             $account_data
                         );

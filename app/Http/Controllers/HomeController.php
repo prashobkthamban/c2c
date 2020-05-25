@@ -139,65 +139,6 @@ class HomeController extends Controller
             ->where('status', 'MISSED')
             ->whereDate('datetime', '=', date("Y-m-d"))
             ->count(); 
-    
-        // $piechart = DB::table('cdr')
-        //     ->select('cdr.status', DB::raw('count(*) as totalresult'))
-        //     ->leftJoin('accountgroup', 'cdr.groupid', '=', 'accountgroup.id')
-        //     ->leftJoin('resellergroup', 'cdr.resellerid', '=', 'resellergroup.id')
-        //     ->leftJoin('operatoraccount', 'cdr.operatorid', '=', 'operatoraccount.id')
-        //     ->whereIn('cdr.status', ['answrd','DIALING'])
-        //     ->where('cdr.groupid', Auth::user()->groupid)
-        //     ->whereDate('cdr.datetime', '>=', $qsdate)
-        //     ->whereDate('cdr.datetime', '<=', $qedate)
-        //     ->groupBy('cdr.status')
-        //     ->get();
-        // $p_data = array();
-        // if( ! empty($piechart) ){
-        //     foreach ($piechart as $key => $value) {
-        //         $ind = array();
-        //         $ind["name"] = $value->status;
-        //         $ind["value"] = $value->totalresult;
-        //         $p_data[] = $ind;
-        //     }
-        // }
-
-        // $barchart = DB::table('cdr')
-        //     ->select('cdr.status', DB::raw('date(cdr.datetime) as mydate'), DB::raw('day(cdr.datetime) as Day'), DB::raw('hour(cdr.datetime) as Hour'), DB::raw('count(cdr.cdrid) as Count'))
-        //     ->leftJoin('accountgroup', 'cdr.groupid', '=', 'accountgroup.id')
-        //     ->leftJoin('resellergroup', 'cdr.resellerid', '=', 'resellergroup.id')
-        //     ->leftJoin('operatoraccount', 'cdr.operatorid', '=', 'operatoraccount.id')
-        //     ->whereIn('cdr.status', ['answrd','DIALING','MISSED'])
-        //     ->where('cdr.groupid', Auth::user()->groupid)
-        //     ->whereDate('cdr.datetime', '>=', $qsdate)
-        //     ->whereDate('cdr.datetime', '<=', $qedate)
-        //     ->groupBy('cdr.status')
-        //     ->get();
-        
-        // $b_data = array();
-        // if( ! empty($barchart) ){
-        //     foreach ($barchart as $pkey => $bvalue) {
-        //         $ind = array();
-        //         $b_data[$bvalue->status][] = $bvalue;
-        //     }
-
-        //     $series = array();
-        //     foreach ($b_data as $pd => $bbvalue) {
-        //         $ind = array();
-        //         $ind["label"]   = $pd;
-        //         $ia = array();
-        //         //usort($bbvalue, 'sortByOrder');
-               
-        //         foreach ($bbvalue as $bbb) {
-        //             $ia[] = array($bbb->Hour,$bbb->Count);
-        //         }
-        //        //ksort($ia);
-        //         $ind["data"]    = $ia;
-        //         $cl = sprintf('#%06X', mt_rand(0, 0xFFFFFF));
-        //         $ind["color"]   = $cl;
-        //         $ind["bars"]    = array('fillColor' => $cl);
-        //         $series[] = $ind;
-        //     }
-        // } 
 
         $level_1 = DB::table('lead_stages')->where('levels', '=', '1')->get()->count();
         $level_2 = DB::table('lead_stages')->where('levels', '=', '2')->get()->count();
@@ -208,11 +149,11 @@ class HomeController extends Controller
         $level_7 = DB::table('lead_stages')->where('levels', '=', '7')->get()->count();
 
         $todo_lists = DB::table('todotask')
-                    ->select('*')
-                    ->where('status','!=','Done')
-                    ->where('user_id','=',Auth::user()->id)
-                    ->orderBy('id', 'desc')
-                    ->paginate(10);
+            ->select('*')
+            ->where('status','!=','Done')
+            ->where('user_id','=',Auth::user()->id)
+            ->orderBy('id', 'desc')
+            ->paginate(10);
                     
             $users_list = DB::table('operatoraccount')
                         ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
@@ -229,8 +170,8 @@ class HomeController extends Controller
             }
 
         $remainders = DB::table('lead_reminders')
-                    ->where('user_id','=',Auth::user()->id)
-                    ->get();
+            ->where('user_id','=',Auth::user()->id)
+            ->get();
 
         if (Auth::user()->usertype == 'groupadmin') {
 
@@ -239,9 +180,6 @@ class HomeController extends Controller
             $users_list = DB::table('operatoraccount')
                         ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
                         ->get();
-
-            //echo "<pre>";
-            //print_r($users_list);
 
             $lead_count = $operator_lead_stage = $predict_cost  = $proposal = $invoice = array();
             foreach ($users_list as $key => $value) {
@@ -299,11 +237,10 @@ class HomeController extends Controller
                 }
 
             }
-            //print_r($invoice);exit;
 
             $remainders = DB::table('lead_reminders')
-                        ->where('user_id','=',Auth::user()->id)
-                        ->get();
+                ->where('user_id','=',Auth::user()->id)
+                ->get();
 
         }
         else if (Auth::user()->usertype == 'reseller') {
@@ -322,17 +259,15 @@ class HomeController extends Controller
             $users_list = '';
 
             $remainders = DB::table('lead_reminders')
-                        ->where('user_id','=',Auth::user()->id)
-                        ->get();
+                ->where('user_id','=',Auth::user()->id)
+                ->get();
 
             $lead_count = '';
         }
 
-        //$group_admin = '';
         $nousers = '';
         $inusers = '';
         $announcements = DB::table('dashbord_annuounce')->orderBy('id', 'desc')->get();
-        //dd($operator_lead_stage);
         return view('home.dashboard', compact('incoming_calls', 'operator_leads', 'opcallList', 'insight_ivr', 'announcements', 'activeoperator', 'g_callstoday', 'o_callstoday', 'callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'sdate', 'edate', 'nousers', 'inusers','level_1','level_2','level_3','level_4','level_5','level_6','level_7','todo_lists','users_list','remainders','lead_count','operator_lead_stage','predict_cost','proposal','invoice','group_admin'));
     }
 
@@ -622,6 +557,9 @@ class HomeController extends Controller
         $res = DB::table($table)->where($field,$id)->delete();
         if($table == 'ivr_menu') {
             DB::table('ast_ivrmenu_language')->where('ivr_menu_id',$id)->delete();
+        } elseif($table == 'operatoraccount' && $id != null) {
+            DB::table('operator_dept_assgin')->where('operatorid',$id)->delete();
+            DB::table('account')->where('operator_id',$id)->delete();
         }
         return $res;
     }

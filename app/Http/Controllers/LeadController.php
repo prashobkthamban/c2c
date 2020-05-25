@@ -110,7 +110,19 @@ class LeadController extends Controller
                         ->get();
         }
 
-        return view('cdr.all_leads',compact('list_leads','products','level_1','level_2','level_3','level_4','level_5','level_6_7','users_lists','result','lead_count'));
+        
+
+        if (Auth::user()->usertype == 'operator') {
+            $lead_allowed = DB::table('operatoraccount')->where('opername',Auth::user()->username)->select('lead_access')->first();
+            $total_access_leads = $lead_allowed->lead_access;
+        }   
+        else
+        {
+            $total_access_leads = Auth::user()->load('accountdetails')->accountdetails->leads_access;
+        }
+        /*print_r($total_access_leads);exit();*/
+
+        return view('cdr.all_leads',compact('list_leads','products','level_1','level_2','level_3','level_4','level_5','level_6_7','users_lists','result','lead_count','total_access_leads'));
     }
 
     public function addLead(Request $request)

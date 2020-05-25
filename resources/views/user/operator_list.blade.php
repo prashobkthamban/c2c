@@ -25,8 +25,6 @@
                                     <th>LoginId</th>
                                     <th>Password</th>
                                     <th>Exten</th>
-                                    <th>StartTime</th>
-                                    <th>EndTime</th>
                                     <th>Stickey Agent</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -35,21 +33,23 @@
                             <tbody>
                                 
                                 @foreach($operators as $operator)
-                                <tr>
+                                <tr id="row_{{ $operator->id }}">
                                     <td>{{$operator->opername}}</td>
                                     <td>{{$operator->phonenumber}}</td>
-                                    <td>{{$operator->accounts->username}}</td>
-                                    <td>{{$operator->accounts->user_pwd}}</td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>{{($operator->accounts != null) ? $operator->accounts->username : ''}}</td>
+                                    <td>{{($operator->accounts != null) ? $operator->accounts->user_pwd : ''}}</td>
+                                    <td>{{$operator->lead_access}}</td>
                                     <td><a href="#" data-toggle="modal" class="stickey_list" id="{{$operator->id}}" data-opername="{{$operator->opername}}" data-target="#stickey_modal"><i class="i-Administrator"></i></a></td>
                                     <td>{{$operator->oper_status}}</td>   
                                     <td><a href="#" data-toggle="modal" data-target="#operator_account" class="text-success mr-2 edit_account" id="{{$operator->id}}">
                                             <i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                        </a><a href="{{ route('deleteOperatorAccount', $operator->id) }}" onclick="return confirm('You want to delete this operator?')" class="text-danger mr-2">
+                                        </a>
+                                        <!-- <a href="{{ route('deleteOperatorAccount', $operator->id) }}" onclick="return confirm('You want to delete this operator?')" class="text-danger mr-2">
                                             <i class="nav-icon i-Close-Window font-weight-bold"></i>
-                                        </a></td>
+                                        </a> -->
+                                        <a href="javascript:void(0)" onClick="deleteItem({{$operator->id}}, 'operatoraccount')" class="text-danger mr-2">
+                                            <i class="nav-icon i-Close-Window font-weight-bold"></i></a>
+                                    </td>
                                 </tr>
                                 @endforeach
                                 
@@ -61,8 +61,6 @@
                                     <th>LoginId</th>
                                     <th>Password</th>
                                     <th>Exten</th>
-                                    <th>StartTime</th>
-                                    <th>EndTime</th>
                                     <th>Stickey Agent</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -163,7 +161,7 @@
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Live Transfer no *</label>
-                                    <input type="text" class="form-control" placeholder="Live Transfer no" name="livetrasferid" id="livetrasferid">
+                                    <input type="number" class="form-control" placeholder="Live Transfer no" name="livetrasferid" id="livetrasferid">
                             </div>
                         </div>
                         <div class="row">

@@ -56,7 +56,7 @@ class InvoiceController extends Controller
         else
         {
              $list_invoices = DB::table('invoice')
-                    ->where('user_id','=',Auth::user()->id)
+                    ->where('invoice.user_id','=',Auth::user()->id)
                     ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
                     ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name')
                     ->orderBy('id', 'desc')
