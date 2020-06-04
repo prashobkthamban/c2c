@@ -52,10 +52,18 @@
 
                     @if(Auth::user()->usertype == 'admin')
                         <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('DidList')}}">
+                            <a class="nav-item-hold" href="{{route('LiveCalls')}}">
+                                <i class="nav-icon i-Telephone"></i>
+                                <span class="nav-text">Live Calls</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="calldetails">
+                            <a class="nav-item-hold" href="#">
                                 <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">Dids</span>
-                            </a> 
+                                <span class="nav-text">Calls & Reports</span>
+                            </a>
+                            <div class="triangle"></div>
                         </li>
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('UserList')}}">
@@ -64,6 +72,20 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('Billing')}}">
+                                <i class="nav-icon i-Credit-Card"></i>
+                                <span class="nav-text">Recharge & Billing</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('DidList')}}">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">Dids</span>
+                            </a> 
+                        </li>
+                        
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('loginAccounts')}}">
                                 <i class="nav-icon i-Administrator"></i>
@@ -82,13 +104,6 @@
                             <a class="nav-item-hold" href="#">
                                 <i class="nav-icon i-Headphone"></i>
                                 <span class="nav-text">Voice Out</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('Billing')}}">
-                                <i class="nav-icon i-Credit-Card"></i>
-                                <span class="nav-text">Recharge & Billing</span>
                             </a>
                             <div class="triangle"></div>
                         </li>
@@ -134,13 +149,7 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-                        <li class="nav-item" data-item="calldetails">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">Calls & Reports</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
+                        <!-- Calls & Reports -->
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('AccessLogs')}}">
                                 <i class="nav-icon i-Security-Check"></i>
@@ -148,13 +157,7 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('LiveCalls')}}">
-                                <i class="nav-icon i-Telephone"></i>
-                                <span class="nav-text">Live Calls</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
+                        <!-- Live Calls -->
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('smsApi')}}">
                                 <i class="nav-icon i-Arrow-X-Left"></i>

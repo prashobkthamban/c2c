@@ -259,7 +259,7 @@
                                             <tbody>
                                             @if(sizeof($opcallList) > 0)
                                                 @foreach($opcallList as $key => $row)
-                                                <?php $total = (isset($row['ANSWERED']) ? $row['ANSWERED'] : 0)+ $row['MISSED'] + $row['lead_count'] + $row['completed']; ?>
+                                                <?php $total = (isset($row['ANSWERED']) ? $row['ANSWERED'] : 0)+ (isset($row['MISSED']) ? $row['MISSED'] : 0) + $row['lead_count'] + $row['completed']; ?>
                                                 <tr>
                                                     <td>{{$key}}</td>
                                                     <td>{{$total}}</td>

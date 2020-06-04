@@ -272,6 +272,7 @@
             url: '{{ URL::route("AddOperatorAccount") }}',
             data: $('.add_account_form').serialize(),
             success: function(res){ // What to do if we succeed
+                console.log(res);
                 if(res.error) {
                     $.each(res.error, function(index, value)
                     { 
@@ -293,7 +294,7 @@
                     else{
                      $('#crm_error').css('display','none');   
                     }
-                    setTimeout(function(){ location.reload() }, 300);               
+                    //setTimeout(function(){ location.reload() }, 300);               
                 }
                
             },
