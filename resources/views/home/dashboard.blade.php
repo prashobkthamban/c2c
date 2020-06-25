@@ -570,7 +570,7 @@
                 <div class="col-md-12">
                     <div class="card o-hidden mb-4">
                         <div class="card-header d-flex align-items-center border-0">
-                            <h3 class="w-50 float-left card-title m-0">Remainder Details</h3>
+                            <h3 class="w-50 float-left card-title m-0">Reminder Details</h3>
                         </div>
 
                         <div class="">
@@ -1041,7 +1041,34 @@
             <?php } ?>
         </div>
         
+        <div class="modal fade" id="TaskRemainder" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">TO DO Remainder</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body RemainderTask">
+                <label>Title:</label>
+                <p><b id="re_title"></b></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert" id="TaskRemainder">
+          <strong id="re_title"></strong>
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div> -->
 
+
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#TaskRemainder" id="show_re" style="display: none;"></button>
 
 @endsection
 
@@ -1051,6 +1078,37 @@
      <script src="{{asset('assets/js/es5/card.metrics.script.min.js')}}"></script>
      <script src="{{asset('assets/js/moment.js')}}"></script>
      <script src="{{asset('assets/js/daterangepicker.js')}}"></script>
+
+<script type="text/javascript">
+    function send(){
+          //alert("hhh");
+          $.ajax({
+              type: "GET",
+              url: "{{ route('NotificationToDo') }}",
+              success:function(data)
+              {
+                  //console.log the response
+                  var obj = jQuery.parseJSON(data);
+                  //console.log(obj);
+                  $.each(obj,function( index, value ) {
+                    //alert(value.re_value);
+                    if (value.re_value == 1) 
+                      {
+                        $('.RemainderTask #re_title').html(value.title);
+                        //$('#TaskRemainder').show();
+                        $("#show_re").trigger('click');
+                      }
+                  });
+                  
+                  //Send another request in 10 seconds.
+                  
+              }
+          });
+      }
+      setInterval(function(){
+                      send();
+                  }, 60000);
+</script>
      <script type="text/javascript">
         $(document).ready(function () {
             var data = <?php echo !empty($p_data) ? json_encode($p_data) : json_encode(array()); ?>;

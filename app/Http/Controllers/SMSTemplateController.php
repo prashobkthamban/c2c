@@ -29,15 +29,19 @@ class SMSTemplateController extends Controller
     {
         $result = SMSTemplate::getReport();
 
-        if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') {
+        if (Auth::user()->usertype == 'groupadmin') {
 
             $list_smstemplates = DB::table('sms_template')
-                    ->where('user_type','=','admin')
-                    ->orWhere('user_type','=','groupadmin')
-                    ->orWhere('user_type','=','operator')
+                    ->where('group_id',Auth::user()->groupid)
                     ->orderBy('id', 'desc')
                     ->paginate(10);
-        }else{
+        }
+        elseif (Auth::user()->usertype == 'admin') {
+            $list_smstemplates = DB::table('sms_template')
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
+        }
+        else{
 
             $list_smstemplates = DB::table('sms_template')
                     ->where('user_type','=','operator')
@@ -62,6 +66,7 @@ class SMSTemplateController extends Controller
         $add_sms = new SMSTemplate([
                 'user_id' => Auth::user()->id,
                 'user_type' => Auth::user()->usertype ? Auth::user()->usertype : 'user',
+                'group_id' => Auth::user()->groupid,
                 'name' => $request->get('name'),
                 'body' => $request->get('sms_body'),
                 'inserted_date' => $now,

@@ -11,7 +11,7 @@ class Converted extends Model
     protected $table = 'converted';
     public $timestamps = false;
     protected $primaryKey = 'id';
-    protected $fillable = ['id', 'cdrreport_lead_id', 'user_id', 'first_name',	'last_name', 'gst_no', 'mobile_no', 'email', 'address','company_name'];
+    protected $fillable = ['id', 'cdrreport_lead_id', 'user_id', 'first_name',	'last_name', 'gst_no', 'mobile_no', 'email', 'address','company_name','group_id'];
 
     public static function getReport( ){
 

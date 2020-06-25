@@ -29,9 +29,20 @@ class ConvertedController extends Controller
 
         $result = Converted::getReport();
 
-        if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') 
+        /*echo "<pre>";
+        print_r(Auth::user());exit();*/
+
+        if (Auth::user()->usertype == 'groupadmin') 
         {
             $list_converteds = DB::table('converted')
+            	->where('group_id','=',Auth::user()->groupid)
+                ->select('*')
+                ->orderBy('id', 'desc')
+                ->paginate(10);
+        }
+        elseif (Auth::user()->usertype == 'admin') 
+        {
+        	$list_converteds = DB::table('converted')
                 ->select('*')
                 ->orderBy('id', 'desc')
                 ->paginate(10);
@@ -71,6 +82,7 @@ class ConvertedController extends Controller
         } else {
             $add_converted = new Converted([
                 'user_id' => Auth::user()->id,
+                'group_id' => Auth::user()->groupid,
                 'first_name' => $request->get('first_name'),
                 'last_name' => $request->get('last_name'),
                 'gst_no' => $request->get('gst_no'),

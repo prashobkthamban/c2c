@@ -11,7 +11,7 @@ class SMSTemplate extends Model
     protected $table = 'sms_template';
     public $timestamps = false;
     protected $primaryKey = 'id';
-    protected $fillable = ['id','user_id','user_type','name','body','inserted_date'];
+    protected $fillable = ['id','user_id','user_type','name','body','inserted_date','group_id'];
 
     public static function getReport( ){
 

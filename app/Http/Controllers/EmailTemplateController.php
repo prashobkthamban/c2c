@@ -29,15 +29,19 @@ class EmailTemplateController extends Controller
     {
         $result = MailTemplate::getReport();
 
-        if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') {
+        if (Auth::user()->usertype == 'groupadmin') {
             
             $list_emailtemplates = DB::table('email_template')
-                    ->where('user_type','=','admin')
-                    ->orWhere('user_type','=','groupadmin')
-                    ->orWhere('user_type','=','operator')
+                    ->where('group_id',Auth::user()->groupid)
                     ->orderBy('id', 'desc')
                     ->paginate(10);
-        }else{
+        }
+        elseif (Auth::user()->usertype == 'admin') {
+            $list_emailtemplates = DB::table('email_template')                    
+                    ->orderBy('id', 'desc')
+                    ->paginate(10);
+        }
+        else{
             $list_emailtemplates = DB::table('email_template')
                     ->where('user_type','=','operator')
                     ->orderBy('id', 'desc')
@@ -73,6 +77,7 @@ class EmailTemplateController extends Controller
         $add_mail = new MailTemplate([
                 'user_id' => Auth::user()->id,
                 'user_type' => Auth::user()->usertype ? Auth::user()->usertype : 'user',
+                'group_id' => Auth::user()->groupid,
                 'name' => $request->get('name'),
                 'subject' => $request->get('subject'),
                 'body' => $request->get('mail_body'),

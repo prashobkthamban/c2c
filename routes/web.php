@@ -470,6 +470,9 @@ Route::post('transfer_leads/transferleads','TranferLeadsController@transferleads
 //Lead Remainder Index
 Route::get('remainder/index','LeadController@remainder_show')->name('RemainderIndex');
 
+//Notification ToDo
+Route::get('notification/todo','HomeController@NotificationToDo')->name('NotificationToDo');
+
 /*
 |--------------------------------------------------------------------------
 | Frontend Routes

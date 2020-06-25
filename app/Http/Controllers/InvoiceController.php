@@ -73,7 +73,7 @@ class InvoiceController extends Controller
     public function add()
     {
         $products = Product::select('*')->get();
-        $customers = Converted::select('*')->get();
+        $customers = Converted::where('group_id','=',Auth::user()->groupid)->select('*')->get();
         $invoice_number = Invoice::max('id');
         return view('invoice.add',compact('products','customers','invoice_number'));
     }

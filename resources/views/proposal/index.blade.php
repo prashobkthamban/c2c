@@ -74,6 +74,7 @@
                                             if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') { ?>
                                                 <th>Agent Name</th>
                                             <?php }?>
+                                            <th>Date</th>
                                             <th>Actions</th>
                                         </tr>
                                     </tfoot>

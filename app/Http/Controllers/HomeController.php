@@ -725,5 +725,29 @@ class HomeController extends Controller
         return $data;
     }
 
+    public function NotificationToDo()
+    {
+        $now = date("Y-m-d H:i").":00";
+
+        $datetime = DB::table('todotask')->where('status','!=','Done')->where('user_id',Auth::user()->id)->get();
+        //echo $now;
+        $new_array = array();
+        foreach ($datetime as $key => $value) 
+        {
+            //print_r($value->date);
+            $str_to = strtotime($value->date); 
+            $now_str = strtotime($now);
+            if ($str_to == $now_str) 
+            {
+                $new_array[] = array('title' => $value->title,'re_value' => '1');
+            }
+            else
+            {
+                $new_array[] = array('title' => '','re_value' => '0');
+            }
+        }
+        echo json_encode($new_array);
+        
+    }
 
 }
