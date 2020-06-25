@@ -72,7 +72,6 @@ class UserController extends Controller
         $sms_gateway = $account_group->sms_api_gateway();
         $sms_gateway = $sms_gateway->prepend('Select gateway', '0');
         $did_list = $this->did->get_did();
-        
         $did_list = $did_list->prepend('Select Did', '');
         
         return view('user.add_user', compact('lang', 'coperate', 'default', 'did_list', 'sms_gateway', 'c2capi', 'cdr_api_key'));
@@ -155,10 +154,11 @@ class UserController extends Controller
             $this->did::where('id', $request->get('did'))->update(array('assignedto' => $account_group->id));
             //  ivrlevel_id -> department_id OR DT was the preivios fildname
             $this->op_dept->insert(array('resellerid' => $request->get('resellerid'), 'groupid' => $account_group->id, 'ivrlevel_id' => 1, 'dept_name' => 'DT-DPT', 'opt_calltype' => 'Round_Robin', 'adddate' => NOW(), 'starttime' => '00:00:00', 'endtime' => '23:59:59'));
-
             $this->op_dept->insert(array('resellerid' => $request->get('resellerid'), 'groupid' => $account_group->id, 'ivrlevel_id' => 1, 'dept_name' => 'C2C-DPT', 'opt_calltype' => 'Round_Robin', 'adddate' => NOW(), 'starttime' => '00:00:00', 'endtime' => '23:59:59'));
             $billData = ['resellerid' => $request->get('resellerid'), 'groupid' => $account_group->id];
-            $billing = DB::table('billing')->insert($billData);
+            DB::table('billing')->insert($billData);
+            $shiftData = ['shift_name' => 'Full Day', 'start_time' => '00:00:00', 'end_time'=> '23:59:59', 'groupid' => $account_group->id];
+            DB::table('operator_shifts')->insert($shiftData);
         }
 	//@savitha we need to insert this entry in to billing
 	//$querys = "INSERT INTO billing(resellerid,groupid)VALUES ('" .$request->get('resellerid') . "', '" . $account_group->id . "');";
@@ -385,14 +385,13 @@ public function updatesettings($id, Request $request) {
 
     public function addAccount(Request $request) 
     {
-        //dd($request->all());
         $rules = [
             'username' => 'required',
             'usertype' => 'required',
         ];   
         
         if(empty($request->get('id'))) {
-             $rules['password'] = 'required';
+            $rules['password'] = 'required';
         }
         $validator = Validator::make($request->all(), $rules);
         if($validator->fails()) {
@@ -483,8 +482,7 @@ public function updatesettings($id, Request $request) {
     public function operators() {
         $operators = OperatorAccount::with(['accounts'])
         ->where('groupid', Auth::user()->groupid)
-        ->orderBy('adddate','DESC')->paginate();
-        //dd($operators);
+        ->orderBy('adddate','DESC')->paginate(10);
         return view('user.operator_list', compact('operators'));
     }
     
@@ -514,13 +512,10 @@ public function updatesettings($id, Request $request) {
             'working_days' => 'required',
             'lead_access' => 'required'
         ]);  
-
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
             $crm_users = DB::table('operatoraccount')->where('groupid',Auth::user()->groupid)->where('crm_access','yes')->get();
-            //print_r($crm_users);exit;
-                //dd($request->all());
             if (count($crm_users) >= Auth::user()->load('accountdetails')->accountdetails['crm_users']) 
             {
                 $workingDays = explode(',', $request->working_days);
@@ -647,6 +642,8 @@ public function updatesettings($id, Request $request) {
             'start_time' => 'required',
             'end_time' => 'required',
             'end_time' => 'after:start_time'
+        ], [
+            'end_time.after' => 'End Time greater than Start Time.',
         ]);    
 
         if($validator->fails()) {

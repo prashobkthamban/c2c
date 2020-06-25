@@ -34,7 +34,7 @@ use Maatwebsite\Excel\Concerns\ToModel;*/
 use Excel;
 
 date_default_timezone_set('Asia/Kolkata'); 
-
+    
 class LeadController extends Controller
 {
     public function __construct()
@@ -51,7 +51,7 @@ class LeadController extends Controller
         //print_r(Auth::user()->load('accountdetails')->accountdetails->crm);exit;
         $result = CdrReport_Lead::getReport();
 
-        if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') 
+        if (Auth::user()->usertype == 'groupadmin') 
         {
             $list_leads = DB::table('cdrreport_lead')
             ->where('user_id','=',Auth::user()->id)
@@ -77,6 +77,31 @@ class LeadController extends Controller
 
             $users_lists = DB::table('operatoraccount')
                         ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
+                        ->get();
+        }
+        elseif (Auth::user()->usertype == 'admin') 
+        {
+            $list_leads = DB::table('cdrreport_lead')
+            ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
+            ->select('operatoraccount.opername','cdrreport_lead.*')
+            ->latest('cdrreport_lead.id')
+            ->paginate(10);
+
+            $lead_count = DB::table('cdrreport_lead')->count();
+
+            //print_r(Auth::user()->id);exit;
+
+            $level_1 = DB::table('lead_stages')->where('levels', '=', '1')->get()->count();
+            $level_2 = DB::table('lead_stages')->where('levels', '=', '2')->get()->count();
+            $level_3 = DB::table('lead_stages')->where('levels', '=', '3')->get()->count();
+            $level_4 = DB::table('lead_stages')->where('levels', '=', '4')->get()->count();
+            $level_5 = DB::table('lead_stages')->where('levels', '=', '5')->get()->count();
+            $level_6_7 = DB::table('lead_stages')->where('levels', '>=', '6')->get()->count();
+
+            $products = Product::select('*')->get();
+
+            $users_lists = DB::table('operatoraccount')
+                        ->select('operatoraccount.*')
                         ->get();
         }
         else
@@ -113,14 +138,25 @@ class LeadController extends Controller
         
 
         if (Auth::user()->usertype == 'operator') {
-            $lead_allowed = DB::table('operatoraccount')->where('opername',Auth::user()->username)->select('lead_access')->first();
+            //$lead_allowed = DB::table('operatoraccount')->leftJoin('account','account.groupid','=','operatoraccount.groupid')->where('account.username',Auth::user()->username)->select('operatoraccount.lead_access')->get();
+            $lead_allowed = DB::table('operatoraccount')->where('operatoraccount.groupid',Auth::user()->groupid)->where('operatoraccount.id', Auth::user()->operator_id)->select('operatoraccount.lead_access')->first();
+            //dd($lead_allowed);
             $total_access_leads = $lead_allowed->lead_access;
         }   
         else
         {
-            $total_access_leads = Auth::user()->load('accountdetails')->accountdetails->leads_access;
+            if (Auth::user()->usertype == 'admin') 
+            {
+                $total_access_leads = '';
+            }
+            else
+            {
+                $total_access_leads = Auth::user()->load('accountdetails')->accountdetails->leads_access;
+            }
+            
         }
-        /*print_r($total_access_leads);exit();*/
+       /* echo "<pre>";
+        print_r(Auth::user()->load('accountdetails'));exit();*/
 
         return view('cdr.all_leads',compact('list_leads','products','level_1','level_2','level_3','level_4','level_5','level_6_7','users_lists','result','lead_count','total_access_leads'));
     }
@@ -128,62 +164,69 @@ class LeadController extends Controller
     public function addLead(Request $request)
     {
 
-     $path = $request->file('csv_file')->getRealPath();
-
-     $data = Excel::load($path)->get();
-     //echo '<pre>';
-    //print_r($data);
-
-    //print_r($data->count());exit;
-     if ($data->count() > 500) {
-          toastr()->success('Please Enter data within 500 limit.');
-        return redirect()->route('ListLeads');
-     }
-     else{
-
-             if($data->count() > 0)
-             {
-              foreach($data->toArray() as $key => $value)
-              {
-                if (Auth::user()->id == $value['owner_name']) {
-                    $operator_id = 0;
-                    $owner_name = Auth::user()->usertype;
+        $file = $_FILES['csv_file']['tmp_name'];
+            //$handle = fopen($file, "r");
+            $row = 1;
+            if (($handle = fopen($file, "r")) !== FALSE) {
+                $newdata = '';
+              while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                if($row == 1)
+                {
+                    $row++;
                 }
-                else{
-                    $operator_id = $value['owner_name'];
-                    $owner_name = 'operator';
+                else
+                {
+                    if ($row == 500) 
+                    {
+                        toastr()->success('Please Enter data within 500 limit.');
+                        return redirect()->route('ListLeads');
+                    }
+                    else
+                    {
+                        $num = count($data);
+                        /*echo '<pre>';
+                        print_r($data);exit;*/
+
+
+                        if (Auth::user()->id == $data[11]) {
+                            $operator_id = 0;
+                            $owner_name = Auth::user()->usertype;
+                        }
+                        else{
+                            $operator_id = $data[11];
+                            $owner_name = 'operator';
+                        }
+                        $insert_data[] = array(
+                             'first_name'  => $data[0],
+                             'last_name'   => $data[1],
+                             'company_name'   => $data[2],
+                             'email'    => $data[3],
+                             'phoneno' => $data[4],
+                             'alt_phoneno' => $data[5],
+                             'total_amount'  => $data[10],
+                             'owner_name' => $owner_name,
+                             'operatorid' => $operator_id,
+                             'lead_stage'   => $data[12]
+                        );
+                        DB::table('cdrreport_lead')->insert($insert_data);
+                        $id = DB::getPdo()->lastInsertId();
+                        $pro_data[] = array(
+                            'cdrreport_lead_id' => $id,
+                            'product_id' => $data[6],
+                            'quantity' => $data[7],
+                            'pro_amount' => $data[8],
+                            'subtotal_amount' => $data[9]
+                        );
+                        DB::table('lead_products')->insert($pro_data);
+                    }
+                    
                 }
-        
-                $insert_data[] = array(
-                 'first_name'  => $value['first_name'],
-                 'last_name'   => $value['last_name'],
-                 'company_name'   => $value['company_name'],
-                 'email'    => $value['email'],
-                 'phoneno' => $value['phoneno'],
-                 'alt_phoneno' => $value['alt_phoneno'],
-                 'total_amount'  => $value['total_amount'],
-                 'owner_name' => $owner_name,
-                 'operatorid' => $operator_id,
-                 'lead_stage'   => $value['lead_stage']
-                );
-                DB::table('cdrreport_lead')->insert($insert_data);
-                $id = DB::getPdo()->lastInsertId();
-                $pro_data[] = array(
-                        'cdrreport_lead_id' => $id,
-                        'product_id' => $value['product_name'],
-                        'quantity' => $value['product_qty'],
-                        'pro_amount' => $value['product_amount'],
-                        'subtotal_amount' => $value['subtotal_amount']
-                    );
-               
+                
               }
-              
-              DB::table('lead_products')->insert($pro_data);
+              fclose($handle);
             }
-            //return back()->with('success', 'Excel Data Imported successfully.');
             toastr()->success('Excel Data Imported successfully.');
             return redirect()->route('ListLeads');
-     }
 
     }
 
@@ -814,19 +857,57 @@ class LeadController extends Controller
         $date_from = $request->get('date_from');
         $date_to = $request->get('date_to');
         $lead = $request->get('lead');
+        $company_name = $request->get('company_name');
+        $agent_name = $request->get('agent_name');
 
-        if ($date_from != '' && $date_to != '' && $lead != '') {
-
-            $filter_data = DB::table('cdrreport_lead')
+        /*$filter_data = DB::table('cdrreport_lead')
+                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
                 ->where('inserted_date','>=', $date_from)
                 ->where('inserted_date','<=', $date_to)
                 ->where('lead_stage',$lead)
+                ->orWhere('company_name','Like','%'.$company_name.'%')
+                ->select('operatoraccount.opername','cdrreport_lead.*')
+                ->get();*/
+
+        if (Auth::user()->usertype == 'operator') 
+        {
+            $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
+                ->where('user_id','=',Auth::user()->id)
+                ->where('inserted_date','<=', $date_to)
+                ->orWhere(function($query) use ($lead,$date_from,$company_name,$agent_name){
+                    $query->where('inserted_date','>=', $date_from)->where('lead_stage',$lead)->where('company_name','like','%'.$company_name.'%')->where('opername',$agent_name);
+                })
                 ->select('operatoraccount.opername','cdrreport_lead.*')
                 ->get();
         }
+        else
+        {
+            $filter_data = DB::table('cdrreport_lead')
+                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
+                ->where('inserted_date','<=', $date_to)
+                ->orWhere(function($query) use ($lead,$date_from,$company_name,$agent_name){
+                    $query->where('inserted_date','>=', $date_from)->where('lead_stage',$lead)->where('company_name','like','%'.$company_name.'%')->where('opername',$agent_name);
+                })
+                ->select('operatoraccount.opername','cdrreport_lead.*')
+                ->get();
+        }
+
         echo json_encode($filter_data);
     }
+
+    public function remainder_show()
+    {
+        $show_all_remainder = DB::table('lead_reminders')->leftJoin('cdrreport_lead','cdrreport_lead.id','=','lead_reminders.cdrreport_lead_id')->where('lead_reminders.user_id',Auth::user()->id)->select('lead_reminders.*','cdrreport_lead.first_name','cdrreport_lead.last_name','cdrreport_lead.company_name','cdrreport_lead.email','cdrreport_lead.phoneno')->paginate(10);
+
+        return view('cdr.lead_remainders',compact('show_all_remainder'));
+    }
+
+
+
+
+
+
 }
 
 

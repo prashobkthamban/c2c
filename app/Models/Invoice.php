@@ -11,7 +11,7 @@ class Invoice extends Model
     protected $table = 'invoice';
     public $timestamps = false;
     protected $primaryKey = 'id';
-    protected $fillable = ['id', 'user_id', 'operator_id', 'billing_address', 'customer_id', 'date','discount','total_amount','grand_total','invoice_number','total_tax_amount','inserted_date'];
+    protected $fillable = ['id', 'user_id', 'operator_id', 'billing_address', 'customer_id', 'date','discount','total_amount','grand_total','invoice_number','total_tax_amount','inserted_date','payment_status'];
 
     public static function getReport( ){
 

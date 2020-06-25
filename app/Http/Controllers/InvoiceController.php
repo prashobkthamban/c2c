@@ -39,7 +39,8 @@ class InvoiceController extends Controller
         {
             $list_invoices = DB::table('invoice')
                     ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
-                    ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name')
+                    ->leftJoin('account','account.id','=','invoice.user_id')
+                    ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','account.username','converted.company_name')
                     ->orderBy('id', 'desc')
                     ->paginate(10);
         }
@@ -47,9 +48,10 @@ class InvoiceController extends Controller
            
            $list_invoices = DB::table('invoice')
                     ->where('invoice.user_id','=',Auth::user()->id)
-                    ->orWhere('operator_id','=',Auth::user()->groupid)
+                    ->orWhere('invoice.operator_id','=',Auth::user()->groupid)
                     ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
-                    ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name')
+                    ->leftJoin('account','account.id','=','invoice.user_id')
+                    ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','account.username','converted.company_name')
                     ->orderBy('id', 'desc')
                     ->paginate(10);
         }
@@ -58,10 +60,12 @@ class InvoiceController extends Controller
              $list_invoices = DB::table('invoice')
                     ->where('invoice.user_id','=',Auth::user()->id)
                     ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
-                    ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name')
+                    ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','converted.company_name')
                     ->orderBy('id', 'desc')
                     ->paginate(10);
         }
+       /* echo "<pre>";
+        print_r($list_invoices);exit;*/
 
         return view('invoice.index',compact('list_invoices','result'));
     }
@@ -254,11 +258,19 @@ class InvoiceController extends Controller
                 'transaction_id'=> $request->get('transaction_id') ? $request->get('transaction_id') : '',
                 'payment_date'=> $request->get('payment_date'),
                 'payment_mode' => $request->get('payment_mode'),
+                'status' => $request->get('payment_status'),
                 'note' => $request->get('note') ? $request->get('note') : '',
             ]);
 
             //dd($add_payment);exit;
             $add_payment->save();
+
+            $update_status_invoice = Invoice::find($request->invoice_id);
+
+            $update_status_invoice->payment_status = $request->get('payment_status');
+
+            $update_status_invoice->save();
+
             toastr()->success('Payment done successfully.');
             return redirect()->route('InvoiceIndex');
     }
@@ -267,15 +279,22 @@ class InvoiceController extends Controller
     {
         $date_from = $request->get('date_from');
         $date_to = $request->get('date_to');
+        $company_name = $request->get('company_name');
+        $agent_name = $request->get('agent_name');
+        $status = $request->get('status');
 
         if ($date_from != '' && $date_to != '') {
 
             $filter_data = DB::table('invoice')
+                ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
+                ->leftJoin('account','account.id','=','invoice.user_id')
                 ->where('invoice.inserted_date','>=', $date_from)
                 ->where('invoice.inserted_date','<=', $date_to)
                 ->where('invoice.user_id','=',Auth::user()->id)
-                ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
-                ->select('converted.first_name','converted.last_name','invoice.*')
+                ->where('converted.company_name','like','%'.$company_name.'%')
+                ->where('account.username','like','%'.$agent_name.'%')
+                ->where('invoice.payment_status',$status)
+                ->select('converted.first_name','converted.last_name','invoice.*','converted.company_name','account.username')
                 ->get();
         }
         echo json_encode($filter_data);
@@ -295,7 +314,54 @@ class InvoiceController extends Controller
                     ->select('invoice_details.*','products.id as p_id','products.name')
                     ->get();
 
-        return view('invoice.view',compact('invoice','invoice_details'));
+        $invoice_payments = DB::table('invoice_payments')->where('invoice_id',$id)->get();
+
+        return view('invoice.view',compact('invoice','invoice_details','invoice_payments'));
+    }
+
+    public function MailInvoice($id)
+    {
+        $invoice = DB::table('invoice')
+                    ->where('invoice.id', $id)
+                    ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
+                    ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','converted.company_name','converted.gst_no','converted.email','converted.mobile_no')
+                    ->first();
+
+        $invoice_details = DB::table('invoice_details')
+                    ->where('invoice_id',$id)
+                    ->leftJoin('products','products.id','=','invoice_details.product_id')
+                    ->select('invoice_details.*','products.id as p_id','products.name')
+                    ->get();
+
+        //print_r($invoice);exit;
+
+        $data = array(
+                'billing_address' => $invoice->billing_address,
+                'customer_id' => $invoice->customer_id,
+                'date'=> $invoice->date,
+                'total_amount'=> $invoice->total_amount,
+                'grand_total' => $invoice->grand_total,
+                'discount' => $invoice->discount,
+                'invoice_number' => $invoice->invoice_number,
+                'total_tax_amount' => $invoice->total_tax_amount,
+                'invoice_details' => $invoice_details,
+            );
+
+        /*$credential = array(
+            'from' => 'prachi.itrd@gmail.com',
+            'to' => $invoice->email,
+            'subject' => 'Your Genrated Invoice',
+        );
+
+         Mail::send('invoice.mail_invoice', $data, function ($message) use ($credential){
+
+            $message->from($credential['from']);
+            $message->to($credential['to'])->subject($credential['subject']);
+        });*/     
+            
+            //print_r($id);exit;
+            toastr()->success('Invoice Mail send successfully.');
+            return redirect()->route('InvoiceIndex');
     }
 }
 

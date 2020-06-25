@@ -38,7 +38,8 @@ class ProposalController extends Controller
         {
             $list_proposals = DB::table('proposal')
                     ->leftJoin('converted', 'converted.id', '=', 'proposal.cutomer_id')
-                    ->select('proposal.*','converted.id as c_id','converted.first_name','converted.last_name','converted.address')
+                    ->leftJoin('account','account.id','=','proposal.user_id')
+                    ->select('proposal.*','converted.id as c_id','converted.first_name','converted.last_name','converted.address','account.username','converted.company_name')
                     ->orderBy('id', 'desc')
                     ->paginate(10);
         }
@@ -46,9 +47,10 @@ class ProposalController extends Controller
 
             $list_proposals = DB::table('proposal')
                      ->where('proposal.user_id','=',Auth::user()->id)
-                    ->orWhere('operator_id','=',Auth::user()->groupid)
+                    ->orWhere('proposal.operator_id','=',Auth::user()->groupid)
                     ->leftJoin('converted', 'converted.id', '=', 'proposal.cutomer_id')
-                    ->select('proposal.*','converted.id as c_id','converted.first_name','converted.last_name','converted.address')
+                    ->leftJoin('account','account.id','=','proposal.user_id')
+                    ->select('proposal.*','converted.id as c_id','converted.first_name','converted.last_name','converted.address','account.username','converted.company_name')
                     ->orderBy('id', 'desc')
                     ->paginate(10);
         }
@@ -57,7 +59,7 @@ class ProposalController extends Controller
             $list_proposals = DB::table('proposal')
             ->where('proposal.user_id','=', Auth::user()->id)
             ->leftJoin('converted', 'converted.id', '=', 'proposal.cutomer_id')
-            ->select('proposal.*','converted.id as c_id','converted.first_name','converted.last_name','converted.address')
+            ->select('proposal.*','converted.id as c_id','converted.first_name','converted.last_name','converted.address','converted.company_name')
             ->orderBy('id', 'desc')
             ->paginate(10);
         }

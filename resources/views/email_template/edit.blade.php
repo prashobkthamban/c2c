@@ -26,7 +26,7 @@
                         <div class="card-body">
                             <div class="card-title mb-3">Edit Email Template</div>
 
-                            {!! Form::model($mail, ['method' => 'PATCH', 'route' => ['EmailTemplateUpdate', $mail->id]]) !!}
+                            {!! Form::model($mail, ['method' => 'PATCH','enctype' => 'multipart/form-data','route' => ['EmailTemplateUpdate', $mail->id]]) !!}
                                 <div class="row">
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="subject">Name*</label>
@@ -50,6 +50,18 @@
                                         </div>
                                     </div>
                                     <textarea name="mail_body" id="mail_body" class="form-control" hidden="">{{$mail->body}}</textarea>
+
+                                    <div class="col-md-4 form-group mb-3">
+                                        <label for="attachment">Attachment</label>
+                                        <input type="file" name="attachment" id="attachment" class="form-control">
+                                        <input type="hidden" name="old_attachment" id="old_attachment" value="{{$mail->attachment}}">
+                                    </div>
+
+                                    <div class="col-md-4 form-group mb-3">
+                                        <label>Last Attachment</label><br>
+                                        <a href="{{ url('email_template/'.$mail->attachment) }}" target="_blank">{{$mail->attachment}}</a>    
+                                    </div>
+
                                     <div class="col-md-12">
                                          <button class="btn btn-primary">Submit</button>
                                     </div>

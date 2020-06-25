@@ -67,6 +67,41 @@
                 </div>
                 <!-- Notificaiton End -->
 
+                <!-- CRM DropDown -->
+                <div class="dropdown">
+                    <div class="badge-top-container" role="button" id="remainders" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <?php 
+
+                        $remainders = DB::table('lead_reminders')->where('user_id',Auth::user()->id)->orderBy('date','desc')->limit(3)->get();
+                        $count_remainders = DB::table('lead_reminders')->where('user_id',Auth::user()->id)->count();
+
+                        //dd($notifyList); ?>
+                        <span class="badge badge-primary notification_count"><?php echo $count_remainders; ?></span>
+                        <i class="i-Speach-Bubble-6 text-muted header-icon"></i>
+                    </div>
+                    <!-- Notification dropdown -->
+                    
+                    <div class="dropdown-menu dropdown-menu-right notification-dropdown rtl-ps-none" aria-labelledby="remainders" data-perfect-scrollbar data-suppress-scroll-x="true">
+                        @foreach($remainders as $remainder)
+                        <div class="dropdown-item d-flex" id="{{$remainder->id}}">
+                            <!-- <div class="notification-icon">
+                                <i class="i-Speach-Bubble-6 text-primary mr-1"></i>
+                            </div> -->
+                            <div class="notification-details flex-grow-1">
+                                <p class="m-0 d-flex align-items-center">
+                                    <span>{{$remainder->task}}</span>
+                                    <span class="badge badge-pill badge-primary ml-1 mr-1">new</span>
+                                    <span class="flex-grow-1"></span>
+                                    <!-- <span class="text-small text-muted ml-auto">10 sec ago</span> -->
+                                </p>
+                                <p class="text-small text-muted m-0">{{$remainder->task}}</p>
+                            </div>
+                        </div>
+                        @endforeach
+                        <a href="{{ route('RemainderIndex') }}" class="text-small text-muted m-0">click here for more..</a>
+                    </div>
+                    
+                </div>
                 <!-- User avatar dropdown -->
                 @guest
                 <li class="nav-item">

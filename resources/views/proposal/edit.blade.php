@@ -31,7 +31,7 @@
                                 <div class="row">
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="subject">Subject*</label>
-                                        <input type="text" class="form-control" id="subject" placeholder="subject" name="subject" value="<?php echo $proposal->subject;?>">
+                                        <input type="text" class="form-control" id="subject" placeholder="subject" name="subject" value="<?php echo $proposal->subject;?>" required>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('subject', ':message') : '' !!}</p>
                                     </div>
 
@@ -52,7 +52,7 @@
                                     
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="date">Date*</label>
-                                        <input type="date" class="form-control" id="date" name="date" value="<?php echo $proposal->date;?>">
+                                        <input type="date" class="form-control" id="date" name="date" value="<?php echo $proposal->date;?>" required >
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('date', ':message') : '' !!}</p>
                                     </div>
 
@@ -68,9 +68,9 @@
                                                         @if(!empty($proposal_details))
                                                         @foreach($proposal_details as $pro_det )
                                                         <td style="width: 20%;">
-                                                          <select name="products[]" id="products" class="form-control js-example-basic-single products">
+                                                          <select name="products[]" id="products" class="form-control js-example-basic-single products" required="">
                                                              <option value="{{$pro_det->p_id}}">{{$pro_det->name}}</option>
-                                                              <option>Select Products</option>
+                                                              <option value="">Select Products</option>
                                                               @if(!empty($products))
                                                                 @foreach($products as $prod )
                                                                     <option value="{{$prod->id}}">{{$prod->name}}
@@ -87,7 +87,7 @@
                                                           </td>
                                                           <td>
                                                               <!-- <input type="text" name="tax[]" id="tax" class="tax form-control" placeholder="Tax" value="{{$pro_det->tax}}"> -->
-                                                              <select name="tax[]" id="tax" class="tax form-control js-example-basic-multiple" multiple="">
+                                                              <select name="tax[]" id="tax" class="tax form-control js-example-basic-multiple" multiple="" required="">
                                                                 <!-- <option value="{{$pro_det->tax}}">{{$pro_det->tax}}%</option> -->
                                                                 <?php
                                                                   $tax_ex = '';
@@ -132,7 +132,7 @@
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text">%</span>
                                                                     </div>
-                                                                   <input type="text" name="discount" id="discount" class="form-control discount">
+                                                                   <input type="text" name="discount" id="discount" class="form-control discount" required="">
                                                                 </div>
                                                             </th>
                                                             <th>
@@ -438,7 +438,7 @@
       });
       function GetDynamicTextBox(value) 
       {
-          return '<td><select name="products[]" id="products" class="form-control js-example-basic-single products"><option>Select Products</option>@if(!empty($products)) @foreach($products as $prod )<option value="{{$prod->id}}">{{$prod->name}}</option>@endforeach @endif</select></td><td><input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" value="1" /></td><td><input type="text" name="rate[]" id="rate" placeholder="Rate" class="form-control rate"></td><td><select name="tax[]" id="tax" class="tax form-control js-example-basic-multiple" multiple><option value="0">No Tax</option><option value="5.00">5.00%</option><option value="10.00">10.00%</option><option value="18.00">18.00%</option></select><input type="hidden" name="tax_amount[]" id="tax_amount" class="tax_amount"></td><td><input type="text" name="amount[]" id="amount" class="form-control amount" placeholder="Amount" readonly="" /></td><td><button type="button" class="btn btn-danger remove" data-toggle="tooltip" data-original-title="Remove"><i class="nav-icon i-Close-Window"></i></button></td>';
+          return '<td><select name="products[]" id="products" class="form-control js-example-basic-single products" required><option value="">Select Products</option>@if(!empty($products)) @foreach($products as $prod )<option value="{{$prod->id}}">{{$prod->name}}</option>@endforeach @endif</select></td><td><input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" value="1" /></td><td><input type="text" name="rate[]" id="rate" placeholder="Rate" class="form-control rate"></td><td><select name="tax[]" id="tax" class="tax form-control js-example-basic-multiple" multiple required><option value="0">No Tax</option><option value="5.00">5.00%</option><option value="10.00">10.00%</option><option value="18.00">18.00%</option></select><input type="hidden" name="tax_amount[]" id="tax_amount" class="tax_amount"></td><td><input type="text" name="amount[]" id="amount" class="form-control amount" placeholder="Amount" readonly="" /></td><td><button type="button" class="btn btn-danger remove" data-toggle="tooltip" data-original-title="Remove"><i class="nav-icon i-Close-Window"></i></button></td>';
       }
 
       function total_amount(){

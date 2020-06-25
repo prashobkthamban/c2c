@@ -139,7 +139,7 @@
             </div>
         </div>
     </div>
-
+   
     <div class="modal fade EditLead" id="EditLead" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
         <div class="col-md-12">
             <div class="card mb-4">
@@ -260,7 +260,7 @@
             </div>
         </div>
     </div>
-
+    
     <div class="modal fade Import_Lead" id="Import_Lead" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
         <div class="col-md-12">
             <div class="card mb-4">
@@ -291,7 +291,7 @@
         </div>
 
     </div>
-
+   
             <div class="separator-breadcrumb border-top"></div>
 
             <div class="row">
@@ -361,7 +361,7 @@
                     </div>
                 </div>
             </div>
-
+           
            <div class="row mb-4">
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
@@ -377,6 +377,7 @@
                                             <label for="from_date">Date From:</label>
                                             <input type="date" name="from_date" id="from_date" class="form-control">
                                         </div>
+                                     
                                         <div class="col-md-4">
                                             <label for="to_date">Date To:</label>
                                             <input type="date" name="to_date" id="to_date" class="form-control" value="<?php echo date('Y-m-d');?>">
@@ -394,6 +395,14 @@
                                                 <option value="Converted">Converted</option>
                                             </select>
                                         </div>
+                                        <div class="col-md-4">
+                                            <label for="search_company_name">Company Name:</label>
+                                            <input type="text" name="search_company_name" id="search_company_name" class="form-control" value="">
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="search_agent_name">Agent Name:</label>
+                                            <input type="text" name="search_agent_name" id="search_agent_name" class="form-control" value="">
+                                        </div>
                                         <div class="col-md-6" style="margin-top: 24px;">
                                             <button id="btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
                                              <button id="export_lead" class="btn btn-outline-secondary" name="btn">Export Leads</button>
@@ -402,14 +411,15 @@
                                 </div>
                             </div>
                             <br><br>
-                            <input type="hidden" name="lead_count" id="lead_count" value="<?php echo $lead_count;?>">
-                            <input type="hidden" name="total_leads" id="total_leads" value="<?php echo $total_access_leads;?>">
+                            <input type="hidden" name="usertype" id="usertype" value="<?php echo Auth::user()->usertype; ?>">
+                            <input type="hidden" name="lead_count" id="lead_count" value="<?php echo $lead_count; ?>">
+                            <input type="hidden" name="total_leads" id="total_leads" value="<?php echo $total_access_leads; ?>">
                             <div class="table-responsive">
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>First_Name</th>
+                                            <th>No.</th>
+                                            <th>First Name</th>
                                             <th>Last Name</th>
                                             <th>Company Name</th>
                                             <th>Email</th>
@@ -417,7 +427,7 @@
                                             <th>Lead Stage</th>
                                             <?php
                                             if (Auth::user()->usertype == 'groupadmin') { ?>
-                                                <th>User Name</th>
+                                                <th>Agent Name</th>
                                             <?php }?>
                                             <th>Actions</th>
                                         </tr>
@@ -438,6 +448,7 @@
                                             if (Auth::user()->usertype == 'groupadmin') { ?>
                                                 <td>{{$list_lead->opername}}</td>
                                             <?php }?>
+                                            
                                             <td>
                                                 <a href="javascript:void(0)" class="text-success mr-2 edit_lead" id="edit_lead" data-toggle="modal" data-target="#EditLead" data-id="{{$list_lead->id}}"><i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                                 </a>
@@ -477,9 +488,16 @@
                                                         $id = 7;
                                                         $stage = 'Converted';
                                                     }
+                                                    else {
+                                                        $id = 1;
+                                                        $stage = 'New';
+                                                    }
                                                     ?>
+                                                
                                                     <a href="{{ route('lead_stages',[$list_lead->id,$id]) }}" class="dropdown-item">Change stage to {{$stage}}</a>
                                                     @endif
+                                        
+
                                                     <a class="dropdown-item add_note assigned_to" href="javascript:void(0)" data-toggle="modal" data-id="{{$list_lead->id}}"  data-target="#lead_assigned" id="assigned">Lead Assigned to
                                                     </a>
                                                 </div>
@@ -724,11 +742,15 @@
         var lead_total = $('#total_leads').val();
         //alert(lead_count);
         //alert(lead_total);
-        if (Number(lead_count) > Number(lead_total) || Number(lead_count) == Number(lead_total)) {
-            //alert('if');
-            $('.add_lead').prop('disabled',true);
-            $('#error_msg').html('Lead Limit access!!! Please contact to admin');
+        if ($('#usertype').val() != 'admin') 
+        {
+            if (Number(lead_count) > Number(lead_total) || Number(lead_count) == Number(lead_total)) {
+                //alert('if');
+                $('.add_lead').prop('disabled',true);
+                $('#error_msg').html('Lead Limit access!!! Please contact to admin');
+            }
         }
+        
         
         $('.js-example-basic-single').select2();
         
@@ -852,13 +874,13 @@
     $(document).ready(function(){
         $('.reminder').click(function(){
             myid = $(this).data('id');
-            //alert(myid);
+            alert(myid);
             $(".Reminder #lead_id").val(myid);
         });
 
         $('.note').click(function(){
             myid = $(this).data('id');
-            //alert(myid);
+            alert(myid);
             $(".Note #lead_id").val(myid);
         });
 
@@ -875,12 +897,14 @@
         var date_to = $('#to_date').val();
         var date_from = $('#from_date').val();
         var lead = $('#lead').val();
+        var company_name = $('#search_company_name').val();
+        var agent_name = $('#search_agent_name').val();
         //alert(date_from+date_to+lead);
         jQuery.ajax({
             type: "POST",
             url: '{{ URL::route("FilterData") }}',
             dataType: 'text',
-            data: {date_to:date_to,date_from:date_from,lead:lead},
+            data: {date_to:date_to,date_from:date_from,lead:lead,company_name:company_name,agent_name:agent_name},
             success: function(data) 
             {
                // alert('qwerty');
@@ -895,7 +919,45 @@
 
                     url = url.replace(':data', data.id);
 
-                    html += '<tr><td>'+data.id+'</td>'+'<td>'+data.first_name+'</td>'+'<td>'+data.last_name+'</td>'+'<td>'+data.company_name+'</td>'+'<td>'+data.email+'</td>'+'<td>'+data.phoneno+'</td>'+'<td>'+data.lead_stage+'</td>'+'<td>'+data.opername+'</td>'+'<td><a href="javascript:void(0)" class="text-success mr-2 edit_lead" id="edit_lead" data-toggle="modal" data-target="#EditLead" data-id="'+data.id+'"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a href="'+url+'" onclick="return confirm("Are you sure you want to delete this Lead?")" class="text-danger mr-2"><i class="nav-icon i-Close-Window font-weight-bold"></i></a></td>';
+                    var ViewLeadID = '{{ route("ViewLeadID", ":lead") }}';
+
+                    ViewLeadID = ViewLeadID.replace(':lead',data.id);
+
+                    if (data.opername != null) {
+                        var opername = data.opername;
+                    }
+                    else
+                    {
+                        var opername = '';
+                    }
+
+                    if (data.lead_stage == 'New') {
+                        var id = 2;
+                        var stage = 'Contacted';
+                    }
+                    else if (data.lead_stage == 'Contacted') {
+                        var id = 3;
+                        var stage = 'Interested';
+                    }
+                    else if (data.lead_stage == 'Interested') {
+                        var id = 4;
+                        var stage = 'Under review';
+                    }
+                    else if (data.lead_stage == 'Under review') {
+                        var id = 5;
+                        var stage = 'Demo';
+                    }
+                    else if (data.lead_stage == 'Demo') {
+                        var id = 6;
+                        var stage = 'Unqualified';
+                    }
+                    else if (data.lead_stage == 'Unqualified') {
+                        var id = 7;
+                        var stage = 'Converted';
+                    }
+
+
+                    html += '<tr><td>'+data.id+'</td>'+'<td><a href="'+ViewLeadID+'"><b>'+data.first_name+'</b></a></td>'+'<td>'+data.last_name+'</td>'+'<td>'+data.company_name+'</td>'+'<td>'+data.email+'</td>'+'<td>'+data.phoneno+'</td>'+'<td><span class="badge badge-success">'+data.lead_stage+'</span></td>'+'<td>'+opername+'</td>'+'<td><a href="javascript:void(0)" class="text-success mr-2 edit_lead" id="edit_lead" data-toggle="modal" data-target="#EditLead" data-id="'+data.id+'"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a href="'+url+'" onclick="return confirm("Are you sure you want to delete this Lead?")" class="text-danger mr-2"><i class="nav-icon i-Close-Window font-weight-bold"></i></a><a href="javascript:void(0)" class="text-warning mr-2" id="action" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="i-Arrow-Down-2"></i></a><div class="dropdown-menu" aria-labelledby="action"><a class="dropdown-item add_note note" href="javascript:void(0)" data-toggle="modal"data-id="'+data.id+'"  data-target="#add_note_modal" id="note">Add Notes</a> @if(!isset($row->reminder->id)) <a class="dropdown-item edit_reminder reminder" href="javascript:void(0)" data-toggle="modal" data-id="'+data.id+'" data-target="#add_reminder_modal" id="reminder">Add Reminder</a><a href="#" class="dropdown-item">Change stage to '+stage+'</a> @endif<a class="dropdown-item add_note assigned_to" href="javascript:void(0)" data-toggle="modal" data-id="'+data.id+'"  data-target="#lead_assigned" id="assigned">Lead Assigned to</a></div></td>';
 
                   });
                 //alert(html);
@@ -913,7 +975,7 @@
                 $(".filter_data").table2excel({  
                     name: "Table2Excel",  
                     filename: "Lead_Data",  
-                    fileext: ".xls"  
+                    fileext: ".csv"  
                 });  
             }  
 </script>

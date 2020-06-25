@@ -27,7 +27,7 @@
                             <tbody>   
                                 @foreach($holiday_list as $listOne)
                                 <tr id="row_{{ $listOne->id }}">
-                                    <td>{{ ($listOne->date) ? $listOne->date : $listOne->day }}</td>
+                                    <td>{{ ($listOne->date) ? $listOne->date : ucfirst($listOne->day) }}</td>
                                     <td>{{$listOne->reason}}</td>
                                     <td><a href="javascript:void(0)" onClick="deleteItem({{$listOne->id}}, 'holiday')" class="text-danger mr-2">
                                             <i class="nav-icon i-Close-Window font-weight-bold"></i>
@@ -43,6 +43,7 @@
                                 </tr>
                             </tfoot>
                         </table>
+                        <div class="pull-right">{{ $holiday_list->links() }}</div>
                     </div>
                 </div>
             </div>

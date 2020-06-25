@@ -13,15 +13,10 @@ class CdrTag extends Model
 
     public static function getReport( )
     {
-        $data = CdrTag::select( 'cdr_tags.*', 'name' )
-            ->leftJoin( 'accountgroup', 'accountgroup.id', '=', 'cdr_tags.groupid' );
-
-        if ( Auth::user()->usertype == 'groupadmin' )
-        {
-            $data->where( 'cdr_tags.groupid', Auth::user()->groupid );
-        }
-
-        $result = $data->orderBy( 'id', 'DESC' )->paginate( 10 );
+        $result = CdrTag::select( 'cdr_tags.*', 'name' )
+            ->leftJoin( 'accountgroup', 'accountgroup.id', '=', 'cdr_tags.groupid' )
+            ->where( 'cdr_tags.groupid', Auth::user()->groupid )
+            ->orderBy( 'id', 'DESC' )->paginate( 10 );
         return $result;
     }
 

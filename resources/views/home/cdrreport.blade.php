@@ -32,9 +32,9 @@ audio {
 @endsection
 
 @section('main-content')
-<div class="breadcrumb">
-    <h1>CDR Report</h1> 
-</div>
+    <div class="breadcrumb">
+        <h1>CDR Report</h1> 
+    </div>
 
     <div class="modal fade" id="AddLead" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
         <div class="col-md-12">
@@ -43,7 +43,7 @@ audio {
                     <div class="card-title mb-3">Add Lead<a href="" class="btn btn-primary" style="float: right;">Back</a></div>
                     {!! Form::open(['action' => 'ReportController@addLead', 'method' => 'post','enctype' => 'multipart/form-data']) !!}
                     <form method="post">
-                         {{ csrf_field() }}
+                            {{ csrf_field() }}
                         <div class="row">
                             <input type="hidden" name="cdrreport_id" id="cdrreport_id">
                             <div class="col-md-12 form-group mb-3">
@@ -66,7 +66,7 @@ audio {
                                 <input type="email" name="email" id="email" class="form-control"placeholder="Enter Email Address" />  
                             </div>
 
-                           <div class="col-md-6 form-group mb-3">
+                            <div class="col-md-6 form-group mb-3">
                                 <label for="phoneno">Phone No*</label>
                                 <input type="text" name="phoneno" id="phoneno" class="form-control"placeholder="Enter Phone No" required="" />  
                             </div>
@@ -79,45 +79,45 @@ audio {
                             <div class="col-md-12">
                                 <label for="products">Products</label>
                                     <div class="row">
-                                         <section class="container col-xs-12">
+                                            <section class="container col-xs-12">
                                             <div class="table table-responsive">
                                             <!-- <h4>Select Details</h4> -->
                                             <table id="ppsale" class="table table-striped table-bordered" border="0">
-                                              
-                                              <tbody id="TextBoxContainer">
+                                                
+                                                <tbody id="TextBoxContainer">
                                                 <td style="width: 50%;">
-                                                  <select name="products[]" id="products" class="form-control js-example-basic-single products">
-                                                      <option>Select Products</option>
-                                                      @if(!empty($products))
+                                                    <select name="products[]" id="products" class="form-control js-example-basic-single products">
+                                                        <option>Select Products</option>
+                                                        @if(!empty($products))
                                                         @foreach($products as $prod )
                                                             <option value="{{$prod->id}}">{{$prod->name}}
                                                             </option>
                                                         @endforeach
                                                     @endif 
-                                                  </select> 
-                                                  <input type="hidden" name="pro_amount[]" id="pro_amount" class="form-control pro_amount">
+                                                    </select> 
+                                                    <input type="hidden" name="pro_amount[]" id="pro_amount" class="form-control pro_amount">
                                                 </td>
-                                                  <td>
+                                                    <td>
                                                     <input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" />  
-                                                  </td>
-                                                  <td>
-                                                      <input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount"readonly="" /> 
-                                                  </td>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount"readonly="" /> 
+                                                    </td>
                                                 </tr>
-                                              </tbody>
-                                              <tfoot>
+                                                </tbody>
+                                                <tfoot>
                                                 <tr>
                                                     <th>
                                                         <label for="total_amount">Total Amount:</label>
                                                         <input type="text" name="total_amount" id="total_amount" style="border: none;">
                                                     </th>
-                                                  <th colspan="5">
-                                                  <button id="btnAdd" type="button" class="btn btn-success" data-toggle="tooltip" data-original-title="Add more" style="float: right;">+</button></th>
+                                                    <th colspan="5">
+                                                    <button id="btnAdd" type="button" class="btn btn-success" data-toggle="tooltip" data-original-title="Add more" style="float: right;">+</button></th>
                                                 </tr>
-                                              </tfoot>
+                                                </tfoot>
                                             </table>
                                             </div>
-                                          </section>
+                                            </section>
                                     </div>
                             </div>
                             
@@ -153,323 +153,378 @@ audio {
         </div>
     </div>
 
-            <div class="separator-breadcrumb border-top"></div>
-            @if(Auth::user()->usertype == 'groupadmin')
-            <div class="row">
-              <div class="col-lg-12 col-md-12">
-                  <div class="card mb-2">
-                        <div class="card-body">
-                    <div id="filter-panel" class="filter-panel collapse">
-                        <h5 class="ml-3
-                        ">Search Panel</h5></br>
-                        <form class="form" role="form" id="cdr_filter_form">
-                            <div class="row"> 
-                            @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
-                            <div class="col-md-3 form-group ml-5
-                            ">
-                                <label class="filter-col"  for="pref-perpage">Departments</label>
-                                <select name="department" class="form-control">
-                                    <option value="">All</option>
-                                    @if(!empty($departments))
-                                        @foreach($departments as $dept )
-                                            <option value="{{$dept->dept_name}}">{{$dept->dept_name}}
-                                            </option>
-                                        @endforeach
+    <div class="separator-breadcrumb border-top"></div>
+    @if(Auth::user()->usertype == 'groupadmin')
+    <div class="row">
+        <div class="col-lg-12 col-md-12">
+            <div class="card mb-2">
+                <div class="card-body">
+            <div id="filter-panel" class="filter-panel collapse">
+                <h5 class="ml-3
+                ">Search Panel</h5></br>
+                <form class="form" role="form" id="cdr_filter_form">
+                    <div class="row"> 
+                    @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
+                    <div class="col-md-3 form-group ml-5
+                    ">
+                        <label class="filter-col"  for="pref-perpage">Departments</label>
+                        <select name="department" class="form-control">
+                            <option value="">All</option>
+                            @if(!empty($departments))
+                                @foreach($departments as $dept )
+                                    <option value="{{$dept->dept_name}}">{{$dept->dept_name}}
+                                    </option>
+                                @endforeach
+                            @endif
+                            
+                        </select>                                
+                    </div> 
+                    @endif
+                    @if( Auth::user()->usertype == 'groupadmin' )
+                    <div class="col-md-3 form-group mb-5
+                    ">
+                    <label class="filter-col"  for="pref-perpage">Operators</label>
+                    <select name="operator" class="form-control">
+                        <option value="">All</option>
+                        @if(!empty($operators))
+                            @foreach($operators as $opr )
+                                <option value="{{$opr->id}}">{{$opr->opername}}
+                                </option>
+                            @endforeach
+                        @endif   
+                    </select>                                
+                    </div> 
+                    @endif
+                    @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
+                    <div class="col-md-3 form-group mb-3">
+                        <label class="filter-col"  for="pref-perpage">Assigned To</label>
+                        <select  class="form-control" name="assigned_to">
+                            <option value="">All</option>
+                            @if(!empty($operators))
+                                @foreach($operators as $opr )
+                                    <option value="{{$opr->id}}">{{$opr->opername}}
+                                    </option>
+                                @endforeach
+                            @endif 
+                        </select>                                
+                    </div> 
+                    @endif
+                    <div class="col-md-3 form-group ml-5">
+                        <label class="filter-col"  for="pref-perpage">Dnid Name</label>
+                        <select  class="form-control" name="did_no">
+                            <option value="">All</option>
+                            @if(!empty($dnidnames))
+                                @foreach($dnidnames as $dnid )
+                                    <option value="{{$dnid->did_no}}">{{$dnid->did_no}}
+                                    </option>
+                                @endforeach
+                            @endif   
+                        </select>                                
+                    </div>
+                    <div class="col-md-3 form-group mb-3">
+                        <label class="filter-col"  for="pref-search">By Caller Number</label>
+                        <input type="text" class="form-control input-sm" name="caller_number">
+                    </div>  
+                    <div class="col-md-3 form-group mb-3">
+                        <label class="filter-col"  for="pref-perpage">Date</label>
+                        <select class="form-control" name="date" id="date_select">
+                            <option value="">All</option>
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="week">1 Week</option>
+                            <option value="month">1 Month</option>
+                            <option value="custom">Custom</option>
+                        </select>                                
+                    </div> 
+                    </div>
+                    <div class="row mt-4" style="display: none;" id="custom_date_div">
+                        <div class="col-md-3 form-group ml-5">
+                        <label class="filter-col"  for="pref-search">Stardate </label>
+                        <input type="text" name="startdate" class="form-control input-sm datepicker" >
+                        </div>
+                        <div class="col-md-3 form-group mb-3">
+                        <label class="filter-col"  for="pref-search">Enddate</label>
+                        <input type="text" class="form-control input-sm datepicker" name="enddate">
+                        </div>
+                    </div>
+                    <div class="mt-4 ml-5">    
+                        <button type="button" id="report_search_button" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-record"></span> Search
+                        </button> 
+                    </div>
+                </form>      
+            </div>
+                    <div class="col-md-2 mt-3 mt-md-0"> 
+                    </div>
+                        <!-- <a class="btn btn-secondary m-1" id="btn_download" href="{{ url('cdrexport') }}">Download</a>  -->
+                        <div class="btn-group" id="assign" name="assign" >
+                        <!-- <a href="#" class="btn btn-primary m-1 dropdown-toggle" data-toggle="dropdown"><i class="i-Add-User"> </i></a> -->
+                        <!-- <ul class="dropdown-menu" role="menu">
+                            @foreach($operators as $operator)
+                            @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
+                            <li> 
+                                <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}});">{{$operator->opername}}</a><ul>
+                            @else 
+                            <li> 
+                                <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}});">{{$operator->opername}}</a>
+                            @endif
+                            @if($account_service['smsservice_assign_cdr'] =='Yes')
+                            <li>
+                                <a href="javascript:assignoper({{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
+                            </li>
+                            @endif
+                            @if($account_service['emailservice_assign_cdr'] =='Yes')
+                            <li>
+                                <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
+                            </li>
+                            @endif 
+                            @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
+                            </ul>
+                            @else 
+                            </li>
+                            @endif
+                            @endforeach
+                            <?php echo '<li><a href="javascript:assignoper(0);">Unassign</a></li>'; ?>
+                        </ul>  -->
+                        </div>
+                </div>
+                    
+            </div>
+            </div>
+        </div>
+    </div>
+    @endif
+    @if(Auth::user()->usertype == 'groupadmin')
+    <!-- 
+        -->
+    @endif
+    <div class="row mb-4" id="div_table">
+        <div class="col-md-12 mb-4">
+            <div class="card text-left">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table id="zero_configuration_table" class="display table table-bordered" style="width:100%">
+                            <thead>
+                            <tr>
+                                @if(Auth::user()->usertype == 'groupadmin')
+                                <th><input type="checkbox" name="allselect" id="allselect" value="yes" onclick="selectAll();"></th>
+                                @elseif(Auth::user()->usertype == 'admin')
+                                <th>Customer</th>
+                                @endif
+                                <th>Caller Id</th>
+                                <th>Date & Time</th>
+                                @if(Auth::user()->usertype == 'admin')
+                                <th>Duration</th>
+                                <th>Coin</th>
+                                @endif
+                                <th>Status</th>
+                                <th>Department</th>
+                                <th>Agent</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @if(!empty($result))
+                                @foreach($result as $row )
+                            <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable" id="row_{{ $row->cdrid }}">
+                            @if(Auth::user()->usertype == 'groupadmin')
+                            <td><input type="checkbox" name="cdr_checkbox" id="{{$row->cdrid}}" value="{{$row->cdrid}}" class="allselect"></td>
+                            @elseif(Auth::user()->usertype == 'admin')
+                            <th>{{$row->name}}</th>
+                            @endif
+                            <td id="caller_{{$row->cdrid}}">
+                            @if(Auth::user()->usertype=='groupadmin')
+                            <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                            @elseif(Auth::user()->usertype=='admin' || Auth::user()->usertype=='reseller')
+                            {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
+                            @else
+                            <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts != null && $row->contacts->fname  ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts != null && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                            @endif
+                            </td>
+                            <td>{{$row->datetime}}</td>
+                            @if(Auth::user()->usertype == 'admin')
+                                <td>{{$row->firstleg."(".$row->secondleg.")"}}</td>
+                                <td>{{$row->creditused}}</td>
+                            @endif
+                            <td>{{$row->status}}</td>
+                            <td>{{$row->deptname}}</td>
+                            <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
+                            <td>
+                            @if(Auth::user()->usertype=='groupadmin')
+                                <a class="btn bg-gray-100" data-toggle="collapse" data-target="
+                                #more{{$row->cdrid}}" aria-expanded="false" aria-controls="collapseExample"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
+                                
+                                @if($row->recordedfilename !== '')
+                                <a href="#" class="btn bg-gray-100 play_audio" data-toggle="modal" data-target="#play_modal" data-dummy="https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
+                                <a href="{{ url('download_file/' .$row->recordedfilename) }}" class="btn bg-gray-100">
+                                <i class="i-Download1"></i></a>
+                                @endif                 
+                                <a href="#" class="btn bg-gray-100 notes_list" title="Notes" data-toggle="modal" data-target="#notes_modal" id="notes_{{$row->uniqueid}}"><i class="i-Notepad"></i></a>
+                                <a href="" class="btn bg-gray-100 history_list" title="Call History" data-toggle="modal" data-target="#history_modal" id="history_{{$row->number}}"><i class="i-Notepad-2"></i></a>
+                                <a href="" class="btn bg-gray-100" data-toggle="dropdown" id="history_{{$row->number}}"><i class="  i-Add-User"></i></a>
+
+                                <ul class="dropdown-menu" role="menu">
+                                    @foreach($operators as $operator)
+                                    @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
+                                    <li> 
+                                        <a href="#">{{$operator->opername}}</a><ul>
+                                    @else 
+                                    <li> 
+                                        <a href="#">{{$operator->opername}}</a>
                                     @endif
-                                    
-                                </select>                                
-                            </div> 
-                            @endif
-                            @if( Auth::user()->usertype == 'groupadmin' )
-                            <div class="col-md-3 form-group mb-5
-                            ">
-                            <label class="filter-col"  for="pref-perpage">Operators</label>
-                            <select name="operator" class="form-control">
-                                <option value="">All</option>
-                                @if(!empty($operators))
-                                    @foreach($operators as $opr )
-                                        <option value="{{$opr->id}}">{{$opr->opername}}
-                                        </option>
-                                    @endforeach
-                                @endif   
-                            </select>                                
-                            </div> 
-                            @endif
-                            @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
-                            <div class="col-md-3 form-group mb-3">
-                                <label class="filter-col"  for="pref-perpage">Assigned To</label>
-                                <select  class="form-control" name="assigned_to">
-                                    <option value="">All</option>
-                                    @if(!empty($operators))
-                                        @foreach($operators as $opr )
-                                            <option value="{{$opr->id}}">{{$opr->opername}}
-                                            </option>
-                                        @endforeach
+                                    @if($account_service['smsservice_assign_cdr'] =='Yes')
+                                    <li>
+                                        <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
+                                    </li>
+                                    @endif
+                                    @if($account_service['emailservice_assign_cdr'] =='Yes')
+                                    <li>
+                                        <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
+                                    </li>
                                     @endif 
-                                </select>                                
-                            </div> 
-                            @endif
-                            <div class="col-md-3 form-group ml-5">
-                                <label class="filter-col"  for="pref-perpage">Dnid Name</label>
-                                <select  class="form-control" name="did_no">
-                                    <option value="">All</option>
-                                    @if(!empty($dnidnames))
-                                        @foreach($dnidnames as $dnid )
-                                            <option value="{{$dnid->did_no}}">{{$dnid->did_no}}
-                                            </option>
-                                        @endforeach
-                                    @endif   
-                                </select>                                
-                            </div>
-                            <div class="col-md-3 form-group mb-3">
-                                <label class="filter-col"  for="pref-search">By Caller Number</label>
-                                <input type="text" class="form-control input-sm" name="caller_number">
-                            </div>  
-                            <div class="col-md-3 form-group mb-3">
-                                <label class="filter-col"  for="pref-perpage">Date</label>
-                                <select class="form-control" name="date" id="date_select">
-                                    <option value="">All</option>
-                                    <option value="today">Today</option>
-                                    <option value="yesterday">Yesterday</option>
-                                    <option value="week">1 Week</option>
-                                    <option value="month">1 Month</option>
-                                    <option value="custom">Custom</option>
-                                </select>                                
-                            </div> 
-                            </div>
-                            <div class="row mt-4" style="display: none;" id="custom_date_div">
-                                <div class="col-md-3 form-group ml-5">
-                                <label class="filter-col"  for="pref-search">Stardate </label>
-                                <input type="text" name="startdate" class="form-control input-sm datepicker" >
-                                </div>
-                                <div class="col-md-3 form-group mb-3">
-                                <label class="filter-col"  for="pref-search">Enddate</label>
-                                <input type="text" class="form-control input-sm datepicker" name="enddate">
-                                </div>
-                            </div>
-                            <div class="mt-4 ml-5">    
-                                <button type="button" id="report_search_button" class="btn btn-primary">
-                                    <span class="glyphicon glyphicon-record"></span> Search
-                                </button> 
-                            </div>
-                        </form>      
-                    </div>
-                          <div class="col-md-2 mt-3 mt-md-0"> 
-                          </div>
-                               <!-- <a class="btn btn-secondary m-1" id="btn_download" href="{{ url('cdrexport') }}">Download</a>  -->
-                               <div class="btn-group" id="assign" name="assign" >
-                               <!-- <a href="#" class="btn btn-primary m-1 dropdown-toggle" data-toggle="dropdown"><i class="i-Add-User"> </i></a> -->
-                                <!-- <ul class="dropdown-menu" role="menu">
-                                  @foreach($operators as $operator)
-                                  @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
-                                    <li> 
-                                        <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}});">{{$operator->opername}}</a><ul>
-                                  @else 
-                                    <li> 
-                                        <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}});">{{$operator->opername}}</a>
-                                  @endif
-                                  @if($account_service['smsservice_assign_cdr'] =='Yes')
-                                    <li>
-                                        <a href="javascript:assignoper({{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
-                                    </li>
-                                  @endif
-                                  @if($account_service['emailservice_assign_cdr'] =='Yes')
-                                    <li>
-                                        <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
-                                    </li>
-                                  @endif 
-                                  @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
+                                    @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
                                     </ul>
-                                  @else 
+                                    @else 
                                     </li>
-                                  @endif
-                                  @endforeach
-                                  <?php echo '<li><a href="javascript:assignoper(0);">Unassign</a></li>'; ?>
-                                </ul>  -->
-                               </div>
-                        </div>
-                          
-                   </div>
-                  </div>
-              </div>
-            </div>
-            @endif
-            @if(Auth::user()->usertype == 'groupadmin')
-            <!-- 
-             -->
-            @endif
-            <div class="row mb-4" id="div_table">
-                <div class="col-md-12 mb-4">
-                    <div class="card text-left">
-                        <div class="card-body">
-                           <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-bordered" style="width:100%">
-                                    <thead>
-                                    <tr>
-                                        @if(Auth::user()->usertype == 'groupadmin')
-                                        <th><input type="checkbox" name="allselect" id="allselect" value="yes" onclick="selectAll();"></th>
-                                        @elseif(Auth::user()->usertype == 'admin')
-                                        <th>Customer</th>
-                                        @endif
-                                        <th>Caller Id</th>
-                                        <th>Date & Time</th>
-                                        @if(Auth::user()->usertype == 'admin')
-                                        <th>Duration</th>
-                                        <th>Coin</th>
-                                        @endif
-                                        <th>Status</th>
-                                        <th>Department</th>
-                                        <th>Agent</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    @if(!empty($result))
-                                        @foreach($result as $row )
-                                    <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable" id="row_{{ $row->cdrid }}">
-                                    @if(Auth::user()->usertype == 'groupadmin')
-                                    <td><input type="checkbox" name="cdr_checkbox" id="{{$row->cdrid}}" value="{{$row->cdrid}}" class="allselect"></td>
-                                    @elseif(Auth::user()->usertype == 'admin')
-                                    <th>{{$row->name}}</th>
                                     @endif
-                                    <td id="caller_{{$row->cdrid}}">
-                                    @if(Auth::user()->usertype=='groupadmin')
-                                    <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
-                                    @elseif(Auth::user()->usertype=='admin' || Auth::user()->usertype=='reseller')
-                                    {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
-                                    @else
-                                    <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts != null && $row->contacts->fname  ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts != null && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
-                                    @endif
-                                    </td>
-                                    <td>{{$row->datetime}}</td>
-                                    @if(Auth::user()->usertype == 'admin')
-                                        <td>{{$row->firstleg."(".$row->secondleg.")"}}</td>
-                                        <td>{{$row->creditused}}</td>
-                                    @endif
-                                    <td>{{$row->status}}</td>
-                                    <td>{{$row->deptname}}</td>
-                                    <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
-                                    <td>
-                                    @if(Auth::user()->usertype=='groupadmin')
-                                        <a class="btn bg-gray-100" data-toggle="collapse" data-target="
-                                        #more{{$row->cdrid}}" aria-expanded="false" aria-controls="collapseExample"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
-                                       
-                                        @if($row->recordedfilename !== '')
-                                        <a href="#" class="btn bg-gray-100 play_audio" data-toggle="modal" data-target="#play_modal" data-dummy="https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
-                                        <a href="{{ url('download_file/' .$row->recordedfilename) }}" class="btn bg-gray-100">
-                                        <i class="i-Download1"></i></a>
-                                        @endif                 
-                                        <a href="#" class="btn bg-gray-100 notes_list" data-toggle="modal" data-target="#notes_modal" id="notes_{{$row->uniqueid}}"><i class="i-Notepad"></i></a>
-                                        <a href="" class="btn bg-gray-100 history_list" data-toggle="modal" data-target="#history_modal" id="history_{{$row->number}}"><i class="i-Notepad-2"></i></a>
-                                        <a href="" class="btn bg-gray-100" data-toggle="dropdown" id="history_{{$row->number}}"><i class="  i-Add-User"></i></a>
-
-                                        <ul class="dropdown-menu" role="menu">
-                                          @foreach($operators as $operator)
-                                          @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
-                                            <li> 
-                                                <a href="#">{{$operator->opername}}</a><ul>
-                                          @else 
-                                            <li> 
-                                                <a href="#">{{$operator->opername}}</a>
-                                          @endif
-                                          @if($account_service['smsservice_assign_cdr'] =='Yes')
-                                            <li>
-                                                <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
-                                            </li>
-                                          @endif
-                                          @if($account_service['emailservice_assign_cdr'] =='Yes')
-                                            <li>
-                                                <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
-                                            </li>
-                                          @endif 
-                                          @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
-                                            </ul>
-                                          @else 
-                                            </li>
-                                          @endif
-                                          @endforeach
-                                          <?php echo '<li><a href="javascript:assignoper('.$row->cdrid.',0);">Unassign</a></li>'; ?>
-                                        </ul>
-
-                                        <span>
-                                        <button class="btn bg-gray-100" type="button" id="action_{{$row->cdrid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="nav-icon i-Gear-2"></i>
-                                        </button>
-
-                                        <a href="?" class="btn btn-success add_lead" id="add_lead" data-toggle="modal" data-number="{{$row->number}}" data-id="{{$row->cdrid}}" data-target="#AddLead"><i class="i-Notepad"></i></a>
-
-                                        <div class="dropdown-menu" aria-labelledby="action_{{$row->cdrid}}">
-                                        <a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" id="contact_{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-groupid="{{$row->groupid}}" data-phone="{{$row->number}}">{{isset($row->contacts->fname) ? 'Update Contact': 'Add Contact'}}</a>
-                                        <a class="dropdown-item edit_tag" href="#" data-toggle="modal" data-target="#tag_modal" id="tag_{{$row->cdrid}}" data-tag="{{$row->tag}}">{{$row->tag ? 'Update Tag': 'Add Tag'}}</a>
-                                        <a class="dropdown-item add_note" href="#" data-toggle="modal" data-target="#add_note_modal" id="add_note_{{$row->uniqueid}}">Add Notes
-                                        </a>
-                                        @if(!isset($row->reminder->id))
-                                        <a class="dropdown-item edit_reminder" href="#" data-toggle="modal" data-target="#add_reminder_modal" id="add_reminder_{{$row->cdrid}}">Add Reminder</a>
-                                        @endif
-                                        </span>
-                                        </div>
-                                        @elseif(Auth::user()->usertype=='admin')
-                                        <a href="javascript:void(0)" onClick="deleteItem({{$row->cdrid}}, 'cdr')" class="text-danger mr-2">
-                                            <i class="nav-icon i-Close-Window font-weight-bold"></i>
-                                        </a>
-                                        @endif
-                                    </td>
-                                    </tr>
-                                    <tr id="more{{$row->cdrid}}" class="collapse">
-                                        <td></td>
-                                         <td colspan='7'>
-                                            <span style="margin-right:100px;"><b>DNID :</b> {{$row->did_no
-                                        }}</span><span style="margin-right:100px;"><b>Duration :</b> {{$row->firstleg."(".$row->secondleg.")"}}</span><span style="margin-right:100px;"><b>Coin :</b> {{$row->creditused}}</span><span style="margin-right:100px;"><b>Assigned To :</b> <span id="assigned_{{$row->cdrid}}">{{$row->operatorAssigned ? $row->operatorAssigned->opername : ''}}</span></span><span style="margin-right:100px;"><b>Tag :</b> {{$row->tag}}</span>
-                                        </td>
-                                    </tr>
                                     @endforeach
-                                        @endif
+                                    <?php echo '<li><a href="javascript:assignoper('.$row->cdrid.',0);">Unassign</a></li>'; ?>
+                                </ul>
 
-                                    </tbody>
-                                </table>
-                                <div class="pull-right">{{ $result->links() }}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- end of row -->
-
-            <!-- play modal -->
-            <div class="modal fade" id="play_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                                <!-- <h5 class="modal-title">Dial A Number</h5> -->
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
+                                <span>
+                                <button class="btn bg-gray-100" type="button" id="action_{{$row->cdrid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="nav-icon i-Gear-2"></i>
                                 </button>
-                        </div>
-                        <div class="modal-body" id="play_src">
-                        </div>
+
+                                <a href="?" class="btn btn-success add_lead" id="add_lead" data-toggle="modal" data-number="{{$row->number}}" data-id="{{$row->cdrid}}" data-target="#AddLead"><i class="i-Notepad"></i></a>
+
+                                <div class="dropdown-menu" aria-labelledby="action_{{$row->cdrid}}">
+                                <a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" id="contact_{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-phone="{{$row->number}}">{{isset($row->contacts->fname) ? 'Update Contact': 'Add Contact'}}</a>
+                                <a class="dropdown-item edit_tag" href="#" data-toggle="modal" data-target="#tag_modal" id="tag_{{$row->cdrid}}" data-tag="{{$row->tag}}">{{$row->tag ? 'Update Tag': 'Add Tag'}}</a>
+                                <a class="dropdown-item add_note" href="#" data-toggle="modal" data-target="#add_note_modal" id="add_note_{{$row->uniqueid}}">Add Notes
+                                </a>
+                                @if(!isset($row->reminder->id))
+                                <a class="dropdown-item edit_reminder" href="#" data-toggle="modal" data-target="#add_reminder_modal" id="add_reminder_{{$row->cdrid}}">Add Reminder</a>
+                                @endif
+                                </span>
+                                </div>
+                                @elseif(Auth::user()->usertype=='admin')
+                                <a href="javascript:void(0)" onClick="deleteItem({{$row->cdrid}}, 'cdr')" class="text-danger mr-2">
+                                    <i class="nav-icon i-Close-Window font-weight-bold"></i>
+                                </a>
+                                @endif
+                            </td>
+                            </tr>
+                            <tr id="more{{$row->cdrid}}" class="collapse">
+                                <td></td>
+                                    <td colspan='7'>
+                                    <span style="margin-right:100px;"><b>DNID :</b> {{$row->did_no}}</span>
+                                    <span style="margin-right:100px;"><b>Duration :</b> {{$row->firstleg."(".$row->secondleg.")"}}</span>
+                                    <span style="margin-right:100px;"><b>Coin :</b> {{$row->creditused}}</span>
+                                    <span style="margin-right:100px;"><b>Assigned To :</b> 
+                                    <span id="assigned_{{$row->cdrid}}">{{$row->operatorAssigned ? $row->operatorAssigned->opername : ''}}</span></span>
+                                    <span style="margin-right:100px;"><b>Tag :</b> <span id="cdrTag_{{$row->cdrid}}">{{$row->tag}}</span></span>
+                                </td>
+                            </tr>
+                            @endforeach
+                                @endif
+
+                            </tbody>
+                        </table>
+                        <div class="pull-right">{{ $result->links() }}</div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <!-- end of row -->
 
-             <!-- dial modal -->
-            <div class="modal fade" id="dial_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Dial A Number</h5>
+    <!-- play modal -->
+        <div class="modal fade" id="play_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                            <!-- <h5 class="modal-title">Dial A Number</h5> -->
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
+                    </div>
+                    <div class="modal-body" id="play_src">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- dial modal -->
+        <div class="modal fade" id="dial_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Dial A Number</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {!! Form::open(['method' => 'post', 'id' => 'dial_form']) !!} 
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> 
+                            </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="number">Customer Number</label> 
+                                <input type="number" id="customer_number" onpaste="return false;" class="form-control" placeholder="Customer Number" name="number">
+                            </div>
                         </div>
-                         {!! Form::open(['method' => 'post', 'id' => 'dial_form']) !!} 
-                        <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> 
+                            </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">Operator Number</label> 
+                                <input type="number" id="operator_number" onpaste="return false;" class="form-control" value="{{Auth::user()->phone_number}}" placeholder="Operator Number" name="phone">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> 
+                            </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">Call First</label> 
+                                <label class="radio-inline"> {{ Form::radio('callf', 'cust') }} Customer</label>
+                                    <label class="radio-inline">{{ Form::radio('callf', 'oper', true) }} Operator</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" id="dial_submit" class="btn btn-primary">Dial Now</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                    {!! Form::close() !!}
+                </div>
+            </div>
+        </div>
+        <!-- end of dial modal -->
+
+    <!-- msg modal -->
+        <div class="modal fade" id="msg_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle-2">Send Message</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {!! Form::open(['method' => 'post', 'id' => 'msg_form']) !!} 
+                    <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-2 form-group mb-3"> 
                                 </div>
 
                                 <div class="col-md-8 form-group mb-3">
                                     <label for="number">Customer Number</label> 
-                                    <input type="number" id="customer_number" onpaste="return false;" class="form-control" placeholder="Customer Number" name="number">
+                                    <input type="number" id="cust_m_number" onpaste="return false;" class="form-control" placeholder="Customer Number" name="number">
                                 </div>
                             </div>
                             <div class="row">
@@ -478,7 +533,7 @@ audio {
 
                                 <div class="col-md-8 form-group mb-3">
                                     <label for="firstName1">Operator Number</label> 
-                                    <input type="number" id="operator_number" onpaste="return false;" class="form-control" value="{{Auth::user()->phone_number}}" placeholder="Operator Number" name="phone">
+                                    <input type="number" id="ope_m_number" onpaste="return false;" class="form-control" value="{{Auth::user()->phone_number}}" placeholder="Operator Number" name="phone">
                                 </div>
                             </div>
                             <div class="row">
@@ -486,90 +541,38 @@ audio {
                                 </div>
 
                                 <div class="col-md-8 form-group mb-3">
-                                    <label for="firstName1">Call First</label> 
-                                    <label class="radio-inline"> {{ Form::radio('callf', 'cust') }} Customer</label>
-                                        <label class="radio-inline">{{ Form::radio('callf', 'oper', true) }} Operator</label>
+                                    <label for="firstName1">Message</label>
+                                    <textarea rows="8" cols="20" class="form-control" placeholder="Message" name="message"></textarea>
                                 </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" id="dial_submit" class="btn btn-primary">Dial Now</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        </div>
-                         {!! Form::close() !!}
                     </div>
+                    <div class="modal-footer">
+                        <button type="submit" id="msg_submit" class="btn btn-primary">Send Now</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                    {!! Form::close() !!}
                 </div>
             </div>
-             <!-- end of dial modal -->
+        </div>
+    <!-- end of msg modal -->
 
-            <!-- msg modal -->
-            <div class="modal fade" id="msg_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle-2">Send Message</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                         {!! Form::open(['method' => 'post', 'id' => 'msg_form']) !!} 
-                        <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> 
-                                    </div>
-
-                                    <div class="col-md-8 form-group mb-3">
-                                        <label for="number">Customer Number</label> 
-                                        <input type="number" id="cust_m_number" onpaste="return false;" class="form-control" placeholder="Customer Number" name="number">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> 
-                                    </div>
-
-                                    <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Operator Number</label> 
-                                        <input type="number" id="ope_m_number" onpaste="return false;" class="form-control" value="{{Auth::user()->phone_number}}" placeholder="Operator Number" name="phone">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> 
-                                    </div>
-
-                                    <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Message</label>
-                                        <textarea rows="8" cols="20" class="form-control" placeholder="Message" name="message"></textarea>
-                                    </div>
-                                </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" id="msg_submit" class="btn btn-primary">Send Now</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        </div>
-                         {!! Form::close() !!}
+    <!-- graph modal -->
+        <div class="modal fade" id="graph_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalCenterTitle-2">Graph Report</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </div>
-            </div>
-            <!-- end of msg modal -->
-
-            <!-- msg modal -->
-            <div class="modal fade" id="graph_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalCenterTitle-2">Graph Report</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-lg-12 col-md-12">
-                                    <div class="card mb-6">
-                                        <div class="card-body">
-                                            <div class="card-title"></div>
-                                            <div id="echartBar" style="height: 300px;"></div>
-                                        </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-lg-12 col-md-12">
+                                <div class="card mb-6">
+                                    <div class="card-body">
+                                        <div class="card-title"></div>
+                                        <div id="echartBar" style="height: 300px;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -577,353 +580,352 @@ audio {
                     </div>
                 </div>
             </div>
-            <!-- end of msg modal -->
+        </div>
+    <!-- end of graph modal -->
 
-            <!-- graph search modal -->
-            <div class="modal fade" id="graph_search_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Graph</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                         {!! Form::open(['class' => 'graph_report', 'autocomplete' => 'off']) !!} 
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-md-2 form-group mb-3"> 
-                                </div>
-
-                                <div class="col-md-8 form-group mb-3">
-                                    <label for="firstName1">Start Date</label> 
-                                    {!! Form::text('startdate', null, ['class' => 'form-control datepicker', 'placeholder' => 'dd-mm-yyyy']) !!}
-                                </div>
+    <!-- graph search modal -->
+        <div class="modal fade" id="graph_search_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Graph</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {!! Form::open(['class' => 'graph_report', 'autocomplete' => 'off']) !!} 
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> 
                             </div>
-                            <div class="row">
-                                <div class="col-md-2 form-group mb-3"> </div>
 
-                                <div class="col-md-8 form-group mb-3">
-                                    <label for="firstName1">End Date</label> 
-                                    {!! Form::text('enddate', null, ['class' => 'form-control datepicker', 'placeholder' => 'dd-mm-yyyy']) !!}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2 form-group mb-3">
-                                </div>
-
-                                <div class="col-md-8 form-group mb-3">
-                                    <label for="firstName1">Status</label> 
-                                    {!! Form::select('status', array('
-                         ' => 'Status', 'answrd' => 'Answered', 'DIALING' => 'Dialing'), null,array('class' => 'form-control')) !!}   
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2 form-group mb-3"></div>
-
-                                <div class="col-md-8 form-group mb-3">
-                                    <label for="firstName1">Departments</label> 
-                                     <select name="department" class="form-control">
-                                        <option value="">All</option>
-                                        @if(!empty($departments))
-                                            @foreach($departments as $dept )
-                                                <option value="{{$dept->dept_name}}">{{$dept->dept_name}}
-                                                </option>
-                                            @endforeach
-                                        @endif 
-                                    </select>    
-                                </div>
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">Start Date</label> 
+                                {!! Form::text('startdate', null, ['class' => 'form-control datepicker', 'placeholder' => 'dd-mm-yyyy']) !!}
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button class="btn btn-primary collapsed m-1" data-toggle="modal" data-target="#graph_modal">Graph</button>  
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">End Date</label> 
+                                {!! Form::text('enddate', null, ['class' => 'form-control datepicker', 'placeholder' => 'dd-mm-yyyy']) !!}
+                            </div>
                         </div>
-                        {!! Form::close() !!}
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3">
+                            </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">Status</label> 
+                                {!! Form::select('status', array('
+                    ' => 'Status', 'answrd' => 'Answered', 'DIALING' => 'Dialing'), null,array('class' => 'form-control')) !!}   
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"></div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">Departments</label> 
+                                <select name="department" class="form-control">
+                                    <option value="">All</option>
+                                    @if(!empty($departments))
+                                        @foreach($departments as $dept )
+                                            <option value="{{$dept->dept_name}}">{{$dept->dept_name}}
+                                            </option>
+                                        @endforeach
+                                    @endif 
+                                </select>    
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button class="btn btn-primary collapsed m-1" data-toggle="modal" data-target="#graph_modal">Graph</button>  
+                    </div>
+                    {!! Form::close() !!}
+                </div>
+            </div>
+        </div>
+    <!-- end of graph form modal -->
+
+    <!-- tag modal -->
+        <div class="modal fade" id="tag_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="tag_title">Add Tag</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {!! Form::open(['class' => 'tag_form', 'method' => 'post']) !!}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> 
+                                {!! Form::hidden('cdrid', null, ['class' => 'form-control', 'id' => 'cdrid']) !!}
+                            </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">Tag</label> 
+                                    {!! Form::select('tag', $tags->prepend('Select Tag', ''), null,array('class' => 'form-control', 'id' => 'tag')) !!}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                    {!! Form::close() !!}
+                </div>
+            </div>
+        </div>
+    <!--end of tag modal -->
+
+    <!-- notes modal -->
+        <div class="modal fade" id="notes_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Notes</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table id="notes_list_table" class="display table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Operator</th>
+                                    <th>Date</th>
+                                    <th>Comments</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody> 
+                            </tbody>
+                        </table>  
                     </div>
                 </div>
             </div>
-            <!-- end of graph form modal -->
+        </div>
+    <!--end of notes modal -->
 
-            <!-- tag modal -->
-                <div class="modal fade" id="tag_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="tag_title">Add Tag</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            {!! Form::open(['class' => 'tag_form', 'method' => 'post']) !!}
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> 
-                                        {!! Form::hidden('cdrid', null, ['class' => 'form-control', 'id' => 'cdrid']) !!}
-                                    </div>
-
-                                    <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Tag</label> 
-                                         {!! Form::select('tag', $tags->prepend('Select Tag', ''), null,array('class' => 'form-control', 'id' => 'tag')) !!}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save changes</button>
-                            </div>
-                            {!! Form::close() !!}
-                        </div>
+    <!-- notes modal -->
+        <div class="modal fade" id="history_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Call History</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                </div>
-            <!--end of tag modal -->
-
-            <!-- notes modal -->
-                <div class="modal fade" id="notes_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Notes</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <table id="notes_list_table" class="display table table-striped table-bordered" style="width:100%">
-                                   <thead>
-                                        <tr>
-                                            <th>Operator</th>
-                                            <th>Date</th>
-                                            <th>Comments</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody> 
-                                    </tbody>
-                                </table>  
-                            </div>
-                        </div>
+                    <div class="modal-body">
+                        <table id="history_list_table" class="display table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Caller Id</th>
+                                    <th>Date & Time</th>
+                                    <th>Status</th>
+                                    <!-- <th>Action</th> -->
+                                </tr>
+                            </thead>
+                            <tbody> 
+                            </tbody>
+                        </table>  
                     </div>
-                </div>
-            <!--end of notes modal -->
-
-            <!-- notes modal -->
-                <div class="modal fade" id="history_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Call History</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <table id="history_list_table" class="display table table-striped table-bordered" style="width:100%">
-                                   <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Caller Id</th>
-                                            <th>Date & Time</th>
-                                            <th>Status</th>
-                                            <!-- <th>Action</th> -->
-                                        </tr>
-                                    </thead>
-                                    <tbody> 
-                                    </tbody>
-                                </table>  
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            <!--end of notes modal -->
-    
-            <!-- add note modal -->
-                <div class="modal fade" id="add_note_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Add Note</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            {!! Form::open(['class' => 'notes_form', 'method' => 'post']) !!}
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                      <input type="hidden" name="uniqueid" id="uniqueid"/>
-                                      <textarea class="form-control" rows="5" name="note" placeholder="Comment"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save changes</button>
-                            </div>
-                            {!! Form::close() !!}
-                        </div>
-                    </div>
-                </div>
-            <!-- end of add note modal -->
-
-            <!-- add reminder -->
-                <div class="modal fade" id="add_reminder_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title">Add Reminder</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            {!! Form::open(['class' => 'reminder_form', 'method' => 'post']) !!}
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> 
-                                        {!! Form::hidden('cdr_id', null, ['id' => 'cdr_id']) !!}
-                                    </div>
-
-                                    <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Reminder Date</label> 
-                                        <input class="form-control datepicker" placeholder="dd-mm-yyyy" name="startdate">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> </div>
-
-                                    <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Reminder Time</label> 
-                                        <input  placeholder="Followup Time" type="text"  size="10"  data-rel="timepicker" id="timepicker1" name="starttime" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" class="form-control" /> 
-                                    </div>
-                                </div>
-                                
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save changes</button>
-                            </div>
-                            {!! Form::close() !!}
-                        </div>
-                    </div>
-                </div>
-            <!-- end of add reminder -->
-
-            <!-- add contact -->
-                <div class="modal fade" id="contact_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="contact_title">Add Contact</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            {!! Form::open(['class' => 'contact_form', 'method' => 'post']) !!}
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-md-2 form-group mb-3"></div>
-
-                                    <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">First Name</label> 
-                                        <input type="hidden" name="contact_id" id="contact_id">
-                                        <input type="hidden" name="phone" id="phone">
-                                        <input type="hidden" name="groupid" id="groupid">
-                                        <input type="text" class="form-control" name="fname" id="fname" placeholder="First Name">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> </div>
-
-                                    <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Last Name</label> 
-                                        <input type="text" name="lname" id="lname" class="form-control" placeholder="Last Name">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> </div>
-
-                                    <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Email</label> 
-                                        <input type="email" name="email" id="email" class="form-control" placeholder="Email">
-                                    </div>
-                                </div>
-                                
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save changes</button>
-                            </div>
-                            {!! Form::close() !!}
-                        </div>
-                    </div>
-                </div>
-            <!-- end of add contact -->
-
-            <!-- customize sidebar -->
-            @if(Auth::user()->usertype == 'groupadmin')
-            <div class="customizer" style="top: 73px;">
-                <div class="handle">
-                  <i data-toggle="modal" title="Dial Now" data-target="#dial_modal" class="i-Telephone"></i>
                 </div>
             </div>
-            <div class="customizer" style="top: 115px;">
-                <div class="handle">
-                  <i class="i-Email" title="Send Message" data-toggle="modal" data-target="#msg_modal"></i>
+        </div>
+    <!--end of notes modal -->
+
+    <!-- add note modal -->
+        <div class="modal fade" id="add_note_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Note</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {!! Form::open(['class' => 'notes_form', 'method' => 'post']) !!}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <input type="hidden" name="uniqueid" id="uniqueid"/>
+                                <textarea class="form-control" rows="5" name="note" placeholder="Comment"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                    {!! Form::close() !!}
                 </div>
             </div>
-            <div class="customizer" style="top: 156px;">
-                <div class="handle">
-                  <i class="i-Bar-Chart-2
-                  " data-toggle="modal" title="Cdr Chart" data-target="#graph_search_modal"></i>
+        </div>
+    <!-- end of add note modal -->
+
+    <!-- add reminder -->
+        <div class="modal fade" id="add_reminder_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Reminder</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {!! Form::open(['class' => 'reminder_form', 'method' => 'post']) !!}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> 
+                                {!! Form::hidden('cdr_id', null, ['id' => 'cdr_id']) !!}
+                            </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">Reminder Date</label> 
+                                <input class="form-control datepicker" placeholder="dd-mm-yyyy" name="startdate">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">Reminder Time</label> 
+                                <input  placeholder="Followup Time" type="text"  size="10"  data-rel="timepicker" id="timepicker1" name="starttime" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" class="form-control" /> 
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                    {!! Form::close() !!}
                 </div>
             </div>
-            <div class="customizer" style="top: 280px;">
-                <div>
-                <a href="#" title="Assign To" class="dropdown-toggle" data-toggle="dropdown"><div class="handle collapsed">
-                  <i class="i-Add-User"></i>
-                </div></a>
-                <ul class="dropdown-menu" role="menu">
-                  @foreach($operators as $operator)
-                  @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
-                    <li> 
-                        <a href="#">{{$operator->opername}}</a><ul>
-                  @else 
-                    <li> 
-                        <a href="#">{{$operator->opername}}</a>
-                  @endif
-                  @if($account_service['smsservice_assign_cdr'] =='Yes')
-                    <li>
-                        <a href="javascript:assignoper(0,{{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
-                    </li>
-                  @endif
-                  @if($account_service['emailservice_assign_cdr'] =='Yes')
-                    <li>
-                        <a href="javascript:assignoper(0,{{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
-                    </li>
-                  @endif 
-                  @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
-                    </ul>
-                  @else 
-                    </li>
-                  @endif
-                  @endforeach
-                  <?php echo '<li><a href="javascript:assignoper(0);">Unassign</a></li>'; ?>
-                    </ul>
+        </div>
+    <!-- end of add reminder -->
+
+    <!-- add contact -->
+        <div class="modal fade" id="contact_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="contact_title">Add Contact</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {!! Form::open(['class' => 'contact_form', 'method' => 'post']) !!}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"></div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">First Name</label> 
+                                <input type="hidden" name="contact_id" id="contact_id">
+                                <input type="hidden" name="phone" id="phone">
+                                <input type="text" class="form-control" name="fname" id="fname" placeholder="First Name">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">Last Name</label> 
+                                <input type="text" name="lname" id="lname" class="form-control" placeholder="Last Name">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">Email</label> 
+                                <input type="email" name="email" id="emailaddress" class="form-control" placeholder="Email">
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                    {!! Form::close() !!}
                 </div>
             </div>
-            <div class="customizer" style="top: 239px;">
-                <a href="#" title="Search" data-toggle="collapse" data-target="#filter-panel"><div class="handle collapsed">
-                  <i class="i-Search-People"></i>
-                </div></a>
-            </div>
+        </div>
+    <!-- end of add contact -->
+
+    <!-- customize sidebar -->
+    @if(Auth::user()->usertype == 'groupadmin')
+    <div class="customizer" style="top: 73px;">
+        <div class="handle">
+            <i data-toggle="modal" title="Dial Now" data-target="#dial_modal" class="i-Telephone"></i>
+        </div>
+    </div>
+    <div class="customizer" style="top: 115px;">
+        <div class="handle">
+            <i class="i-Email" title="Send Message" data-toggle="modal" data-target="#msg_modal"></i>
+        </div>
+    </div>
+    <div class="customizer" style="top: 156px;">
+        <div class="handle">
+            <i class="i-Bar-Chart-2
+            " data-toggle="modal" title="Cdr Chart" data-target="#graph_search_modal"></i>
+        </div>
+    </div>
+    <div class="customizer" style="top: 280px;">
+        <div>
+        <a href="#" title="Assign To" class="dropdown-toggle" data-toggle="dropdown"><div class="handle collapsed">
+            <i class="i-Add-User"></i>
+        </div></a>
+        <ul class="dropdown-menu" role="menu">
+            @foreach($operators as $operator)
+            @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
+            <li> 
+                <a href="#">{{$operator->opername}}</a><ul>
+            @else 
+            <li> 
+                <a href="#">{{$operator->opername}}</a>
             @endif
-            <div class="customizer" style="{{Auth::user()->usertype == 'groupadmin' ?  'top:198px' : 'top:73px'}}">>
-                <a href="{{ url('cdrexport') }}" title="Export Data"><div class="handle">
-                  <i class="i-Download1"></i>
-                </div></a>
-            </div>
-           
-            
+            @if($account_service['smsservice_assign_cdr'] =='Yes')
+            <li>
+                <a href="javascript:assignoper(0,{{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
+            </li>
+            @endif
+            @if($account_service['emailservice_assign_cdr'] =='Yes')
+            <li>
+                <a href="javascript:assignoper(0,{{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
+            </li>
+            @endif 
+            @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
+            </ul>
+            @else 
+            </li>
+            @endif
+            @endforeach
+            <?php echo '<li><a href="javascript:assignoper(0);">Unassign</a></li>'; ?>
+            </ul>
+        </div>
+    </div>
+    <div class="customizer" style="top: 239px;">
+        <a href="#" title="Search" data-toggle="collapse" data-target="#filter-panel"><div class="handle collapsed">
+            <i class="i-Search-People"></i>
+        </div></a>
+    </div>
+    @endif
+    <div class="customizer" style="{{Auth::user()->usertype == 'groupadmin' ?  'top:198px' : 'top:73px'}}">>
+        <a href="{{ url('cdrexport') }}" title="Export Data"><div class="handle">
+            <i class="i-Download1"></i>
+        </div></a>
+    </div>  
+
 @endsection
 
 @section('page-js')
@@ -1186,8 +1188,7 @@ audio {
                 $("#tag").val(tag);
             } else {
                 $("#tag_title").text("Add Tag");
-            }
-            
+            }  
         });
         
         $('.edit_contact').on('click',function(e)
@@ -1196,14 +1197,12 @@ audio {
             var email = $(this).attr("data-email");
             var fname = $(this).attr("data-fname");
             var lname = $(this).attr("data-lname");
-            var groupid = $(this).attr("data-groupid");
             var phone = $(this).attr("data-phone");
             var contactid = id.replace("contact_", "");
             $("#contact_id").val(contactid);
-            $("#email").val(email);
+            $("#emailaddress").val(email);
             $("#fname").val(fname);
             $("#lname").val(lname);
-            $("#groupid").val(groupid);
             $("#phone").val(phone);
             if(contactid != '') {
                 $("#contact_title").text("Update Contact");
@@ -1258,7 +1257,7 @@ audio {
 
                     }); 
                 } else {
-                    noteHTML += "<tr><td colspan='3'><center>No Data Found</center></td></tr>";
+                    noteHTML += "<tr><td colspan='4'><center>No Data Found</center></td></tr>";
                 } 
                 $("#notes_list_table tbody").html(noteHTML);
             },

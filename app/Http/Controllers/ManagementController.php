@@ -30,7 +30,7 @@ class ManagementController extends Controller
     }
 
     public function holiday() {
-        $holiday_list = Holiday::all()->where('groupid', Auth::user()->groupid);
+        $holiday_list = Holiday::where('groupid', Auth::user()->groupid)->orderBy('id','DESC')->paginate(10);
         return view('management.holiday', compact('holiday_list'));
     }
 

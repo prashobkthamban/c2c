@@ -27,7 +27,7 @@
                     <div class="card mb-4">
                         <div class="card-body">
                             <div class="card-title mb-3">Add Email Template</div>
-                            {!! Form::open(['action' => 'EmailTemplateController@store', 'method' => 'post','autocomplete' => 'off']) !!} 
+                            {!! Form::open(['action' => 'EmailTemplateController@store', 'method' => 'post','autocomplete' => 'off','enctype' => 'multipart/form-data']) !!} 
                                 <div class="row">
 
                                     <div class="col-md-4 form-group mb-3">
@@ -52,6 +52,12 @@
                                         </div>
                                     </div>
                                     <textarea name="mail_body" id="mail_body" class="form-control" hidden=""></textarea>
+
+                                    <div class="col-md-4 form-group mb-3">
+                                        <label for="attachment">Attachment</label>
+                                        <input type="file" name="attachment" id="attachment" class="form-control">
+                                    </div>
+
 
                                     <div class="col-md-12">
                                          <button class="btn btn-primary">Submit</button>

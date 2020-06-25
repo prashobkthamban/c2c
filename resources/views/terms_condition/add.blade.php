@@ -26,25 +26,34 @@
                 <div class="col-md-12">
                     <div class="card mb-4">
                         <div class="card-body">
-                            <div class="card-title mb-3">Add Terms And Condition for Invoice</div>
+                            <div class="card-title mb-3">Add/Edit Terms And Condition for Invoice</div>
                             {!! Form::open(['action' => 'TermsAndConditionController@store', 'method' => 'post','autocomplete' => 'off']) !!} 
                                 <div class="row">
+                                    <input type="hidden" name="uid" id="uid" value="<?php if (!empty($list_tc_invoices)) { echo $list_tc_invoices->id; } ?>">
 
                                     <div class="col-md-12 form-group mb-3">
                                         <div class="mx-auto col-md-12">
-                                            <div id="full-editor" style="height: 150px;"></div>
+                                            <div id="full-editor" style="height: 150px;"><?php if (!empty($list_tc_invoices)) {
+                                                echo $list_tc_invoices->tc_inv_name;
+                                            }?></div>
                                         </div>
                                     </div>
-                                    <textarea name="mail_body_invoice" id="mail_body_invoice" class="form-control" hidden=""></textarea>
+                                    <textarea name="mail_body_invoice" id="mail_body_invoice" class="form-control" hidden=""><?php if (!empty($list_tc_invoices)) {
+                                                echo $list_tc_invoices->tc_inv_name;
+                                            }?></textarea>
 
-                                    <div class="card-title mb-3">Add Terms And Condition for Proposal</div>
+                                    <div class="card-title mb-3">Add/Edit Terms And Condition for Proposal</div>
 
                                     <div class="col-md-12 form-group mb-3">
                                         <div class="mx-auto_1 col-md-12">
-                                            <div id="full-editor_1" style="height: 150px;"></div>
+                                            <div id="full-editor_1" style="height: 150px;"><?php if (!empty($list_tc_invoices)) {
+                                                echo $list_tc_invoices->tc_pro_name;
+                                            }?></div>
                                         </div>
                                     </div>
-                                    <textarea name="mail_body_proposal" id="mail_body_proposal" class="form-control" hidden=""></textarea>
+                                    <textarea name="mail_body_proposal" id="mail_body_proposal" class="form-control" hidden=""><?php if (!empty($list_tc_invoices)) {
+                                                echo $list_tc_invoices->tc_pro_name;
+                                            }?></textarea>
 
                                     <div class="col-md-12">
                                          <button class="btn btn-primary">Submit</button>

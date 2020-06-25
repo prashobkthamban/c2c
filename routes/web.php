@@ -13,6 +13,7 @@
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
+Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
 Route::get('/test', 'ServiceController@test')->name('test');
 Route::get('home', 'HomeController@index')->name('home');
 Route::get('acc_call_summary', 'HomeController@callSummary')->name('callSummary');
@@ -20,6 +21,7 @@ Route::get('dashboard_note', 'HomeController@dashboardNote')->name('dashboardNot
 Route::post('add_announcement', 'HomeController@addAnnouncement')->name('addAnnouncement');
 Route::get('delete_announcement/{id}', 'HomeController@deleteAnnouncement')->name('deleteAnnouncement');
 Route::get('cdr_tags', 'HomeController@cdrTags')->name('cdrTags');
+Route::post('tag_store', 'HomeController@tagStore')->name('tagStore');
 Route::get('delete_record/{id}/{name}', 'HomeController@deleteRecord')->name('deleteRecord');
 
 /* --- Sms Api ----- */
@@ -210,7 +212,6 @@ Route::get('optdept_list', 'OperatorController@index')->name('OptdeptList');
 Route::get('get_ivr/{groupid}', 'OperatorController@getIvr')->name('getIvr');
 Route::post('add_operator', 'OperatorController@addOperator')->name('addOperator');
 Route::get('get_operator/{id}', 'OperatorController@getOperator')->name('getOperator');
-Route::get('delete_operator/{id}', 'OperatorController@deleteOperator')->name('deleteOperator');
 
 Route::get('nonoperator_list', 'OperatorController@nonOperatorList')->name('NonOperatorList');
 Route::get('get_non_operator/{id}', 'OperatorController@getNonOperator')->name('getNonOperator');
@@ -358,6 +359,7 @@ Route::post('/product/store','ProductController@store')->name('store');
 Route::get('product/{id}', 'ProductController@destroy')->name('deleteProduct');
 Route::post('product/edit/', 'ProductController@edit')->name('editProduct');
 Route::patch('/product/update', 'ProductController@update')->name('update');
+Route::post('/product/csvadd','ProductController@addproductcsv')->name('ProductCSV');
 
 //CDR Report Leads
 Route::post('cdrreport/store','ReportController@addLead')->name('store');
@@ -413,6 +415,7 @@ Route::patch('invoice/update/{id}', 'InvoiceController@update')->name('updateInv
 Route::post('invoice/payment','InvoiceController@payment')->name('InvoicePayment');
 Route::post('/invoice/filter_data','InvoiceController@FilterDataInvoice')->name('FilterDataInvoice');
 Route::get('invoice/view/{id}','InvoiceController@ViewInvoice')->name('ViewInvoice');
+Route::get('invoice/mail/{id}','InvoiceController@MailInvoice')->name('MailInvoice');
 
 //ToDoList
 Route::post('home/todotask','HomeController@ToDoTaskAdd')->name('ToDoTaskAdd');
@@ -462,6 +465,10 @@ Route::post('home/crm_data','HomeController@CRMData')->name('CRMData');
 
 //Tranfer Leads
 Route::get('transfer_leads/index','TranferLeadsController@index')->name('TranferLeadIndex');
+Route::post('transfer_leads/transferleads','TranferLeadsController@transferleads')->name('transferleads');
+
+//Lead Remainder Index
+Route::get('remainder/index','LeadController@remainder_show')->name('RemainderIndex');
 
 /*
 |--------------------------------------------------------------------------

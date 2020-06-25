@@ -45,22 +45,26 @@ class OperatorController extends Controller
         return view('operator.operatordept_list', compact('operatordept'));
     }
 
-    public function addOperator(Request $request) {
-        //dd($request->all());
-        $validator = Validator::make($request->all(), [
+    public function addOperator(Request $request) { 
+        $rules = [
             'groupid' => 'required',
             'dept_name' => 'required',
-            'ivrlevel_id' => 'required',
             'opt_calltype' => 'required',
             'starttime' => 'required',
             'endtime' => 'required',
             'call_transfer' => 'required'
-        ], [
+        ];
+        if($request->get('DT') !== '1' && $request->get('C2C') !== '1') {
+            $rules['ivrlevel_id'] = 'required';
+        }
+
+        $messages = [
             'groupid.required' => 'Customer is required',
             'dept_name.required' => 'Department Name is required',
             'ivrlevel_id.required' => 'Ivr Level is required',
-        ]);    
-        
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
@@ -83,7 +87,9 @@ class OperatorController extends Controller
                      'endtime' => $request->get('endtime'),
                      'call_transfer' => $request->get('call_transfer'),
                      'email_id' => $request->get('email_id'),
-                     'phone_no' => $request->get('phone_no')
+                     'phone_no' => $request->get('phone_no'),
+                     'DT' => $request->get('DT'),
+                     'C2C' => $request->get('C2C')
                     ];
 
             if(empty($request->get('id'))) {
@@ -101,14 +107,6 @@ class OperatorController extends Controller
 
     public function getOperator($id) {
         return $ope_dept = OperatorDepartment::find($id);
-    }
-
-    public function deleteOperator($id)
-    {
-        $ope_dept = OperatorDepartment::find($id);
-        $ope_dept->delete();
-        toastr()->success('Operator delete successfully.');
-        return redirect()->route('operators');
     }
 
     public function nonOperatorList() {

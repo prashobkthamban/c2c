@@ -115,6 +115,7 @@
                                                                   <option value="18.00">18.00%</option>
                                                               </select>
                                                               <input type="hidden" name="tax_amount[]" id="tax_amount" class="tax_amount">
+                                                              <input type="hidden" name="add_tax" id="add_tax">
                                                           </td>
                                                           <td>
                                                               <input type="text" name="amount[]" id="amount" class="form-control amount" placeholder="Amount" readonly="" /> 
@@ -289,6 +290,7 @@
                 //alert(data);
                 total_tax += Number(data);
             });
+            $('#add_tax').val(total_tax);
             am = thisss.closest("tr").find("input.amount").val();
             amount_tax = parseFloat((am*total_tax)/100).toFixed(2);
             //alert(total_tax);
@@ -329,7 +331,17 @@
             //alert(tax);
             //alert(discount);
             $('#dis_val').val(discount);
-            var grand_total = sub_total - discount + Number(tax);
+            //var grand_total = sub_total - discount + Number(tax);
+            var dec = (dis_val / 100).toFixed(2);
+            var mult = sub_total * dec;
+            var discont = sub_total - mult;
+
+            var total_tax = $('#add_tax').val();
+            tax_val = (total_tax / 100).toFixed(2);
+            var mul_tax = discont * tax_val;
+            var grand_total = discont + mul_tax; 
+
+            //var grand_total = sub_total - (dis_val / 100 ).toFixed(2);
             //alert(grand_total);
             $('#grand_total').val(parseFloat(grand_total).toFixed(2));
         });

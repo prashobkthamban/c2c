@@ -47,9 +47,7 @@ class ReportController extends Controller
     public function index(){
         $cdr = new CdrReport();
         $user = CdrReport::where('assignedto' , Auth::user()->groupid)->get();
-
         $products = Product::select('*')->get();
-
         $users_lists = DB::table('operatoraccount')
                         ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
                         ->get();
@@ -82,7 +80,6 @@ class ReportController extends Controller
 
     public function addContact(Request $request) 
     {
-        //dd($request->all());
         $validator = Validator::make($request->all(), [
             'fname' => 'required',
             'lname' => 'required',
@@ -96,7 +93,7 @@ class ReportController extends Controller
                      'lname'=> $request->get('lname'),
                      'phone'=> $request->get('phone'),
                      'email'=> $request->get('email'),
-                     'groupid'=> $request->get('groupid')
+                     'groupid'=> Auth::user()->groupid
                     ];
             if(!empty($request->get('contact_id'))) {
                 DB::table('contacts')

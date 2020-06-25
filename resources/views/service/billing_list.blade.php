@@ -100,6 +100,42 @@
                 <!-- end of col -->
 
             </div>
+
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                        <div class="card-body text-center">
+                            <!-- <i class="i-Administrator"></i> -->
+                            <div class="content" style="max-width: 100px;">
+                                <p class="text-muted mt-2 mb-0">Lead Balance</p>
+                                <p class="text-primary text-24 line-height-1 mb-2">{{$lead_count.'/'.$total_access_leads}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                        <div class="card-body text-center">
+                            <!-- <i class="i-Administrator"></i> -->
+                            <div class="content" style="max-width: 100px;">
+                                <p class="text-muted mt-2 mb-0">SMS Balance</p>
+                                <p class="text-primary text-24 line-height-1 mb-2">{{$response}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                        <div class="card-body text-center">
+                            <!-- <i class="i-Administrator"></i> -->
+                            <div class="content" style="max-width: 100px;">
+                                <p class="text-muted mt-2 mb-0">User</p>
+                                <p class="text-primary text-24 line-height-1 mb-2"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- end of row -->
 
             <!-- bill list modal -->

@@ -67,7 +67,7 @@
                                 </tr>
                             </tfoot>
                         </table>
-                        {{ $operators->links() }}
+                        <div class="pull-right">{{ $operators->links() }}</div>
                     </div>
 
                 </div>
@@ -294,7 +294,7 @@
                     else{
                      $('#crm_error').css('display','none');   
                     }
-                    //setTimeout(function(){ location.reload() }, 300);               
+                    setTimeout(function(){ location.reload() }, 300);               
                 }
                
             },

@@ -13,6 +13,12 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Product;
 use App\Models\Category;
 
+use File;
+
+use Excel;
+/*use Maatwebsite\Excel\Imports\HeadingRowFormatter;
+use Maatwebsite\Excel\Concerns\ToModel;
+*/
 class ProductController extends Controller
 {
     public function __construct()
@@ -99,15 +105,21 @@ class ProductController extends Controller
             //echo "else";exit;
             $file = $request->file('p_image');
                 
-                if ($request->hasFile("p_image")) {
+                if ($request->hasFile("p_image")) 
+                {
                     $file = $request->file("p_image");
                     $file->move("product_images/",$file->getClientOriginalName());
+                    $image_name = $file->getClientOriginalName();
+                }
+                else
+                {
+                    $image_name = '';
                 }
 
             $add_product = new Product([
                 'name' => $request->get('name'),
                 'category_id' => $request->get('category_id'),
-                'image'=> $file->getClientOriginalName(),
+                'image'=> $image_name,
                 'unit_of_measurement'=> $request->get('uom'),
                 'landing_cost'=> $request->get('landing_cost'),
                 'selling_cost'=> $request->get('selling_cost'),
@@ -170,7 +182,7 @@ class ProductController extends Controller
     
                 $edit_product->name = $request->name;
                 $edit_product->category_id = $request->category_id;
-                $edit_product->image = $image;
+                $edit_product->image = $image ? $image : '';
                 $edit_product->unit_of_measurement = $request->uom;
                 $edit_product->landing_cost = $request->landing_cost;
                 $edit_product->selling_cost = $request->selling_cost;
@@ -192,7 +204,44 @@ class ProductController extends Controller
         return redirect()->route('productIndex');
     }
 
+    public function addproductcsv(Request $request)
+    {
+          $file = $_FILES['products_file']['tmp_name'];
+            //$handle = fopen($file, "r");
+            $row = 1;
+            if (($handle = fopen($file, "r")) !== FALSE) {
+                $newdata = '';
+              while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                if($row == 1)
+                {
+                    $row++;
+                }else
+                {
+                    $num = count($data);
 
+                    /*echo '<pre>';
+                    print_r($data);exit;*/
+
+
+                    $add_data = new Product([
+                        'name' => $data[0],
+                        'category_id' => $data[1],
+                        'unit_of_measurement' => $data[2],
+                        'selling_cost' => $data[3],
+                        'landing_cost' => $data[4],
+                        'description' => $data[5],
+                    ]);
+                    
+                    $add_data->save();
+                }
+                
+              }
+              fclose($handle);
+            }
+
+        toastr()->success('Product Inserted successfully.');
+        return redirect()->route('productIndex');
+    }
 
 }
 

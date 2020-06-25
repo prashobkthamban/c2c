@@ -34,11 +34,13 @@ class SMSTemplateController extends Controller
             $list_smstemplates = DB::table('sms_template')
                     ->where('user_type','=','admin')
                     ->orWhere('user_type','=','groupadmin')
+                    ->orWhere('user_type','=','operator')
                     ->orderBy('id', 'desc')
                     ->paginate(10);
         }else{
 
             $list_smstemplates = DB::table('sms_template')
+                    ->where('user_type','=','operator')
                     ->orderBy('id', 'desc')
                     ->paginate(10);
         }

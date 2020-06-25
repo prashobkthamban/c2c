@@ -20,20 +20,24 @@
                                  {{ csrf_field() }}
                                 <div class="row">
                                     <div class="col-md-6 form-group mb-3">
+                                        <label for="company_name_converted">Company Name*</label>
+                                        <input type="text" name="company_name_converted" id="company_name_converted" class="form-control" placeholder="Enter Company Name" required="">
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
                                         <label for="first_name">Name*</label>
-                                        <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter your First Name" />  
+                                        <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter your First Name" required="" />  
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('first_name', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="last_name">Last Name*</label>
-                                        <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Enter Last Name" />  
+                                        <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Enter Last Name" required="" />  
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('last_name', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="gst_no">Gst No*</label>
-                                        <input type="text" name="gst_no" id="gst_no" class="form-control"placeholder="Enter Gst No" />  
+                                        <input type="text" name="gst_no" id="gst_no" class="form-control"placeholder="Enter Gst No" required="" />  
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('gst_no', ':message') : '' !!}</p>
                                     </div>
 
@@ -45,7 +49,7 @@
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="email">Email*</label>
-                                        <input type="text" name="email" id="email" class="form-control"placeholder="Enter Your Email Address" />  
+                                        <input type="text" name="email" id="email" class="form-control"placeholder="Enter Your Email Address" required="" />  
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('email', ':message') : '' !!}</p>
                                     </div>
 
@@ -154,10 +158,12 @@
                                             <th>ID</th>
                                             <th>First_Name</th>
                                             <th>Last Name</th>
+                                            <th>Company Name</th>
                                             <th>GST No</th>
                                             <th>Email</th>
                                             <th>Phone Number</th>
                                             <th>Address</th>
+                                            <th>Date</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>                                
@@ -167,10 +173,12 @@
                                             <td>{{$list_converted->id}}</td>
                                             <td>{{$list_converted->first_name}}</td>
                                             <td>{{$list_converted->last_name}}</td>
+                                            <td>{{$list_converted->company_name}}</td>
                                             <td>{{$list_converted->gst_no}}</td>
                                             <td>{{$list_converted->email}}</td>
                                             <td>{{$list_converted->mobile_no}}</td>
                                             <td>{{$list_converted->address}}</td>
+                                            <td>{{$list_converted->inserted_date}}</td>
                                             <td>
                                                 <a href="javascript:void(0)" class="text-success mr-2 edit_converted" id="edit_converted" data-id="{{$list_converted->id}}"><i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                                 </a>
@@ -186,10 +194,12 @@
                                             <th>ID</th>
                                             <th>First_Name</th>
                                             <th>Last Name</th>
+                                            <th>Company Name</th>
                                             <th>GST No</th>
                                             <th>Email</th>
                                             <th>Phone Number</th>
                                             <th>Address</th>
+                                            <th>Date</th>
                                             <th>Actions</th>
                                         </tr>
                                     </tfoot>

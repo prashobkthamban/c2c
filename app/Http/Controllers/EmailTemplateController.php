@@ -34,13 +34,16 @@ class EmailTemplateController extends Controller
             $list_emailtemplates = DB::table('email_template')
                     ->where('user_type','=','admin')
                     ->orWhere('user_type','=','groupadmin')
+                    ->orWhere('user_type','=','operator')
                     ->orderBy('id', 'desc')
                     ->paginate(10);
         }else{
             $list_emailtemplates = DB::table('email_template')
+                    ->where('user_type','=','operator')
                     ->orderBy('id', 'desc')
                     ->paginate(10);    
         }
+        //print_r(Auth::user());exit;
         
         return view('email_template.index',compact('list_emailtemplates','result'));
     }
@@ -53,6 +56,18 @@ class EmailTemplateController extends Controller
     public function store(Request $request)
     {
         //print_r($request->all());exit;
+
+        $file = $request->file('attachment');
+                
+        if ($request->hasFile("attachment")) {
+            $file = $request->file("attachment");
+            $file->move("email_template/",$file->getClientOriginalName());
+            $attachment = $file->getClientOriginalName();
+        }
+        else {
+            $attachment = '';
+        }
+
         $now = date("Y-m-d H:i:s");
 
         $add_mail = new MailTemplate([
@@ -61,6 +76,7 @@ class EmailTemplateController extends Controller
                 'name' => $request->get('name'),
                 'subject' => $request->get('subject'),
                 'body' => $request->get('mail_body'),
+                'attachment' => $attachment,
                 'inserted_date' => $now,
             ]);
 
@@ -80,11 +96,29 @@ class EmailTemplateController extends Controller
     {
         //print_r($request->all());exit;
 
+        $file = $request->file('attachment');
+                
+        if ($request->hasFile("attachment")) {
+            
+            //unlink(public_path('product_images/'.$request->old_image));
+            $file = $request->file("attachment");
+            $file->move("email_template/",$file->getClientOriginalName());
+        }
+
+        if (empty($request->file('attachment'))) {
+            
+            $attachment = $request->get('old_attachment');
+        }else{
+            
+           $attachment = $file->getClientOriginalName();
+        }
+
         $edit_template = MailTemplate::find($id);
     
         $edit_template->name = $request->name;
         $edit_template->subject = $request->subject;
         $edit_template->body = $request->mail_body;
+        $edit_template->attachment = $attachment ? $attachment : '';
 
         $edit_template->save();
         

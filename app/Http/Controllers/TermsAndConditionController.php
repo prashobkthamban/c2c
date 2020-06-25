@@ -30,6 +30,8 @@ class TermsAndConditionController extends Controller
     {
         $result = Terms_Condition_Invoice::getReport();
 
+        //print_r($result);exit;
+
         $list_tc_invoices = DB::table('terms_condition_invoice')
                     ->where('terms_condition_invoice.user_id','=',Auth::user()->id)
                     ->LeftJoin('terms_condition_proposal','terms_condition_proposal.id','=','terms_condition_invoice.id')
@@ -42,38 +44,69 @@ class TermsAndConditionController extends Controller
 
     public function add()
     {
-        return view('terms_condition.add');
+        $list_tc_invoices = DB::table('terms_condition_invoice')
+                    ->LeftJoin('terms_condition_proposal','terms_condition_proposal.id','=','terms_condition_invoice.id')
+                    ->where('terms_condition_invoice.user_id','=',Auth::user()->id)
+                    ->where('terms_condition_proposal.user_id','=',Auth::user()->id)
+                    ->select('terms_condition_proposal.name as tc_pro_name','terms_condition_invoice.name as tc_inv_name','terms_condition_invoice.id')->first();
+
+        /*echo "<pre>";
+        print_r($list_tc_invoices);exit;*/
+        return view('terms_condition.add',compact('list_tc_invoices'));
     }
 
     public function store(Request $request)
     {
     
         //print_r($request->all());exit;
+        
         $now = date("Y-m-d H:i:s");
 
-        $invoice = new Terms_Condition_Invoice([
-            'user_id' => Auth::user()->id,
-            'user_type' => Auth::user()->usertype ? Auth::user()->usertype : 'user',
-            'name' => $request->get('mail_body_invoice'),
-            'inserted_date' => $now,
-        ]);
+        if (!empty(DB::table('terms_condition_invoice')->where('id', $request->uid)->first())) 
+        {
+            $edit_tc_invoice = Terms_Condition_Invoice::find($request->uid);
+        
+            $edit_tc_invoice->name = $request->mail_body_invoice;
+            
 
-        //dd($invoice);exit;
-        $invoice->save();
+            $edit_tc_invoice->save();
 
-        $proposal = new Terms_Condition_Proposal([
-            'user_id' => Auth::user()->id,
-            'user_type' => Auth::user()->usertype ? Auth::user()->usertype : 'user',
-            'name' => $request->get('mail_body_proposal'),
-            'inserted_date' => $now,
-        ]);
+            $edit_tc_proposal = Terms_Condition_Proposal::find($request->uid);
 
-        //dd($proposal);exit;
-        $proposal->save();
+            $edit_tc_proposal->name = $request->mail_body_proposal;
 
+            $edit_tc_proposal->save();
 
-        toastr()->success('T&C added successfully.');
-        return redirect()->route('TermsAndConditionIndex');
+            toastr()->success('T&C Updated successfully.');
+        }
+        else
+        {
+
+            $invoice = new Terms_Condition_Invoice([
+                'user_id' => Auth::user()->id,
+                'user_type' => Auth::user()->usertype ? Auth::user()->usertype : 'user',
+                'name' => $request->get('mail_body_invoice'),
+                'inserted_date' => $now,
+            ]);
+
+            //dd($invoice);exit;
+            $invoice->save();
+
+            $proposal = new Terms_Condition_Proposal([
+                'user_id' => Auth::user()->id,
+                'user_type' => Auth::user()->usertype ? Auth::user()->usertype : 'user',
+                'name' => $request->get('mail_body_proposal'),
+                'inserted_date' => $now,
+            ]);
+
+            //dd($proposal);exit;
+            $proposal->save();
+
+            toastr()->success('T&C added successfully.');
+        }
+
+        
+        return redirect()->route('TermsAndConditionAdd');
     }
 
     public function edit($id)

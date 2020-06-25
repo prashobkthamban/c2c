@@ -638,7 +638,7 @@
                                             </div>
                                             <div class="col-md-8 form-group mb-3">
                                                 <label for="firstName1">Reminder Date</label> 
-                                                <input type="date" class="form-control" placeholder="yyyy-mm-dd" name="startdate">
+                                                <input type="date" class="form-control" placeholder="yyyy-mm-dd" name="startdate" required="">
                                             </div>
                                         </div>
                                         <div class="row">
@@ -646,7 +646,7 @@
 
                                             <div class="col-md-8 form-group mb-3">
                                                 <label for="firstName1">Reminder Time</label> 
-                                                <input  placeholder="Followup Time" type="text"  size="10"  data-rel="timepicker" id="timepicker1" name="starttime" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" class="form-control" /> 
+                                                <input  placeholder="Followup Time" type="text"  size="10"  data-rel="timepicker" id="timepicker1" name="starttime" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" class="form-control" required="" /> 
                                             </div>
                                         </div>
                                         <div class="row">
@@ -654,7 +654,7 @@
 
                                             <div class="col-md-8 form-group mb-3">
                                                 <label for="firstName1">Title</label> 
-                                                <input  placeholder="Add Title" type="text"  size="10" id="title" name="title" class="form-control" /> 
+                                                <input  placeholder="Add Title" type="text"  size="10" id="title" name="title" class="form-control" required="" /> 
                                             </div>
                                         </div>
 
@@ -663,7 +663,7 @@
 
                                             <div class="col-md-8 form-group mb-3">
                                                 <label for="firstName1">Task</label> 
-                                                <textarea id="task" name="task" class="form-control" placeholder="Add Description"></textarea>
+                                                <textarea id="task" name="task" class="form-control" placeholder="Add Description" required=""></textarea>
                                             </div>
                                         </div>
                                         
@@ -906,7 +906,7 @@
                                                                 </div>
                                                                 <div class="ul-widget-s7__item-text">
                                                                     Subject: {{$lead_mail->subject ? $lead_mail->subject : 'No Subject Found'}}
-                                                                    {!!$lead_mail->body!!}
+                                                                    Mail Body: {!!$lead_mail->body!!}
                                                                 </div>
                                                             </div>
                                                             @endforeach
@@ -936,7 +936,8 @@
                                                                     <p class="ul-vertical-line bg-warning "></p>
                                                                 </div>
                                                                 <div class="ul-widget-s7__item-text">
-                                                                    {{$msg->message}}
+                                                                    Phone Number : {{$msg->msg_to}} <br>
+                                                                    Text Message: {{$msg->message}}
                                                                 </div>
                                                             </div>
                                                             @endforeach

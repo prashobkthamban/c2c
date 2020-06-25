@@ -26,6 +26,26 @@
                                     <input type="date" name="date_to" id="date_to" class="form-control" value="<?php echo date('Y-m-d');?>">
                                 </div>
                                 <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <label for="company_name">Company Name</label>
+                                    <input type="text" name="company_name" id="company_name" class="form-control" value="">
+                                </div>
+                                <?php
+                                if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin') { ?>
+                                    <div class="col-md-4">
+                                        <label for="agent_name">Agent Name</label>
+                                        <input type="text" name="agent_name" id="agent_name" class="form-control" value="">
+                                    </div>
+                                <?php }
+                                ?>
+                                <div class="col-md-4">
+                                    <label for="status">Payment Status</label>
+                                        <select name="status" id="status" class="form-control">
+                                            <option value="pending">Pending</option>
+                                            <option value="partial">Partial</option>
+                                            <option value="paid">Paid</option>
+                                        </select>
+                                </div>
                                 <div class="col-md-6" style="margin-top: 23px;">
                                     <button id="btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
                                     <button id="export_invoice" class="btn btn-outline-secondary" name="btn">Export Invoice</button>
@@ -38,13 +58,14 @@
                                             <th>ID</th>
                                             <th>Invoice Number</th>
                                             <th>Customer Name</th>
+                                            <th>Company Name</th>
                                             <th>Date</th>
                                             <th>Discount</th>
                                             <th>Total Amount</th>
-                                            <th>Grand Total</th>
+                                            <th>Payment Status</th>
                                             <?php
                                             if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') { ?>
-                                                <th>User ID</th>
+                                                <th>Agent Name</th>
                                             <?php }?>
                                             <th>Actions</th>
                                         </tr>
@@ -55,13 +76,27 @@
                                             <td>{{$list_invoice->id}}</td>
                                             <td>{{$list_invoice->invoice_number}}</td>
                                             <td>{{$list_invoice->first_name.' '.$list_invoice->last_name}}</td>
+                                            <td>{{$list_invoice->company_name}}</td>
                                             <td>{{$list_invoice->date}}</td>
                                             <td>{{$list_invoice->discount}}</td>
                                             <td>{{$list_invoice->total_amount}}</td>
-                                            <td>{{$list_invoice->grand_total}}</td>
+                                            <td>
+                                                <?php
+                                                if ($list_invoice->payment_status == 'partial') { ?>
+                                                    <span class="badge badge-warning">{{$list_invoice->payment_status}}</span>
+                                                <?php }
+                                                elseif ($list_invoice->payment_status == 'pending') { ?>
+                                                    <span class="badge badge-danger">{{$list_invoice->payment_status}}</span>
+                                                <?php }
+                                                else
+                                                { ?>
+                                                    <span class="badge badge-success">{{$list_invoice->payment_status}}</span>
+                                                <?php }
+                                                ?>
+                                            </td>
                                             <?php
                                             if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') { ?>
-                                                <td>{{$list_invoice->user_id}}</td>
+                                                <td>{{$list_invoice->username}}</td>
                                             <?php }?>
                                             <td>
                                                 <a href="{{ route('editInvoice', $list_invoice->id) }}" class="text-success mr-2">
@@ -83,13 +118,14 @@
                                             <th>ID</th>
                                             <th>Invoice Number</th>
                                             <th>Customer Name</th>
+                                            <th>Company Name</th>
                                             <th>Date</th>
                                             <th>Discount</th>
                                             <th>Total Amount</th>
-                                            <th>Grand Total</th>
+                                            <th>Payment Status</th>
                                             <?php
                                             if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') { ?>
-                                                <th>User ID</th>
+                                                <th>Agent Name</th>
                                             <?php }?>
                                             <th>Actions</th>
                                         </tr>
@@ -134,10 +170,19 @@
                                                             </div>
                                                             <div class="col-md-6">
                                                                 <label for="payment_mode">Payment Mode*</label>
-                                                                <select id="payment_mode" class="form-control" name="payment_mode">
+                                                                <select id="payment_mode" class="form-control" name="payment_mode" required="">
                                                                     <option value="">Select Payment</option>
                                                                     <option value="Bank">Bank</option>
                                                                     <option value="Cash">Cash</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label for="payment_status">Payment Status*</label>
+                                                                <select id="payment_status" class="form-control" name="payment_status" required="">
+                                                                    <option value="">Select Status</option>
+                                                                    <option value="partial">partial</option>
+                                                                    <option value="pending">pending</option>
+                                                                    <option value="paid">paid</option>
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-12">
@@ -174,7 +219,7 @@
         var myid = $(this).data('id');
         var amount = parseFloat($(this).data('amount')).toFixed(2);
         $(".Payment #invoice_id").val(myid);
-        $(".Payment #amount").val(amount);
+        //$(".Payment #amount").val(amount);
 
     });
 </script>
@@ -182,12 +227,15 @@
     $('#btn').click(function(){
         var date_from = $('#date_from').val();
         var date_to = $('#date_to').val();
+        var company_name = $('#company_name').val();
+        var agent_name = $('#agent_name').val();
+        var status = $('#status').val();
         //alert(date_from+date_to);
         jQuery.ajax({
             type: "POST",
             url: '{{ URL::route("FilterDataInvoice") }}',
             dataType: 'text',
-            data: {date_to:date_to,date_from:date_from},
+            data: {date_to:date_to,date_from:date_from,company_name:company_name,agent_name:agent_name,status:status},
             success: function(data) 
             {
                 //console.log(data);
@@ -209,7 +257,21 @@
 
                     url_view = url_view.replace(':data',data.id);
 
-                    html += '<tr><td>'+data.id+'</td>'+'<td>'+data.invoice_number+'</td>'+'<td>'+data.first_name+'</td>'+'<td>'+data.date+'</td>'+'<td>'+data.discount+'</td>'+'<td>'+data.total_amount+'</td>'+'<td>'+data.grand_total+'</td>'+'<td>'+data.user_id+'</td>'+'<td><a href="'+url_edit+'" class="text-success mr-2"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a href="'+url_delete+'" onclick="return confirm("Are you sure you want to delete this Data?")" class="text-danger mr-2"><i class="nav-icon i-Close-Window font-weight-bold"></i></a> <a href="javascript:void(0)" class="text-warning mr-2" data-toggle="modal" data-target="#payment" data-id="'+data.id+'" data-amount="'+data.grand_total+'" id="payment_modal"><i class="fa fa-credit-card" aria-hidden="true"></i></a><a href="'+url_view+'" class="text-info mr-2"><i class="nav-icon fa fa-eye font-weight-bold"></i></a></td>';
+                    if (data.payment_status == 'partial') 
+                    {
+                        var status = '<span class="badge badge-warning">'+data.payment_status+'</span>';
+                    }
+                    else if(data.payment_status == 'pending')
+                    {
+                        var status = '<span class="badge badge-danger">'+data.payment_status+'</span>';
+                    }
+                    else
+                    {
+                        var status = '<span class="badge badge-success">'+data.payment_status+'</span>';
+                    }
+
+
+                    html += '<tr><td>'+data.id+'</td>'+'<td>'+data.invoice_number+'</td>'+'<td>'+data.first_name+'</td><td>'+data.company_name+'</td>'+'<td>'+data.date+'</td>'+'<td>'+data.discount+'</td>'+'<td>'+data.total_amount+'</td>'+'<td>'+status+'</td>'+'<td>'+data.username+'</td>'+'<td><a href="'+url_edit+'" class="text-success mr-2"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a href="'+url_delete+'" onclick="return confirm("Are you sure you want to delete this Data?")" class="text-danger mr-2"><i class="nav-icon i-Close-Window font-weight-bold"></i></a> <a href="javascript:void(0)" class="text-warning mr-2" data-toggle="modal" data-target="#payment" data-id="'+data.id+'" data-amount="'+data.grand_total+'" id="payment_modal"><i class="fa fa-credit-card" aria-hidden="true"></i></a><a href="'+url_view+'" class="text-info mr-2"><i class="nav-icon fa fa-eye font-weight-bold"></i></a></td>';
 
                 });
                 //alert(html);

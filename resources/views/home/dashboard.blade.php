@@ -367,6 +367,11 @@
                                  <input type="text" name="task" id="task" class="form-control" placeholder="Enter Task" required="" />    
                             </div>
 
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="datetime">DateTime*</label>
+                                 <input type="datetime-local" name="datetime" id="datetime" class="form-control" required="" />    
+                            </div>
+
                             <div class="col-md-12">
                                 <button class="btn btn-primary">Submit</button>
                             </div>
@@ -392,8 +397,8 @@
                             </div>
 
                             <div class="col-md-12 form-group mb-3">
-                                <label for="date">Date*</label>
-                                 <input type="datetime-local" name="date" id="date" class="form-control" required="" />    
+                                <label for="datetime">Datetime*</label>
+                                 <input type="datetime-local" name="datetime" id="datetime" class="form-control" required="" />    
                             </div>
 
                             <div class="col-md-12">
@@ -415,13 +420,13 @@
                           ToDo List
                         </h3>
                       </div>
-                      <button type="button" class="btn bg-white _r_btn border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <!-- <button type="button" class="btn bg-white _r_btn border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="_dot _inline-dot bg-primary"></span>
                         <span class="_dot _inline-dot bg-primary"></span>
                         <span class="_dot _inline-dot bg-primary"></span>
-                      </button>
-                      <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 33px, 0px); top: 0px; left: 0px; will-change: transform;">
-                        <a href="javascript:void(0)" class="dropdown-item" id="add_do" data-toggle="modal" data-target="#ToDoTask">Add</a>
+                      </button> -->
+                      <div style="top: 0px; left: 0px;">
+                        <a href="javascript:void(0)" class="btn btn-primary" id="add_do" data-toggle="modal" data-target="#ToDoTask">Add</a>
                       </div>
                     </div>
                     <div class="ul-widget-body">
@@ -616,7 +621,7 @@
                         </div>
                         <?php //print_r($operator_lead_stage);?>
                         <div class="">
-                            <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                            <div class="table-responsive" style="height: 301px;overflow-y: scroll;">
                                 <table id="user_table" class="table  text-center">
                                     <thead>
                                         <tr>
@@ -634,78 +639,49 @@
                                     <tbody>
                                         <?php
                                         $i = 1; 
-                                        foreach($operator_lead_stage as $row)
+                                        foreach($operator_lead_stage as $name => $row)
                                         { 
+                                            $new = $converted = $interested = $under_review = $demo = $unqualified = $converted = '0';
                                             foreach ($row as $key => $value) { 
-                                                ?>
+
+                                               if ($value->lead_stage == 'new') { 
+                                                   $new = $value->lead_count;
+                                               }
+                                               if ($value->lead_stage == 'Contacted') { 
+                                                   $converted = $value->lead_count;
+                                               }
+
+                                               if ($value->lead_stage == 'Interested') { 
+                                                   $interested = $value->lead_count;
+                                               }
+
+                                               if ($value->lead_stage == 'Under review') { 
+                                                   $under_review = $value->lead_count;
+                                               }
+
+                                               if ($value->lead_stage == 'Demo') { 
+                                                   $demo = $value->lead_count;
+                                               }
+                                               if ($value->lead_stage == 'Unqualified') { 
+                                                   $unqualified = $value->lead_count;
+                                               }
+                                               if ($value->lead_stage == 'Converted') { 
+                                                   $converted = $value->lead_count;
+                                               }
+                                            }
+                                            ?>
                                             <tr>
                                                 <td>{{$i}}</td>
-                                                <td>{{$value->opername}}</td>
-                                                <td>
-                                                    <?php
-                                                       if ($value->lead_stage == 'new') { 
-                                                           echo $value->lead_count;
-                                                       }else{
-                                                        echo "0";
-                                                       }
-                                                    ?> 
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                       if ($value->lead_stage == 'Contacted') { 
-                                                           echo $value->lead_count;
-                                                       }else{
-                                                        echo "0";
-                                                       }
-                                                    ?> 
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                       if ($value->lead_stage == 'Interested') { 
-                                                           echo $value->lead_count;
-                                                       }else{
-                                                        echo "0";
-                                                       }
-                                                    ?> 
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                       if ($value->lead_stage == 'Under review') { 
-                                                           echo $value->lead_count;
-                                                       }else{
-                                                        echo "0";
-                                                       }
-                                                    ?> 
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                       if ($value->lead_stage == 'Demo') { 
-                                                           echo $value->lead_count;
-                                                       }else{
-                                                        echo "0";
-                                                       }
-                                                    ?> 
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                       if ($value->lead_stage == 'Unqualified') { 
-                                                           echo $value->lead_count;
-                                                       }else{
-                                                        echo "0";
-                                                       }
-                                                    ?> 
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                       if ($value->lead_stage == 'Converted') { 
-                                                           echo $value->lead_count;
-                                                       }else{
-                                                        echo "0";
-                                                       }
-                                                    ?> 
-                                                </td>
+                                                <td>{{$name}}</td>
+                                                <td>{{$new}}</td>
+                                                <td>{{$converted}}</td>
+                                                <td>{{$interested}}</td>
+                                                <td>{{$under_review}}</td>
+                                                <td>{{$demo}}</td>
+                                                <td>{{$unqualified}}</td>
+                                                <td>{{$converted}}</td>
                                             </tr>        
-                                        <?php $i++; }
+                                        <?php
                                        
                                         } 
                                         ?>
@@ -728,7 +704,7 @@
                         </div>
                         <?php //print_r($predict_cost);?>
                         <div class="">
-                            <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                            <div class="table-responsive" style="height: 301px;overflow-y: scroll;">
                                 <table id="user_table" class="table  text-center">
                                     <thead>
                                         <tr>
@@ -776,7 +752,7 @@
                         </div>
                         <?php //print_r($predict_cost);?>
                         <div class="">
-                            <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                            <div class="table-responsive" style="height: 301px;overflow-y: scroll;">
                                 <table id="user_table" class="table  text-center">
                                     <thead>
                                         <tr>
@@ -822,7 +798,7 @@
                         </div>
                         <?php //print_r($predict_cost);?>
                         <div class="">
-                            <div class="table-responsive" style="height: 301px;overflow-y: auto;">
+                            <div class="table-responsive" style="height: 301px;overflow-y: scroll;">
                                 <table id="user_table" class="table  text-center">
                                     <thead>
                                         <tr>
@@ -1265,7 +1241,7 @@
                     var newdate = obj[0].date.replace(' ','T');
                     //console.log(newdate);
                     $(".EditToDo #task").val(obj[0].title);
-                    $(".EditToDo #date").val(newdate);
+                    $(".EditToDo #datetime").val(newdate);
                 }
             });
         });

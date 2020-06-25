@@ -23,13 +23,15 @@
                                             <th>ID</th>
                                             <th>Subject</th>
                                             <th>Customer Name</th>
+                                            <th>Company Name</th>
                                             <th>Date</th>
                                             <th>Discount</th>
                                             <th>Total Amount</th>
                                             <?php
                                             if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') { ?>
-                                                <th>User ID</th>
+                                                <th>Agent Name</th>
                                             <?php }?>
+                                            <th>Date</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>                                
@@ -39,13 +41,15 @@
                                             <td>{{$list_proposal->id}}</td>
                                             <td>{{$list_proposal->subject}}</td>
                                             <td>{{$list_proposal->first_name.' '.$list_proposal->last_name}}</td>
+                                            <td>{{$list_proposal->company_name}}</td>
                                             <td>{{$list_proposal->date}}</td>
                                             <td>{{$list_proposal->discount}}</td>
                                             <td>{{$list_proposal->total_amount}}</td>
                                             <?php
                                             if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') { ?>
-                                                <td>{{$list_proposal->user_id}}</td>
+                                                <td>{{$list_proposal->username}}</td>
                                             <?php }?>
+                                            <td><?php echo date('d M, Y',strtotime($list_proposal->inserted_date)); ?></td>
                                             <td>
                                                 <a href="{{ route('editProposal', $list_proposal->id) }}" class="text-success mr-2">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
@@ -62,12 +66,13 @@
                                             <th>ID</th>
                                             <th>Subject</th>
                                             <th>Customer Name</th>
+                                            <th>Company Name</th>
                                             <th>Date</th>
                                             <th>Discount</th>
                                             <th>Total Amount</th>
                                             <?php
                                             if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') { ?>
-                                                <th>User ID</th>
+                                                <th>Agent Name</th>
                                             <?php }?>
                                             <th>Actions</th>
                                         </tr>

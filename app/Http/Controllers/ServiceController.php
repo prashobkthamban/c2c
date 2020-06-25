@@ -44,8 +44,40 @@ class ServiceController extends Controller
             
         $query->select('billing.*', 'accountgroup.name', 'resellergroup.resellername', 'dids.rdins', 'dids.rdnid')->orderBy('id', 'desc');
         $result = $query->paginate(10);
+
+        $lead_count = DB::table('cdrreport_lead')
+                        ->select('cdrreport_lead.operatorid')
+                        ->where('user_id','=',Auth::user()->id)
+                        ->count();
+
+        if (Auth::user()->usertype == 'operator') {
+            $lead_allowed = DB::table('operatoraccount')->where('opername',Auth::user()->username)->select('lead_access')->first();
+            $total_access_leads = $lead_allowed->lead_access;
+        }   
+        else
+        {
+            $total_access_leads = Auth::user()->load('accountdetails')->accountdetails->leads_access;
+        }
+
+        $apiKey = urlencode('624AD-63599');
+ 
+        // Prepare data for POST request
+        $data = array('apikey' => $apiKey);
+     
+        // Send the POST request with cURL
+        $ch = curl_init('http://smsdnd.voiceetc.co.in/sms-panel/api/http/index.php?username=demosms&apikey=624AD-63599&apirequest=CreditCheck&route=RouteName&format=JSON');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        
+        // Process your response here
+        //echo $response;exit;
+
+        //print_r($total_access_leads);exit;
         //dd($result);
-        return view('service.billing_list', compact('result'));
+        return view('service.billing_list', compact('result','lead_count','total_access_leads','response'));
     }
 
     public function billDetails($groupid) {

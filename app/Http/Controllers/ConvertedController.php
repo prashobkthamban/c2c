@@ -76,7 +76,7 @@ class ConvertedController extends Controller
                 'gst_no' => $request->get('gst_no'),
                 'mobile_no' => $request->get('phone_no'),
                 'email' => $request->get('email'),
-                'address' => $request->get('address'),
+                'address' => $request->get('address') ? $request->get('address') : '',
                 'company_name' => $request->get('company_name_converted'),
             ]);
 

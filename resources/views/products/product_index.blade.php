@@ -177,6 +177,36 @@
                 </div>
     </div>
 
+     <div class="modal fade" id="ImProduct" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            {!! Form::open(['action' => 'ProductController@addproductcsv', 'method' => 'post','enctype' => 'multipart/form-data','onsubmit'=>'return Validate(this);']) !!}
+            {{ csrf_field() }}
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Import Product Data</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label>Add Data from CSV File Only</label>
+                        <input type="file" name="products_file" id="products_file" class="form-control">
+                    </div>
+                </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        {!! Form::close() !!}
+        </div>
+      </div>
+    </div>
+
             <div class="separator-breadcrumb border-top"></div>
 
 
@@ -184,9 +214,11 @@
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
                         <div class="card-body">
+                            <a href="javascript:void(0)" class="btn btn-outline-secondary float-right" id="import_product" data-toggle="modal" data-target="#ImProduct" style="margin-left: 15px;">Import Lead</a>
+                            <button id="export_product" class="btn btn-outline-secondary float-right" name="btn">Export Product</button><br>
                             <a title="Compact Sidebar" id="add_product" href="javascript:void(0)" class="btn btn-primary"> Add Product </a>
                             <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                                <table id="zero_configuration_table" class="display table table-striped table-bordered insert_to_excel" style="width:100%">
                                    <thead>
                                         <tr>
                                             <th>Image</th>
@@ -251,7 +283,22 @@
 
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
+<script src="{{asset('assets/js/jquery.table2excel.min.js')}}"></script>
 <script type="text/javascript">
+
+    $('#export_product').click(function(){
+        //alert('excel');
+        exportexcel();
+    });
+
+    function exportexcel() {  
+        $(".insert_to_excel").table2excel({  
+            name: "Table2Excel",  
+            filename: "Product_Data",  
+            fileext: ".xls"  
+        });  
+    }  
+
     $('#add_product').click(function(){
         //$(".addProduct").show(1000);
         $(".addProduct").animate({width: 'toggle'}, "slow");
@@ -277,7 +324,7 @@
                 $(".editProduct #uom").val(obj.unit_of_measurement);
                 $(".editProduct #landing_cost").val(parseFloat(obj.landing_cost).toFixed(2));
                 $(".editProduct #selling_cost").val(parseFloat(obj.selling_cost).toFixed(2));
-                $("editProduct #description").val(obj.description);
+                $(".editProduct #description").val(obj.description);
                 $(".editProduct #old_image").val(obj.image);
                 /*$('#amount').val(parseFloat(mul_data).toFixed(2));
                 $('.rent_amount_1').val(parseFloat(mul_data).toFixed(2));

@@ -102,13 +102,8 @@ class HomeController extends Controller
             
             $insight_ivr = CdrReport::select(DB::raw('count(*) as count, deptname'))
             ->where('deptname', '!=', '')
-            // ->whereDate('cdr.datetime', '>=', $qsdate)
-            // ->whereDate('cdr.datetime', '<=', $qedate)
             ->groupBy('deptname')
             ->get();
-           //dd($insight_ivr);
-
-
 
         } else if(Auth::user()->usertype == 'operator') {
             $o_callstoday = DB::table('cdr')
@@ -189,11 +184,13 @@ class HomeController extends Controller
                         ->where('operatorid','=',$value->id)
                         ->get()->count();
 
-                $operator_lead_stage[$value->id] = DB::table('cdrreport_lead')
+                $operator_lead_stage[$value->opername] = DB::table('cdrreport_lead')
+                //,DB::raw('group_concat(cdrreport_lead.lead_stage) as stage')
                         ->select(DB::raw('COUNT(lead_stage) as lead_count'),'lead_stage','operatoraccount.opername')
                         ->where('operatorid','=',$value->id)
                         ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
                         ->groupBy('cdrreport_lead.lead_stage','operatoraccount.opername')
+                        //->groupBy('cdrreport_lead.lead_stage')
                         ->get();
 
                 $predict_cost[$value->id] = DB::table('cdrreport_lead')
@@ -242,13 +239,22 @@ class HomeController extends Controller
                 ->where('user_id','=',Auth::user()->id)
                 ->get();
 
+            $level_1 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '1')->get()->count();
+            $level_2 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '2')->get()->count();
+            $level_3 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '3')->get()->count();
+            $level_4 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '4')->get()->count();
+            $level_5 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '5')->get()->count();
+            $level_6_7 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '>=', '6')->get()->count();
+
         }
+
         else if (Auth::user()->usertype == 'reseller') {
             
             $group_admin = DB::table('accountgroup')->where('resellerid','=',Auth::user()->resellerid)->get();
 
         }
-        else if (Auth::user()->usertype == '') {
+        else if (Auth::user()->usertype == 'operator') 
+        {
             $level_1 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '1')->get()->count();
             $level_2 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '2')->get()->count();
             $level_3 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '3')->get()->count();
@@ -265,10 +271,101 @@ class HomeController extends Controller
             $lead_count = '';
         }
 
+        /*echo "<pre>";
+        print_r($operator_lead_stage);exit;*/
+
         $nousers = '';
         $inusers = '';
         $announcements = DB::table('dashbord_annuounce')->orderBy('id', 'desc')->get();
         return view('home.dashboard', compact('incoming_calls', 'operator_leads', 'opcallList', 'insight_ivr', 'announcements', 'activeoperator', 'g_callstoday', 'o_callstoday', 'callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'sdate', 'edate', 'nousers', 'inusers','level_1','level_2','level_3','level_4','level_5','level_6','level_7','todo_lists','users_list','remainders','lead_count','operator_lead_stage','predict_cost','proposal','invoice','group_admin'));
+    }
+
+    public function dashboard() {
+        $onemonthdate= date("m/d/Y", strtotime("-2 month"));
+        $sdate = isset($_REQUEST['dfrom']) ? date('m/d/Y',strtotime($_REQUEST['dfrom'])) : $onemonthdate;
+        $edate = isset($_REQUEST['dto']) ? date('m/d/Y',strtotime($_REQUEST['dto'])) : date('m/d/Y');
+        //dd($sdate);
+        $qedate = date("Y-m-d",strtotime($edate));
+        $qsdate = date("Y-m-d",strtotime($sdate));
+    
+        $piechart = DB::table('cdr')
+            ->select('cdr.status', DB::raw('count(*) as totalresult'))
+            ->leftJoin('accountgroup', 'cdr.groupid', '=', 'accountgroup.id')
+            ->leftJoin('resellergroup', 'cdr.resellerid', '=', 'resellergroup.id')
+            ->leftJoin('operatoraccount', 'cdr.operatorid', '=', 'operatoraccount.id')
+            ->whereIn('cdr.status', ['ANSWERED','MISSED','AFTEROFFICE'])
+            ->where('cdr.groupid', Auth::user()->groupid)
+            ->whereDate('cdr.datetime', '>=', $qsdate)
+            ->whereDate('cdr.datetime', '<=', $qedate)
+            ->groupBy('cdr.status')
+            ->get();
+        $p_data = array();
+        $total = 0;
+        
+        if( ! empty($piechart) ){
+            foreach ($piechart as $key => $value) {
+                $ind = array();
+                $ind["name"] = $value->status;
+                $ind["value"] = $value->totalresult;
+                $total += $value->totalresult;
+                $p_data[] = $ind;
+            }
+        }
+        $p_data[] = [
+            'name' => 'Total',
+            'value' => $total
+        ];
+        //dd($total);
+        $barchart = DB::table('cdr')
+        ->select('cdr.status', DB::raw('DATE(cdr.datetime) as newdate'), DB::raw('count(cdr.cdrid) as Count'))
+            ->leftJoin('accountgroup', 'cdr.groupid', '=', 'accountgroup.id')
+            ->leftJoin('resellergroup', 'cdr.resellerid', '=', 'resellergroup.id')
+            ->leftJoin('operatoraccount', 'cdr.operatorid', '=', 'operatoraccount.id')
+            ->whereIn('cdr.status', ['ANSWERED','MISSED'])
+            ->where('cdr.groupid', Auth::user()->groupid)
+            ->whereDate('cdr.datetime', '>=', $qsdate)
+            ->whereDate('cdr.datetime', '<=', $qedate)
+            ->groupBy('newdate')
+            ->groupBy('status')
+            ->get();
+            //echo Auth::user()->groupid; 3
+        //dd($barchart);
+        $b_data = array();
+        $bar_data = array();
+        $ind = array();
+        $nd = array();
+        $date = null;
+        if( !empty($barchart) ){
+            $i = 0;
+            foreach ($barchart as $pkey => $bvalue) {
+                $b_data[] = $bvalue->newdate;
+                if(!empty($date) && $date == $bvalue->newdate) {
+                    $nd["answered"] = $bar_data[$i-1]['answered'];
+                    $nd["missed"] = ($bvalue->status == 'MISSED') ? $bvalue->Count : 0;
+                    $nd["date"] = $bvalue->newdate;
+                    $bar_data[$i-1] = $nd;
+                } else {
+                    $ind["answered"] = ($bvalue->status == 'ANSWERED') ? $bvalue->Count : 0;
+                    $ind["missed"] = ($bvalue->status == 'MISSED') ? $bvalue->Count : 0;
+                    $ind["date"] = $bvalue->newdate;
+                    $bar_data[] = $ind;
+                    $i++;
+                }
+                $date = $bvalue->newdate;
+            }
+            // dd($bar_data);
+            // //for(array_unique($b_data))
+            $dates = array();
+            $missed = array();
+            $answered = array();
+            foreach($bar_data as $val) {
+                array_push($dates, $val['date']);
+                array_push($missed, $val['missed']);
+                array_push($answered, $val['answered']);
+            }
+        }    
+        //dd(array_unique($b_data));
+        return view('home.dashboard_1', compact('p_data', 'series', 'sdate', 'edate', 'dates', 'missed', 'answered'));
     }
 
     public function CRMData(Request $request) {
@@ -424,7 +521,25 @@ class HomeController extends Controller
     }
 
     public function cdrTags() {
-        return view('home.cdrtags', ['result' => CdrTag::getReport()]);
+        return view('home.cdrtags', ['result' => CdrTag::getReport(), 'tags'=>CdrTag::getTag()]);
+    }
+
+    public function tagStore(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'tag' => 'required'
+        ]);
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $tag = [
+                'tag'=> $request->get('tag'),
+                'groupid'=> Auth::user()->groupid,
+            ];
+            DB::table('cdr_tags')->insert($tag); 
+            $data['success'] = 'Cdr Tag added successfully.';
+        } 
+       return $data; 
     }
 
     public function deleteRecord($id, $name) {
@@ -442,6 +557,7 @@ class HomeController extends Controller
         $add_todo = new ToDoTask([
                 'user_id' => Auth::user()->id,
                 'title' => $request->get('task'),
+                'date' => $request->get('datetime'),
                 'inserted_date' => $now,
             ]);
 
@@ -466,7 +582,7 @@ class HomeController extends Controller
         $edit_todo = ToDoTask::find($id);
     
         $edit_todo->title = $request->task;
-        $edit_todo->date = $request->date;
+        $edit_todo->date = $request->datetime;
 
         //print_r($edit_todo);exit;
         $edit_todo->save();

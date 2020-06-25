@@ -31,7 +31,7 @@
                                 <div class="row">
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="subject">Subject*</label>
-                                        <input type="text" class="form-control" id="subject" placeholder="subject" name="subject">
+                                        <input type="text" class="form-control" id="subject" placeholder="subject" name="subject" required="">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('subject', ':message') : '' !!}</p>
                                     </div>
 
@@ -51,7 +51,7 @@
                                     
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="date">Date*</label>
-                                        <input type="date" class="form-control" id="date" name="date">
+                                        <input type="date" class="form-control" id="date" name="date" required="">
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('date', ':message') : '' !!}</p>
                                     </div>
 
@@ -65,8 +65,8 @@
                                                       
                                                       <tbody id="TextBoxContainer">
                                                         <td style="width: 20%;">
-                                                          <select name="products[]" id="products" class="form-control js-example-basic-single products">
-                                                              <option>Select Products</option>
+                                                          <select name="products[]" id="products" class="form-control js-example-basic-single products" required="">
+                                                              <option value="">Select Products</option>
                                                               @if(!empty($products))
                                                                 @foreach($products as $prod )
                                                                     <option value="{{$prod->id}}">{{$prod->name}}
@@ -83,13 +83,14 @@
                                                           </td>
                                                           <td>
                                                               <!-- <input type="text" name="tax[]" id="tax" class="tax form-control" placeholder="Tax"> -->
-                                                              <select name="tax[]" id="tax" class="tax form-control js-example-basic-multiple" multiple="">
+                                                              <select name="tax[]" id="tax" class="tax form-control js-example-basic-multiple" multiple="" required="">
                                                                   <option value="0">No Tax</option>
                                                                   <option value="5.00">5.00%</option>
                                                                   <option value="10.00">10.00%</option>
                                                                   <option value="18.00">18.00%</option>
                                                               </select>
                                                               <input type="hidden" name="tax_amount[]" id="tax_amount" class="tax_amount">
+                                                              <input type="hidden" name="add_tax" id="add_tax">
                                                           </td>
                                                           <td>
                                                               <input type="text" name="amount[]" id="amount" class="form-control amount" placeholder="Amount" readonly="" /> 
@@ -107,7 +108,7 @@
                                                                     <div class="input-group-prepend">
                                                                         <span class="input-group-text">%</span>
                                                                     </div>
-                                                                   <input type="text" name="discount" id="discount" class="form-control discount">
+                                                                   <input type="text" name="discount" id="discount" class="form-control discount" required="">
                                                                 </div>
                                                             </th>
                                                             <th>
@@ -241,10 +242,12 @@
             $.each(tax,function(index,data){
                 //alert(data);
                 total_tax += Number(data);
+                //alert("tax"+total_tax);
             });
             am = thisss.closest("tr").find("input.amount").val();
             amount_tax = parseFloat((am*total_tax)/100).toFixed(2);
-            //alert(total_tax);
+            //alert("tax"+total_tax);
+            $('#add_tax').val(total_tax);
             $(this).closest("td").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
             $('#total_tax').val(parseFloat(amount_tax).toFixed(2));
             //$('#total_tax').html(tax+"%");
@@ -282,7 +285,17 @@
             //alert(tax);
             //alert(discount);
             $('#dis_val').val(discount);
-            var grand_total = sub_total - discount + Number(tax);
+            //var grand_total = sub_total - discount + Number(tax);
+            var dec = (dis_val / 100).toFixed(2);
+            var mult = sub_total * dec;
+            var discont = sub_total - mult;
+
+            var total_tax = $('#add_tax').val();
+            tax_val = (total_tax / 100).toFixed(2);
+            var mul_tax = discont * tax_val;
+            var grand_total = discont + mul_tax; 
+
+            //var grand_total = sub_total - (dis_val / 100 ).toFixed(2);
             //alert(grand_total);
             $('#grand_total').val(parseFloat(grand_total).toFixed(2));
         });
