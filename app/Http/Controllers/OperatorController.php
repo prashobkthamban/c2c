@@ -242,7 +242,6 @@ class OperatorController extends Controller
     }
 
     public function addSms(Request $request) {
-        //dd($request->all());
         $validator = Validator::make($request->all(), [
             'groupid' => 'required',
             'type' => 'required',
@@ -273,13 +272,6 @@ class OperatorController extends Controller
 
     public function getSms($id) {
        return $sms = DB::table('sms_content')->where('id', $id)->get(); 
-    }
-
-    public function deleteSms($id)
-    {
-        $res = DB::table('sms_content')->where('id',$id)->delete();
-        toastr()->success('Sms delete successfully.');
-        return redirect()->route('Sms');
     }
 
     public function getIvr($groupid) {

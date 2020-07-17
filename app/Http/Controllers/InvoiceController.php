@@ -42,18 +42,36 @@ class InvoiceController extends Controller
                     ->leftJoin('account','account.id','=','invoice.user_id')
                     ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','account.username','converted.company_name')
                     ->orderBy('id', 'desc')
-                    ->paginate(10);
+                    ->get();
         }
         elseif (Auth::user()->usertype == 'groupadmin') {
            
            $list_invoices = DB::table('invoice')
                     ->where('invoice.user_id','=',Auth::user()->id)
-                    ->orWhere('invoice.operator_id','=',Auth::user()->groupid)
+                    ->orWhere('invoice.group_id','=',Auth::user()->groupid)
                     ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
                     ->leftJoin('account','account.id','=','invoice.user_id')
                     ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','account.username','converted.company_name')
                     ->orderBy('id', 'desc')
-                    ->paginate(10);
+                    ->get();
+        }
+        elseif (Auth::user()->usertype == 'reseller') 
+        {
+            $groupid = DB::table('resellergroup')->where('id',Auth::user()->resellerid)->first();
+
+            $de = json_decode($groupid->associated_groups);
+
+            $list_invoices = array();
+            foreach ($de as $key => $de_gpid) {
+                $list_invoices[] = DB::table('invoice')
+                    ->where('invoice.group_id','=',$de_gpid)
+                    ->Leftjoin('accountgroup','accountgroup.id','invoice.group_id')
+                    ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
+                    ->leftJoin('account','account.id','=','invoice.user_id')
+                    ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','account.username','converted.company_name','accountgroup.name as accountgroup_name')
+                    ->orderBy('id', 'desc')
+                    ->get();
+            }   
         }
         else
         {
@@ -62,9 +80,9 @@ class InvoiceController extends Controller
                     ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
                     ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','converted.company_name')
                     ->orderBy('id', 'desc')
-                    ->paginate(10);
+                    ->get();
         }
-       /* echo "<pre>";
+        /*echo "<pre>";
         print_r($list_invoices);exit;*/
 
         return view('invoice.index',compact('list_invoices','result'));
@@ -86,6 +104,7 @@ class InvoiceController extends Controller
         $add_invoice = new Invoice([
                 'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
                 'user_id' => Auth::user()->id,
+                'group_id' => Auth::user()->groupid,
                 'billing_address' => $request->get('address'),
                 'customer_id' => $request->get('customer_id'),
                 'date'=> $request->get('date'),
@@ -283,8 +302,9 @@ class InvoiceController extends Controller
         $agent_name = $request->get('agent_name');
         $status = $request->get('status');
 
-        if ($date_from != '' && $date_to != '') {
 
+        if (Auth::user()->usertype == 'operator') 
+        {
             $filter_data = DB::table('invoice')
                 ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
                 ->leftJoin('account','account.id','=','invoice.user_id')
@@ -296,8 +316,73 @@ class InvoiceController extends Controller
                 ->where('invoice.payment_status',$status)
                 ->select('converted.first_name','converted.last_name','invoice.*','converted.company_name','account.username')
                 ->get();
+
+            $count_data = DB::table('invoice')
+                ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
+                ->leftJoin('account','account.id','=','invoice.user_id')
+                ->where('invoice.inserted_date','>=', $date_from)
+                ->where('invoice.inserted_date','<=', $date_to)
+                ->where('invoice.user_id','=',Auth::user()->id)
+                ->where('converted.company_name','like','%'.$company_name.'%')
+                ->where('account.username','like','%'.$agent_name.'%')
+                ->where('invoice.payment_status',$status)
+                ->count();
+            
         }
-        echo json_encode($filter_data);
+        elseif (Auth::user()->usertype == 'groupadmin') {
+           
+           $filter_data = DB::table('invoice')
+                ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
+                ->leftJoin('account','account.id','=','invoice.user_id')
+                ->where('invoice.inserted_date','>=', $date_from)
+                ->where('invoice.inserted_date','<=', $date_to)
+                ->where('invoice.group_id','=',Auth::user()->groupid)
+                ->where('converted.company_name','like','%'.$company_name.'%')
+                ->where('account.username','like','%'.$agent_name.'%')
+                ->where('invoice.payment_status',$status)
+                ->select('converted.first_name','converted.last_name','invoice.*','converted.company_name','account.username')
+                ->get();
+
+            $count_data = DB::table('invoice')
+                ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
+                ->leftJoin('account','account.id','=','invoice.user_id')
+                ->where('invoice.inserted_date','>=', $date_from)
+                ->where('invoice.inserted_date','<=', $date_to)
+                ->where('invoice.group_id','=',Auth::user()->groupid)
+                ->where('converted.company_name','like','%'.$company_name.'%')
+                ->where('account.username','like','%'.$agent_name.'%')
+                ->where('invoice.payment_status',$status)
+                ->count();
+        }
+        else
+        {
+            $filter_data = DB::table('invoice')
+                ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
+                ->leftJoin('account','account.id','=','invoice.user_id')
+                ->where('invoice.inserted_date','>=', $date_from)
+                ->where('invoice.inserted_date','<=', $date_to)
+                ->where('converted.company_name','like','%'.$company_name.'%')
+                ->where('account.username','like','%'.$agent_name.'%')
+                ->where('invoice.payment_status',$status)
+                ->select('converted.first_name','converted.last_name','invoice.*','converted.company_name','account.username')
+                ->get();
+
+            $count_data = DB::table('invoice')
+                ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
+                ->leftJoin('account','account.id','=','invoice.user_id')
+                ->where('invoice.inserted_date','>=', $date_from)
+                ->where('invoice.inserted_date','<=', $date_to)
+                ->where('converted.company_name','like','%'.$company_name.'%')
+                ->where('account.username','like','%'.$agent_name.'%')
+                ->where('invoice.payment_status',$status)
+                ->count();
+        }
+
+        
+
+        $newdata = array('filter_data' => $filter_data, 'count_data' => $count_data);
+
+        echo json_encode($newdata);
     }
 
     public function ViewInvoice($id)
@@ -314,9 +399,13 @@ class InvoiceController extends Controller
                     ->select('invoice_details.*','products.id as p_id','products.name')
                     ->get();
 
+        $company_details = DB::table('accountgroup')->where('id',Auth::user()->groupid)->first();
+
+        //print_r($company_details);exit;
+
         $invoice_payments = DB::table('invoice_payments')->where('invoice_id',$id)->get();
 
-        return view('invoice.view',compact('invoice','invoice_details','invoice_payments'));
+        return view('invoice.view',compact('invoice','invoice_details','invoice_payments','company_details'));
     }
 
     public function MailInvoice($id)

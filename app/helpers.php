@@ -111,3 +111,154 @@ function getConatctName($callerid) {
     $contact = DB::table('contacts')->where('groupid', Auth::user()->groupid)->where('phone', $callerid)->select('contacts.fname')->get(); 
     return $contact;
 }
+
+function smsConfig($params) {
+    $apiid=Auth::user()->load('accountdetails')->accountdetails['sms_api_gateway_id'];
+    $smssuport=Auth::user()->load('accountdetails')->accountdetails['sms_support'];
+    $sms_api_user=Auth::user()->load('accountdetails')->accountdetails['sms_api_user'];
+    $sms_api_pass=Auth::user()->load('accountdetails')->accountdetails['sms_api_pass'];
+    $sms_api_senderid=Auth::user()->load('accountdetails')->accountdetails['sms_api_senderid'];
+    if($smssuport !== 'No')
+    {
+        $resultapi = DB::table('sms_api_gateways')->where('id',$apiid)->first();
+        if (empty($resultapi))
+        {
+            $data['error'] = 'SMS APi details NOt found.';
+            $data['status'] = 0;
+        } else
+        { 
+            //url 2 mobile_param_name 3 user_param_name 4 password_parm_name 5 sender_param_name 6
+            $url =$resultapi->url;
+            $mobile_param=$resultapi->mobile_param_name;
+            $user_param=$resultapi->user_param_name;
+            $password_param=$resultapi->password_parm_name;
+            $sender_param=$resultapi->sender_param_name;
+            $message_param=$resultapi->message_para_name;
+            $fullapi=$url."".$user_param."=".$sms_api_user."&".$password_param."=".$sms_api_pass."&".$sender_param."=".$sms_api_senderid."&".$message_param."=".$params['message'];
+
+            $url=$fullapi."&response=Y&".$mobile_param."=".$params['number'];
+            //dd($url);
+            $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                $curl_scraped_page = curl_exec($ch);
+                curl_close($ch);
+                $resp1= $curl_scraped_page;
+            //dd(Auth::user());
+            $sms = ['number' => $params['number'],
+                    'groupid' => Auth::user()->groupid,
+                    'operatorid' => Auth::user()->operator_id,
+                    'message' => $params['message'],
+                    'response' => $resp1,
+                    ];
+                
+            DB::table('bulksms')->insert($sms);
+            $res = (array) json_decode($resp1);
+            //dd($res['status']);
+            if($res['status'] == 'error') {
+                $data['error'] = $res['message'];
+                $data['status'] = 0;
+            } else {
+                $data['success'] = 'Sms sent successfully';
+                $data['status'] = 1;
+            }
+            
+        }
+    } else {
+        $data['error'] = 'SMS support Not enabled.';
+        $data['status'] = 0;
+    }
+    return $data;
+}
+
+function callConfig($params) {
+    //global $locate;
+    $wrets = '';
+    $did = DB::table('dids')->where('assignedto',Auth::user()->groupid)->select('did', 'c2cpri', 'c2ccallerid')->first();
+    $didnumber=$did->did;
+    $gatewayid=$did->c2cpri;
+    $didnumber=$did->c2ccallerid;
+    $prigateway = DB::table('prigateway')->where('id',$gatewayid)->select('Gchannel')->first();
+    $span = $prigateway->Gchannel;
+    $groupid = Auth::user()->groupid;
+    $dept = DB::table('operatordepartment')->where('groupid',$groupid)->where('C2C',1)->select('dept_name')->first();
+    $dptname=$dept->dept_name;
+    if($dptname == NULL)
+    {
+        $dptname='C2C';
+    }
+
+    if(Auth::user()->usertype != 'admin')
+    {
+        $billing = DB::table('billing')->where('groupid',$groupid)->select('c2c_balance')->first();
+        if($billing->c2c_balance > 1) {
+            $time=floor($billing->c2c_balance / 2);
+            $time=$time*60;
+        } else {
+            $credit='0';
+        }
+    }
+
+    $params['number']=preg_replace('/[^a-zA-Z0-9]/', '',$params['number']);  
+    $params['phone']=preg_replace('/[^a-zA-Z0-9]/', '',$params['phone']);  
+
+    if($params['callf'] == 'cust')
+    {
+        $phone2 = $params['phone'];// leg1 operator
+        $phone1 = '0'.substr($params['number'],-10);//leg2 customer number
+    }
+    else
+    {
+        $phone1 = $params['phone'];// leg1 operator
+        $phone2 = '0'.substr($params['number'],-10);//leg2 customer number
+    }
+
+    $rand_no = substr(str_shuffle("0123456789"), 0, 4);
+    $rand_no = time().'.'.$rand_no;
+    $cdr = ['number' => $params['number'],
+            'did_no' => $didnumber,
+            'groupid' => Auth::user()->groupid,
+            'resellerid' => Auth::user()->resellerid,
+            'operatorid' => Auth::user()->operator_id,
+            'deptname' => 'C2C',
+            'status' => 'DIALING',
+            'userid' => Auth::user()->id,
+            'uniqueid' => $rand_no
+            ];               
+    $cdrid = DB::table('cdr')->insertGetId($cdr);
+ 
+    $phone1=$phone1."-".$cdrid."-".$didnumber."-".$groupid;
+    $phone2=$phone2."-".$cdrid."-".$didnumber."-".$groupid."-".$time;
+    $manager = DB::table('asterisk_manager')->where('id', 1)->first();
+    //dd($phone1 .  ' '. $phone2);
+    $strHost = $manager->ip;
+    $strUser = $manager->username;
+    $strSecret = $manager->password;
+    //dd($strHost . ' '. $strUser . ' ' . $strSecret);
+    $errno = "";
+    $errstr = "";
+    $timeout = "30";
+    $socket = fsockopen("$strHost","5038", $errno, $errstr, $timeout);
+    fputs($socket, "Action: Login\r\n");
+    fputs($socket, "UserName: $strUser\r\n");
+    fputs($socket, "Secret: $strSecret\r\n\r\n");
+    fputs($socket, "Action: Originate\r\n");
+    fputs($socket, "Variable: span=$span\r\n");
+
+    fputs($socket, "Channel: local/".$phone1."@ast_ivrc2cleg1\r\n");
+    fputs($socket, "Context: ast_ivrc2cleg2\r\n");
+    fputs($socket, "Variable: groupid=$groupid\r\n");
+    fputs($socket, "Exten: ".$phone2."\r\n");
+    fputs($socket, "Callerid: $didnumber\r\n");
+    fputs($socket, "Priority: 1\r\n");
+    fputs($socket, "Timeout: 30000\r\n\r\n");
+
+    fputs($socket, "Action: Logoff\r\n\r\n");
+    while (!feof($socket)) {
+        $wrets .= fread($socket, 1000);
+    }
+        fclose($socket);
+        $data['success'] = 'Cdr added successfully.';
+        $data['status'] = 1;
+        return $data;
+        //return $wrets;
+}

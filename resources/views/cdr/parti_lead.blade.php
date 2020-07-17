@@ -411,7 +411,7 @@
                                                             <th class="th_width_40">Outcome</th>
                                                             <th class="th_width_60">
                                                                 <select class="js-example-basic-single form-control" name="outcomes" id="outcomes">
-                                                                    <option value="">outcomes</option>
+                                                                    <option value="outcomes">outcomes</option>
                                                                     <option value="Interested">Interested</option>
                                                                     <option value="Left Message">Left Message</option>
                                                                     <option value="No response">No response</option>
@@ -506,7 +506,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">To</span>
                                                     </div>
-                                                    <input type="text" class="form-control" name="msg_to" id="msg_to">
+                                                    <input type="text" class="form-control" name="msg_to" id="msg_to" value="{{$lead_data->phoneno}}">
                                                 </div>
                                                 <label for="msg_text">Message</label>
                                                 <textarea id="msg_text" name="msg_text" style="height: 100px;width: 100%;" placeholder="Send Message"></textarea>
@@ -694,13 +694,13 @@
                                         <input type="hidden" name="lead_id" id="lead_id">
                                             <div class="col-md-4 form-group mb-3">
                                                 <label for="subject">Subject*</label>
-                                                <input type="text" class="form-control" id="subject" placeholder="subject" name="subject">
+                                                <input type="text" class="form-control" id="subject" placeholder="subject" name="subject" required="">
                                                 <p class="text-danger">{!! !empty($messages) ? $messages->first('subject', ':message') : '' !!}</p>
                                             </div>
 
                                             <div class="col-md-4 form-group mb-3">
                                                 <label for="date">Date*</label>
-                                                <input type="date" class="form-control" id="date" name="date">
+                                                <input type="date" class="form-control" id="date" name="date" required="">
                                                 <p class="text-danger">{!! !empty($messages) ? $messages->first('date', ':message') : '' !!}</p>
                                             </div>
 
@@ -762,7 +762,7 @@
                                                                             <div class="input-group-prepend">
                                                                                 <span class="input-group-text">%</span>
                                                                             </div>
-                                                                           <input type="text" name="discount" id="discount" class="form-control discount">
+                                                                           <input type="text" name="discount" id="discount" class="form-control discount" required="">
                                                                         </div>
                                                                     </th>
                                                                     <th>

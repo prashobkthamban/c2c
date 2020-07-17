@@ -1,12 +1,11 @@
 @extends('layouts.master')
 @section('page-css')
-
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">
 @endsection
 
 @section('main-content')
     <div class="breadcrumb">
-        <h1>Sms Apis</h1>
+        <h1>Email Config</h1>
     </div>
     <div class="separator-breadcrumb border-top"></div>
 
@@ -14,18 +13,15 @@
         <div class="col-md-12 mb-4">
             <div class="card text-left">
                 <div class="card-body">
-                    <a title="Add Sms Api" href="#" data-toggle="modal" data-target="#add_sms_api" class="btn btn-primary"> Add Sms Api </a>
+                    <a title="Add Config" href="#" data-toggle="modal" data-target="#add_config" class="btn btn-primary"> Add Config </a>
                     <div class="table-responsive">
                         <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                             <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Url</th>
-                                <th>Mobile Parameter</th>
-                                <th>User Parameter</th>
-                                <th>Password Parameter</th>
-                                <th>User Parameter</th>
-                                <th>Message Parameter</th>
+                                <th>Host</th>
+                                <th>User</th>
+                                <th>Password</th>
                                 <th>Action</th>
                             </tr>
                             </thead>
@@ -34,16 +30,13 @@
                                 @foreach($result as $row )
                             <tr id="row_{{ $row->id }}">
                                 <td>{{ $row->name }}</td>
-                                <td>{{ $row->url }}</td>
-                                <td>{{ $row->mobile_param_name }}</td>
-                                <td>{{ $row->user_param_name }}</td>
-                                <td>{{ $row->password_parm_name }}</td>
-                                <td>{{ $row->sender_param_name }}</td>
-                                <td>{{ $row->message_para_name }}</td>
+                                <td>{{ $row->smtp_host }}</td>
+                                <td>{{ $row->smtp_user }}</td>
+                                <td>{{ $row->smtp_pass }}</td>
                                 <td>
-                                    <a href="#" data-toggle="modal" data-target="#add_sms_api" class="text-success mr-2 edit_sms" id="{{$row->id}}">
+                                    <a href="#" data-toggle="modal" data-target="#add_config" class="text-success mr-2 edit_config" id="{{$row->id}}">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                    <a href="javascript:void(0)" onClick="deleteItem({{$row->id}}, 'sms_api_gateways')" class="text-danger mr-2">
+                                    <a href="javascript:void(0)" onClick="deleteItem({{$row->id}}, 'email_config')" class="text-danger mr-2">
                                             <i class="nav-icon i-Close-Window font-weight-bold"></i>
                                     </a></td>
                             </tr>
@@ -53,12 +46,9 @@
                             <tfoot>
                             <tr>
                                 <th>Name</th>
-                                <th>Url</th>
-                                <th>Mobile Parameter</th>
-                                <th>User Parameter</th>
-                                <th>Password Parameter</th>
-                                <th>User Parameter</th>
-                                <th>Message Parameter</th>
+                                <th>Host</th>
+                                <th>User</th>
+                                <th>Password</th>
                                 <th>Action</th>
                             </tr>
                             </tfoot>
@@ -73,25 +63,25 @@
     <!-- end of row -->
 
     <!-- add notifiaction modal -->
-    <div class="modal fade" id="add_sms_api" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="add_config" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modal-title">Add Api</h5>
+                    <h5 class="modal-title" id="modal-title">Add Config</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                    {!! Form::open(['class' => 'sms_api_form', 'method' => 'post']) !!} 
+                    {!! Form::open(['class' => 'config_form', 'method' => 'post']) !!} 
                     <div class="modal-body">  
                         <div class="row">
                             <div class="col-md-2 form-group mb-3"> 
-                                {!! Form::hidden('id', null, ['class' => 'form-control', 'id' => 'sms_id']) !!}
+                                {!! Form::hidden('id', null, ['class' => 'form-control', 'id' => 'config_id']) !!}
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Name *</label> 
-                                {!! Form::text('name', null, ['class' => 'form-control', 'id' => 'name']) !!}
+                            <label for="firstName1">Group Admin *</label> 
+                                {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'groupid')) !!}
                             </div>
                         </div>                
                         <div class="row">
@@ -99,8 +89,8 @@
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Url *</label> 
-                                {!! Form::text('url', null, ['class' => 'form-control', 'id' => 'url']) !!}
+                                <label for="firstName1">Host *</label> 
+                                {!! Form::text('smtp_host', null, ['class' => 'form-control', 'id' => 'smtp_host']) !!}
                             </div>
                         </div>               
                         <div class="row">
@@ -108,8 +98,8 @@
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Mobile Parameter *</label> 
-                                {!! Form::text('mobile_param_name', null, ['class' => 'form-control', 'id' => 'mob_para']) !!}
+                                <label for="firstName1">User *</label> 
+                                {!! Form::text('smtp_user', null, ['class' => 'form-control', 'id' => 'smtp_user']) !!}
                             </div>
                         </div>                 
                         <div class="row">
@@ -117,37 +107,10 @@
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">User Parameter *</label> 
-                                {!! Form::text('user_param_name', null, ['class' => 'form-control', 'id' => 'user_para']) !!}
+                                <label for="firstName1">Password *</label> 
+                                {!! Form::text('smtp_pass', null, ['class' => 'form-control', 'id' => 'smtp_pass']) !!}
                             </div>
-                        </div>                
-                        <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
-                            </div>
-
-                            <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Password parameter *</label> 
-                                {!! Form::text('password_parm_name', null, ['class' => 'form-control', 'id' => 'pwd_para']) !!}
-                            </div>
-                        </div>                 
-                        <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
-                            </div>
-
-                            <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Sender parameter *</label> 
-                                {!! Form::text('sender_param_name', null, ['class' => 'form-control', 'id' => 'sender_para']) !!}
-                            </div>
-                        </div>               
-                        <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
-                            </div>
-
-                            <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Message parameter *</label> 
-                                {!! Form::text('message_para_name', null, ['class' => 'form-control', 'id' => 'msg_para']) !!}
-                            </div>
-                        </div>  
+                        </div>                  
                     </div>             
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -164,14 +127,14 @@
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-    $( '.sms_api_form' ).on( 'submit', function(e) {
+    $( '.config_form' ).on( 'submit', function(e) {
         e.preventDefault();
         var errors = ''; 
         $.ajax({
         type: "POST",
-        url: '{{ URL::route("addSmsApi") }}', // This is the url we gave in the route
-        data: $('.sms_api_form').serialize(),
-        success: function(res){ // What to do if we succeed
+        url: '{{ URL::route("addConfig") }}', 
+        data: $('.config_form').serialize(),
+        success: function(res){ 
             if(res.error) {
                 $.each(res.error, function(index, value)
                 {
@@ -183,35 +146,32 @@ $(document).ready(function() {
                 });
                 toastr.error(errors);
             } else {
-                $("#add_sms_api").modal('hide');
+                $("#add_config").modal('hide');
                 toastr.success(res.success); 
                 setTimeout(function(){ location.reload() }, 500);               
             }
             
         },
-        error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+        error: function(jqXHR, textStatus, errorThrown) { 
             toastr.error('Some errors are occured');
         }
         });
     });
 
-    $('.edit_sms').on('click',function(e)
+    $('.edit_config').on('click',function(e)
     {
-        $("#modal-title").text('Edit Sms Api');
+        $("#modal-title").text('Edit Config');
         var id = $(this).attr("id");
         $.ajax({
         type: "GET",
-        url: '/get_data/sms_api_gateways/'+ id, // This is the url we gave in the route
+        url: '/get_data/email_config/'+ id, // This is the url we gave in the route
         success: function(result) { 
             var res = result[0];
-            $("#sms_id").val(res.id);
-            $("#name").val(res.name);
-            $("#url").val(res.url);
-            $("#mob_para").val(res.mobile_param_name);
-            $("#user_para").val(res.user_param_name);
-            $("#pwd_para").val(res.password_parm_name);        
-            $("#sender_para").val(res.sender_param_name);        
-            $("#msg_para").val(res.message_para_name);        
+            $("#config_id").val(res.id);
+            $("#groupid").val(res.groupid);
+            $("#smtp_host").val(res.smtp_host);
+            $("#smtp_user").val(res.smtp_user);
+            $("#smtp_pass").val(res.smtp_pass);       
         },
         error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
         }

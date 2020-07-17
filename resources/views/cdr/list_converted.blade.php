@@ -2,6 +2,7 @@
 @section('page-css')
 
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">
+<link rel="stylesheet" href="{{asset('assets/styles/css/custom.css')}}">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.0.12/dist/css/select2.min.css" rel="stylesheet" />
 @endsection
 
@@ -150,55 +151,108 @@
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
                         <div class="card-body">
-                            <a title="Compact Sidebar" id="add_converted" href="javascript:void(0)" class="btn btn-primary"> Add Converted </a>
+                            <a id="add_converted" href="javascript:void(0)" class="btn btn-primary" style="float: right;margin-bottom: 15px;"> Add Customer </a>
                             <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                                <table id="customer_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>First_Name</th>
+                                            <th>No</th>
+                                            <th>First Name</th>
                                             <th>Last Name</th>
                                             <th>Company Name</th>
                                             <th>GST No</th>
                                             <th>Email</th>
                                             <th>Phone Number</th>
                                             <th>Address</th>
+                                            <?php
+                                            if (Auth::user()->usertype == 'reseller') 
+                                            {
+                                                echo "<th>Group Name</th>";
+                                            }
+                                            ?>
                                             <th>Date</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>                                
                                     <tbody>
-                                        @foreach($list_converteds as $list_converted)
-                                        <tr>
-                                            <td>{{$list_converted->id}}</td>
-                                            <td>{{$list_converted->first_name}}</td>
-                                            <td>{{$list_converted->last_name}}</td>
-                                            <td>{{$list_converted->company_name}}</td>
-                                            <td>{{$list_converted->gst_no}}</td>
-                                            <td>{{$list_converted->email}}</td>
-                                            <td>{{$list_converted->mobile_no}}</td>
-                                            <td>{{$list_converted->address}}</td>
-                                            <td>{{$list_converted->inserted_date}}</td>
-                                            <td>
-                                                <a href="javascript:void(0)" class="text-success mr-2 edit_converted" id="edit_converted" data-id="{{$list_converted->id}}"><i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                                </a>
-                                                <a href="{{ route('deleteConverted', $list_converted->id) }}" onclick="return confirm('Are you sure you want to delete this Data?')" class="text-danger mr-2">
-                                                    <i class="nav-icon i-Close-Window font-weight-bold"></i>
-                                                </a>  
-                                            </td>
-                                        </tr>
-                                        @endforeach
+                                        @if(Auth::user()->usertype == 'reseller')
+                                            @foreach($list_converteds as $list_converted)
+                                                @foreach($list_converted as $customer)
+                                                    <tr>
+                                                        <td>{{$customer->id}}</td>
+                                                        <td>{{$customer->first_name}}</td>
+                                                        <td>{{$customer->last_name}}</td>
+                                                        <td>{{$customer->company_name}}</td>
+                                                        <td>{{$customer->gst_no}}</td>
+                                                        <td>{{$customer->email}}</td>
+                                                        <td>{{$customer->mobile_no}}</td>
+                                                        <td>{{$customer->address}}</td>
+                                                        <?php
+                                                        if (Auth::user()->usertype == 'reseller') 
+                                                        {
+                                                            echo '<td>'.$customer->accountgroup_name.'</td>';
+                                                        }
+                                                        ?>
+                                                        <td>{{$customer->inserted_date}}</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)" class="text-success mr-2 edit_converted" id="edit_converted" data-id="{{$customer->id}}"><i class="nav-icon i-Pen-2 font-weight-bold" data-toggle="tooltip" data-placement="top" title="Customer Edit"></i>
+                                                            </a>
+                                                            <a href="{{ route('deleteConverted', $customer->id) }}" onclick="return confirm('Are you sure you want to delete this Data?')" class="text-danger mr-2" data-toggle="tooltip" data-placement="top" title="Customer Delete">
+                                                                <i class="nav-icon i-Close-Window font-weight-bold"></i>
+                                                            </a>  
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endforeach
+                                        @else
+                                            @foreach($list_converteds as $list_converted)
+                                            <tr>
+                                                <td>{{$list_converted->id}}</td>
+                                                <td>{{$list_converted->first_name}}</td>
+                                                <td>{{$list_converted->last_name}}</td>
+                                                <td>{{$list_converted->company_name}}</td>
+                                                <td>{{$list_converted->gst_no}}</td>
+                                                <td>{{$list_converted->email}}</td>
+                                                <td>{{$list_converted->mobile_no}}</td>
+                                                <td>{{$list_converted->address}}</td>
+                                                <td>
+                                                    <?php 
+                                                    if ($list_converted->inserted_date == '0000-00-00 00:00:00') 
+                                                    {
+                                                        echo $list_converted->inserted_date;
+                                                    }
+                                                    else
+                                                    {
+                                                        echo date('d-m-Y',strtotime($list_converted->inserted_date));
+                                                    }
+                                                    ?></td>
+                                                <td>
+                                                    <a href="javascript:void(0)" class="text-success mr-2 edit_converted" id="edit_converted" data-id="{{$list_converted->id}}" data-toggle="tooltip" data-placement="top" title="Customer Edit"><i class="nav-icon i-Pen-2 font-weight-bold"></i>
+                                                    </a>
+                                                    <a href="{{ route('deleteConverted', $list_converted->id) }}" onclick="return confirm('Are you sure you want to delete this Data?')" class="text-danger mr-2" data-toggle="tooltip" data-placement="top" title="Customer Delete">
+                                                        <i class="nav-icon i-Close-Window font-weight-bold"></i>
+                                                    </a>  
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        @endif
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th>ID</th>
-                                            <th>First_Name</th>
+                                            <th>No</th>
+                                            <th>First Name</th>
                                             <th>Last Name</th>
                                             <th>Company Name</th>
                                             <th>GST No</th>
                                             <th>Email</th>
                                             <th>Phone Number</th>
                                             <th>Address</th>
+                                            <?php
+                                            if (Auth::user()->usertype == 'reseller') 
+                                            {
+                                                echo "<th>Group Name</th>";
+                                            }
+                                            ?>
                                             <th>Date</th>
                                             <th>Actions</th>
                                         </tr>
@@ -208,7 +262,7 @@
                             </div>
 
                         </div>
-                        <div class="pull-right">{{ $result->links() }}</div>
+                        <!-- <div class="pull-right">{{ $result->links() }}</div> -->
                     </div>
                 </div>
             </div>
@@ -220,7 +274,14 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script src="{{asset('assets/js/select2.min.js')}}"></script>
-
+<script src="{{asset('assets/js/tooltip.script.js')}}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#customer_table').DataTable( {
+            "order": [[0, "desc" ]]
+        } );
+    } );
+</script>
 <script type="text/javascript">
     $('#add_converted').click(function(){
         //$(".addProduct").show(1000);

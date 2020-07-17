@@ -32,13 +32,37 @@ class ProductController extends Controller
 
     public function index(){
 
+        /*echo "<pre>";
+        print_r(Auth::user());exit();*/
+
         $result = Product::getReport();
 
-        $products = DB::table('products')
+        if (Auth::user()->usertype == 'admin') 
+        {
+             $products = DB::table('products')
             ->join('category', 'category.id', '=', 'products.category_id')
             ->select('products.*','category.name as cat_name')
             ->orderBy('id', 'desc')
             ->paginate(10);
+        }
+        elseif (Auth::user()->usertype == 'groupadmin' ) {
+
+             $products = DB::table('products')
+            ->orWhere('products.group_id','=',Auth::user()->groupid)
+            ->join('category', 'category.id', '=', 'products.category_id')
+            ->select('products.*','category.name as cat_name')
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+        }
+        else
+        {
+             $products = DB::table('products')
+            ->where('proposal.user_id','=',Auth::user()->id)
+            ->join('category', 'category.id', '=', 'products.category_id')
+            ->select('products.*','category.name as cat_name')
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+        }
 
         $category = new Product();
         $category_data =  $this->select_category_data();
@@ -82,6 +106,8 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        /*echo "<pre>";
+        print_r(Auth::user());exit();*/
         //dd($request->all());exit;
         $products = DB::table('products')
             ->select('*')
@@ -117,6 +143,8 @@ class ProductController extends Controller
                 }
 
             $add_product = new Product([
+                'group_id' => Auth::user()->groupid,
+                'user_id' => Auth::user()->id,
                 'name' => $request->get('name'),
                 'category_id' => $request->get('category_id'),
                 'image'=> $image_name,
@@ -224,6 +252,8 @@ class ProductController extends Controller
 
 
                     $add_data = new Product([
+                        'group_id' => Auth::user()->groupid,
+                        'user_id' => Auth::user()->id,
                         'name' => $data[0],
                         'category_id' => $data[1],
                         'unit_of_measurement' => $data[2],

@@ -38,14 +38,30 @@ class ConvertedController extends Controller
             	->where('group_id','=',Auth::user()->groupid)
                 ->select('*')
                 ->orderBy('id', 'desc')
-                ->paginate(10);
+                ->get();
         }
         elseif (Auth::user()->usertype == 'admin') 
         {
         	$list_converteds = DB::table('converted')
                 ->select('*')
                 ->orderBy('id', 'desc')
-                ->paginate(10);
+                ->get();
+        }
+        elseif (Auth::user()->usertype == 'reseller') 
+        {
+            $groupid = DB::table('resellergroup')->where('id',Auth::user()->resellerid)->first();
+
+            $de = json_decode($groupid->associated_groups);
+
+            $list_converteds = array();
+            foreach ($de as $key => $de_gpid) {
+                $list_converteds[] = DB::table('converted')
+                    ->Leftjoin('accountgroup','accountgroup.id','converted.group_id')
+                    ->where('group_id','=',$de_gpid)
+                    ->select('converted.*','accountgroup.name as accountgroup_name')
+                    ->orderBy('id', 'desc')
+                    ->get();
+            }
         }
         else
         {
@@ -53,8 +69,11 @@ class ConvertedController extends Controller
                 ->where('user_id','=',Auth::user()->id)
                 ->select('*')
                 ->orderBy('id', 'desc')
-                ->paginate(10);
+                ->get();
         }
+
+        /*echo "<pre>";
+        print_r(array_merge($list_converteds));exit;*/
         return view('cdr.list_converted',compact('list_converteds','result'));
     }
 

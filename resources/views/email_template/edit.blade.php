@@ -30,7 +30,7 @@
                                 <div class="row">
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="subject">Name*</label>
-                                        <input type="text" class="form-control" id="name" placeholder="subject" name="name" value="{{$mail->name}}">
+                                        <input type="text" class="form-control" id="name" placeholder="Enter email template name" name="name" value="{{$mail->name}}">
                                     </div>
 
                                     <div class="col-md-4"></div>
@@ -39,7 +39,7 @@
 
                                     <div class="col-md-12 form-group mb-3">
                                         <label for="subject">Subject*</label>
-                                        <input type="text" class="form-control" id="subject" placeholder="subject" name="subject" required="" value="{{$mail->subject}}">
+                                        <input type="text" class="form-control" id="subject" placeholder="Subject" name="subject" required="" value="{{$mail->subject}}">
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3"></div>

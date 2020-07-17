@@ -34,18 +34,36 @@ class EmailTemplateController extends Controller
             $list_emailtemplates = DB::table('email_template')
                     ->where('group_id',Auth::user()->groupid)
                     ->orderBy('id', 'desc')
-                    ->paginate(10);
+                    ->get();
         }
         elseif (Auth::user()->usertype == 'admin') {
             $list_emailtemplates = DB::table('email_template')                    
                     ->orderBy('id', 'desc')
-                    ->paginate(10);
+                    ->get();
+        }
+        elseif (Auth::user()->usertype == 'reseller') 
+        {
+            $groupid = DB::table('resellergroup')->where('id',Auth::user()->resellerid)->first();
+
+            $de = json_decode($groupid->associated_groups);
+
+            $list_emailtemplates = array();
+            foreach ($de as $key => $de_gpid) {
+                $list_emailtemplates[] = DB::table('email_template')
+                    ->Leftjoin('accountgroup','accountgroup.id','email_template.group_id')
+                    ->where('email_template.group_id',$de_gpid)
+                    ->select('email_template.*','accountgroup.name as accountgroup_name')
+                    ->orderBy('id', 'desc')
+                    ->get();
+            }
+            
         }
         else{
             $list_emailtemplates = DB::table('email_template')
                     ->where('user_type','=','operator')
+                    ->where('group_id',Auth::user()->groupid)
                     ->orderBy('id', 'desc')
-                    ->paginate(10);    
+                    ->get();    
         }
         //print_r(Auth::user());exit;
         

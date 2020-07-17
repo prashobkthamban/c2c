@@ -56,7 +56,7 @@ class ServiceController extends Controller
         }   
         else
         {
-            $total_access_leads = Auth::user()->load('accountdetails')->accountdetails->leads_access;
+            $total_access_leads = (Auth::user()->load('accountdetails')->accountdetails != null) ? Auth::user()->load('accountdetails')->accountdetails->leads_access : '';
         }
 
         $apiKey = urlencode('624AD-63599');
@@ -71,12 +71,7 @@ class ServiceController extends Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = curl_exec($ch);
         curl_close($ch);
-        
-        // Process your response here
-        //echo $response;exit;
-
-        //print_r($total_access_leads);exit;
-        //dd($result);
+    
         return view('service.billing_list', compact('result','lead_count','total_access_leads','response'));
     }
 

@@ -41,18 +41,36 @@ class ProposalController extends Controller
                     ->leftJoin('account','account.id','=','proposal.user_id')
                     ->select('proposal.*','converted.id as c_id','converted.first_name','converted.last_name','converted.address','account.username','converted.company_name')
                     ->orderBy('id', 'desc')
-                    ->paginate(10);
+                    ->get();
         }
         elseif (Auth::user()->usertype == 'groupadmin' ) {
 
             $list_proposals = DB::table('proposal')
                      ->where('proposal.user_id','=',Auth::user()->id)
-                    ->orWhere('proposal.operator_id','=',Auth::user()->groupid)
+                    ->orWhere('proposal.group_id','=',Auth::user()->groupid)
                     ->leftJoin('converted', 'converted.id', '=', 'proposal.cutomer_id')
                     ->leftJoin('account','account.id','=','proposal.user_id')
                     ->select('proposal.*','converted.id as c_id','converted.first_name','converted.last_name','converted.address','account.username','converted.company_name')
                     ->orderBy('id', 'desc')
-                    ->paginate(10);
+                    ->get();
+        }
+        elseif (Auth::user()->usertype == 'reseller' ) 
+        {
+            $groupid = DB::table('resellergroup')->where('id',Auth::user()->resellerid)->first();
+
+            $de = json_decode($groupid->associated_groups);
+
+            $list_proposals = array();
+            foreach ($de as $key => $de_gpid) {
+                $list_proposals[] = DB::table('proposal')
+                    ->where('proposal.group_id','=',$de_gpid)
+                    ->Leftjoin('accountgroup','accountgroup.id','proposal.group_id')
+                    ->leftJoin('converted', 'converted.id', '=', 'proposal.cutomer_id')
+                    ->leftJoin('account','account.id','=','proposal.user_id')
+                    ->select('proposal.*','converted.id as c_id','converted.first_name','converted.last_name','converted.address','account.username','converted.company_name','accountgroup.name as accountgroup_name')
+                    ->orderBy('id', 'desc')
+                    ->get();
+            }
         }
         else
         {
@@ -61,16 +79,18 @@ class ProposalController extends Controller
             ->leftJoin('converted', 'converted.id', '=', 'proposal.cutomer_id')
             ->select('proposal.*','converted.id as c_id','converted.first_name','converted.last_name','converted.address','converted.company_name')
             ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->get();
         }
 
+        /*echo "<pre>";
+        print_r($list_proposals);exit;*/
         return view('proposal.index',compact('list_proposals','result'));
     }
 
     public function add()
     {
         $products = Product::select('*')->get();
-        $customers = Converted::select('*')->get();
+        $customers = Converted::select('*')->where('group_id',Auth::user()->groupid)->get();
 
         return view('proposal.add',compact('products','customers'));
     }
@@ -82,8 +102,9 @@ class ProposalController extends Controller
         $now = date("Y-m-d H:i:s");
 
         $add_proposal = new Proposal([
-                'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
+                'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '0',
                 'user_id' => Auth::user()->id,
+                'group_id' => Auth::user()->groupid,
                 'subject' => $request->get('subject'),
                 'cutomer_id' => $request->get('customer_id') ? $request->get('customer_id') : '',
                 'date'=> $request->get('date'),
@@ -153,7 +174,7 @@ class ProposalController extends Controller
                             ->get();
 
         $products = Product::select('*')->get();
-        $customers = Converted::select('*')->get();
+        $customers = Converted::select('*')->where('group_id',Auth::user()->groupid)->get();
 
         $invoice_number = Invoice::max('id');
         //print_r($invoice_number);exit;

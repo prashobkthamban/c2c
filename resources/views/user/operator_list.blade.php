@@ -14,12 +14,16 @@
         <div class="col-md-12 mb-4">
             <div class="card text-left">
                 <div class="card-body">
-                    <a title="Add Operator" href="#" data-toggle="modal" data-target="#operator_account" class="btn btn-primary add_account">Add Operator</a>
+                    <?php $operatorCount = sizeof($operators); 
+                    $target = ($operatorCount < Auth::user()->load('accountdetails')->accountdetails['operator_no_logins']) ? '#operator_account' : ''; 
+                    ?>
+                    <a title="Add Operator" href="#" data-toggle="modal" data-target="<?php echo $target; ?>" class="btn btn-primary add_account">Add Operator</a>
                     <p><center><b id="crm_error" style="display:none;color: red;">CRM Access Limit is over.Please contact to Administration!!!</b></center></p>
                     <div class="table-responsive">
                         <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Operator</th>
                                     <th>Phone</th>
                                     <th>LoginId</th>
@@ -31,9 +35,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                
                                 @foreach($operators as $operator)
                                 <tr id="row_{{ $operator->id }}">
+                                    <td>{{ $operator->id }}</td>
                                     <td>{{$operator->opername}}</td>
                                     <td>{{$operator->phonenumber}}</td>
                                     <td>{{($operator->accounts != null) ? $operator->accounts->username : ''}}</td>
@@ -56,6 +60,7 @@
                             </tbody>
                             <tfoot>
                                 <tr>
+                                    <th>ID</th>
                                     <th>Operator</th>
                                     <th>Phone</th>
                                     <th>LoginId</th>
@@ -250,6 +255,9 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script>
+    var operatorLimits = "<?php echo Auth::user()->load('accountdetails')->accountdetails['operator_no_logins']; ?>";
+    var createCount = "<?php echo $operatorCount; ?>";
+    console.log('fcghv', operatorLimits);
     var days = [];
     function selectDay(day) {
         if(!$("#" + day).hasClass('btn-primary')) {
@@ -340,12 +348,6 @@
           });
         });
 
-        $('.add_account').on('click',function(e) {
-            $("#modal-title").text('Add Operator Account');
-            $(".week_days").removeClass('btn-primary');
-            $(".add_account_form")[0].reset();
-        });
-
         $('.stickey_list').click(function() {
             $("#operator_name").text('Operator Name : ' + $(this).attr("data-opername"));
 
@@ -373,6 +375,15 @@
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }
           });
+        });
+
+        $('.add_account').click(function() {
+            if(!(createCount < operatorLimits)) {
+                toastr.error('Limit exceeded');
+            } 
+            $("#modal-title").text('Add Operator Account');
+            $(".week_days").removeClass('btn-primary');
+            $(".add_account_form")[0].reset();    
         });
 
         $(document).on("click", ".delete_stickey", function(event)

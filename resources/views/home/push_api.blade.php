@@ -197,7 +197,7 @@ $(document).ready(function() {
             } else {
                 $("#add_push_api").modal('hide');
                 toastr.success(res.success); 
-                setTimeout(function(){ location.reload() }, 500);               
+                setTimeout(function(){ location.reload() }, 300);               
             }
             
         },

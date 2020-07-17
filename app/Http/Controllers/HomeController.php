@@ -102,6 +102,8 @@ class HomeController extends Controller
             
             $insight_ivr = CdrReport::select(DB::raw('count(*) as count, deptname'))
             ->where('deptname', '!=', '')
+            ->whereDate('cdr.datetime', '>=', $qsdate)
+            ->whereDate('cdr.datetime', '<=', $qedate)
             ->groupBy('deptname')
             ->get();
 
@@ -252,6 +254,87 @@ class HomeController extends Controller
             
             $group_admin = DB::table('accountgroup')->where('resellerid','=',Auth::user()->resellerid)->get();
 
+            $groupid = DB::table('resellergroup')->where('id',Auth::user()->resellerid)->first();
+
+            
+            $de = json_decode($groupid->associated_groups);
+
+            foreach ($de as $key => $de_gpid) {
+                $users_list[] = DB::table('operatoraccount')
+                        ->select('operatoraccount.*')->where('groupid',$de_gpid)
+                        ->get();
+            }
+            
+            $lead_count = $operator_lead_stage = $predict_cost  = $proposal = $invoice = array();
+
+            foreach ($users_list as $key => $value) {
+                foreach ($value as $key => $new_value) {
+                    
+                
+                    $lead_count[$new_value->id] = DB::table('cdrreport_lead')
+                            ->select('cdrreport_lead.operatorid')
+                            ->where('operatorid','=',$new_value->id)
+                            ->get()->count();
+
+                    $operator_lead_stage[$new_value->opername] = DB::table('cdrreport_lead')
+                    //,DB::raw('group_concat(cdrreport_lead.lead_stage) as stage')
+                            ->select(DB::raw('COUNT(lead_stage) as lead_count'),'lead_stage','operatoraccount.opername')
+                            ->where('operatorid','=',$new_value->id)
+                            ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
+                            ->groupBy('cdrreport_lead.lead_stage','operatoraccount.opername')
+                            //->groupBy('cdrreport_lead.lead_stage')
+                            ->get();
+
+                    $predict_cost[$new_value->id] = DB::table('cdrreport_lead')
+                                    ->select(DB::raw('SUM(total_amount) as pre_cost'),'operatoraccount.opername')
+                                    ->where('operatorid','=',$new_value->id)
+                                    ->whereNotIn('lead_stage', ['converted'])
+                                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
+                                    ->get();
+
+                    $proposal[$new_value->id] = DB::table('proposal')
+                                    ->select(DB::raw('SUM(grand_total) as proposal_total'),'operatoraccount.opername')
+                                    ->where('operator_id','=',$new_value->id)
+                                    ->leftJoin('operatoraccount','operatoraccount.id','=','proposal.operator_id')
+                                    ->get();
+
+                    $invoice[$new_value->id] = DB::table('invoice')
+                                    ->select(DB::raw('SUM(grand_total) as invoice_total'),'operatoraccount.opername')
+                                    ->where('operator_id','=',$new_value->id)
+                                    ->leftJoin('operatoraccount','operatoraccount.id','=','invoice.operator_id')
+                                    ->get();
+
+                    foreach ($predict_cost as $key => $pc) {
+                        if ($pc[0]->opername == '') {
+                            $pc[0]->pre_cost = 0;
+                            $pc[0]->opername = $new_value->opername;
+                        }
+                    }
+
+                    foreach ($proposal as $key => $pro) {
+                        if ($pro[0]->opername == '') {
+                            $pro[0]->proposal_total = 0;
+                            $pro[0]->opername = $new_value->opername;
+                        }
+                    }
+
+                    foreach ($invoice as $key => $pro) {
+                        if ($pro[0]->opername == '') {
+                            $pro[0]->invoice_total = 0;
+                            $pro[0]->opername = $new_value->opername;
+                        }
+                    }
+                }
+
+            }
+
+            $remainders = DB::table('lead_reminders')
+                ->where('user_id','=',Auth::user()->id)
+                ->get();
+
+            /*echo "<pre>";
+            print_r($users_list);exit();*/
+
         }
         else if (Auth::user()->usertype == 'operator') 
         {
@@ -271,8 +354,8 @@ class HomeController extends Controller
             $lead_count = '';
         }
 
-        /*echo "<pre>";
-        print_r($operator_lead_stage);exit;*/
+/*        echo "<pre>";
+        print_r(Auth::user());exit;*/
 
         $nousers = '';
         $inusers = '';
@@ -739,15 +822,58 @@ class HomeController extends Controller
             $now_str = strtotime($now);
             if ($str_to == $now_str) 
             {
-                $new_array[] = array('title' => $value->title,'re_value' => '1');
+                $new_array[] = array('title' => $value->title, 'date' => $value->date, 're_value' => '1');
             }
             else
             {
-                $new_array[] = array('title' => '','re_value' => '0');
+                $new_array[] = array('title' => '', 'date' => '', 're_value' => '0');
             }
         }
         echo json_encode($new_array);
         
+    }
+
+    public function emailConfig() {
+        $result = DB::table('email_config')
+        ->select('email_config.*', 'accountgroup.name')
+        ->leftJoin('accountgroup', 'email_config.groupid', '=', 'accountgroup.id')
+        ->orderBy('email_config.id', 'desc')
+        ->paginate(10);
+        //dd($result);
+        return view('home.email_config', compact('result'));
+    }
+
+    public function addConfig(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'groupid' => 'required',
+            'smtp_host' => 'required',
+            'smtp_user' => 'required',
+            'smtp_pass' => 'required'
+        ]);  
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $config = [
+                'groupid' => $request->get('groupid'),
+                'smtp_host'=> $request->get('smtp_host'),
+                'smtp_user'=> $request->get('smtp_user'),
+                'smtp_pass'=> $request->get('smtp_pass')
+            ];
+
+            if(!empty($request->get('id'))) {
+                DB::table('email_config')->where('id', $request->get('id'))->update($config);
+                $data['success'] = 'Email config update successfully.';
+            } else {
+                    DB::table('email_config')->insert(
+                        $config
+                    );
+                $data['success'] = 'Email config added successfully.';   
+            }
+                     
+        } 
+        return $data;
     }
 
 }

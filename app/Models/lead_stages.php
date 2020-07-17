@@ -11,6 +11,6 @@ class lead_stages extends Model
     protected $table = 'lead_stages';
     public $timestamps = false;
     protected $primaryKey = 'id';
-    protected $fillable = ['id', 'user_id', 'cdrreport_lead_id', 'levels', 'status'];
+    protected $fillable = ['id', 'user_id', 'cdrreport_lead_id', 'levels', 'status','group_id'];
 
 }

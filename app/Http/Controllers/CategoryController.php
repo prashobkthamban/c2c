@@ -29,7 +29,7 @@ class CategoryController extends Controller
     	$categories = DB::table('category')
             ->select('*')
             ->orderBy('id', 'desc')
-            ->paginate(10);
+            ->get();
 
         $category = new Category();
         $category_data =  $this->select_category_data();

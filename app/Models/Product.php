@@ -11,7 +11,7 @@ class Product extends Model
     protected $table = 'products';
     public $timestamps = false;
     protected $primaryKey = 'id';
-    protected $fillable = ['id', 'name', 'category_id', 'image','unit_of_measurement','landing_cost','selling_cost','description'];
+    protected $fillable = ['id', 'name', 'category_id', 'image','unit_of_measurement','landing_cost','selling_cost','description','group_id','user_id'];
 
     public static function getReport( ){
 

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Contact;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 
 class CdrReport extends Model
@@ -67,20 +68,27 @@ class CdrReport extends Model
             $data->where('cdr.resellerid',Auth::user()->resellerid );
         }
         else if( Auth::user()->usertype == 'operator' ){
-            $data->where('cdr.operatorid',Auth::user()->id );
+            $data->where('cdr.operatorid',Auth::user()->operator_id );
         } else if(Auth::user()->usertype == 'admin') {
             $data->select('cdr.*', 'accountgroup.name')->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr.groupid');
+        } else if(Auth::user()->usertype == 'groupadmin') {
+            //dd(Auth::user()->usertype);
+            $data->where('cdr.groupid',Auth::user()->groupid );
         }
-    
-        $result = $data->orderBy('datetime','DESC')->paginate(10);
-
+        
+        $result = $data->orderBy('datetime','DESC')->get();
        return $result;
     }
 
     public static function getGraphReport($params){
-        $data = CdrReport::select('*');
+        $data = CdrReport::select('cdr.status', DB::raw('DATE(cdr.datetime) as newdate'), DB::raw('count(cdr.cdrid) as Count'));
         if( Auth::user()->usertype == 'reseller'){
             $data->where('cdr.resellerid',Auth::user()->resellerid );
+        }
+        else if( Auth::user()->usertype == 'operator' ){
+            $data->where('cdr.operatorid',Auth::user()->operator_id );
+        } else if(Auth::user()->usertype == 'groupadmin') {
+            $data->where('cdr.groupid',Auth::user()->groupid );
         }
         
         if(!empty($params['startdate']) && !empty($params['enddate'])) {
@@ -95,8 +103,7 @@ class CdrReport extends Model
             $data->where('cdr.deptname', $params['department'] );
         }
 
-        $data->selectRaw("COUNT(*) total, DATE_FORMAT(datetime, '%Y %m %e') date")->groupBy('date');
-        $result = $data->get();
+        $result = $data->groupBy('newdate')->groupBy('status')->get();
         return $result;
     }
 

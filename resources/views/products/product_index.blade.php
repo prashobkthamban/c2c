@@ -2,6 +2,7 @@
 @section('page-css')
 
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">
+<link rel="stylesheet" href="{{asset('assets/styles/css/custom.css')}}">
 @endsection
 
 @section('main-content')
@@ -177,7 +178,7 @@
                 </div>
     </div>
 
-     <div class="modal fade" id="ImProduct" tabindex="-1" role="dialog">
+    <div class="modal fade" id="ImProduct" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             {!! Form::open(['action' => 'ProductController@addproductcsv', 'method' => 'post','enctype' => 'multipart/form-data','onsubmit'=>'return Validate(this);']) !!}
@@ -194,6 +195,9 @@
                     <div class="col-md-6">
                         <label>Add Data from CSV File Only</label>
                         <input type="file" name="products_file" id="products_file" class="form-control">
+                    </div>
+                    <div class="col-md-6" style="text-align: end;">
+                        <a href="{{ url('general_file/product.csv') }}" download>Sample CSV File</a>
                     </div>
                 </div>
             </div>
@@ -216,9 +220,9 @@
                         <div class="card-body">
                             <a href="javascript:void(0)" class="btn btn-outline-secondary float-right" id="import_product" data-toggle="modal" data-target="#ImProduct" style="margin-left: 15px;">Import Lead</a>
                             <button id="export_product" class="btn btn-outline-secondary float-right" name="btn">Export Product</button><br>
-                            <a title="Compact Sidebar" id="add_product" href="javascript:void(0)" class="btn btn-primary"> Add Product </a>
+                            <a title="Compact Sidebar" id="add_product" href="javascript:void(0)" class="btn btn-primary" style="margin-bottom: 15px;margin-top: -24px;"> Add Product </a>
                             <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-striped table-bordered insert_to_excel" style="width:100%">
+                                <table id="product_table" class="display table table-striped table-bordered insert_to_excel" style="width:100%">
                                    <thead>
                                         <tr>
                                             <th>Image</th>
@@ -246,10 +250,10 @@
                                             <td>{{$product->landing_cost}}</td>
                                             <td>{{$product->description}}</td>
                                             <td>
-                                                <a href="javascript:void(0)" class="text-success mr-2 edit_product" id="edit_product" data-id="{{$product->id}}"><i class="nav-icon i-Pen-2 font-weight-bold"></i>
+                                                <a href="javascript:void(0)" class="text-success mr-2 edit_product" id="edit_product" data-id="{{$product->id}}" data-toggle="tooltip" data-placement="top" title="Product Edit"><i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                                 </a>
                                                 <a href="{{ route('deleteProduct', $product->id) }}" onclick="return confirm('Are you sure you want to delete this Product?')" class="text-danger mr-2">
-                                                    <i class="nav-icon i-Close-Window font-weight-bold"></i>
+                                                    <i class="nav-icon i-Close-Window font-weight-bold" data-toggle="tooltip" data-placement="top" title="Product Delete"></i>
                                                 </a>  
                                             </td>
                                         </tr>
@@ -284,6 +288,14 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script src="{{asset('assets/js/jquery.table2excel.min.js')}}"></script>
+<script src="{{asset('assets/js/tooltip.script.js')}}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#product_table').DataTable( {
+            "order": [[0, "desc" ]]
+        } );
+    } );
+</script>
 <script type="text/javascript">
 
     $('#export_product').click(function(){

@@ -11,7 +11,7 @@ class CdrReport_Lead extends Model
     protected $table = 'cdrreport_lead';
     public $timestamps = false;
     protected $primaryKey = 'id';
-    protected $fillable = ['id', 'user_id', 'cdrreport_id', 'first_name', 'last_name','company_name','email','owner_name','lead_stage','total_amount','inserted_date','operatorid','phoneno','alt_phoneno'];
+    protected $fillable = ['id', 'user_id', 'cdrreport_id', 'first_name', 'last_name','company_name','email','owner_name','lead_stage','total_amount','inserted_date','operatorid','phoneno','alt_phoneno','group_id'];
 
     public static function getReport( ){
 

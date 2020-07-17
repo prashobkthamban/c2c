@@ -31,6 +31,9 @@ Route::delete('delete_item/{id}/{table}', 'HomeController@deleteItem')->name('de
 Route::get('push_api', 'HomeController@pushApi')->name('pushApi');
 Route::get('get_data/{table}/{id}', 'HomeController@getData')->name('getData');
 Route::post('add_push_api', 'HomeController@addPushApi')->name('addPushApi');
+Route::get('email_config', 'HomeController@emailConfig')->name('emailConfig');
+Route::post('add_config', 'HomeController@addConfig')->name('addConfig');
+
 
 
 
@@ -121,6 +124,7 @@ Route::get('edit_account/{id}', 'UserController@editAccount')->name('editAccount
 Route::get('get_customer/{usertype}/{resellerid}', 'UserController@getCustomer')->name('getCustomer');
 Route::get('get_did/{groupid}', 'UserController@getDid')->name('getDid');
 Route::post('edit_profile', 'UserController@editProfile')->name('editProfile');
+Route::post('crm_settings', 'UserController@crmSettings')->name('crmSettings');
 Route::get('reset_password', 'UserController@resetPassword')->name('resetPassword');
 
 
@@ -131,9 +135,8 @@ Route::get('edit_coperate/{id}', 'UserController@editCoperate')->name('editCoper
 Route::get('destroy_coperate/{id}', 'UserController@destroyCoperate')->name('destroyCoperate');
 
 Route::get('blacklist', 'UserController@blacklist')->name('BlackList');
-Route::get('add_black_list', 'UserController@addBlacklist')->name('addBlackList');
+Route::post('add_black_list', 'UserController@addBlacklist')->name('addBlackList');
 Route::get('blacklist/{id}', 'UserController@destroyBlacklist')->name('deleteBlacklist');
-Route::post('blacklist_store', 'UserController@storeBlacklist')->name('blacklistStore');
 
 Route::get('operators', 'UserController@operators')->name('OperatorList');
 Route::get('stickey_list/{id}', 'UserController@stickey_list')->name('stickeyList');
@@ -205,6 +208,7 @@ Route::get('cdroutexport', 'ReportController@cdroutexport')->name('cdroutexport'
 Route::get('voicemailexport', 'ReportController@voicemailexport')->name('voicemailexport');
 Route::get('operatordept', 'ReportController@operatordept')->name('operatordept');
 Route::post('add_cdr', 'ReportController@addCdr')->name('AddCdr');
+Route::post('send_message', 'ReportController@sendMessage')->name('SendMessage');
 Route::post('assign_cdr', 'ReportController@assignCdr')->name('AssignCdr');
 
 /* ---------- Operator Department ----------- */
@@ -223,7 +227,6 @@ Route::get('delete_non_operator/{id}', 'OperatorController@deleteNonOperator')->
 Route::get('sms_list', 'OperatorController@sms')->name('Sms');
 Route::post('add_sms', 'OperatorController@addSms')->name('addSms');
 Route::get('get_sms/{id}', 'OperatorController@getSms')->name('getSms');
-Route::get('delete_sms/{id}', 'OperatorController@deleteSms')->name('deleteSms');
 //ajax
 //Route::get('getForm', 'CdrAjaxController@getForm');
 Route::post('getForm', 'CdrAjaxController@getForm');

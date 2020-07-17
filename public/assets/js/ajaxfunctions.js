@@ -111,16 +111,18 @@ $(document).ready(function(){
                     });
                     toastr.error(errors);
                 } else {
-                    console.log(res);
-                    noteHTML += "<tr class='cmnt_row_" + res.id + "'>";
+                    /*noteHTML += "<tr class='cmnt_row_" + res.id + "'>";
                     noteHTML += "<td>" + res.result.operator  + "</td>";
                     noteHTML += "<td>" + moment(res.result.datetime.date).format('YYYY-MM-DD hh:mm:ss')  + "</td>";
                     noteHTML += "<td>" + res.result.note + "</td>";
                     noteHTML += "<td><a href='#' class='text-danger mr-2 delete_comment' id='" + res.id + "'><i class='nav-icon i-Close-Window font-weight-bold'></td>";
                     noteHTML += "</tr>";
-                    $("#notes_list_table tbody").append(noteHTML);
+                    $("#notes_list_table tbody").append(noteHTML);*/
                     $("#add_note_modal").modal('hide');
-                    toastr.success(res.success);                
+                    toastr.success(res.success);        
+                    setTimeout( function() { 
+                            location.reload(true); 
+                    }, 300);             
                 }
                
             },

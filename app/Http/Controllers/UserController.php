@@ -49,7 +49,6 @@ class UserController extends Controller
             ->leftJoin('dids', 'accountgroup.did', '=', 'dids.id')
             ->select('accountgroup.*', 'resellergroup.resellername', 'dids.did')
             ->get();
-        //dd($users);
         return view('user.user_list', compact('users'));
     }
 
@@ -428,35 +427,26 @@ public function updatesettings($id, Request $request) {
     /* ----------blacklist----------- */
     public function blacklist() {
         $blacklists = DB::table('blacklist')
-            ->leftJoin('accountgroup', 'blacklist.groupid', '=', 'accountgroup.id')
-            ->select('blacklist.*', 'accountgroup.name')
+            //->leftJoin('accountgroup', 'blacklist.groupid', '=', 'accountgroup.id')
+            ->where('groupid', Auth::user()->groupid)
             ->get();
         return view('user.black_list', compact('blacklists'));
     }
 
-    public function addBlacklist()
-    {
-        $customer = DB::table('accountgroup')->pluck('name', 'id');
-        $customer = $customer->prepend('Select Customer', '');
-        return view('user.add_blacklist', compact('customer'));
-    }
-
-    public function storeBlacklist(Request $request)
+    public function addBlacklist(Request $request)
     {
         $customer = DB::table('accountgroup')->pluck('name', 'id');
         $customer = $customer->prepend('Select Customer', '');
         $validator = Validator::make($request->all(), [
-            'groupid' => 'required',
             'phone_number' => 'required',
             'reason' => 'required',
         ]);
 
         if($validator->fails()) {
-            $messages = $validator->messages(); 
-            return view('user.add_blacklist', compact('messages', 'customer'));
+            $data['error'] = $validator->messages();
         } else {
             $blacklist_data = [
-                'groupid' => $request->get('groupid'),
+                'groupid' => Auth::user()->groupid,
                 'phone_number'=> $request->get('phone_number'),
                 'reason'=> $request->get('reason')
             ];
@@ -464,19 +454,10 @@ public function updatesettings($id, Request $request) {
             DB::table('blacklist')->insert(
                 $blacklist_data
             );  
-
-            toastr()->success('Blacklist added successfully.');
+            $data['success'] = 'Blacklist added successfully.';
         } 
-        return redirect()->route('BlackList');
+        return $data;
         
-    }
-
-    public function destroyBlacklist($id)
-    {
-        //dd($id);
-        $res = DB::table('blacklist')->where('id',$id)->delete();
-        toastr()->success('Blacklist delete successfully.');
-        return redirect()->route('BlackList');
     }
 
     public function operators() {
@@ -1018,6 +999,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
             $days = [];
             $did = [];
         }
+        //dd($acGrp);
         return view('user.my_profile',compact('acGrp','did', 'days'));
     }
 
@@ -1059,6 +1041,27 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                     $data['data'] = array_merge($data['data'], $accGroup);
 
         } 
+         return $data;
+    }
+
+    public function crmSettings(Request $request) 
+    {
+       if(!empty($request->all())) {
+            $crm = ['companyname' => $request->get('companyname'),
+                     'GST'=> $request->get('GST'),
+                     'billing_address'=> $request->get('billing_address'),
+                     'shipping_address'=> $request->get('shipping_address'), 
+                     'PAN'=> $request->get('PAN'), 
+                    ];
+
+            DB::table('accountgroup')
+                ->where('id', Auth::user()->groupid)
+                ->update($crm);
+
+            $data['success'] = 'Crm settings updated successfully.';
+        } else {
+            $data['error'] = 'Some errors are occured.';
+        }
          return $data;
     }
 

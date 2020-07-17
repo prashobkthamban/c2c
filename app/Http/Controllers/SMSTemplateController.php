@@ -34,19 +34,37 @@ class SMSTemplateController extends Controller
             $list_smstemplates = DB::table('sms_template')
                     ->where('group_id',Auth::user()->groupid)
                     ->orderBy('id', 'desc')
-                    ->paginate(10);
+                    ->get();
         }
         elseif (Auth::user()->usertype == 'admin') {
             $list_smstemplates = DB::table('sms_template')
                     ->orderBy('id', 'desc')
-                    ->paginate(10);
+                    ->get();
+        }
+        elseif (Auth::user()->usertype == 'reseller') 
+        {
+            $groupid = DB::table('resellergroup')->where('id',Auth::user()->resellerid)->first();
+
+            $de = json_decode($groupid->associated_groups);
+
+            $list_smstemplates = array();
+            foreach ($de as $key => $de_gpid) {
+                $list_smstemplates[] = DB::table('sms_template')
+                    ->Leftjoin('accountgroup','accountgroup.id','sms_template.group_id')
+                    ->where('sms_template.group_id',$de_gpid)
+                    ->select('sms_template.*','accountgroup.name as accountgroup_name')
+                    ->orderBy('id', 'desc')
+                    ->get();
+            }
+            
         }
         else{
 
             $list_smstemplates = DB::table('sms_template')
                     ->where('user_type','=','operator')
+                    ->where('group_id',Auth::user()->groupid)
                     ->orderBy('id', 'desc')
-                    ->paginate(10);
+                    ->get();
         }
         
 

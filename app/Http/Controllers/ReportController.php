@@ -51,29 +51,59 @@ class ReportController extends Controller
         $users_lists = DB::table('operatoraccount')
                         ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
                         ->get();
-        return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup(),'products' => $products,'users_lists' => $users_lists]);
+
+        $result1 = DB::table('cdr')->get();
+
+        $all_leads = array();
+        foreach ($result1 as $key => $value) {
+            $all_leads[$value->cdrid] = DB::table('cdrreport_lead')->where('cdrreport_id',$value->cdrid)->select('cdrreport_id')->get();
+        }
+
+        /*echo "<pre>";
+        print_r($all_leads);exit;*/
+        //dd(CdrReport::getReport());
+        return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup(),'products' => $products,'users_lists' => $users_lists,'all_leads' => $all_leads]);
     }
 
-    public function graphReport(Request $request) {
-        // $validator = Validator::make($request->all(), [
-        //     'fname' => 'required',
-        //     'lname' => 'required',
-        //     'email' => 'required|email',
-        // ]); 
+    public function graphReport(Request $request) { 
         $data = array();
         $max = 0;
         $result = CdrReport::getGraphReport($request->all());
-        //dd($result);
-        foreach($result as $row) {
-            if($request->get('status') == null)
-                $data['label'] = 'both';
-            else 
-                $data['label'] = ''; 
-            $data[$row->status][Carbon::parse($row->datetime)->format('Y-m-d')] = $row->total;
-            $max = ($max < $row->total) ? $row->total : $max;
+        $b_data = array();
+        $bar_data = array();
+        $ind = array();
+        $nd = array();
+        $date = null;
+        if( !empty($result) ){
+            $i = 0;
+            foreach ($result as $pkey => $bvalue) {
+                $b_data[] = $bvalue->newdate;
+                if(!empty($date) && $date == $bvalue->newdate) {
+                    $nd["answered"] = $bar_data[$i-1]['answered'];
+                    $nd["dialed"] = ($bvalue->status == 'DIALING') ? $bvalue->Count : 0;
+                    $nd["date"] = $bvalue->newdate;
+                    $bar_data[$i-1] = $nd;
+                } else {
+                    $ind["answered"] = ($bvalue->status == 'ANSWERED') ? $bvalue->Count : 0;
+                    $ind["dialed"] = ($bvalue->status == 'DIALING') ? $bvalue->Count : 0;
+                    $ind["date"] = $bvalue->newdate;
+                    $bar_data[] = $ind;
+                    $i++;
+                }
+                $date = $bvalue->newdate;
+            }
+            $dates = array();
+            $dialed = array();
+            $answered = array();
+            foreach($bar_data as $val) {
+                array_push($dates, $val['date']);
+                array_push($dialed, $val['dialed']);
+                array_push($answered, $val['answered']);
+            }
         }
-        //dd($data);
-        $data['max'] = $max;
+        $data['dates'] = $dates;
+        $data['dialed'] = $dialed;
+        $data['answered'] = $answered;
         return $data;
     
     }
@@ -130,6 +160,7 @@ class ReportController extends Controller
         } 
          return $data;
     }
+    
 
     public function addNote(Request $request) 
     {
@@ -233,21 +264,33 @@ class ReportController extends Controller
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
-            $did = Dids::where('assignedto' , Auth::user()->groupid)->select('c2cpri', 'c2ccallerid')->get();
- 
-            //dd($did[0]->c2ccallerid);
-            $operatorid = (Auth::user()->usertype == 'groupadmin') ? '' : Auth::user()->id;
-            $cdr = ['number' => $request->get('number'),
-                    'did_no' => !empty($did[0]) ? $did[0]->c2ccallerid : '',
-                    'groupid' => Auth::user()->groupid,
-                    'resellerid' => Auth::user()->resellerid,
-                    'operatorid' => $operatorid,
-                    'deptname' => 'C2C',
-                    'status' => 'DIALING',
-                    ];
-                
-                DB::table('cdr')->insert($cdr);
+            $res = callConfig($request->all());
+            if($res['status']) {
                 $data['success'] = 'Cdr added successfully.';
+            }    
+        } 
+        return $data;
+    }
+
+    public function sendMessage(Request $request) 
+    {
+        $validator = Validator::make($request->all(), [
+            'number' => 'required|max:12',
+            'message' => 'required'
+        ], [
+            'number.required' => 'Customer number field is required.',
+        ]);    
+          
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $res = smsConfig($request->all());
+            //dd($res);
+            if($res['status']) {
+                $data['success'] = 'Message sent successfully.';
+            } else {
+                $data['error'] = $res['error'];
+            }
         } 
         return $data;
     }
@@ -484,6 +527,7 @@ class ReportController extends Controller
         $add_lead = new CdrReport_Lead([
                 'user_id' => Auth::user()->id,
                 'cdrreport_id' => $request->get('cdrreport_id') ? $request->get('cdrreport_id') : '',
+                'group_id' => Auth::user()->groupid,
                 'first_name' => $request->get('first_name'),
                 'last_name'=> $request->get('last_name'),
                 'company_name'=> $request->get('company_name') ? $request->get('company_name') : '',

@@ -22,9 +22,9 @@
                         <div class="card-body">
                         	<div class="col-md-12" style="text-align: right;">
 
-                        		<a title="Compact Sidebar" id="download" href="javascript:void(0)" class="btn btn-outline-secondary" style="margin-right: 15px;" onclick="getPDF();"> Download </a>
+                        		<a title="Compact Sidebar" id="download" href="javascript:void(0)" class="btn btn-outline-secondary" style="margin-right: 15px;"> Download </a>
 
-                        		<a title="Compact Sidebar" id="print" href="javascript:void(0)" class="btn btn-outline-secondary" style="margin-right: 15px;" onclick="getPRINT();"> Print </a>
+                        		<a title="Compact Sidebar" id="print" href="javascript:void(0)" class="btn btn-outline-secondary" style="margin-right: 15px;"> Print </a>
 
                         		<a title="Compact Sidebar" id="mail" href="{{ route('MailInvoice',$invoice->id) }}" class="btn btn-outline-secondary" style="margin-right: 15px;"> Mail </a>
 
@@ -39,22 +39,40 @@
                         		<table border="0" cellspacing="0" cellpadding="2" style="width: 90%;margin-left: 30px;margin-top: 30px;" class="show_print">
 									<tbody>
 										<tr>
-											<td><b>Company Name</b></td>
-											<td>Test</td>
+											<td></td>
+											<td></td>
 											<td><b>Invoice Number</b></td>
-											<td><b style="font-size: x-large;">INV-{{$invoice->invoice_number}}</b></td>			
+											<td><b style="font-size: large;">INV-{{$invoice->invoice_number}}</b></td>			
 										</tr>
 										<tr>
-											<td><b>Address</b></td>
-											<td style="width: 60%;">{{$invoice->billing_address}}</td>
+											<td></td>
+											<td></td>
 											<td><b>Invoice Date</b></td>
 											<td>{{$invoice->date}}</td>
 										</tr>
 										<tr>
+											<td><b>Client's Details</b></td>
+											<td></td>
+											<td><b>Company's Details</b></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td><b>Company Name</b></td>
+											<td>{{$invoice->company_name}}</td>
+											<td><b>Company Name</b></td>
+											<td>{{$company_details->companyname}}</td>			
+										</tr>
+										<tr>
+											<td><b>Address</b></td>
+											<td style="width: 60%;">{{$invoice->billing_address}}</td>
+											<td><b>GST Number</b></td>
+											<td>{{$company_details->GST}}</td>
+										</tr>
+										<tr>
 											<td><b>First Name</b></td>
 											<td>{{$invoice->first_name}}</td>
-											<td></td>
-											<td></td>
+											<td><b>Address</b></td>
+											<td>{{$company_details->shipping_address}}</td>
 										</tr>
 										<tr>
 											<td><b>Last Name</b></td>
@@ -174,6 +192,7 @@
 										</tr>
 									</tfoot>
 								</table>
+								<p id="sign" style="margin-left: 85%;margin-top: 12%;display: none;">Signature</p>
                         	</div>	
                            
                         </div>
@@ -198,7 +217,7 @@
                     			</thead>
                     			<tbody>
                     				<?php
-                    				$i = 0;
+                    				$i = 1;
                     				foreach ($invoice_payments as $key => $payment) { ?>
                     					<tr>
                     						<td>{{$i}}</td>
@@ -243,9 +262,21 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
 <script type="text/javascript" src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
 <script type="text/javascript">
-
+$(document).ready(function() {
+	$('#sign').hide();
+	$('#download').click(function() {
+		$('#sign').show();
+		getPDF();
+		$('#sign').hide();
+	});
+	$('#print').click(function() {
+		$('#sign').show();
+		getPRINT();
+		$('#sign').hide();
+	});
+});
 	function getPDF(){
-
+		'<br><br>';
 		var HTML_Width = $(".canvas_div_pdf").width();
 		var HTML_Height = $(".canvas_div_pdf").height();
 		var top_left_margin = 15;
@@ -279,12 +310,14 @@
 
 	function getPRINT(){
 
+		$('#sign').show();
+
 		var HTML_Width = $(".canvas_div_pdf").width();
 		var HTML_Height = $(".canvas_div_pdf").height();
 		var top_left_margin = 15;
-		var PDF_Width = HTML_Width+(top_left_margin*2);
+		var PDF_Width = 595;
 		var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
-		var canvas_image_width = HTML_Width;
+		var canvas_image_width = 595;
 		var canvas_image_height = HTML_Height;
 		
 		var totalPDFPages = Math.ceil(HTML_Height/PDF_Height)-1;
@@ -293,7 +326,7 @@
 		html2canvas($(".canvas_div_pdf")[0],{allowTaint:true}).then(function(canvas) {
 			canvas.getContext('2d');
 			
-			console.log(canvas.height+"  "+canvas.width);
+			console.log(PDF_Width);
 			
 			
 			var imgData = canvas.toDataURL("image/jpeg", 1.0);

@@ -31,14 +31,14 @@
                                     <tbody>
                                        
                                         @foreach($sms as $listOne)
-                                        <tr>
+                                        <tr id="row_{{ $listOne->id }}">
                                             <td>{{$listOne->name}}</td>
                                             <td>{{$listOne->type}}</td>
                                             <td>{{$listOne->sms_to}}</td>
                                             <td>{{$listOne->content}}</td> 
                                             <td><a href="#" data-toggle="modal" data-target="#add_sms" class="text-success mr-2 edit_sms" id="{{$listOne->id}}">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                                </a><a href="{{ route('deleteSms', $listOne->id) }}" onclick="return confirm('Are you sure want to delete this sms ?')" class="text-danger mr-2">
+                                                </a><a href="javascript:void(0)" onClick="deleteItem({{$listOne->id}}, 'sms_content')" class="text-danger mr-2">
                                                     <i class="nav-icon i-Close-Window font-weight-bold"></i>
                                                 </a></td>
                                         </tr>
@@ -56,7 +56,7 @@
                                     </tfoot>
 
                                 </table>
-                                {{ $sms->links() }}
+                                <div class="pull-right">{{ $sms->links() }}</div>
                             </div>
 
                         </div>
@@ -120,7 +120,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <!-- <label for="firstName1">Sms Content</label>  -->
-                                        <select id="param" name="param" multiple="multiple" onchange="copyval()" size="6">
+                                        <select id="param" name="param" multiple="multiple" onchange="copyval('param', 'content')" size="6">
                                             <option value="{CUSTOMERNAME}">CUSTOMERNAME </option>
                                             <option value="{OPERATORNAME}">OPERATORNAME</option>
                                             <option value="{TICKETID}">TICKETID</option>
@@ -167,7 +167,6 @@
     $(document).ready(function() {
         $( '.add_sms_form' ).on( 'submit', function(e) {
             e.preventDefault();
-            //var noteHTML = "";
             var errors = ''; 
               $.ajax({
                 type: "POST",
@@ -187,7 +186,7 @@
                     } else {
                         $("#add_sms").modal('hide');
                         toastr.success(res.success); 
-                        setTimeout(function(){ location.reload() }, 3000);               
+                        setTimeout(function(){ location.reload() }, 300);               
                     }
                    
                 },

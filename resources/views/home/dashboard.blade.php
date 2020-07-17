@@ -682,7 +682,7 @@
                                                 <td>{{$converted}}</td>
                                             </tr>        
                                         <?php
-                                       
+                                       $i++;
                                         } 
                                         ?>
                                     </tbody>
@@ -700,7 +700,7 @@
                 <div class="col-md-12">
                     <div class="card o-hidden mb-4">
                         <div class="card-header d-flex align-items-center border-0">
-                            <h3 class="w-50 float-left card-title m-0">Predicted Amount Details</h3>
+                            <h3 class="w-50 float-left card-title m-0 col-md-12">Predicted Amount Details</h3>
                         </div>
                         <?php //print_r($predict_cost);?>
                         <div class="">
@@ -722,8 +722,8 @@
                                                 ?>
                                             <tr>
                                                 <td>{{$i}}</td>
-                                                <td>{{$value->opername}}</td>
-                                                <td>
+                                                <td style="text-align: left;">{{$value->opername}}</td>
+                                                <td style="text-align: right;">
                                                     <?php
                                                         echo sprintf("%.2f", $value->pre_cost);
                                                     ?> 
@@ -748,7 +748,7 @@
                 <div class="col-md-12">
                     <div class="card o-hidden mb-4">
                         <div class="card-header d-flex align-items-center border-0">
-                            <h3 class="w-50 float-left card-title m-0">Proposal Amount Details</h3>
+                            <h3 class="w-50 float-left card-title m-0 col-md-12">Proposal Amount Details</h3>
                         </div>
                         <?php //print_r($predict_cost);?>
                         <div class="">
@@ -769,8 +769,8 @@
                                                 ?>
                                                 <tr>
                                                     <td>{{$i}}</td>
-                                                    <td>{{$value->opername}}</td>
-                                                    <td>
+                                                    <td style="text-align: left;">{{$value->opername}}</td>
+                                                    <td style="text-align: right;">
                                                         <?php
                                                             echo sprintf("%.2f", $value->proposal_total);
                                                         ?> 
@@ -794,7 +794,7 @@
                 <div class="col-md-12">
                     <div class="card o-hidden mb-4">
                         <div class="card-header d-flex align-items-center border-0">
-                            <h3 class="w-50 float-left card-title m-0">Invoice Amount Details</h3>
+                            <h3 class="w-50 float-left card-title m-0 col-md-12">Invoice Amount Details</h3>
                         </div>
                         <?php //print_r($predict_cost);?>
                         <div class="">
@@ -815,8 +815,8 @@
                                                 ?>
                                                 <tr>
                                                     <td>{{$i}}</td>
-                                                    <td>{{$value->opername}}</td>
-                                                    <td>
+                                                    <td style="text-align: left;">{{$value->opername}}</td>
+                                                    <td style="text-align: right;">
                                                         <?php
                                                             echo sprintf("%.2f", $value->invoice_total);
                                                         ?> 
@@ -890,14 +890,17 @@
                                         <?php
                                         $i = 1; 
                                         foreach($users_list as $row)
-                                        { ?>
+                                        { 
+                                            foreach ($row as $key => $new_value) {
+                                                # code...
+                                            }?>
                                         <tr>
                                             <td>{{$i}}</td>
-                                            <td>{{$row->opername}}</td>
-                                            <td>{{$row->phonenumber}}</td>
+                                            <td>{{$new_value->opername}}</td>
+                                            <td>{{$new_value->phonenumber}}</td>
                                             <td>
                                                 <?php
-                                                echo $lead_count[$row->id];
+                                                echo $lead_count[$new_value->id];
                                                 ?>
 
                                             </td>
@@ -945,6 +948,55 @@
                                         </tr>
                                     </thead>
                                     <tbody id="user_lead_details">
+
+                                        <?php
+                                        $i = 1; 
+                                        foreach($operator_lead_stage as $name => $row)
+                                        { 
+                                            $new = $converted = $interested = $under_review = $demo = $unqualified = $converted = '0';
+                                            foreach ($row as $key => $value) { 
+
+                                               if ($value->lead_stage == 'new') { 
+                                                   $new = $value->lead_count;
+                                               }
+                                               if ($value->lead_stage == 'Contacted') { 
+                                                   $converted = $value->lead_count;
+                                               }
+
+                                               if ($value->lead_stage == 'Interested') { 
+                                                   $interested = $value->lead_count;
+                                               }
+
+                                               if ($value->lead_stage == 'Under review') { 
+                                                   $under_review = $value->lead_count;
+                                               }
+
+                                               if ($value->lead_stage == 'Demo') { 
+                                                   $demo = $value->lead_count;
+                                               }
+                                               if ($value->lead_stage == 'Unqualified') { 
+                                                   $unqualified = $value->lead_count;
+                                               }
+                                               if ($value->lead_stage == 'Converted') { 
+                                                   $converted = $value->lead_count;
+                                               }
+                                            }
+                                            ?>
+                                            <tr>
+                                                <td>{{$i}}</td>
+                                                <td>{{$name}}</td>
+                                                <td>{{$new}}</td>
+                                                <td>{{$converted}}</td>
+                                                <td>{{$interested}}</td>
+                                                <td>{{$under_review}}</td>
+                                                <td>{{$demo}}</td>
+                                                <td>{{$unqualified}}</td>
+                                                <td>{{$converted}}</td>
+                                            </tr>        
+                                        <?php
+                                       $i++;
+                                        } 
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -960,7 +1012,7 @@
                 <div class="col-md-12">
                     <div class="card o-hidden mb-4">
                         <div class="card-header d-flex align-items-center border-0">
-                            <h3 class="w-50 float-left card-title m-0">Predicted Amount Details</h3>
+                            <h3 class="w-50 float-left card-title m-0 col-md-12">Predicted Amount Details</h3>
                         </div>
                         <?php //print_r($predict_cost);?>
                         <div class="">
@@ -974,6 +1026,26 @@
                                         </tr>
                                     </thead>
                                     <tbody id="predicted_amount_details">
+
+                                        <?php
+                                        $i = 1; 
+                                        foreach($predict_cost as $row)
+                                        { //print_r($row);
+                                            foreach ($row as $key => $value) { 
+                                                ?>
+                                            <tr>
+                                                <td>{{$i}}</td>
+                                                <td style="text-align: left;">{{$value->opername}}</td>
+                                                <td style="text-align: right;">
+                                                    <?php
+                                                        echo sprintf("%.2f", $value->pre_cost);
+                                                    ?> 
+                                                </td>
+                                            </tr>        
+                                        <?php $i++; }
+                                       
+                                        } 
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -989,7 +1061,7 @@
                 <div class="col-md-12">
                     <div class="card o-hidden mb-4">
                         <div class="card-header d-flex align-items-center border-0">
-                            <h3 class="w-50 float-left card-title m-0">Proposal Amount Details</h3>
+                            <h3 class="w-50 float-left card-title m-0 col-md-12">Proposal Amount Details</h3>
                         </div>
                         <?php //print_r($predict_cost);?>
                         <div class="">
@@ -1003,6 +1075,23 @@
                                         </tr>
                                     </thead>
                                     <tbody id="proposal_amount_details">
+                                        <?php
+                                        $i = 1; 
+                                        foreach ($proposal as $row) {
+                                            foreach ($row as $key => $value) { 
+                                                ?>
+                                                <tr>
+                                                    <td>{{$i}}</td>
+                                                    <td style="text-align: left;">{{$value->opername}}</td>
+                                                    <td style="text-align: right;">
+                                                        <?php
+                                                            echo sprintf("%.2f", $value->proposal_total);
+                                                        ?> 
+                                                    </td>
+                                                </tr>        
+                                            <?php $i++; }
+                                        }
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -1018,7 +1107,7 @@
                 <div class="col-md-12">
                     <div class="card o-hidden mb-4">
                         <div class="card-header d-flex align-items-center border-0">
-                            <h3 class="w-50 float-left card-title m-0">Invoice Amount Details</h3>
+                            <h3 class="w-50 float-left card-title m-0 col-md-12">Invoice Amount Details</h3>
                         </div>
                         <?php //print_r($predict_cost);?>
                         <div class="">
@@ -1032,6 +1121,23 @@
                                         </tr>
                                     </thead>
                                     <tbody id="invoice_amount_details">
+                                        <?php
+                                        $i = 1; 
+                                        foreach ($invoice as $row) {
+                                            foreach ($row as $key => $value) { 
+                                                ?>
+                                                <tr>
+                                                    <td>{{$i}}</td>
+                                                    <td style="text-align: left;">{{$value->opername}}</td>
+                                                    <td style="text-align: right;">
+                                                        <?php
+                                                            echo sprintf("%.2f", $value->invoice_total);
+                                                        ?> 
+                                                    </td>
+                                                </tr>        
+                                            <?php $i++; }
+                                        }
+                                        ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -1045,14 +1151,16 @@
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">TO DO Remainder</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">Remainder</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              <div class="modal-body RemainderTask">
+              <div class="modal-body RemainderTask" style="text-align: center;">
                 <label>Title:</label>
                 <p><b id="re_title"></b></p>
+                <label>Date & Time:</label>
+                <p><b id="re_datetime"></b></p>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -1060,12 +1168,6 @@
             </div>
           </div>
         </div>
-        <!-- <div class="alert alert-warning alert-dismissible fade show" role="alert" id="TaskRemainder">
-          <strong id="re_title"></strong>
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div> -->
 
 
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#TaskRemainder" id="show_re" style="display: none;"></button>
@@ -1081,7 +1183,6 @@
 
 <script type="text/javascript">
     function send(){
-          //alert("hhh");
           $.ajax({
               type: "GET",
               url: "{{ route('NotificationToDo') }}",
@@ -1095,13 +1196,10 @@
                     if (value.re_value == 1) 
                       {
                         $('.RemainderTask #re_title').html(value.title);
-                        //$('#TaskRemainder').show();
+                        $('.RemainderTask #re_datetime').html(value.date);
                         $("#show_re").trigger('click');
                       }
                   });
-                  
-                  //Send another request in 10 seconds.
-                  
               }
           });
       }

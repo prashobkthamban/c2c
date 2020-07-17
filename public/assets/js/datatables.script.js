@@ -12,11 +12,11 @@ $(document).ready(function () {
 
     // ordering or sorting
 
-    $('#deafult_ordering_table').DataTable({
-        "order": [
-            [3, "desc"]
-        ]
-    });
+    // $('#deafult_ordering_table').DataTable({
+      //  "order": [
+        //    [3, "desc"]
+       // ]
+    // });
 
     // multi column ordering
     $('#multicolumn_ordering_table').DataTable({

@@ -244,6 +244,13 @@
                                 <span class="item-name">Live Calls</span>
                             </a>
                         </li>
+                        <li class="nav-item" data-item="settings">
+                            <a class="nav-item-hold" href="#">
+                                <i class="nav-icon i-Library"></i>
+                                <span class="nav-text">CRM</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
 						@endif
                     @if(Auth::user()->usertype == 'operator')
 						<li class="nav-item" data-item="calldetails">
@@ -421,6 +428,11 @@
                     <li class="nav-item">
                         <a href="{{route('smsApi')}}">
                             <span class="nav-text">Sms Api</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{route('emailConfig')}}">
+                            <span class="nav-text">Email Config</span>
                         </a>
                     </li>
                 </ul> 

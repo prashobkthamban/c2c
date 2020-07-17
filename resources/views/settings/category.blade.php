@@ -16,9 +16,9 @@
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
                         <div class="card-body">
-                            <a title="Compact Sidebar" href="{{route('addCategory')}}" class="btn btn-primary"> Add Category </a>
+                            <a title="Compact Sidebar" href="{{route('addCategory')}}" class="btn btn-primary" style="float: right;margin-bottom: 15px;"> Add Category </a>
                             <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                                <table id="customer_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
                                         <tr>
                                             <th>ID</th>
@@ -51,7 +51,7 @@
                             </div>
 
                         </div>
-                        <div class="pull-right">{{ $result->links() }}</div>
+                        <!-- <div class="pull-right">{{ $result->links() }}</div> -->
                     </div>
                 </div>
             </div>
@@ -63,5 +63,11 @@
 
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
-
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#customer_table').DataTable( {
+            "order": [[0, "desc" ]]
+        } );
+    } );
+</script>
 @endsection

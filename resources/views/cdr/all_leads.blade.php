@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.date.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.time.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/css/bootstrap-timepicker.min.css')}}">
+<link rel="stylesheet" href="{{asset('assets/styles/css/custom.css')}}">
 <style>
 .select2-container {
     width: 100%!important;    
@@ -109,12 +110,20 @@
                             </div>
 
                             <div class="col-md-12 form-group mb-3">
-                                <label for="owner_name">Owner Name</label>
+                                <label for="owner_name">Operator Name</label>
                                 <select id="owner_name" name="owner_name" class="form-control">
                                     <option value="<?php echo Auth::user()->id;?>"><?php echo Auth::user()->username;?></option>
-                                    @foreach($users_lists as $users_list)
-                                    <option value="{{$users_list->id}}">{{$users_list->opername}}</option>
-                                    @endforeach
+                                    @if(Auth::user()->usertype == 'reseller')
+                                        @foreach($users_lists as $users_list)
+                                            @foreach($users_list as $us_lis)
+                                                <option value="{{$us_lis->id}}">{{$us_lis->opername}}</option>
+                                            @endforeach
+                                        @endforeach
+                                    @else
+                                        @foreach($users_lists as $users_list)
+                                            <option value="{{$users_list->id}}">{{$users_list->opername}}</option>
+                                        @endforeach
+                                    @endif
                                 </select>
                             </div>
 
@@ -228,12 +237,20 @@
                                 </div>
                                 
                                 <div class="col-md-12 form-group mb-3">
-                                    <label for="owner_name">Owner Name</label>
+                                    <label for="owner_name">Operator Name</label>
                                     <select id="owner_name" name="owner_name" class="form-control">
                                        <!--  <option value="<?php echo Auth::user()->id;?>"><?php echo Auth::user()->username;?></option> -->
-                                        @foreach($users_lists as $users_list)
-                                        <option value="{{$users_list->id}}">{{$users_list->opername}}</option>
-                                        @endforeach
+                                        @if(Auth::user()->usertype == 'reseller')
+                                            @foreach($users_lists as $users_list)
+                                                @foreach($users_list as $us_lis)
+                                                    <option value="{{$us_lis->id}}">{{$us_lis->opername}}</option>
+                                                @endforeach
+                                            @endforeach
+                                        @else
+                                            @foreach($users_lists as $users_list)
+                                                <option value="{{$users_list->id}}">{{$users_list->opername}}</option>
+                                            @endforeach
+                                        @endif
                                     </select>
                                 </div>
 
@@ -302,7 +319,7 @@
                             <div class="card card-icon mb-4">
                                 <div class="card-body text-center" style="background: #A5D6A7;">
                                     <i class="i-Consulting"></i>
-                                    <p class="text-muted mt-2 mb-2">New</p>
+                                    <p class="text-muted mt-2 mb-2">1.New</p>
                                     <p class="lead text-22 m-0">{{$level_1}}</p>
                                 </div>
                             </div>
@@ -312,7 +329,7 @@
                             <div class="card card-icon mb-4">
                                 <div class="card-body text-center" style="background-color: #BBDEFB;">
                                     <i class="i-Telephone"></i>
-                                    <p class="text-muted mt-2 mb-2">Contacted</p>
+                                    <p class="text-muted mt-2 mb-2">2.Contacted</p>
                                     <p class="lead text-22 m-0">{{$level_2}}</p>
                                 </div>
                             </div>
@@ -322,7 +339,7 @@
                             <div class="card card-icon mb-4">
                                 <div class="card-body text-center" style="background-color: #FFCDD2;">
                                     <i class="i-Money"></i>
-                                    <p class="text-muted mt-2 mb-2">Interested</p>
+                                    <p class="text-muted mt-2 mb-2">3.Interested</p>
                                     <p class="lead text-22 m-0">{{$level_3}}</p>
                                 </div>
                             </div>
@@ -332,7 +349,7 @@
                             <div class="card card-icon mb-4">
                                 <div class="card-body text-center" style="background-color: #FFF59D;">
                                     <i class="i-Letter-Open"></i>
-                                    <p class="text-muted mt-2 mb-2">Under review</p>
+                                    <p class="text-muted mt-2 mb-2">4.Under review</p>
                                     <p class="lead text-22 m-0">{{$level_4}}</p>
                                 </div>
                             </div>
@@ -342,7 +359,7 @@
                             <div class="card card-icon mb-4">
                                 <div class="card-body text-center" style="background-color: #E1BEE7;">
                                     <i class="i-Monitor-5"></i>
-                                    <p class="text-muted mt-2 mb-2">Demo</p>
+                                    <p class="text-muted mt-2 mb-2">5.Demo</p>
                                     <p class="lead text-22 m-0">{{$level_5}}</p>
                                 </div>
                             </div>
@@ -352,8 +369,8 @@
                             <div class="card card-icon mb-4">
                                 <div class="card-body text-center" style="background-color: #B2DFDB;">
                                     <i class="i-Flag-2"></i>
-                                    <p class="text-muted mt-2 mb-2">Converted/Unqualified</p>
-                                    <p class="lead text-22 m-0">{{$level_6_7}}</p>
+                                    <p class="text-muted mt-2 mb-2">6.Unqualified/7.Converted</p>
+                                    <p class="lead text-22 m-0">{{$level_6.'/'.$level_7}}</p>
                                 </div>
                             </div>
                         </div>
@@ -361,14 +378,13 @@
                     </div>
                 </div>
             </div>
-           
            <div class="row mb-4">
                 <div class="col-md-12 mb-4">
                     <div class="card text-left">
                         <div class="card-body">
                             <a href="?" class="btn btn-primary add_lead" id="add_lead" data-toggle="modal" data-target="#AddLead">Add Lead </a>
                             <p id="error_msg" style="font-size: 15px;color: red;text-align: center;"></p>
-                            <a href="?" class="btn btn-primary" id="import_lead" data-toggle="modal" data-target="#Import_Lead" style="float: right;">Import Lead</a>
+                            <a href="?" class="btn btn-primary" id="import_lead" data-toggle="modal" data-target="#Import_Lead" style="float: right;margin-top: -49px">Import Lead</a>
                             <br><br>
                             <div class="row">
                                 <div class="col-md-12">
@@ -385,8 +401,7 @@
                                         <div class="col-md-4">
                                             <label for="lead">Lead Stage</label>
                                             <select id="lead" class="form-control" name="lead">
-                                                <option value="">Select Lead</option>
-                                                <option value="New">New</option>
+                                                <option value="New" selected="">New</option>
                                                 <option value="Contacted">Contacted</option>
                                                 <option value="Interested">Interested</option>
                                                 <option value="Under review">Under review</option>
@@ -415,7 +430,7 @@
                             <input type="hidden" name="lead_count" id="lead_count" value="<?php echo $lead_count; ?>">
                             <input type="hidden" name="total_leads" id="total_leads" value="<?php echo $total_access_leads; ?>">
                             <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                                <table id="lead_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
                                         <tr>
                                             <th>No.</th>
@@ -429,81 +444,150 @@
                                             if (Auth::user()->usertype == 'groupadmin') { ?>
                                                 <th>Agent Name</th>
                                             <?php }?>
+                                            <?php
+                                            if (Auth::user()->usertype == 'reseller') { ?>
+                                                <th>Group Name</th>
+                                            <?php }?>
+                                            <th>Date</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>                                
                                     <tbody class="filter_data">
-                                        @foreach($list_leads as $list_lead)
-                                        <tr>
-                                            <td>{{$list_lead->id}}</td>
-                                            <td><a href="{{ route('ViewLeadID', $list_lead->id) }}"><b>{{$list_lead->first_name}}</b></a></td>
-                                            <td>{{$list_lead->last_name}}</td>
-                                            <td>{{$list_lead->company_name}}</td>
-                                            <td>{{$list_lead->email}}</td>
-                                            <td>{{$list_lead->phoneno}}</td>
-                                            <td>
-                                              <span class="badge badge-success">{{$list_lead->lead_stage}}</span>
-                                            </td>
-                                            <?php
-                                            if (Auth::user()->usertype == 'groupadmin') { ?>
-                                                <td>{{$list_lead->opername}}</td>
-                                            <?php }?>
-                                            
-                                            <td>
-                                                <a href="javascript:void(0)" class="text-success mr-2 edit_lead" id="edit_lead" data-toggle="modal" data-target="#EditLead" data-id="{{$list_lead->id}}"><i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                                </a>
-                                                <a href="{{ route('deleteLead', $list_lead->id) }}" onclick="return confirm('Are you sure you want to delete this Lead?')" class="text-danger mr-2">
-                                                    <i class="nav-icon i-Close-Window font-weight-bold"></i>
-                                                </a>
-                                               <!--  <button class="btn btn-primary" type="button" id="action" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="i-Arrow-Down-2"></i>
-                                                </button>   -->
-                                                <a href="javascript:void(0)" class="text-warning mr-2" id="action" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="i-Arrow-Down-2"></i></a>
-                                                <div class="dropdown-menu" aria-labelledby="action">
-                                                    <a class="dropdown-item add_note note" href="javascript:void(0)" data-toggle="modal"data-id="{{$list_lead->id}}"  data-target="#add_note_modal" id="note">Add Notes
-                                                    </a>
-                                                    @if(!isset($row->reminder->id))
-                                                    <a class="dropdown-item edit_reminder reminder" href="javascript:void(0)" data-toggle="modal" data-id="{{$list_lead->id}}" data-target="#add_reminder_modal" id="reminder">Add Reminder</a>
-                                                    <?php
-                                                    if ($list_lead->lead_stage == 'New') {
-                                                        $id = 2;
-                                                        $stage = 'Contacted';
-                                                    }
-                                                    elseif ($list_lead->lead_stage == 'Contacted') {
-                                                        $id = 3;
-                                                        $stage = 'Interested';
-                                                    }
-                                                    elseif ($list_lead->lead_stage == 'Interested') {
-                                                        $id = 4;
-                                                        $stage = 'Under review';
-                                                    }
-                                                    elseif ($list_lead->lead_stage == 'Under review') {
-                                                        $id = 5;
-                                                        $stage = 'Demo';
-                                                    }
-                                                    elseif ($list_lead->lead_stage == 'Demo') {
-                                                        $id = 6;
-                                                        $stage = 'Unqualified';
-                                                    }
-                                                    elseif ($list_lead->lead_stage == 'Unqualified') {
-                                                        $id = 7;
-                                                        $stage = 'Converted';
-                                                    }
-                                                    else {
-                                                        $id = 1;
-                                                        $stage = 'New';
-                                                    }
-                                                    ?>
-                                                
-                                                    <a href="{{ route('lead_stages',[$list_lead->id,$id]) }}" class="dropdown-item">Change stage to {{$stage}}</a>
-                                                    @endif
-                                        
+                                        @if(Auth::user()->usertype == 'reseller')
+                                            @foreach($list_leads as $list_lead)
+                                                @foreach($list_lead as $up_lead)
+                                                    <tr>
+                                                        <td>{{$up_lead->id}}</td>
+                                                        <td><a href="{{ route('ViewLeadID', $up_lead->id) }}"><b>{{$up_lead->first_name}}</b></a></td>
+                                                        <td>{{$up_lead->last_name}}</td>
+                                                        <td>{{$up_lead->company_name}}</td>
+                                                        <td>{{$up_lead->email}}</td>
+                                                        <td>{{$up_lead->phoneno}}</td>
+                                                        <td>
+                                                          <span class="badge badge-success">{{$up_lead->lead_stage}}</span>
+                                                        </td>
+                                                        <?php
+                                                        if (Auth::user()->usertype == 'reseller') { ?>
+                                                            <td>{{$up_lead->accountgroup_name}}</td>
+                                                        <?php }?>
+                                                        <td>{{$up_lead->inserted_date}}</td>
+                                                        <td>
+                                                            <a href="javascript:void(0)" class="text-success mr-2 edit_lead" id="edit_lead" data-toggle="modal" data-target="#EditLead" data-id="{{$up_lead->id}}"><i class="nav-icon i-Pen-2 font-weight-bold" data-toggle="tooltip" data-placement="top" title="Lead Edit"></i>
+                                                            </a>
+                                                            <a href="{{ route('deleteLead', $up_lead->id) }}" onclick="return confirm('Are you sure you want to delete this Lead?')" class="text-danger mr-2" data-toggle="tooltip" data-placement="top" title="Lead Delete">
+                                                                <i class="nav-icon i-Close-Window font-weight-bold"></i>
+                                                            </a>
+                                                            <a href="javascript:void(0)" class="text-warning mr-2" id="action" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="i-Arrow-Down-2" data-toggle="tooltip" data-placement="top" title="Lead Actions"></i></a>
+                                                            <div class="dropdown-menu" aria-labelledby="action">
+                                                                <a class="dropdown-item add_note note" href="javascript:void(0)" data-toggle="modal"data-id="{{$up_lead->id}}"  data-target="#add_note_modal" id="note">Add Notes
+                                                                </a>
+                                                                @if(!isset($row->reminder->id))
+                                                                <a class="dropdown-item edit_reminder reminder" href="javascript:void(0)" data-toggle="modal" data-id="{{$up_lead->id}}" data-target="#add_reminder_modal" id="reminder">Add Reminder</a>
+                                                                <?php
+                                                                if ($up_lead->lead_stage == 'New') {
+                                                                    $id = 2;
+                                                                    $stage = 'Contacted';
+                                                                }
+                                                                elseif ($up_lead->lead_stage == 'Contacted') {
+                                                                    $id = 3;
+                                                                    $stage = 'Interested';
+                                                                }
+                                                                elseif ($up_lead->lead_stage == 'Interested') {
+                                                                    $id = 4;
+                                                                    $stage = 'Under review';
+                                                                }
+                                                                elseif ($up_lead->lead_stage == 'Under review') {
+                                                                    $id = 5;
+                                                                    $stage = 'Demo';
+                                                                }
+                                                                elseif ($up_lead->lead_stage == 'Demo') {
+                                                                    $id = 6;
+                                                                    $stage = 'Unqualified';
+                                                                }
+                                                                else {
+                                                                    $id = 1;
+                                                                    $stage = 'New';
+                                                                }
+                                                                ?>
+                                                            
+                                                                <a href="{{ route('lead_stages',[$up_lead->id,$id]) }}" class="dropdown-item">Change stage to {{$stage}}</a>
+                                                                @endif
+                                                    
 
-                                                    <a class="dropdown-item add_note assigned_to" href="javascript:void(0)" data-toggle="modal" data-id="{{$list_lead->id}}"  data-target="#lead_assigned" id="assigned">Lead Assigned to
+                                                                <a class="dropdown-item add_note assigned_to" href="javascript:void(0)" data-toggle="modal" data-id="{{$up_lead->id}}"  data-target="#lead_assigned" id="assigned">Lead Assigned to
+                                                                </a>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @endforeach
+                                        @else
+                                            @foreach($list_leads as $list_lead)
+                                            <tr>
+                                                <td>{{$list_lead->id}}</td>
+                                                <td><a href="{{ route('ViewLeadID', $list_lead->id) }}"><b>{{$list_lead->first_name}}</b></a></td>
+                                                <td>{{$list_lead->last_name}}</td>
+                                                <td>{{$list_lead->company_name}}</td>
+                                                <td>{{$list_lead->email}}</td>
+                                                <td>{{$list_lead->phoneno}}</td>
+                                                <td>
+                                                  <span class="badge badge-success">{{$list_lead->lead_stage}}</span>
+                                                </td>
+                                                <?php
+                                                if (Auth::user()->usertype == 'groupadmin') { ?>
+                                                    <td>{{$list_lead->opername}}</td>
+                                                <?php }?>
+                                                <td><?php echo date('d-m-Y',strtotime($list_lead->inserted_date)); ?></td>
+                                                <td>
+                                                    <a href="javascript:void(0)" class="text-success mr-2 edit_lead" id="edit_lead" data-toggle="modal" data-target="#EditLead" data-id="{{$list_lead->id}}"><i class="nav-icon i-Pen-2 font-weight-bold" data-toggle="tooltip" data-placement="top" title="Lead Edit"></i>
                                                     </a>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        @endforeach
+                                                    <a href="{{ route('deleteLead', $list_lead->id) }}" onclick="return confirm('Are you sure you want to delete this Lead?')" class="text-danger mr-2" data-toggle="tooltip" data-placement="top" title="Lead Delete">
+                                                        <i class="nav-icon i-Close-Window font-weight-bold"></i>
+                                                    </a>
+                                                    <a href="javascript:void(0)" class="text-warning mr-2" id="action" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="i-Arrow-Down-2" data-toggle="tooltip" data-placement="top" title="Lead Actions"></i></a>
+                                                    <div class="dropdown-menu" aria-labelledby="action">
+                                                        <a class="dropdown-item add_note note" href="javascript:void(0)" data-toggle="modal"data-id="{{$list_lead->id}}"  data-target="#add_note_modal" id="note">Add Notes
+                                                        </a>
+                                                        @if(!isset($row->reminder->id))
+                                                        <a class="dropdown-item edit_reminder reminder" href="javascript:void(0)" data-toggle="modal" data-id="{{$list_lead->id}}" data-target="#add_reminder_modal" id="reminder">Add Reminder</a>
+                                                        <?php
+                                                        if ($list_lead->lead_stage == 'New') {
+                                                            $id = 2;
+                                                            $stage = 'Contacted';
+                                                        }
+                                                        elseif ($list_lead->lead_stage == 'Contacted') {
+                                                            $id = 3;
+                                                            $stage = 'Interested';
+                                                        }
+                                                        elseif ($list_lead->lead_stage == 'Interested') {
+                                                            $id = 4;
+                                                            $stage = 'Under review';
+                                                        }
+                                                        elseif ($list_lead->lead_stage == 'Under review') {
+                                                            $id = 5;
+                                                            $stage = 'Demo';
+                                                        }
+                                                        elseif ($list_lead->lead_stage == 'Demo') {
+                                                            $id = 6;
+                                                            $stage = 'Unqualified';
+                                                        }
+                                                        else {
+                                                            $id = 1;
+                                                            $stage = 'New';
+                                                        }
+                                                        ?>
+                                                    
+                                                        <a href="{{ route('lead_stages',[$list_lead->id,$id]) }}" class="dropdown-item">Change stage to {{$stage}}</a>
+                                                        @endif
+                                            
+
+                                                        <a class="dropdown-item add_note assigned_to" href="javascript:void(0)" data-toggle="modal" data-id="{{$list_lead->id}}"  data-target="#lead_assigned" id="assigned">Lead Assigned to
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        @endif
                                     </tbody>
                                     <tfoot>
                                         <tr>
@@ -516,8 +600,13 @@
                                             <th>Lead Stage</th>
                                             <?php
                                             if (Auth::user()->usertype == 'groupadmin') { ?>
-                                                <th>User ID</th>
+                                                <th>Agent Name</th>
                                             <?php }?>
+                                            <?php
+                                            if (Auth::user()->usertype == 'reseller') { ?>
+                                                <th>Group Name</th>
+                                            <?php }?>
+                                            <th>Date</th>
                                             <th>Actions</th>
                                         </tr>
                                     </tfoot>
@@ -526,7 +615,7 @@
                             </div>
 
                         </div>
-                        <div class="pull-right">{{ $result->links() }}</div>
+                        <!-- <div class="pull-right">{{ $result->links() }}</div> -->
                     </div>
                 </div>
             </div>
@@ -635,9 +724,17 @@
                                         <input type="hidden" name="lead_id" id="lead_id">
                                         <select id="owner_name" name="owner_name[]" class="form-control js-example-basic-multiple" multiple="multiple">
                                             <option value="">Select Account</option>
-                                            @foreach($users_lists as $users_list)
-                                                <option value="{{$users_list->id}}">{{$users_list->opername}}</option>
-                                            @endforeach
+                                            @if(Auth::user()->usertype == 'reseller')
+                                                @foreach($users_lists as $users_list)
+                                                    @foreach($users_list as $us_lis)
+                                                        <option value="{{$us_lis->id}}">{{$us_lis->opername}}</option>
+                                                    @endforeach
+                                                @endforeach
+                                            @else
+                                                @foreach($users_lists as $users_list)
+                                                    <option value="{{$users_list->id}}">{{$users_list->opername}}</option>
+                                                @endforeach
+                                            @endif
                                         </select>
                                     </div>
                                 </div>
@@ -667,7 +764,14 @@
 <script src="{{asset('assets/js/vendor/pickadate/picker.date.js')}}"></script>
 <script src="{{asset('assets/js/vendor/pickadate/picker.time.js')}}"></script>
 <script src="{{asset('assets/js/jquery.table2excel.min.js')}}"></script>
-
+<script src="{{asset('assets/js/tooltip.script.js')}}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#lead_table').DataTable( {
+            "order": [[0, "desc" ]]
+        } );
+    } );
+</script>
 <script type="text/javascript">
     $('#timepicker1').timepicker();
     /*$('.edit_lead').click(function(){*/
@@ -742,7 +846,7 @@
         var lead_total = $('#total_leads').val();
         //alert(lead_count);
         //alert(lead_total);
-        if ($('#usertype').val() != 'admin') 
+        if ($('#usertype').val() != 'admin' && $('#usertype').val() != 'reseller') 
         {
             if (Number(lead_count) > Number(lead_total) || Number(lead_count) == Number(lead_total)) {
                 //alert('if');
@@ -830,7 +934,7 @@
     $('#excel').click(function(e){
         
             e.preventDefault();  //stop the browser from following
-            window.location.href = 'general_file/Add_Lead.xlsx';
+            window.location.href = 'general_file/Add_Lead.csv';
         
     });
 
@@ -900,70 +1004,93 @@
         var company_name = $('#search_company_name').val();
         var agent_name = $('#search_agent_name').val();
         //alert(date_from+date_to+lead);
-        jQuery.ajax({
-            type: "POST",
-            url: '{{ URL::route("FilterData") }}',
-            dataType: 'text',
-            data: {date_to:date_to,date_from:date_from,lead:lead,company_name:company_name,agent_name:agent_name},
-            success: function(data) 
-            {
-               // alert('qwerty');
-                //console.log(data);
-                var obj = jQuery.parseJSON(data);
-                console.log(obj);
-                var html = '';
+        if (date_from != '' && date_to != '') 
+        {
+            jQuery.ajax({
+                type: "POST",
+                url: '{{ URL::route("FilterData") }}',
+                dataType: 'text',
+                data: {date_to:date_to,date_from:date_from,lead:lead,company_name:company_name,agent_name:agent_name},
+                success: function(data) 
+                {
+                   // alert('qwerty');
+                    //console.log(data);
+                    var obj = jQuery.parseJSON(data);
+                    //console.log(obj);
+                    var html = '';
 
-                $.each(obj,function(index,data){
-                    //alert(index+data.tbl_booking_id);
-                    var url = '{{ route("deleteLead", ":data") }}';
+                    $.each(obj['filter_data'],function(index,data){
+                        //alert(index+data.tbl_booking_id);
+                        var url = '{{ route("deleteLead", ":data") }}';
 
-                    url = url.replace(':data', data.id);
+                        url = url.replace(':data', data.id);
 
-                    var ViewLeadID = '{{ route("ViewLeadID", ":lead") }}';
+                        var ViewLeadID = '{{ route("ViewLeadID", ":lead") }}';
 
-                    ViewLeadID = ViewLeadID.replace(':lead',data.id);
+                        ViewLeadID = ViewLeadID.replace(':lead',data.id);
 
-                    if (data.opername != null) {
-                        var opername = data.opername;
-                    }
-                    else
-                    {
-                        var opername = '';
-                    }
+                        if (data.opername != null) {
+                            var opername = data.opername;
+                        }
+                        else
+                        {
+                            var opername = '';
+                        }
 
-                    if (data.lead_stage == 'New') {
-                        var id = 2;
-                        var stage = 'Contacted';
-                    }
-                    else if (data.lead_stage == 'Contacted') {
-                        var id = 3;
-                        var stage = 'Interested';
-                    }
-                    else if (data.lead_stage == 'Interested') {
-                        var id = 4;
-                        var stage = 'Under review';
-                    }
-                    else if (data.lead_stage == 'Under review') {
-                        var id = 5;
-                        var stage = 'Demo';
-                    }
-                    else if (data.lead_stage == 'Demo') {
-                        var id = 6;
-                        var stage = 'Unqualified';
-                    }
-                    else if (data.lead_stage == 'Unqualified') {
-                        var id = 7;
-                        var stage = 'Converted';
-                    }
+                        if (data.lead_stage == 'New') {
+                            var id = 2;
+                            var stage = 'Contacted';
+                        }
+                        else if (data.lead_stage == 'Contacted') {
+                            var id = 3;
+                            var stage = 'Interested';
+                        }
+                        else if (data.lead_stage == 'Interested') {
+                            var id = 4;
+                            var stage = 'Under review';
+                        }
+                        else if (data.lead_stage == 'Under review') {
+                            var id = 5;
+                            var stage = 'Demo';
+                        }
+                        else if (data.lead_stage == 'Demo') {
+                            var id = 6;
+                            var stage = 'Unqualified';
+                        }
+
+                        var usertype = $('#usertype').val();
+                        if (usertype != 'operator') 
+                        {
+                            var op = '<td>'+opername+'</td>';
+                        }
+                        else
+                        {
+                            var op = '';
+                        }
+
+                        var d = new Date(data.inserted_date);
+
+                        var month = d.getMonth()+1;
+                        var day = d.getDate();
+
+                        var output = ((''+day).length<2 ? '0' : '') + day  + '-' + ((''+month).length<2 ? '0' : '') + month + '-' + d.getFullYear();
+
+                        /*alert(output);*/
 
 
-                    html += '<tr><td>'+data.id+'</td>'+'<td><a href="'+ViewLeadID+'"><b>'+data.first_name+'</b></a></td>'+'<td>'+data.last_name+'</td>'+'<td>'+data.company_name+'</td>'+'<td>'+data.email+'</td>'+'<td>'+data.phoneno+'</td>'+'<td><span class="badge badge-success">'+data.lead_stage+'</span></td>'+'<td>'+opername+'</td>'+'<td><a href="javascript:void(0)" class="text-success mr-2 edit_lead" id="edit_lead" data-toggle="modal" data-target="#EditLead" data-id="'+data.id+'"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a href="'+url+'" onclick="return confirm("Are you sure you want to delete this Lead?")" class="text-danger mr-2"><i class="nav-icon i-Close-Window font-weight-bold"></i></a><a href="javascript:void(0)" class="text-warning mr-2" id="action" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="i-Arrow-Down-2"></i></a><div class="dropdown-menu" aria-labelledby="action"><a class="dropdown-item add_note note" href="javascript:void(0)" data-toggle="modal"data-id="'+data.id+'"  data-target="#add_note_modal" id="note">Add Notes</a> @if(!isset($row->reminder->id)) <a class="dropdown-item edit_reminder reminder" href="javascript:void(0)" data-toggle="modal" data-id="'+data.id+'" data-target="#add_reminder_modal" id="reminder">Add Reminder</a><a href="#" class="dropdown-item">Change stage to '+stage+'</a> @endif<a class="dropdown-item add_note assigned_to" href="javascript:void(0)" data-toggle="modal" data-id="'+data.id+'"  data-target="#lead_assigned" id="assigned">Lead Assigned to</a></div></td>';
+                        html += '<tr><td>'+data.id+'</td>'+'<td><a href="'+ViewLeadID+'"><b>'+data.first_name+'</b></a></td>'+'<td>'+data.last_name+'</td>'+'<td>'+data.company_name+'</td>'+'<td>'+data.email+'</td>'+'<td>'+data.phoneno+'</td>'+'<td><span class="badge badge-success">'+data.lead_stage+'</span></td>'+op+'<td>'+output+'</td>'+'<td><a href="javascript:void(0)" class="text-success mr-2 edit_lead" id="edit_lead" data-toggle="modal" data-target="#EditLead" data-id="'+data.id+'"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a><a href="'+url+'" onclick="return confirm("Are you sure you want to delete this Lead?")" class="text-danger mr-2"><i class="nav-icon i-Close-Window font-weight-bold"></i></a><a href="javascript:void(0)" class="text-warning mr-2" id="action" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="i-Arrow-Down-2"></i></a><div class="dropdown-menu" aria-labelledby="action"><a class="dropdown-item add_note note" href="javascript:void(0)" data-toggle="modal"data-id="'+data.id+'"  data-target="#add_note_modal" id="note">Add Notes</a> @if(!isset($row->reminder->id)) <a class="dropdown-item edit_reminder reminder" href="javascript:void(0)" data-toggle="modal" data-id="'+data.id+'" data-target="#add_reminder_modal" id="reminder">Add Reminder</a><a href="#" class="dropdown-item">Change stage to '+stage+'</a> @endif<a class="dropdown-item add_note assigned_to" href="javascript:void(0)" data-toggle="modal" data-id="'+data.id+'"  data-target="#lead_assigned" id="assigned">Lead Assigned to</a></div></td>';
 
-                  });
-                //alert(html);
-                $('.filter_data').html(html);
-            }
-        });
+                    });
+                    //alert(html);
+                    $('.filter_data').html(html);
+                    $('#lead_table_info').html('Total count are '+obj['count_data']);
+                }
+            });
+        }
+        else
+        {
+            alert('please enter Date From');
+        }
     });
 
     $('#export_lead').click(function(){
