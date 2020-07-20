@@ -100,12 +100,20 @@ class HomeController extends Controller
                 $opcallList[$listOne->username]['completed'] = 0;
             }
             
-            $insight_ivr = CdrReport::select(DB::raw('count(*) as count, deptname'))
+            $insight_ivr = DB::table('cdr')
+            ->select(DB::raw('count(*) as count, deptname as dept_name'))
             ->where('deptname', '!=', '')
+            ->where('groupid', Auth::user()->groupid)
             ->whereDate('cdr.datetime', '>=', $qsdate)
             ->whereDate('cdr.datetime', '<=', $qedate)
             ->groupBy('deptname')
             ->get();
+
+            $departments = DB::table('operatordepartment')
+            ->select('dept_name')
+            ->where('groupid', Auth::user()->groupid)
+            ->get(); 
+            dd($departments);
 
         } else if(Auth::user()->usertype == 'operator') {
             $o_callstoday = DB::table('cdr')

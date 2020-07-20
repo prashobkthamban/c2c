@@ -352,8 +352,7 @@ audio {
                             <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
                             <td>
                             @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
-                                <a class="btn bg-gray-100" title="More Details" data-toggle="collapse" data-target="
-                                #more{{$row->cdrid}}" aria-expanded="false" aria-controls="collapseExample"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a> 
+                                <a class="btn bg-gray-100" title="More Details" onClick="moreOption({{$row->cdrid}},'{{$row->did_no ? $row->did_no : 0}}','{{$row->firstleg."(".$row->secondleg.")"}}','{{$row->creditused ? $row->creditused : 0}}','{{$row->operatorAssigned ? $row->operatorAssigned->opername : 0}}','{{$row->tag ? $row->tag : 0}}');return false;"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a> 
                             @endif
                             @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator' || Auth::user()->usertype=='reseller')
                                 @if(!empty($row->recordedfilename))
@@ -431,17 +430,6 @@ audio {
                             @endif
                             </td>
                             </tr>
-                            <div id="more{{$row->cdrid}}" class="collapse">
-                                <!-- <td></td> -->
-                                    <!-- <td colspan='7'> -->
-                                    <!-- <span style="margin-right:100px;"><b>DNID :</b> {{$row->did_no}}</span>
-                                    <span style="margin-right:100px;"><b>Duration :</b> {{$row->firstleg."(".$row->secondleg.")"}}</span>
-                                    <span style="margin-right:100px;"><b>Coin :</b> {{$row->creditused}}</span>
-                                    <span style="margin-right:100px;"><b>Assigned To :</b> 
-                                    <span id="assigned_{{$row->cdrid}}">{{$row->operatorAssigned ? $row->operatorAssigned->opername : ''}}</span></span>
-                                    <span style="margin-right:100px;"><b>Tag :</b> <span id="cdrTag_{{$row->cdrid}}">{{$row->tag}}</span></span> -->
-                                <!-- </td> -->
-                            </div>
                             @endforeach
                                 @endif
                             </tbody>
@@ -966,6 +954,17 @@ audio {
     $('#AddLead .js-example-basic-single').select2({dropdownParent: $("#AddLead")});
  </script>
 <script type="text/javascript">
+
+    function moreOption(id, did_no, firstLeg, creditUsed, operName, tag) {
+        console.log(id);
+        var className = $("#second_row").attr('class');
+        if(className == 'show') {
+            $("#second_row").remove();
+        } else {
+            $('#row_'+id).after('<tr id="second_row" class="show"><td></td><td colspan="7"><span style="margin-right:100px;"><b>DNID :</b>'+did_no+'</span><span style="margin-right:100px;"><b>Duration :</b>'+firstLeg+'</span><span style="margin-right:100px;"><b>Coin :</b>'+creditUsed+'</span><span style="margin-right:100px;"><b>Assigned To :</b> <span id="assigned_'+id+'">'+operName+'</span></span><span style="margin-right:100px;"><b>Tag :</b> <span id="cdrTag_'+id+'">'+tag+'</span></span></td></tr>');
+        }
+    }
+
     function selectAll() {
         if ($('#allselect').is(":checked"))
         {

@@ -47,7 +47,7 @@ Route::get('notes/{id}', 'ReportController@notes')->name('notes');
 Route::get('call_history/{number}', 'ReportController@callHistory')->name('callHistory');
 Route::post('add_reminder', 'ReportController@addReminder')->name('addReminder');
 Route::get('get_reminder/{id}', 'ReportController@getReminder')->name('getReminder');
-Route::get('delete_reminder/{id}', 'ReportController@deleteReminder')->name('deleteReminder');
+//Route::get('delete_reminder/{id}', 'ReportController@deleteReminder')->name('deleteReminder');
 Route::delete('delete_comment/{id}', 'ReportController@deleteComment')->name('deleteComment');
 Route::get('download_file/{file}/{id}', 'ReportController@downloadFile')->name('downloadFile');
 Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('cdrreportarchive');

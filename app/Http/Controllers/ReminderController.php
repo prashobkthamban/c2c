@@ -21,6 +21,7 @@ class ReminderController extends Controller
     }
 
     public function index(){
+        //dd('index');
         return view('home.reminder', ['result' => Reminder::getReport(),'tags'=>CdrTag::getTag()]);
     }
 

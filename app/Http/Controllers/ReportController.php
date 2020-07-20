@@ -245,11 +245,12 @@ class ReportController extends Controller
         return $reminder = DB::table('reminders')->where('id', $id)->get();
     }
 
-    public function deleteReminder($id) {
-        $res = DB::table('reminders')->where('id',$id)->delete();
-        toastr()->success('Reminder delete successfully.');
-        return redirect()->route('Reminder');
-    }
+    // public function deleteReminder($id) {
+    //     dd($id);
+    //     $res = DB::table('reminders')->where('id',$id)->delete();
+    //     toastr()->success('Reminder delete successfully.');
+    //     return redirect()->route('Reminder');
+    // }
 
     public function addCdr(Request $request) 
     {

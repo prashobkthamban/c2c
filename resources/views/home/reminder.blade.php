@@ -17,7 +17,7 @@
             <div class="card text-left">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                        <table id="reminder_table" class="display table table-striped table-bordered" style="width:100%">
                             <thead>
                             <tr>
                                 <th>Caller</th>
@@ -34,14 +34,14 @@
                             <?php //dd($result); ?>
                             @if(!empty($result))
                                 @foreach($result as $row )
-                            <tr data-toggle="collapse" data-target="#accordion_{{$row->id}}" class="clickable">
+                            <tr data-toggle="collapse" data-target="#accordion_{{$row->id}}" class="clickable" id="row_{{ $row->id }}">
                                 <td>
                                     @if(Auth::user()->usertype=='groupadmin')
-                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="moreOption({{$row->id}},{{ $row->contacts && $row->contacts->fname ? true : false}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
                                         @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
                                         {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
                                         @else
-                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="xajax_editc2c({{$row->id}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="moreOption({{$row->id}},{{$row->contacts && $row->contacts->fname ? true : false}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
                                     @endif
 
                                 </td>
@@ -55,12 +55,16 @@
                                     <a href="#" data-toggle="modal" data-target="#edit_reminder" class="text-success mr-2 edit_reminder" id="{{$row->id}}">
                                             <i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                     </a>
-                                    <a href="{{ route('deleteReminder', $row->id) }}" onclick="return confirm('Are you sure want to delete this reminder ?')" class="text-danger mr-2">
-                                            <i class="nav-icon i-Close-Window font-weight-bold"></i>
+                                   
+                                    <a href="javascript:void(0)" onClick="deleteItem({{$row->id}}, 'reminders')" class="text-danger mr-2">
+                                        <i class="nav-icon i-Close-Window font-weight-bold"></i>
                                     </a>
                                 </td>
                             </tr>
-                            <tr id="accordion_{{$row->id}}" class="collapse">
+                            <!-- <div id="more_option_{{$row->id}}">
+
+                            </div> -->
+                            <!-- <tr id="accordion_{{$row->id}}" class="collapse more_option">
                                 <td colspan="8">
                                     <div >
                                         @if(!empty($row->contacts->fname))
@@ -74,7 +78,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            
+                             -->
                             @endforeach
                                 @endif
 
@@ -84,7 +88,7 @@
                     </div>
 
                 </div>
-                <div class="pull-right">{{ $result->links() }}</div>
+                <!-- <div class="pull-right">{{ $result->links() }}</div> -->
             </div>
         </div>
         <!-- end of col -->
@@ -155,6 +159,8 @@
 <script src="{{asset('assets/js/bootstrap-timepicker.min.js')}}"></script>
 <script type="text/javascript">
     $('#timepicker1').timepicker();
+    //$('.more_option').hide();
+    $('#reminder_table').DataTable();
     function xajax_show(id) {
         $(".cdr_form").addClass('d-none');
         $("#"+id).removeClass('d-none');
@@ -163,6 +169,29 @@
     function xajax_hide() {
         $(".cdr_form").addClass('d-none');
     }
+
+   
+    function moreOption(id, name) {
+        console.log(id);
+        console.log(name);
+        var btn;
+        var btnFn = 'contact_form_'+id;
+        var noteFn = 'add_tag_'+id;
+        var tagFn = 'notes_'+id;
+        var className = $("#second_row").attr('class');
+        if(className == 'show') {
+            $("#second_row").remove();
+        } else {
+            if(name) {
+                btn = '<button type="button" id="view_contact" class="btn btn-info m-1 clickable" >View Contact</button>';
+            } else {
+                btn = '<button type="button" id="add_contact" class="btn btn-info m-1 clickable" >Add Contact</button>';
+            }
+
+            $('#row_'+id).after('<tr id="second_row" class="show"><td colspan="8"><div>'+btn+'<button type="button" id="notes" onClick="xajax_show('+noteFn+')" class="btn btn-info m-1">Notes</button><button type="button" id="tag" onClick="xajax_show('+tagFn+')" class="btn btn-info m-1">Tag</button></div></td></tr>');
+        }
+    }
+
     $(document).ready(function() {
         $('.edit_reminder').on('click',function(e)
         {
@@ -216,5 +245,18 @@
         });
     });
  </script>
+ <!-- // <td colspan="8">
+        //         <div >
+        //             @if(!empty($row->contacts->fname))
+        //             <button type="button" onClick="xajax_show('contact_form_{{$row->id}}')" class="btn btn-info m-1 clickable" >View Contact</button>
+        //             @else
+        //             <button type="button" onClick="xajax_show('contact_form_{{$row->id}}')" class="btn btn-info m-1 clickable">Add Contact</button>
+        //             @endif
+        //             <button type="button" onClick="xajax_show('notes_{{$row->id}}')" class="btn btn-info m-1">Notes</button>
+        //             <button type="button" onClick="xajax_show('add_tag_{{$row->id}}')" class="btn btn-info m-1">Tag</button>
+                    
+        //         </div>
+        //     </td> -->
 
 @endsection
+
