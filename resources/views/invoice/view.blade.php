@@ -7,7 +7,6 @@
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/quill.snow.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/perfect-scrollbar.css')}}">
 <link href="{{asset('assets/styles/vendor/select2.min.css')}}" rel="stylesheet" />
-
 @endsection
 
 @section('main-content')
@@ -35,8 +34,8 @@
                         		<!-- <button id="pdf" class="btn btn-primary" name="btn">Generate PDF</button> -->
                         		
                         	</div>
-                        	<div class="canvas_div_pdf" id="download_data">
-                        		<table border="0" cellspacing="0" cellpadding="2" style="width: 90%;margin-left: 30px;margin-top: 30px;" class="show_print">
+                        	<div class="canvas_div_pdf" id="download_data" style="width: 100%;">
+                        		<!-- <table border="0" cellspacing="0" cellpadding="2" style="width: 90%;margin-left: 30px;margin-top: 30px;" class="show_print">
 									<tbody>
 										<tr>
 											<td></td>
@@ -69,11 +68,13 @@
 											<td>{{$company_details->GST}}</td>
 										</tr>
 										<tr>
-											<td><b>First Name</b></td>
+											
+
+									
+									<td><b>First Name</b></td>
 											<td>{{$invoice->first_name}}</td>
 											<td><b>Address</b></td>
-											<td>{{$company_details->shipping_address}}</td>
-										</tr>
+											<td>{{$company_details->shipping_address}}</td>	</tr>
 										<tr>
 											<td><b>Last Name</b></td>
 											<td>{{$invoice->last_name}}</td>
@@ -191,7 +192,214 @@
 											<td style="border-bottom: 1px solid;border-right: 1px solid;text-align: center;border-color: transparent;font-size: large;"><b>₹{{sprintf("%.2f",$invoice->grand_total)}}</b></td>
 										</tr>
 									</tfoot>
-								</table>
+								</table> -->
+								<div class="col-md-12">
+									<div class="row">
+										<div class="col-md-6"></div>
+										<div class="col-md-6">
+											<div class="row">
+												<div class="col-md-4">
+													<b>Invoice Number</b>
+												</div>
+												<div class="col-md-8">
+													<b style="font-size: large;">INV-{{$invoice->invoice_number}}</b>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<b style="font-size: large;">Client's Details</b>
+										</div>
+										<div class="col-md-6">
+											<b style="font-size: large;">Company's Details</b>
+										</div>
+										<div class="col-md-6">
+											<div class="row">
+												<div class="col-md-4">
+													<b>Company Name</b>
+												</div>
+												<div class="col-md-8">
+													<p>{{$invoice->company_name}}</p>
+												</div>	
+												<div class="col-md-3"></div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="row">
+												<div class="col-md-4">
+													<b>Company Name</b>
+												</div>
+												<div class="col-md-8">
+													<p>{{$company_details->companyname}}</p>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="row">
+												<div class="col-md-4">
+													<b>Address</b>
+												</div>
+												<div class="col-md-8">
+													<p>{{$invoice->billing_address}}</p>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="row">
+												<div class="col-md-4">
+													<b>GST Number</b>
+												</div>
+												<div class="col-md-8">
+													<p>{{$company_details->GST}}</p>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="row">
+												<div class="col-md-4">
+													<b>First Name</b>
+												</div>
+												<div class="col-md-8">
+													<p>{{$invoice->first_name}}</p>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="row">
+												<div class="col-md-4">
+													<b>Address</b>
+												</div>
+												<div class="col-md-8">
+													<p>{{$company_details->shipping_address}}</p>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="row">
+												<div class="col-md-4">
+													<b>Last Name</b>
+												</div>
+												<div class="col-md-8">
+													<p>{{$invoice->last_name}}</p>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6"></div>
+										<div class="col-md-6">
+											<div class="row">
+												<div class="col-md-4">
+													<b>Email Address</b>
+												</div>
+												<div class="col-md-8">
+													<p>{{$invoice->email}}</p>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6"></div>
+										<div class="col-md-6">
+											<div class="row">
+												<div class="col-md-4">
+													<b>Phone Number</b>
+												</div>
+												<div class="col-md-8">
+													<p>{{$invoice->mobile_no}}</p>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6"></div>
+										<div class="col-md-6">
+											<div class="row">
+												<div class="col-md-4">
+													<b>GST Number</b>
+												</div>
+												<div class="col-md-8">
+													<p>{{$invoice->gst_no}}</p>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6"></div>
+									</div>
+								</div>
+								<div class="col-md-12" style="background-color: #80808045;text-align: center;line-height: 154%;">
+									<div class="row">
+										<div class="col-md-1">
+											<p>#</p>
+										</div>
+										<div class="col-md-4">
+											<p>Item</p>
+										</div>
+										<div class="col-md-1">
+											<p>Qty</p>
+										</div>
+										<div class="col-md-2">
+											<p>Rate</p>
+										</div>
+										<div class="col-md-2">
+											<p>Tax</p>
+										</div>
+										<div class="col-md-2">
+											<p>Amount</p>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-12" style="text-align: center;line-height: 154%;">
+									<div class="row">
+										<?php 
+										$i = 1;
+										foreach ($invoice_details as $key => $invoice_detail) { ?>
+											<div class="col-md-1">
+												<p>{{$i}}</p>
+											</div>
+											<div class="col-md-4">
+												<p>{{$invoice_detail->name}}</p>
+											</div>
+											<div class="col-md-1">
+												<p>{{$invoice_detail->qty}}</p>
+											</div>
+											<div class="col-md-2">
+												<p>₹{{sprintf("%.2f",$invoice_detail->rate)}}</p>
+											</div>
+											<div class="col-md-2">
+												<p>{{$invoice_detail->tax}}%</p>
+											</div>
+											<div class="col-md-2">
+												<p>₹{{sprintf("%.2f",$invoice_detail->amount)}}</p>
+											</div>
+										<?php $i++; }?>
+									</div>
+								</div>
+								<div class="col-md-12" style="background-color: #80808045;line-height: 154%;">
+									<div class="row">
+										<div class="col-md-9"></div>
+										<div class="col-md-3">
+											<div class="row">
+												<div class="col-md-6">
+													<p>Sub Total</p>
+												</div>
+												<div class="col-md-6">
+													<p>₹{{sprintf("%.2f",$invoice->total_amount)}}</p>
+												</div>
+												<div class="col-md-6">
+													<p>Total Discount</p>
+												</div>
+												<div class="col-md-6">
+													<p>₹{{sprintf("%.2f",$invoice->discount)}}</p>
+												</div>
+												<div class="col-md-6">
+													<p>Total Tax</p>
+												</div>
+												<div class="col-md-6">
+													<p>₹{{sprintf("%.2f",$invoice->total_tax_amount)}}</p>
+												</div>
+												<div class="col-md-6" style="font-size: large;">
+													<b>Grand Total</b>
+												</div>
+												<div class="col-md-6" style="font-size: large;">
+													<b>₹{{sprintf("%.2f",$invoice->grand_total)}}</b>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
 								<p id="sign" style="margin-left: 85%;margin-top: 12%;display: none;">Signature</p>
                         	</div>	
                            
@@ -291,7 +499,7 @@ $(document).ready(function() {
 		html2canvas($(".canvas_div_pdf")[0],{allowTaint:true}).then(function(canvas) {
 			canvas.getContext('2d');
 			
-			console.log(canvas.height+"  "+canvas.width);
+			//console.log(canvas.height+"  "+canvas.width);
 			
 			
 			var imgData = canvas.toDataURL("image/jpeg", 1.0);
@@ -315,9 +523,9 @@ $(document).ready(function() {
 		var HTML_Width = $(".canvas_div_pdf").width();
 		var HTML_Height = $(".canvas_div_pdf").height();
 		var top_left_margin = 15;
-		var PDF_Width = 595;
+		var PDF_Width = HTML_Width+(top_left_margin*2);
 		var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
-		var canvas_image_width = 595;
+		var canvas_image_width = HTML_Width;
 		var canvas_image_height = HTML_Height;
 		
 		var totalPDFPages = Math.ceil(HTML_Height/PDF_Height)-1;
@@ -326,7 +534,7 @@ $(document).ready(function() {
 		html2canvas($(".canvas_div_pdf")[0],{allowTaint:true}).then(function(canvas) {
 			canvas.getContext('2d');
 			
-			console.log(PDF_Width);
+			//console.log(PDF_Width);
 			
 			
 			var imgData = canvas.toDataURL("image/jpeg", 1.0);

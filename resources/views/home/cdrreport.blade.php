@@ -307,7 +307,7 @@ audio {
                             <thead>
                             <tr>
                                 @if(Auth::user()->usertype == 'groupadmin')
-                                <th><input type="checkbox" name="allselect" id="allselect" value="yes" onclick="selectAll();"></th>
+                                <th class="noExport"><input type="checkbox" name="allselect" id="allselect" value="yes" onclick="selectAll();"></th>
                                 @elseif(Auth::user()->usertype == 'admin')
                                 <th>Customer</th>
                                 @endif
@@ -320,7 +320,7 @@ audio {
                                 <th>Status</th>
                                 <th>Department</th>
                                 <th>Agent</th>
-                                <th>Actions</th>
+                                <th class="noExport">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -925,15 +925,7 @@ audio {
 @endsection
 
 @section('page-js')
- <!-- <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
- <script src="{{asset('assets/js/datatables.script.js')}}"></script>
- <script src="{{asset('assets/js/vendor/pickadate/picker.js')}}"></script>
- <script src="{{asset('assets/js/vendor/pickadate/picker.date.js')}}"></script>
- <script src="{{asset('assets/js/vendor/pickadate/picker.time.js')}}"></script>
- <script src="{{asset('assets/js/moment.min.js')}}"></script>
- <script src="{{asset('assets/js/bootstrap-timepicker.min.js')}}"></script>
- <script src="{{asset('assets/js/vendor/echarts.min.js')}}"></script>
- <script src="{{asset('assets/js/select2.min.js')}}"></script> -->
+<script src="{{asset('assets/js/vendor/echarts.min.js')}}"></script> 
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script src="{{asset('assets/js/select2.min.js')}}"></script>
@@ -949,14 +941,34 @@ audio {
         // $('#zero_configuration_table').DataTable( {
         //     "order": [[0, "desc" ]]
         // } );
-        $('#cdr_table').DataTable();
+        $('#cdr_table').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'csv',
+                    exportOptions: {
+                        columns: "thead th:not(.noExport)"
+                    }
+                }
+            ]
+        });
+        // var table = $('#cdr_table').DataTable();
+ 
+        // var data = table.buttons.exportData( {
+        //     columns: ':visible'
+        // } );
+    //     $('#example').DataTable( {
+    //     dom: 'Bfrtip',
+    //     buttons: [
+    //         'copy', 'csv', 'excel', 'pdf', 'print'
+    //     ]
+    // } );
     $('#timepicker1').timepicker();
     $('#AddLead .js-example-basic-single').select2({dropdownParent: $("#AddLead")});
  </script>
 <script type="text/javascript">
 
     function moreOption(id, did_no, firstLeg, creditUsed, operName, tag) {
-        console.log(id);
         var className = $("#second_row").attr('class');
         if(className == 'show') {
             $("#second_row").remove();

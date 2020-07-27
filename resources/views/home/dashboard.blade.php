@@ -225,12 +225,13 @@
                             <p class="text-22 font-weight-light mb-1"><i class="i-Up text-success"></i> By Department</p>
                             <!-- <div class="text-white purple-500 rounded-circle p-2 mr-3" >52</div> -->
                             <div class="row mt-4">
-                            @foreach($insight_ivr as $row)
+                            @foreach($insightData as $row)
                                 <div class="col-md-3">
-                                <button class="btn btn-sm rounded-circle btn-icon btn-outline-primary text-white purple-500">{{$row->count}}</button>
+                                <button class="btn btn-sm rounded-circle btn-icon btn-outline-primary text-white purple-500">{{$row['count']}}</button>
                                 </br></br>
-                                <span style="margin:7px;">{{$row->deptname}}</span>
+                                <span style="margin:7px;">{{$row['deptname']}}</span>
                                 </div>
+                               
                             @endforeach
                             <div id="echart9" style="height: 60px; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1586745275835"><div style="position: relative; overflow: hidden; width: 528px; height: 60px; padding: 0px; margin: 0px; border-width: 0px; cursor: default;"><canvas data-zr-dom-id="zr_0" width="528" height="60" style="position: absolute; left: 0px; top: 0px; width: 528px; height: 60px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas></div><div></div></div>
                         </div>

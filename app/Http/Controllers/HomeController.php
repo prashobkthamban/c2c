@@ -108,13 +108,35 @@ class HomeController extends Controller
             ->whereDate('cdr.datetime', '<=', $qedate)
             ->groupBy('deptname')
             ->get();
-
             $departments = DB::table('operatordepartment')
             ->select('dept_name')
             ->where('groupid', Auth::user()->groupid)
             ->get(); 
-            dd($departments);
-
+            //dd($insight_ivr);
+            $insightData = array();
+            $deptNames = array(); 
+            foreach($departments as $key => $dept) {
+                if(count($insight_ivr) > 0) {
+                    for($i = 0; $i < count($insight_ivr); $i++) {
+                        if($insight_ivr[$i]->dept_name == $dept->dept_name) {
+                            $deptNames[] = $dept->dept_name;
+                            $insightData[$key]['deptname'] = $dept->dept_name;
+                            $insightData[$key]['count'] = $insight_ivr[$i]->count;
+                        } else {
+                            if ( !in_array($dept->dept_name, $deptNames) ) { 
+                                $deptNames[] = $dept->dept_name; 
+                                $insightData[$key]['deptname'] = $dept->dept_name;
+                                $insightData[$key]['count'] = 0;
+                            } 
+                        }
+                        
+                    }
+                } else {
+                    $insightData[$key]['deptname'] = $dept->dept_name;
+                    $insightData[$key]['count'] = 0;
+                }
+                
+            }
         } else if(Auth::user()->usertype == 'operator') {
             $o_callstoday = DB::table('cdr')
             ->where('operatorid', Auth::user()->id)
@@ -368,7 +390,7 @@ class HomeController extends Controller
         $nousers = '';
         $inusers = '';
         $announcements = DB::table('dashbord_annuounce')->orderBy('id', 'desc')->get();
-        return view('home.dashboard', compact('incoming_calls', 'operator_leads', 'opcallList', 'insight_ivr', 'announcements', 'activeoperator', 'g_callstoday', 'o_callstoday', 'callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'sdate', 'edate', 'nousers', 'inusers','level_1','level_2','level_3','level_4','level_5','level_6','level_7','todo_lists','users_list','remainders','lead_count','operator_lead_stage','predict_cost','proposal','invoice','group_admin'));
+        return view('home.dashboard', compact('incoming_calls', 'operator_leads', 'opcallList', 'insight_ivr','insightData', 'announcements', 'activeoperator', 'g_callstoday', 'o_callstoday', 'callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'sdate', 'edate', 'nousers', 'inusers','level_1','level_2','level_3','level_4','level_5','level_6','level_7','todo_lists','users_list','remainders','lead_count','operator_lead_stage','predict_cost','proposal','invoice','group_admin'));
     }
 
     public function dashboard() {
@@ -456,7 +478,92 @@ class HomeController extends Controller
             }
         }    
         //dd(array_unique($b_data));
-        return view('home.dashboard_1', compact('p_data', 'series', 'sdate', 'edate', 'dates', 'missed', 'answered'));
+        $barstacked = DB::table('cdr')
+            ->select('cdr.status', DB::raw('HOUR(cdr.datetime) as time') ,DB::raw('count(*) as totalresult'))
+            ->leftJoin('accountgroup', 'cdr.groupid', '=', 'accountgroup.id')
+            ->leftJoin('resellergroup', 'cdr.resellerid', '=', 'resellergroup.id')
+            ->leftJoin('operatoraccount', 'cdr.operatorid', '=', 'operatoraccount.id')
+            ->whereIn('cdr.status', ['ANSWERED','MISSED'])
+            ->where('cdr.groupid', Auth::user()->groupid)
+            ->whereDate('cdr.datetime', '>=', $qsdate)
+            ->whereDate('cdr.datetime', '<=', $qedate)
+            ->groupBy('time')
+            ->groupBy('cdr.status')
+            ->get();
+
+        //dd($barstacked);
+
+        $answered_bar = array();
+        $missed_bar = array();
+        foreach ($barstacked as $key => $value) 
+        {
+            if ($value->status == 'ANSWERED') 
+            {
+                $answered_bar[$value->time] = $value->totalresult;
+            }
+            else
+            {
+                $missed_bar[$value->time] = $value->totalresult;
+            }
+        }   
+
+        for ($i=1; $i <= 24; $i++) 
+        { 
+            if (!array_key_exists($i,$answered_bar)) 
+            {
+                $answered_bar[$i] = 0;
+            }
+            if (!array_key_exists($i,$missed_bar)) 
+            {
+                $missed_bar[$i] = 0;
+            }
+        }
+        ksort($answered_bar);
+        ksort($missed_bar);
+        
+        $new_ans = array();
+        $new_miss = array();
+
+        foreach($answered_bar as $x => $x_value)
+        {
+            $new_ans[$x] = $x_value;
+        }
+
+        foreach ($missed_bar as $m => $m_value) 
+        {
+            $new_miss[$m] = $m_value;
+        }
+        
+        $crm_total_leads = DB::table('cdrreport_lead')
+            ->select('lead_stage',DB::raw('count(*) as totalresult'))
+            ->where('group_id', Auth::user()->groupid)
+            ->whereDate('inserted_date', '>=', $qsdate)
+            ->whereDate('inserted_date', '<=', $qedate)
+            ->groupBy('lead_stage')
+            ->get();
+
+        //dd($crm_total_leads);
+
+        $crm_data = array();
+        $total_crm = 0;
+        
+        if( ! empty($crm_total_leads) ){
+            foreach ($crm_total_leads as $key => $value) {
+                $ind_crm = array();
+                $ind_crm["name"] = $value->lead_stage;
+                $ind_crm["value"] = $value->totalresult;
+                $total_crm += $value->totalresult;
+                $crm_data[] = $ind_crm;
+            }
+        }
+        $crm_data[] = [
+            'name' => 'Total',
+            'value' => $total_crm
+        ];
+
+        //dd($crm_data);
+        
+        return view('home.dashboard_1', compact('p_data', 'series', 'sdate', 'edate', 'dates', 'missed', 'answered','new_ans','new_miss','crm_data'));
     }
 
     public function CRMData(Request $request) {
