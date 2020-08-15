@@ -311,6 +311,9 @@ audio {
                                 @elseif(Auth::user()->usertype == 'admin')
                                 <th>Customer</th>
                                 @endif
+                                @if(Auth::user()->usertype == 'reseller')
+                                <th>Account Name</th>
+                                @endif
                                 <th>Caller Id</th>
                                 <th>Date & Time</th>
                                 @if(Auth::user()->usertype == 'admin')
@@ -326,12 +329,15 @@ audio {
                             <tbody>
                             @if(!empty($result))
                                 @foreach($result as $row )
-                               <?php //dd($row['cdrNotes']); ?>
+                               <?php //dd($row->cdrid); ?>
                             <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable" id="row_{{ $row->cdrid }}">
                             @if(Auth::user()->usertype == 'groupadmin')
                             <td><input type="checkbox" name="cdr_checkbox" id="{{$row->cdrid}}" value="{{$row->cdrid}}" class="allselect"></td>
                             @elseif(Auth::user()->usertype == 'admin')
                             <th>{{$row->name}}</th>
+                            @endif
+                            @if(Auth::user()->usertype == 'reseller')
+                                <td>{{ $row->accountGroup ? $row->accountGroup->name : '' }}</td>
                             @endif
                             <td id="caller_{{$row->cdrid}}">
                             @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
@@ -361,14 +367,15 @@ audio {
                                     <i class="i-Download1"></i></a>
                                 @endif   
                             @endif
-                            @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
+                            @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator' || Auth::user()->usertype=='reseller')
                                 @if(sizeof($row['cdrNotes']) > 0)              
                                     <a href="#" class="btn bg-gray-100 notes_list" title="Notes" data-toggle="modal" data-target="#notes_modal" id="notes_{{$row->uniqueid}}"><i class="i-Notepad"></i></a>
                                 @endif
-                                <a href="" class="btn bg-gray-100 history_list" title="Call History" data-toggle="modal" data-target="#history_modal" id="history_{{$row->number}}"><i class="i-Notepad-2"></i></a>
                                 @if(Auth::user()->usertype=='groupadmin')
                                     <a href="" class="btn bg-gray-100" title="Assign To" data-toggle="dropdown" id="history_{{$row->number}}"><i class="  i-Add-User"></i></a>
                                 @endif
+                                @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
+                                <a href="" class="btn bg-gray-100 history_list" title="Call History" data-toggle="modal" data-target="#history_modal" id="history_{{$row->number}}"><i class="i-Notepad-2"></i></a>
                                 <ul class="dropdown-menu" role="menu">
                                     @foreach($operators as $operator)
                                     @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
@@ -396,11 +403,14 @@ audio {
                                     @endforeach
                                     <?php echo '<li><a href="javascript:assignoper('.$row->cdrid.',0);">Unassign</a></li>'; ?>
                                 </ul>
+                                @endif
 
                                 <span>
+                                @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
                                 <button class="btn bg-gray-100" type="button" id="action_{{$row->cdrid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="nav-icon i-Gear-2"></i>
                                 </button>
+                                @endif
 
                                 <?php
                                 if (sizeof($all_leads[$row->cdrid]) != '0') {
@@ -411,9 +421,9 @@ audio {
                                     $add_cl = 'btn-success';
                                 }
                                 ?>
-
+                                @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
                                 <a href="?" class="btn {{$add_cl}} add_lead" title="Add Lead" id="add_lead" data-toggle="modal" data-number="{{$row->number}}" data-id="{{$row->cdrid}}" data-target="#AddLead"><i class="i-Notepad"></i></a>
-
+                                @endif
                                 <div class="dropdown-menu" aria-labelledby="action_{{$row->cdrid}}">
                                 <a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" id="contact_{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-phone="{{$row->number}}">{{isset($row->contacts->fname) ? 'Update Contact': 'Add Contact'}}</a>
                                 <a class="dropdown-item edit_tag" href="#" data-toggle="modal" data-target="#tag_modal" id="tag_{{$row->cdrid}}" data-tag="{{$row->tag}}">{{$row->tag ? 'Update Tag': 'Add Tag'}}</a>

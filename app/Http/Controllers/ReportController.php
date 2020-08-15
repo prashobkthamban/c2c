@@ -58,10 +58,7 @@ class ReportController extends Controller
         foreach ($result1 as $key => $value) {
             $all_leads[$value->cdrid] = DB::table('cdrreport_lead')->where('cdrreport_id',$value->cdrid)->select('cdrreport_id')->get();
         }
-
-        /*echo "<pre>";
-        print_r($all_leads);exit;*/
-        //dd(CdrReport::getReport());
+        
         return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup(),'products' => $products,'users_lists' => $users_lists,'all_leads' => $all_leads]);
     }
 

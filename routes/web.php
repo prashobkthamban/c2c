@@ -132,7 +132,6 @@ Route::get('reset_password', 'UserController@resetPassword')->name('resetPasswor
 Route::get('coperates', 'UserController@coperates')->name('CoperateGroup');
 Route::post('add_coperate', 'UserController@addCoperate')->name('AddCoperate');
 Route::get('edit_coperate/{id}', 'UserController@editCoperate')->name('editCoperate');
-Route::get('destroy_coperate/{id}', 'UserController@destroyCoperate')->name('destroyCoperate');
 
 Route::get('blacklist', 'UserController@blacklist')->name('BlackList');
 Route::post('add_black_list', 'UserController@addBlacklist')->name('addBlackList');

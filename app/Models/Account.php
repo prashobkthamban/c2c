@@ -23,6 +23,11 @@ class Account extends Authenticatable
     public function opeartor()
 	{
 	    return $this->belongsTo('App\Models\OperatorAccount', 'operator_id');
+    }
+    
+    public function reseller()
+	{
+	    return $this->belongsTo('App\Models\Resellergroup', 'resellerid');
 	}
  
     public function did()

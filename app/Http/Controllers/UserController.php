@@ -924,7 +924,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         return DB::table('resellergroup')
                 ->join('account', 'resellergroup.id', '=', 'account.resellerid')
                 ->where('resellergroup.id', $id)
-                ->select('resellergroup.*', 'account.username', 'account.password')
+                ->select('resellergroup.*', 'account.username', 'account.user_pwd')
                 ->get();
     }
 
@@ -945,17 +945,19 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                 'cdr_apikey' => 'required',
             ]);
         }        
-
+        
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
             $reseller = ['resellername' => $request->get('resellername'),
-                     'cdr_apikey'=> $request->get('cdr_apikey')
+                     'cdr_apikey'=> $request->get('cdr_apikey'),
+                     'associated_groups' => json_encode($request->get('associated_groups'))
                     ];
             $account = [ 'status' => 'Active',
                          'usertype' => 'reseller',
                          'username' => $request->get('username'),
                          'password'=> Hash::make($request->get('password')),
+                         'user_pwd' => $request->get('password'),
                         ]; 
 
             if(empty($request->get('id'))) {
@@ -977,14 +979,6 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
             }
         } 
         return $data;
-    }
-
-    public function destroyCoperate($id)
-    {
-        DB::table('resellergroup')->where('id',$id)->delete();
-        DB::table('account')->where('resellerid',$id)->delete();
-        toastr()->success('Coperate delete successfully.');
-        return redirect()->route('CoperateGroup');
     }
 
     public function myProfile() {

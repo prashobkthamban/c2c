@@ -47,6 +47,10 @@ class CdrReport extends Model
     public function operatorAccount() {
         return $this->hasOne('App\Models\OperatorAccount', 'id', 'operatorid');
     }
+
+    public function accountGroup() {
+        return $this->hasOne('App\Models\Accountgroup', 'id', 'groupid');
+    }
     
     public function operatorAssigned() {
         return $this->hasOne('App\Models\OperatorAccount', 'id', 'assignedto');
@@ -63,8 +67,11 @@ class CdrReport extends Model
     }
 
     public static function getReport(){
-       $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder', 'operatorAccount', 'operatorAssigned']);
-        if( Auth::user()->usertype == 'reseller'){
+       $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder', 'operatorAccount', 'operatorAssigned', 'accountGroup']);
+        if( Auth::user()->usertype == 'reseller' && !empty(Auth::user()->reseller->associated_groups) ){
+            $data->whereIn('cdr.groupid', json_decode(Auth::user()->reseller->associated_groups));
+        } 
+        else if( Auth::user()->usertype == 'reseller' ) {
             $data->where('cdr.resellerid',Auth::user()->resellerid );
         }
         else if( Auth::user()->usertype == 'operator' ){
@@ -77,6 +84,7 @@ class CdrReport extends Model
         }
         
         $result = $data->orderBy('datetime','DESC')->get();
+       //dd($result->operatorAccount);
        return $result;
     }
 

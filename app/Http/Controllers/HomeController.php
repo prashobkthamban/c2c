@@ -36,6 +36,8 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $today = date("Y-m-d");
+        //dd($today);
         $onemonthdate= date("m/d/Y", strtotime("-1 month"));
         $sdate = isset($_REQUEST['dfrom']) ? date('m/d/Y',strtotime($_REQUEST['dfrom'])) : $onemonthdate;
         $edate = isset($_REQUEST['dto']) ? date('m/d/Y',strtotime($_REQUEST['dto'])) : date('m/d/Y');
@@ -50,7 +52,7 @@ class HomeController extends Controller
             ->count(); 
         } 
 
-        $g_callstoday = $o_callstoday = $callstoday = $g_activecalls = $activecalls = 0;
+        $g_callstoday = $g_activecalls = $activecalls = 0;
 
         $activeoperator = DB::table('operatoraccount')
             ->where('operatoraccount.groupid', Auth::user()->groupid)
@@ -59,7 +61,7 @@ class HomeController extends Controller
         if(Auth::user()->usertype == 'groupadmin') {
             $g_callstoday = DB::table('cdr')
             ->where('groupid', Auth::user()->groupid)
-            ->whereDate('datetime', '=', date("Y-m-d"))
+            ->whereDate('cdr.datetime', '=', $today)
             ->count();
             
             $incoming_calls = CdrReport::select(DB::raw('count(*) as count, status'))->with('leadCdr')
@@ -138,13 +140,13 @@ class HomeController extends Controller
                 
             }
         } else if(Auth::user()->usertype == 'operator') {
-            $o_callstoday = DB::table('cdr')
-            ->where('operatorid', Auth::user()->id)
-            ->whereDate('datetime', '=', date("Y-m-d"))
+            $g_callstoday = DB::table('cdr')
+            ->where('operatorid', Auth::user()->operator_id)
+            ->whereDate('cdr.datetime', '=', $today)
             ->count();
         } else if(Auth::user()->usertype == 'admin'){
-            $callstoday = DB::table('cdr')
-            ->whereDate('datetime', '=', date("Y-m-d"))
+            $g_callstoday = DB::table('cdr')
+            ->whereDate('cdr.datetime', '=', $today)
             ->count();
         }
          
@@ -390,7 +392,7 @@ class HomeController extends Controller
         $nousers = '';
         $inusers = '';
         $announcements = DB::table('dashbord_annuounce')->orderBy('id', 'desc')->get();
-        return view('home.dashboard', compact('incoming_calls', 'operator_leads', 'opcallList', 'insight_ivr','insightData', 'announcements', 'activeoperator', 'g_callstoday', 'o_callstoday', 'callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'sdate', 'edate', 'nousers', 'inusers','level_1','level_2','level_3','level_4','level_5','level_6','level_7','todo_lists','users_list','remainders','lead_count','operator_lead_stage','predict_cost','proposal','invoice','group_admin'));
+        return view('home.dashboard', compact('incoming_calls', 'operator_leads', 'opcallList', 'insight_ivr','insightData', 'announcements', 'activeoperator', 'g_callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'sdate', 'edate', 'nousers', 'inusers','level_1','level_2','level_3','level_4','level_5','level_6','level_7','todo_lists','users_list','remainders','lead_count','operator_lead_stage','predict_cost','proposal','invoice','group_admin'));
     }
 
     public function dashboard() {
@@ -874,6 +876,8 @@ class HomeController extends Controller
         } elseif($table == 'operatoraccount' && $id != null) {
             DB::table('operator_dept_assgin')->where('operatorid',$id)->delete();
             DB::table('account')->where('operator_id',$id)->delete();
+        } elseif($table == 'resellergroup' && $id != null) {
+            DB::table('account')->where('resellerid',$id)->delete();
         }
         return $res;
     }

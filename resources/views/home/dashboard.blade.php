@@ -67,7 +67,7 @@
                             <i class="i-Telephone"></i>
                             <div class="content">
                                 <p class="text-muted mt-2 mb-0">Today's Total Calls</p>
-                                <p class="text-primary text-24 line-height-1 mb-2">{{ (Auth::user()->usertype == 'groupadmin' ? $g_callstoday : (Auth::user()->usertype == 'operator' ? $o_callstoday : $callstoday))}}</p>
+                                <p class="text-primary text-24 line-height-1 mb-2">{{ $g_callstoday }}</p>
                             </div>
                         </div>
                     </div>

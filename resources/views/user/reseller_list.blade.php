@@ -30,15 +30,17 @@
                                     <tbody>
                                        
                                         @foreach($resellers as $reseller)
-                                        <tr>
+                                        <tr id="row_{{ $reseller->id }}">
                                             <td>{{$reseller->resellername}}</td>
                                             <td>{{$reseller->cdr_apikey}}</td>
                                             <td>{{ date('d-m-Y', strtotime($reseller->adddate)) }}</td>
                                             <td><a  id="{{$reseller->id}}" data-toggle="modal" data-target="#reseller_form" href="javaScript:void(0);" class="text-success mr-2 edit_form">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                                </a><a href="{{ route('destroyCoperate', $reseller->id) }}" onclick="return confirm('You want to delete this coperate?')" class="text-danger mr-2">
+                                                </a>
+                                                <a href="javascript:void(0)" onClick="deleteItem({{$reseller->id}}, 'resellergroup')" class="text-danger mr-2">
                                                     <i class="nav-icon i-Close-Window font-weight-bold"></i>
-                                                </a></td>
+                                                </a>
+                                            </td>
                                         </tr>
                                         @endforeach
                                       
@@ -109,6 +111,15 @@
                                         <input type="text" class="form-control" value="{{$cdr_api_key}}" placeholder="CDR API Key" name="cdr_apikey" id="cdr_apikey"> 
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="firstName1">Associate Groups </label> 
+                                            {!! Form::select('associated_groups[]', getAccountgroups()->prepend('Select Customer', ''), null,array('multiple'=>'multiple','class' => 'form-control', 'id' => 'associated_groups')) !!}
+                                    </div>
+                                </div>  
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -151,8 +162,7 @@
                     toastr.success(res.success);
                     setTimeout( function() { 
                         location.reload(true); 
-                    }, 1000);
-                    
+                    }, 300);  
                 }
                
             },
@@ -168,8 +178,6 @@
             url: '/edit_coperate/'+this.id, // This is the url we gave in the route
             success: function(res){ // What to do if we succeed
                 var response = JSON.stringify(res);
-                console.log(res.length);
-                console.log(res);
                 if(res.length > 0) {
                     $("#reseller_form").modal('show');
                     var data = res[0];
@@ -177,7 +185,8 @@
                     $("#resellername").val(data.resellername);
                     $("#cdr_apikey").val(data.cdr_apikey);
                     $("#username").val(data.username);
-                    $("#password").val(data.password);
+                    $("#password").val(data.user_pwd);
+                    $("#associated_groups").val(jQuery.parseJSON(data.associated_groups));
                 } 
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
@@ -187,6 +196,7 @@
 
         $('#add_coperate').click(function() {
             $("#coperate_form").trigger("reset");
+            $("#coperate_title").text('Add Coperate account');
         });
         
     });
