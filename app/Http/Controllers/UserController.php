@@ -1063,5 +1063,16 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         return view('auth.passwords.reset');
     }
 
+    public function associatedGroups() {
+        $result = DB::table('accountgroup')
+        ->whereIn('accountgroup.id', json_decode(Auth::user()->reseller->associated_groups))
+        ->leftJoin('dids', 'accountgroup.did', '=', 'dids.id')
+        ->select('accountgroup.id', 'accountgroup.name', 'accountgroup.startdate', 'accountgroup.enddate', 'accountgroup.status', 'accountgroup.did', 'dids.did')
+        ->paginate(10);
+        //dd($result);
+        return view('user.account_group', compact('result'));
+
+    }
+
 
 }

@@ -14,17 +14,18 @@
         <div class="col-md-12 mb-4">
             <div class="card text-left">
                 <div class="card-body">
-                    <a title="Add Contact" href="#" data-toggle="modal" data-target="#contact_update_modal" class="btn btn-primary add_contact">Add Contact</a>
-
+                    
                     <div class="table-responsive">
-                        <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                    <a title="Add Contact" href="#" data-toggle="modal" data-target="#contact_update_modal" class="btn btn-primary add_contact" style="float:right;margin-right: 16px;">Add Contact</a>
+
+                        <table id="contact_data" class="display table table-striped table-bordered" style="width:100%">
                            <thead>
                                 <tr>
                                     <th>Name</th>
                                     <th>Last name</th>
                                     <th>Phone Number</th>
                                     <th>Email</th>
-                                    <th>Actions</th>
+                                    <th class="noExport">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>   
@@ -55,7 +56,6 @@
                                 </tr>
                             </tfoot>
                         </table>
-                        {{ $contacts->links() }}
                     </div>
 
                 </div>
@@ -73,7 +73,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                 {!! Form::open(['class' => 'contact_form', 'method' => 'post']) !!} 
+                 {!! Form::open(['class' => 'contact_form_1', 'method' => 'post']) !!} 
                 <div class="modal-body">
                         <div class="row">
                             <div class="col-md-2 form-group mb-3"> 
@@ -129,8 +129,24 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
+    $('#contact_data').DataTable({
+        dom: 'Bfrtip',
+        buttons: [
+            {
+                extend: 'excel',
+                text: 'Export',
+                title: $('h1').text(),
+                exportOptions: {
+                    modifier: {
+                        page: 'current'
+                    },
+                    columns: "thead th:not(.noExport)"
+                },
+                dom: 'Bfrtip',
+            }
+        ]
+    });
     function ContactUpdate(id,fname,lname,email,phone) {
-        console.log(phone);
         $(".modal-title").text('Edit Contact');
         $("#phone_div").hide();
         $("#id").val(id);
@@ -141,13 +157,13 @@
     }
 
     $(document).ready(function() {
-        $( '.contact_form' ).on( 'submit', function(e) {
+        $( '.contact_form_1' ).on( 'submit', function(e) {
             e.preventDefault();
             var errors = ''; 
           $.ajax({
             type: "POST",
             url: '{{ URL::route("EditContact") }}', // This is the url we gave in the route
-            data: $('.contact_form').serialize(),
+            data: $('.contact_form_1').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
                     $.each(res.error, function(index, value)
@@ -174,7 +190,7 @@
 
         $('.add_contact').on('click',function(e) {
             $(".modal-title").text('Add Contact');
-            $(".contact_form")[0].reset();
+            $(".contact_form_1")[0].reset();
             $("#phone_div").show();
         });
     });

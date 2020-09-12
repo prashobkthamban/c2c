@@ -160,13 +160,11 @@ audio {
             <div class="card mb-2">
                 <div class="card-body">
             <div id="filter-panel" class="filter-panel collapse">
-                <h5 class="ml-3
-                ">Search Panel</h5></br>
+                <h5 class="ml-3">Search Panel</h5></br>
                 <form class="form" role="form" id="cdr_filter_form">
-                    <div class="row"> 
+                    <div class="row" style="margin-right: 24px;margin-left: 24px;"> 
                     @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
-                    <div class="col-md-3 form-group ml-5
-                    ">
+                    <div class="col-md-4">
                         <label class="filter-col"  for="pref-perpage">Departments</label>
                         <select name="department" class="form-control">
                             <option value="">All</option>
@@ -181,22 +179,29 @@ audio {
                     </div> 
                     @endif
                     @if( Auth::user()->usertype == 'groupadmin' )
-                    <div class="col-md-3 form-group mb-5
-                    ">
-                    <label class="filter-col"  for="pref-perpage">Operators</label>
-                    <select name="operator" class="form-control">
-                        <option value="">All</option>
-                        @if(!empty($operators))
-                            @foreach($operators as $opr )
-                                <option value="{{$opr->id}}">{{$opr->opername}}
-                                </option>
-                            @endforeach
-                        @endif   
-                    </select>                                
+                    <div class="col-md-4">
+                        <label class="filter-col"  for="pref-perpage">Operators</label>
+                        <select name="operator" class="form-control">
+                            <option value="">All</option>
+                            @if(!empty($operators))
+                                @foreach($operators as $opr )
+                                    <option value="{{$opr->id}}">{{$opr->opername}}
+                                    </option>
+                                @endforeach
+                            @endif   
+                        </select>                                
+                    </div> 
+                    <div class="col-md-4">
+                        <label class="filter-col"  for="pref-perpage">Cdr Tag</label>
+                        {!! Form::select('tag', $tags->prepend('Select Tag', ''), null,array('class' => 'form-control', 'id' => 'tag')) !!}
+                    </div> 
+                    <div class="col-md-4">
+                        <label class="filter-col"  for="pref-perpage">Status</label>
+                        {!! Form::select('status', array('' => 'All', 'MISSED' => 'Missed', 'ANSWERED' => 'Answered', 'DIALING' => 'Dialing', 'LIVECALL' => 'Live call', 'AFTEROFFICE' => 'After Office'), null,array('class' => 'form-control')) !!}  
                     </div> 
                     @endif
                     @if( Auth::user()->usertype == 'groupadmin')
-                    <div class="col-md-3 form-group mb-3">
+                    <div class="col-md-4">
                         <label class="filter-col"  for="pref-perpage">Assigned To</label>
                         <select  class="form-control" name="assigned_to">
                             <option value="">All</option>
@@ -209,7 +214,7 @@ audio {
                         </select>                                
                     </div> 
                     @endif
-                    <div class="col-md-3 form-group ml-5">
+                    <div class="col-md-4">
                         <label class="filter-col"  for="pref-perpage">Dnid Name</label>
                         <select  class="form-control" name="did_no">
                             <option value="">All</option>
@@ -221,11 +226,11 @@ audio {
                             @endif   
                         </select>                                
                     </div>
-                    <div class="col-md-3 form-group mb-3">
+                    <div class="col-md-4">
                         <label class="filter-col"  for="pref-search">By Caller Number</label>
                         <input type="text" class="form-control input-sm" name="caller_number">
                     </div>  
-                    <div class="col-md-3 form-group mb-3">
+                    <div class="col-md-4">
                         <label class="filter-col"  for="pref-perpage">Date</label>
                         <select class="form-control" name="date" id="date_select">
                             <option value="">All</option>
@@ -236,8 +241,8 @@ audio {
                             <option value="custom">Custom</option>
                         </select>                                
                     </div> 
-                    </div>
-                    <div class="row mt-4" style="display: none;" id="custom_date_div">
+                    <!-- </div> -->
+                    <!-- <div class="row mt-4" style="display: none;" id="custom_date_div">
                         <div class="col-md-3 form-group ml-5">
                         <label class="filter-col"  for="pref-search">Stardate </label>
                         <input type="text" name="startdate" class="form-control input-sm datepicker" >
@@ -246,11 +251,10 @@ audio {
                         <label class="filter-col"  for="pref-search">Enddate</label>
                         <input type="text" class="form-control input-sm datepicker" name="enddate">
                         </div>
-                    </div>
-                    <div class="mt-4 ml-5">    
-                        <button type="button" id="report_search_button" class="btn btn-primary">
-                            <span class="glyphicon glyphicon-record"></span> Search
-                        </button> 
+                    </div> -->
+                    <div class="col-md-6" style="margin-top: 24px;">
+                        <button id="btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
+                        <a href="{{url('cdrreport')}}" class="btn btn-outline-secondary" name="btn">Clear</a>
                     </div>
                 </form>      
             </div>

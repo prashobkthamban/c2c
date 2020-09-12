@@ -81,18 +81,18 @@ class HomeController extends Controller
             ->groupBy('cdrreport_lead.lead_stage')
             ->get();
 
-            $operator_calls = CdrReport::select(DB::raw('count(cdrreport_lead.cdrreport_id) as lead_count'), DB::raw('count(cdrreport_lead.lead_stage) as lead_status'), DB::raw('count(*) as user_count, cdr.status'), DB::raw('count(*) as total_count, cdr.operatorid'), 'account.username', 'cdr.groupid', 'cdr.operatorid','cdr.status', 'cdrreport_lead.lead_stage')
+            $operator_calls = CdrReport::select(DB::raw('count(cdrreport_lead.cdrreport_id) as lead_count'), DB::raw('count(cdrreport_lead.lead_stage) as lead_status'), DB::raw('count(*) as user_count, cdr.status'), DB::raw('count(*) as total_count, cdr.operatorid'), 'account.username', 'cdr.cdrid', 'cdr.groupid', 'cdr.operatorid','cdr.status', 'cdrreport_lead.lead_stage')
             ->where('cdr.groupid', Auth::user()->groupid)
             ->where('cdr.operatorid', '!=', '0')
             ->join('account', 'account.operator_id', '=', 'cdr.operatorid')
             ->leftjoin('cdrreport_lead', 'cdrreport_lead.cdrreport_id', '=', 'cdr.cdrid')
             ->whereIn('cdr.status', ['ANSWERED', 'MISSED', 'AFTEROFFICE', 'LIVECALL'])
-            ->whereDate('cdr.datetime', '>=', $qsdate)
-            ->whereDate('cdr.datetime', '<=', $qedate)
+            //->whereDate('cdr.datetime', '>=', $qsdate)
+            //->whereDate('cdr.datetime', '<=', $qedate)
             ->groupBy('cdr.operatorid', 'cdr.status')
             ->get();
 
-           // dd($operator_calls);
+            //dd($operator_calls);
             $opcallList = [];
             $lead_count = 0;
             foreach($operator_calls as $listOne) {
@@ -101,7 +101,7 @@ class HomeController extends Controller
                 $opcallList[$listOne->username]['lead_count'] = $lead_count;
                 $opcallList[$listOne->username]['completed'] = 0;
             }
-            
+            //dd($opcallList);
             $insight_ivr = DB::table('cdr')
             ->select(DB::raw('count(*) as count, deptname as dept_name'))
             ->where('deptname', '!=', '')

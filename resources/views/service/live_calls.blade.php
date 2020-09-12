@@ -31,13 +31,21 @@
                                         <th>Dial Statergy</th>
                                         <th>Priority</th>
                                         <th>Duration</th>
+                                        @if(Auth::user()->usertype == 'groupadmin')
+                                        <th>Listen</th>
+                                        @endif
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @if(!empty($result))
                                         @foreach($result as $row )
-                                        $contactName = getConatctName($row->callerid);
-                                        $fname = count($contactName) == null ? $row->callerid :  contactName[0]->fname;
+                                        <?php $contactName = getConatctName($row->callerid);
+                                        date_default_timezone_set('Asia/Kolkata');
+                                        $datetime1 = new DateTime();
+                                        $datetime2 = new DateTime($row->status_change_time);
+                                        $interval = $datetime1->diff($datetime2);
+                                        $fname = count($contactName) == null ? $row->callerid :  contactName[0]->fname; 
+                                        ?>
                                     <tr>
                                         @if(Auth::user()->usertype == 'admin')
                                         <td>{{ $row->name }}</td>
@@ -49,7 +57,10 @@
                                         <td>{{ $row->call_status }}</td>
                                         <td>{{ $row->dial_statergy }}</td>
                                         <td>{{ $row->priority }}</td>
-                                        <td>hjgh</td>
+                                        <td>{{ $interval->format('%H:%i:%s') }}</td>
+                                        @if(Auth::user()->usertype == 'groupadmin')
+                                        <td><i class="i-Headphone" aria-hidden="true"></i></td>
+                                        @endif
                                     </tr>
                                     @endforeach
                                         @endif
@@ -68,6 +79,9 @@
                                         <th>Dial Statergy</th>
                                         <th>Priority</th>
                                         <th>Duration</th>
+                                        @if(Auth::user()->usertype == 'groupadmin')
+                                        <td>Listen</td>
+                                        @endif
                                     </tr>
 
                                     </tfoot>

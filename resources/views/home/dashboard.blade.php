@@ -253,6 +253,8 @@
                                                     <th scope="col">Total</th>
                                                     <th scope="col">Answered</th>
                                                     <th scope="col">Missed</th>
+                                                    <th scope="col">Live</th>
+                                                    <th scope="col">After Office</th>
                                                     <th scope="col">Forms</th>
                                                     <th scope="col">Completed</th>
                                                 </tr>
@@ -260,14 +262,19 @@
                                             <tbody>
                                             @if(sizeof($opcallList) > 0)
                                                 @foreach($opcallList as $key => $row)
-                                                <?php $total = (isset($row['ANSWERED']) ? $row['ANSWERED'] : 0)+ (isset($row['MISSED']) ? $row['MISSED'] : 0) + $row['lead_count'] + $row['completed']; ?>
+                                                <?php //dd($row);
+                                                $total = (isset($row['ANSWERED']) ? $row['ANSWERED'] : 0)+ (isset($row['MISSED']) ? $row['MISSED'] : 0) + $row['lead_count'] + $row['completed']; ?>
                                                 <tr>
                                                     <td>{{$key}}</td>
                                                     <td>{{$total}}</td>
                                                     <td>{{isset($row['ANSWERED']) ? $row['ANSWERED'] : ''}}</td>
                                                     <td>{{isset($row['MISSED']) ? $row['MISSED'] : ''}}</td>
-                                                    <td>{{isset($row['lead_count']) ? $row['lead_count'] : ''}}</td>
-                                                    <td>{{isset($row['completed']) ? $row['completed'] : ''}}</td>
+                                                    <td>{{isset($row['LIVECALL']) ? $row['LIVECALL'] : ''}}</td>
+                                                    <td>{{isset($row['AFTEROFFICE']) ? $row['AFTEROFFICE'] : ''}}</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <!-- <td>{{isset($row['lead_count']) ? $row['lead_count'] : ''}}</td>
+                                                    <td>{{isset($row['completed']) ? $row['completed'] : ''}}</td> -->
                                                 </tr>
                                                 @endforeach
                                             @else

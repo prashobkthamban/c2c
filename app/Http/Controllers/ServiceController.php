@@ -207,6 +207,7 @@ class ServiceController extends Controller
             
         $query->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name')->orderBy('id', 'desc');
         $result = $query->paginate(10);
+        //dd($result);
         return view('service.live_calls', compact('result'));
     }
 

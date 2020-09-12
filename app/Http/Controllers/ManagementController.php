@@ -48,7 +48,6 @@ class ManagementController extends Controller
             ]);
         }
 
-
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
@@ -65,18 +64,51 @@ class ManagementController extends Controller
        return $data; 
     }
 
-    public function voicemail() {
-        $voicemails = DB::table('voicemails')
+    public function voicemail(Request $request) {
+        $date_to = $request->get('date_to');
+        $date_from = $request->get('date_from');
+        $date = $request->get('date');
+        $call_no = $request->get('caller_number');
+        $department = $request->get('department');
+
+        $query = DB::table('voicemails')
             ->select('voicemails.*', 'accountgroup.name' )
-            ->where('voicemails.groupid', 1)
-            ->join('accountgroup', 'voicemails.groupid', '=', 'accountgroup.id')
-            ->get();
-        //dd($voicemails);
-        return view('management.voicemail', compact('voicemails'));
+            ->where('voicemails.groupid', Auth::user()->groupid)
+            ->join('accountgroup', 'voicemails.groupid', '=', 'accountgroup.id');
+            if(!empty($call_no)) {
+                $query->where('voicemails.callerid', $call_no);
+            }
+            if(!empty($department)) {
+                $query->where('voicemails.departmentname','like','%'.$department.'%');
+            }
+            if(!empty($date)) {
+                if($date == 'today')
+                    $date_from = $date_to = date("Y-m-d");
+                elseif ($date == 'yesterday')
+                    $date_from = $date_to = date("Y-m-d", strtotime("-1 day"));
+                elseif ($date == 'week') {
+                    $date_from = date("Y-m-d", strtotime("-7 day"));
+                    $date_to = date("Y-m-d");
+                }
+                elseif($date == 'month') {
+                    $date_from = date("Y-m-d", strtotime("-1 month"));
+                    $date_to = date("Y-m-d");
+                } 
+                elseif($date == 'custom') {
+                    if($date_from != '')
+                        $date_from = date('Y-m-d',strtotime($date_from));
+                    if($date_to != '')
+                        $date_to = date('Y-m-d',strtotime($date_to));
+                }
+                $query->whereBetween('datetime',[$date_from.'%',$date_to.'%']);
+            }
+
+        $voicemails = $query->get();
+        return view('management.voicemail', compact('voicemails', 'call_no', 'department', 'date'));
     }
 
     public function contacts() {
-        $contacts = Contact::paginate(10);
+        $contacts = Contact::get();
         return view('management.contacts', compact('contacts'));
     }
 
@@ -88,7 +120,6 @@ class ManagementController extends Controller
             'email' => 'required',
             'phone' => 'required'
         ]); 
-        //dd($request->all());  
 
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
@@ -109,7 +140,8 @@ class ManagementController extends Controller
                 $data['success'] = 'Contact updated successfully.';
             } 
         } 
-         return $data;
+        //dd($data);
+        return $data;
     }
 
     public function ivrMenu() {

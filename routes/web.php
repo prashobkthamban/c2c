@@ -86,7 +86,7 @@ Route::get('get_pbx_did/{id}', 'ReminderController@getPbxdid')->name('getPbxdid'
 
 Route::get('operator', 'ReportController@operator')->name('operator');
 Route::get('contacts', 'ReportController@contacts')->name('contacts');
-Route::get('voicemail', 'ReportController@voicemail')->name('voicemail');
+//Route::get('voicemail', 'ReportController@voicemail')->name('voicemail');
 Route::get('blacklist', 'ReportController@blacklist')->name('blacklist');
 Route::get('holiday', 'ReportController@holiday')->name('holiday');
 Route::get('conference', 'ReportController@conference')->name('conference');
@@ -126,6 +126,7 @@ Route::get('get_did/{groupid}', 'UserController@getDid')->name('getDid');
 Route::post('edit_profile', 'UserController@editProfile')->name('editProfile');
 Route::post('crm_settings', 'UserController@crmSettings')->name('crmSettings');
 Route::get('reset_password', 'UserController@resetPassword')->name('resetPassword');
+Route::get('account_list', 'UserController@associatedGroups')->name('associatedGroups');
 
 
 /* ----------Coperate Group----------- */

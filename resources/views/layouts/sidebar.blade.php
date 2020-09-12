@@ -238,7 +238,7 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-						<li class="nav-item ">
+						<li class="nav-item">
                             <a class="nav-item-hold" href="{{route('LiveCalls')}}">
                                 <i class="nav-icon i-Clock-3"></i>
                                 <span class="item-name">Live Calls</span>
@@ -248,6 +248,13 @@
                             <a class="nav-item-hold" href="#">
                                 <i class="nav-icon i-Library"></i>
                                 <span class="nav-text">CRM</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-item-hold" href="{{route('associatedGroups')}}">
+                                <i class="nav-icon i-Administrator"></i>
+                                <span class="nav-text">Accounts</span>
                             </a>
                             <div class="triangle"></div>
                         </li>
