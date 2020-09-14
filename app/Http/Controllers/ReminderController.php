@@ -20,9 +20,17 @@ class ReminderController extends Controller
         }
     }
 
-    public function index(){
-        //dd('index');
-        return view('home.reminder', ['result' => Reminder::getReport(),'tags'=>CdrTag::getTag()]);
+    public function index(Request $request){
+        //dd($request->all);
+        $data['caller'] = $request->get('caller_number');
+        $data['operator'] = $request->get('operator');
+        $data['department'] = $request->get('department');
+        $data['status'] = $request->get('status');
+        $data['date_to'] = $request->get('date_to');
+        $data['date_from'] = $request->get('date_from');
+        $data['date'] = $request->get('date');
+        $dept = Reminder::select('deptname')->where('deptname', '!=', '')->groupBy('deptname')->pluck('deptname', 'deptname');
+        return view('home.reminder', ['result' => Reminder::getReport($data),'tags'=>CdrTag::getTag(), 'depts' => $dept, 'params' => $data]);
     }
 
     public function pbxextension() {

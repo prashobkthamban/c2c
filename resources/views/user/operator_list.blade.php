@@ -17,7 +17,7 @@
                     <?php $operatorCount = sizeof($operators); 
                     $target = ($operatorCount < Auth::user()->load('accountdetails')->accountdetails['operator_no_logins']) ? '#operator_account' : ''; 
                     ?>
-                    <a title="Add Operator" href="#" data-toggle="modal" data-target="<?php echo $target; ?>" class="btn btn-primary add_account">Add Operator</a>
+                    <a title="Add Operator" href="javascript:void(0)" data-toggle="modal" data-target="<?php echo $target; ?>" class="btn btn-primary add_account">Add Operator</a>
                     <p><center><b id="crm_error" style="display:none;color: red;">CRM Access Limit is over.Please contact to Administration!!!</b></center></p>
                     <div class="table-responsive">
                         <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
@@ -48,10 +48,7 @@
                                     <td><a href="#" data-toggle="modal" data-target="#operator_account" class="text-success mr-2 edit_account" id="{{$operator->id}}">
                                             <i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                         </a>
-                                        <!-- <a href="{{ route('deleteOperatorAccount', $operator->id) }}" onclick="return confirm('You want to delete this operator?')" class="text-danger mr-2">
-                                            <i class="nav-icon i-Close-Window font-weight-bold"></i>
-                                        </a> -->
-                                        <a href="javascript:void(0)" onClick="deleteItem({{$operator->id}}, 'operatoraccount')" class="text-danger mr-2">
+                                        <a href="javascript:void(0)" onClick="deleteItem({{$operator->id}}, 'operatoraccount')" class="text-danger mr-2 deleteItem">
                                             <i class="nav-icon i-Close-Window font-weight-bold"></i></a>
                                     </td>
                                 </tr>
@@ -256,8 +253,6 @@
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script>
     var operatorLimits = "<?php echo Auth::user()->load('accountdetails')->accountdetails['operator_no_logins']; ?>";
-    var createCount = "<?php echo $operatorCount; ?>";
-    console.log('fcghv', operatorLimits);
     var days = [];
     function selectDay(day) {
         if(!$("#" + day).hasClass('btn-primary')) {
@@ -378,9 +373,17 @@
         });
 
         $('.add_account').click(function() {
-            if(!(createCount < operatorLimits)) {
-                toastr.error('Limit exceeded');
-            } 
+            $.ajax({
+                url: "operator_count",
+                type: 'GET',
+                success: function (count) {
+                    if(Number(count)  >= Number(operatorLimits) ) {
+                        toastr.error('Limit exceeded');
+                    } else {
+                        $('.add_account').attr('data-target', '#operator_account');
+                    }           
+                }
+            });
             $("#modal-title").text('Add Operator Account');
             $(".week_days").removeClass('btn-primary');
             $(".add_account_form")[0].reset();    

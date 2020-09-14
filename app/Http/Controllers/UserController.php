@@ -466,6 +466,10 @@ public function updatesettings($id, Request $request) {
         ->orderBy('adddate','DESC')->paginate(10);
         return view('user.operator_list', compact('operators'));
     }
+
+    public function operatorCount() {
+        return OperatorAccount::where('groupid', Auth::user()->groupid)->count();
+    }
     
     public function stickey_list($id) {
         return $stickey = DB::table('ast_sticky_agents')
@@ -497,7 +501,7 @@ public function updatesettings($id, Request $request) {
             $data['error'] = $validator->messages(); 
         } else {
             $crm_users = DB::table('operatoraccount')->where('groupid',Auth::user()->groupid)->where('crm_access','yes')->get();
-            if (count($crm_users) >= Auth::user()->load('accountdetails')->accountdetails['crm_users']) 
+            if (count($crm_users) <= Auth::user()->load('accountdetails')->accountdetails['crm_users']) 
             {
                 $workingDays = explode(',', $request->working_days);
                 $operator_data = [

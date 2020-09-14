@@ -139,6 +139,7 @@ Route::post('add_black_list', 'UserController@addBlacklist')->name('addBlackList
 Route::get('blacklist/{id}', 'UserController@destroyBlacklist')->name('deleteBlacklist');
 
 Route::get('operators', 'UserController@operators')->name('OperatorList');
+Route::get('operator_count', 'UserController@operatorCount')->name('operatorCount');
 Route::get('stickey_list/{id}', 'UserController@stickey_list')->name('stickeyList');
 Route::delete('delete_stickey/{id}', 'UserController@delete_stickey')->name('deleteStickey');
 Route::post('add_operator_account', 'UserController@addOprAccount')->name('AddOperatorAccount');

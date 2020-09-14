@@ -11,11 +11,65 @@
     </div>
     <div class="separator-breadcrumb border-top"></div>
 
-
     <div class="row mb-4">
         <div class="col-md-12 mb-4">
             <div class="card text-left">
                 <div class="card-body">
+                <h5 class="ml-3">Search Panel</h5></br>
+                    <div class="row" style="margin-right: 24px;margin-left: 24px;">
+                        <div class="col-md-12">
+                            <form id="reminder_form" method="GET" autocomplete="off">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="filter-col"  for="pref-perpage">Departments</label>
+                                    {!! Form::select('department', $depts->prepend('All', ''), (isset($_GET['department'])) ? $_GET['department'] : '',array('class' => 'form-control', 'id' => 'department')) !!}
+                                </div> 
+                                <div class="col-md-4">
+                                    <label class="filter-col"  for="pref-perpage">Status</label>
+                                    <select name="status" class="form-control">
+                                        <option value="">All</option>
+                                        <option value="live" <?= ($params['status'] == 'live') ? 'selected' : ''; ?>>Live</option>
+                                        <option value="close" <?= ($params['status'] == 'close') ? 'selected' : ''; ?>>Close</option>
+                                    </select>                                
+                                </div> 
+                                <div class="col-md-4">
+                                    <label class="filter-col"  for="pref-search">By Caller Number</label>
+                                    <input type="text" class="form-control input-sm" value="<?= $params['caller']; ?>" name="caller_number">
+                                </div> 
+                                <div class="col-md-4">
+                                    <label class="filter-col"  for="pref-search">By Operator Name</label>
+                                    <input type="text" class="form-control input-sm" value="<?= $params['operator']; ?>" name="operator">
+                                </div>  
+                                <div class="col-md-4">
+                                    <label class="filter-col"  for="pref-perpage">Date</label>
+                                    <select class="form-control" name="date" id="date_select">
+                                        <option value="">All</option>
+                                        <option value="today" <?= ($params['date'] == 'today') ? 'selected' : ''; ?>>Today</option>
+                                        <option value="yesterday" <?= ($params['date'] == 'yesterday') ? 'selected' : ''; ?>>Yesterday</option>
+                                        <option value="week" <?= ($params['date'] == 'week') ? 'selected' : ''; ?>>1 Week</option>
+                                        <option value="month" <?= ($params['date'] == 'month') ? 'selected' : ''; ?>>1 Month</option>
+                                        <option value="custom" <?= ($params['date'] == 'custom') ? 'selected' : ''; ?>>Custom</option>
+                                    </select>                                
+                                </div> 
+                                <div class="col-md-4 custom_date_div d-none">
+                                    <label class="filter-col"  for="pref-search">Date From</label>
+                                    <input type="text" name="date_from" value="<?= (isset($_GET['date_from'])) ? $_GET['date_from'] : ''; ?>" class="form-control input-sm datepicker" >
+                                </div>
+                                <div class="col-md-4 custom_date_div d-none">
+                                    <label class="filter-col"  for="pref-search">Date To</label>
+                                    <input type="text" class="form-control input-sm datepicker" name="date_to" value="<?= (isset($_GET['date_to'])) ? $_GET['date_to'] : ''; ?>">
+                                </div>
+                                <div class="col-md-4 custom_date_div d-none" style="display:none">
+                                </div>
+                                <div class="col-md-6" style="margin-top: 24px;">
+                                    <button id="btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
+                                    <a href="{{url('reminder')}}" class="btn btn-outline-secondary" name="btn">Clear</a>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                    <br><br>
                     <div class="table-responsive">
                         <table id="reminder_table" class="display table table-striped table-bordered" style="width:100%">
                             <thead>
@@ -37,11 +91,11 @@
                             <tr data-toggle="collapse" data-target="#accordion_{{$row->id}}" class="clickable" id="row_{{ $row->id }}">
                                 <td>
                                     @if(Auth::user()->usertype=='groupadmin')
-                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="moreOption({{$row->id}},{{ $row->contacts && $row->contacts->fname ? true : false}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->number }}" onClick="moreOption({{$row->id}},{{ $row->contacts && $row->contacts->fname ? true : false}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
                                         @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
                                         {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
                                         @else
-                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->contacts->fname ? $row->contacts->fname : $row->number }}" onClick="moreOption({{$row->id}},{{$row->contacts && $row->contacts->fname ? true : false}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->number }}" onClick="moreOption({{$row->id}},{{$row->contacts && $row->contacts->fname ? true : false}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
                                     @endif
 
                                 </td>
@@ -49,9 +103,12 @@
                                 <td>{{$row->secondleg}}</td>
                                 <td>{{$row->appoint_status}}</td>
                                 <td><a>{{$row->deptname}}</a></td>
-                                <td>{{$row->opername}}</td>
+                                <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
                                 <td>{{$row->assignedname}}</td>
                                 <td>
+                                @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
+                                        <a href="#" class="btn play_audio" <?php echo (!empty($row->recordedfilename)) ? "style=''" : "style='visibility:hidden'"; ?> title="Play Audio" data-toggle="modal" data-target="#play_modal" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>   
+                                @endif
                                     <a href="#" data-toggle="modal" data-target="#edit_reminder" class="text-success mr-2 edit_reminder" id="{{$row->id}}">
                                             <i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                     </a>
@@ -86,7 +143,6 @@
 
                         </table>
                     </div>
-
                 </div>
                 <!-- <div class="pull-right">{{ $result->links() }}</div> -->
             </div>
@@ -147,6 +203,22 @@
 
     </div>
 
+    <!-- play modal -->
+    <div class="modal fade" id="play_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                            <!-- <h5 class="modal-title">Dial A Number</h5> -->
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                    </div>
+                    <div class="modal-body" id="play_src">
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
 
 @endsection
@@ -193,6 +265,13 @@
     }
 
     $(document).ready(function() {
+        $('.play_audio').on('click',function(e)
+        {
+            var file = $(this).attr("data-file");
+            file = 'voicefiles/' + file;
+            $("#play_src").html('<audio controls id="audioSource"><source src="' + file + '" type="video/mp4"></source></audio>' );
+        });
+
         $('.edit_reminder').on('click',function(e)
         {
             var id = $(this).attr("id");
