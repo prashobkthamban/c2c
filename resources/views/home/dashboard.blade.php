@@ -15,8 +15,8 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         @foreach($announcements as $listOne)
-                            <div class="card-title">{{$listOne->msg}}</div>    
-                        @endforeach                      
+                            <div class="card-title">{{$listOne->msg}}</div>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -24,8 +24,8 @@
             @endif
             <div class="row">
                 <?php if(Auth::user()->usertype == 'admin'): ?>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                <div class="col-md-2">
+                    <div class="card card-icon mb-4">
                         <div class="card-body text-center">
                             <i class="i-Administrator"></i>
                             <div class="content">
@@ -35,8 +35,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                <div class="col-md-2">
+                    <div class="card card-icon mb-4">
                         <div class="card-body text-center">
                             <i class="i-Administrator"></i>
                             <div class="content">
@@ -48,8 +48,8 @@
                 </div>
                 <?php endif; ?>
                 <?php if(Auth::user()->usertype == 'groupadmin'): ?>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                <div class="col-md-2">
+                    <div class="card card-icon mb-4">
                         <div class="card-body text-center">
                             <i class="i-Administrator"></i>
                             <div class="content">
@@ -61,8 +61,8 @@
                 </div>
                 <?php endif; ?>
                 <?php if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator' || Auth::user()->usertype == 'admin'): ?>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                <div class="col-md-2">
+                    <div class="card card-icon mb-4">
                         <div class="card-body text-center">
                             <i class="i-Telephone"></i>
                             <div class="content">
@@ -74,12 +74,12 @@
                 </div>
                 <?php endif; ?>
                 <?php if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin'): ?>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                <div class="col-md-2">
+                    <div class="card card-icon mb-4">
                         <div class="card-body text-center">
                             <i class="i-Headphone"></i>
                             <div class="content">
-                                <p class="text-muted mt-2 mb-3">Live Calls</p>
+                                <p class="text-muted mt-2 mb-0">Live Calls</p>
                                 <p class="text-primary text-24 line-height-1 mb-2">{{ (Auth::user()->usertype == 'groupadmin' ? $g_activecalls  : $activecalls) }}</p>
                             </div>
                         </div>
@@ -87,8 +87,8 @@
                 </div>
                 <?php endif; ?>
                 <?php if(Auth::user()->usertype == 'groupadmin'): ?>
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                <div class="col-md-2">
+                    <div class="card card-icon mb-4">
                         <div class="card-body text-center">
                             <i class="i-Thumbs-Up-Smiley"></i>
                             <div class="content">
@@ -99,20 +99,20 @@
                     </div>
                 </div>
 
-                <div class="col-lg-3 col-md-6 col-sm-6">
-                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
+                <div class="col-md-2">
+                    <div class="card card-icon mb-4">
                         <div class="card-body text-center">
                             <i class="i-Thumbs-Down-Smiley"></i>
                             <div class="content">
-                                <p class="text-muted mt-2 mb-3">IVR Missed</p>
+                                <p class="text-muted mt-2 mb-0">IVR Missed</p>
                                 <p class="text-primary text-24 line-height-1 mb-2">{{ $ivrmissed }}</p>
                             </div>
                         </div>
                     </div>
-                </div> 
-                <?php endif; ?> 
+                </div>
+                <?php endif; ?>
 
-               
+
             </div>
 
             <div class="row" style="margin-bottom: 34px;">
@@ -139,9 +139,9 @@
                             <div id="echartBar" style="height: 300px;"></div>
                         </div>
                     </div>
-                </div>       
+                </div>
             </div> -->
-            
+
             <?php if (Auth::user()->usertype == 'groupadmin') { ?>
                 <div class="row">
                 <div class="col-lg-6 col-xl-6 mt-4">
@@ -162,15 +162,15 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        @if(sizeof($incoming_calls) > 0)    
+                                        @if(sizeof($incoming_calls) > 0)
                                             @foreach($incoming_calls as $row)
                                             <tr>
                                                 <td>{{$row->status}}</td>
                                                 <td>{{$row->count}}</td>
                                                 <td>{{$row->leadCdr->count()}}</td>
                                             </tr>
-                                            @endforeach 
-                                        @else 
+                                            @endforeach
+                                        @else
                                             <tr>
                                                 <td  colspan="3">No Data Found</td>
                                             </tr>
@@ -205,7 +205,7 @@
                                                 <td>{{$row->total}}</td>
                                             </tr>
                                             @endforeach
-                                            @else 
+                                            @else
                                             <tr>
                                                 <td  colspan="2">No Data Found</td>
                                             </tr>
@@ -224,14 +224,36 @@
                             <h6 class="mb-2 text-muted">Insight Ivr</h6>
                             <p class="text-22 font-weight-light mb-1"><i class="i-Up text-success"></i> By Department</p>
                             <!-- <div class="text-white purple-500 rounded-circle p-2 mr-3" >52</div> -->
-                            <div class="row mt-4">
-                            @foreach($insightData as $row)
+                            <div class="row">
+                            @foreach($insightData as $k => $row)
+                                @php
+                                if($k == 1){
+                                    $progress = "bg-danger";
+                                }else if($k == 2){
+                                    $progress = "bg-info";
+                                }else if($k == 3){
+                                    $progress = "bg-warning";
+                                } else {
+                                    $progress = "bg-success";
+                                }
+                                @endphp
                                 <div class="col-md-3">
+                                    <div class="card mb-4">
+                                        <div class="card-body">
+                                            <h6 class="mb-2 text-muted">{{$row['deptname']}}</h6>
+                                            <p class="mb-1 text-22 font-weight-light">{{$row['count']}}</p>
+                                            <div class="progress mb-1" style="height: 4px">
+                                                <div class="progress-bar bg-success" style="width: {{$row['count']}}%" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{-- <div class="col-md-2">
                                 <button class="btn btn-sm rounded-circle btn-icon btn-outline-primary text-white purple-500">{{$row['count']}}</button>
                                 </br></br>
                                 <span style="margin:7px;">{{$row['deptname']}}</span>
-                                </div>
-                               
+                                </div> --}}
+
                             @endforeach
                             <div id="echart9" style="height: 60px; -webkit-tap-highlight-color: transparent; user-select: none; position: relative;" _echarts_instance_="ec_1586745275835"><div style="position: relative; overflow: hidden; width: 528px; height: 60px; padding: 0px; margin: 0px; border-width: 0px; cursor: default;"><canvas data-zr-dom-id="zr_0" width="528" height="60" style="position: absolute; left: 0px; top: 0px; width: 528px; height: 60px; user-select: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); padding: 0px; margin: 0px; border-width: 0px;"></canvas></div><div></div></div>
                         </div>
@@ -249,7 +271,7 @@
                                         <table id="user_table" class="table  text-center">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col">User</th>
+                                                    <th scope="col">Operator</th>
                                                     <th scope="col">Total</th>
                                                     <th scope="col">Answered</th>
                                                     <th scope="col">Missed</th>
@@ -297,7 +319,7 @@
                 <h1>CRM</h1>
                 <div class="col-lg-12 col-md-12">
                     <div class="row">
-                       
+
                         <div class="col-md-2">
                             <div class="card card-icon mb-4">
                                 <div class="card-body text-center" style="background: #A5D6A7;">
@@ -372,12 +394,12 @@
                         <div class="row">
                             <div class="col-md-12 form-group mb-3">
                                 <label for="task">Task*</label>
-                                 <input type="text" name="task" id="task" class="form-control" placeholder="Enter Task" required="" />    
+                                 <input type="text" name="task" id="task" class="form-control" placeholder="Enter Task" required="" />
                             </div>
 
                             <div class="col-md-12 form-group mb-3">
                                 <label for="datetime">DateTime*</label>
-                                 <input type="datetime-local" name="datetime" id="datetime" class="form-control" required="" />    
+                                 <input type="datetime-local" name="datetime" id="datetime" class="form-control" required="" />
                             </div>
 
                             <div class="col-md-12">
@@ -401,12 +423,12 @@
                             <input type="hidden" name="todo_id" id="todo_id">
                             <div class="col-md-12 form-group mb-3">
                                 <label for="task">Task*</label>
-                                 <input type="text" name="task" id="task" class="form-control" placeholder="Enter Task" required="" />    
+                                 <input type="text" name="task" id="task" class="form-control" placeholder="Enter Task" required="" />
                             </div>
 
                             <div class="col-md-12 form-group mb-3">
                                 <label for="datetime">Datetime*</label>
-                                 <input type="datetime-local" name="datetime" id="datetime" class="form-control" required="" />    
+                                 <input type="datetime-local" name="datetime" id="datetime" class="form-control" required="" />
                             </div>
 
                             <div class="col-md-12">
@@ -451,7 +473,7 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <!-- start tr --> 
+                              <!-- start tr -->
                               @foreach($todo_lists as $todo_list)
                               <tr>
                                 <th scope="row">
@@ -461,7 +483,7 @@
                                     <!-- <span class="checkmark"></span> -->
                                   </label>
                                 </th>
-                               
+
                                 <td>
                                   {{$todo_list->title}}
                                 </td>
@@ -472,7 +494,7 @@
                                 <?php }else{ ?>
                                     <span class="badge badge-pill badge-outline-warning p-2 m-1">{{$todo_list->status}}</span>
                                 <?php }?>
-                                  
+
                                 </td>
                                 <td>
                                   <button type="button" class="btn bg-white _r_btn border-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -499,10 +521,10 @@
                                       Status Update to Hold
                                     </a>
                                     <?php }?>
-                                    
+
                                   </div>
                                 </td>
-                                
+
                               </tr>
                               @endforeach
                               <!-- end tr -->
@@ -524,7 +546,7 @@
                 <div class="col-md-12">
                     <div class="card o-hidden mb-4">
                         <div class="card-header d-flex align-items-center border-0">
-                            <h3 class="w-50 float-left card-title m-0">Users Details</h3>
+                            <h3 class="w-50 float-left card-title m-0">Operator Details</h3>
                             <!-- <div class="dropdown dropleft text-right w-50 float-right">
                                 <button class="btn bg-gray-100" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="nav-icon i-Gear-2"></i>
@@ -538,7 +560,7 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Username</th>
+                                            <th scope="col">Operator Name</th>
                                             <th scope="col">Phone No</th>
                                             <th scope="col">Lead Count</th>
                                             <th scope="col">View Leads</th>
@@ -546,7 +568,7 @@
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $i = 1; 
+                                        $i = 1;
                                         foreach($users_list as $row)
                                         { ?>
                                         <tr>
@@ -566,7 +588,7 @@
                                             </td>
                                         </tr>
                                         <?php $i++;
-                                        } 
+                                        }
                                         ?>
                                     </tbody>
                                 </table>
@@ -595,7 +617,7 @@
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $i = 1; 
+                                        $i = 1;
                                         foreach($remainders as $row)
                                         { ?>
                                         <tr>
@@ -606,7 +628,7 @@
                                             <td>{{$row->task}}</td>
                                         </tr>
                                         <?php $i++;
-                                        } 
+                                        }
                                         ?>
                                     </tbody>
                                 </table>
@@ -634,7 +656,7 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Username</th>
+                                            <th scope="col">Operator Name</th>
                                             <th scope="col">New</th>
                                             <th scope="col">Contacted</th>
                                             <th scope="col">Interested</th>
@@ -646,34 +668,34 @@
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $i = 1; 
+                                        $i = 1;
                                         foreach($operator_lead_stage as $name => $row)
-                                        { 
+                                        {
                                             $new = $converted = $interested = $under_review = $demo = $unqualified = $converted = '0';
-                                            foreach ($row as $key => $value) { 
+                                            foreach ($row as $key => $value) {
 
-                                               if ($value->lead_stage == 'new') { 
+                                               if ($value->lead_stage == 'new') {
                                                    $new = $value->lead_count;
                                                }
-                                               if ($value->lead_stage == 'Contacted') { 
+                                               if ($value->lead_stage == 'Contacted') {
                                                    $converted = $value->lead_count;
                                                }
 
-                                               if ($value->lead_stage == 'Interested') { 
+                                               if ($value->lead_stage == 'Interested') {
                                                    $interested = $value->lead_count;
                                                }
 
-                                               if ($value->lead_stage == 'Under review') { 
+                                               if ($value->lead_stage == 'Under review') {
                                                    $under_review = $value->lead_count;
                                                }
 
-                                               if ($value->lead_stage == 'Demo') { 
+                                               if ($value->lead_stage == 'Demo') {
                                                    $demo = $value->lead_count;
                                                }
-                                               if ($value->lead_stage == 'Unqualified') { 
+                                               if ($value->lead_stage == 'Unqualified') {
                                                    $unqualified = $value->lead_count;
                                                }
-                                               if ($value->lead_stage == 'Converted') { 
+                                               if ($value->lead_stage == 'Converted') {
                                                    $converted = $value->lead_count;
                                                }
                                             }
@@ -688,10 +710,10 @@
                                                 <td>{{$demo}}</td>
                                                 <td>{{$unqualified}}</td>
                                                 <td>{{$converted}}</td>
-                                            </tr>        
+                                            </tr>
                                         <?php
                                        $i++;
-                                        } 
+                                        }
                                         ?>
                                     </tbody>
                                 </table>
@@ -717,16 +739,16 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Username</th>
-                                            <th scope="col">Predicted Amount</th>
+                                            <th scope="col" style="text-align: left;">Operator Name</th>
+                                            <th scope="col" style="width: 50%;text-align: right;">Predicted Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $i = 1; 
+                                        $i = 1;
                                         foreach($predict_cost as $row)
                                         { //print_r($row);
-                                            foreach ($row as $key => $value) { 
+                                            foreach ($row as $key => $value) {
                                                 ?>
                                             <tr>
                                                 <td>{{$i}}</td>
@@ -734,12 +756,12 @@
                                                 <td style="text-align: right;">
                                                     <?php
                                                         echo sprintf("%.2f", $value->pre_cost);
-                                                    ?> 
+                                                    ?>
                                                 </td>
-                                            </tr>        
+                                            </tr>
                                         <?php $i++; }
-                                       
-                                        } 
+
+                                        }
                                         ?>
                                     </tbody>
                                 </table>
@@ -748,7 +770,7 @@
                     </div>
                 </div>
             <?php } ?>
-        </div>    
+        </div>
 
         <div class="col-lg-4 col-xl-4 mt-4">
             <?php
@@ -765,15 +787,15 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Username</th>
-                                            <th scope="col">Total Amount</th>
+                                            <th scope="col" style="text-align: left;">Operator Name</th>
+                                            <th scope="col" style="text-align: right;">Total Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $i = 1; 
+                                        $i = 1;
                                         foreach ($proposal as $row) {
-                                            foreach ($row as $key => $value) { 
+                                            foreach ($row as $key => $value) {
                                                 ?>
                                                 <tr>
                                                     <td>{{$i}}</td>
@@ -781,9 +803,9 @@
                                                     <td style="text-align: right;">
                                                         <?php
                                                             echo sprintf("%.2f", $value->proposal_total);
-                                                        ?> 
+                                                        ?>
                                                     </td>
-                                                </tr>        
+                                                </tr>
                                             <?php $i++; }
                                         }
                                         ?>
@@ -811,15 +833,15 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Username</th>
-                                            <th scope="col">Total Amount</th>
+                                            <th scope="col" style="text-align: left;">Operator Name</th>
+                                            <th scope="col" style="text-align: right;">Total Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $i = 1; 
+                                        $i = 1;
                                         foreach ($invoice as $row) {
-                                            foreach ($row as $key => $value) { 
+                                            foreach ($row as $key => $value) {
                                                 ?>
                                                 <tr>
                                                     <td>{{$i}}</td>
@@ -827,9 +849,9 @@
                                                     <td style="text-align: right;">
                                                         <?php
                                                             echo sprintf("%.2f", $value->invoice_total);
-                                                        ?> 
+                                                        ?>
                                                     </td>
-                                                </tr>        
+                                                </tr>
                                             <?php $i++; }
                                         }
                                         ?>
@@ -878,7 +900,7 @@
                 <div class="col-md-12">
                     <div class="card o-hidden mb-4">
                         <div class="card-header d-flex align-items-center border-0">
-                            <h3 class="w-50 float-left card-title m-0">Users Details</h3>
+                            <h3 class="w-50 float-left card-title m-0">Operator Details</h3>
                         </div>
                         <?php //print_r($lead_count);?>
                         <div class="">
@@ -887,18 +909,18 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Username</th>
+                                            <th scope="col">Operator Name</th>
                                             <th scope="col">Phone No</th>
                                             <th scope="col">Lead Count</th>
                                             <th scope="col">View Leads</th>
                                         </tr>
                                     </thead>
                                     <tbody id="user_details">
-                                    	
+
                                         <?php
-                                        $i = 1; 
+                                        $i = 1;
                                         foreach($users_list as $row)
-                                        { 
+                                        {
                                             foreach ($row as $key => $new_value) {
                                                 # code...
                                             }?>
@@ -919,7 +941,7 @@
                                             </td>
                                         </tr>
                                         <?php $i++;
-                                        } 
+                                        }
                                         ?>
                                     </tbody>
                                 </table>
@@ -936,7 +958,7 @@
                 <div class="col-md-12">
                     <div class="card o-hidden mb-4">
                         <div class="card-header d-flex align-items-center border-0">
-                            <h3 class="w-50 float-left card-title m-0">Users Lead Details</h3>
+                            <h3 class="w-50 float-left card-title m-0">Operator Lead Details</h3>
                         </div>
                         <?php //print_r($operator_lead_stage);?>
                         <div class="">
@@ -945,7 +967,7 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Username</th>
+                                            <th scope="col">Operator Name</th>
                                             <th scope="col">New</th>
                                             <th scope="col">Contacted</th>
                                             <th scope="col">Interested</th>
@@ -958,34 +980,34 @@
                                     <tbody id="user_lead_details">
 
                                         <?php
-                                        $i = 1; 
+                                        $i = 1;
                                         foreach($operator_lead_stage as $name => $row)
-                                        { 
+                                        {
                                             $new = $converted = $interested = $under_review = $demo = $unqualified = $converted = '0';
-                                            foreach ($row as $key => $value) { 
+                                            foreach ($row as $key => $value) {
 
-                                               if ($value->lead_stage == 'new') { 
+                                               if ($value->lead_stage == 'new') {
                                                    $new = $value->lead_count;
                                                }
-                                               if ($value->lead_stage == 'Contacted') { 
+                                               if ($value->lead_stage == 'Contacted') {
                                                    $converted = $value->lead_count;
                                                }
 
-                                               if ($value->lead_stage == 'Interested') { 
+                                               if ($value->lead_stage == 'Interested') {
                                                    $interested = $value->lead_count;
                                                }
 
-                                               if ($value->lead_stage == 'Under review') { 
+                                               if ($value->lead_stage == 'Under review') {
                                                    $under_review = $value->lead_count;
                                                }
 
-                                               if ($value->lead_stage == 'Demo') { 
+                                               if ($value->lead_stage == 'Demo') {
                                                    $demo = $value->lead_count;
                                                }
-                                               if ($value->lead_stage == 'Unqualified') { 
+                                               if ($value->lead_stage == 'Unqualified') {
                                                    $unqualified = $value->lead_count;
                                                }
-                                               if ($value->lead_stage == 'Converted') { 
+                                               if ($value->lead_stage == 'Converted') {
                                                    $converted = $value->lead_count;
                                                }
                                             }
@@ -1000,10 +1022,10 @@
                                                 <td>{{$demo}}</td>
                                                 <td>{{$unqualified}}</td>
                                                 <td>{{$converted}}</td>
-                                            </tr>        
+                                            </tr>
                                         <?php
                                        $i++;
-                                        } 
+                                        }
                                         ?>
                                     </tbody>
                                 </table>
@@ -1029,17 +1051,17 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Username</th>
-                                            <th scope="col">Predicted Amount</th>
+                                            <th scope="col" style="text-align: left;">Operator Name</th>
+                                            <th scope="col" style="width: 50%;text-align: right;">Predicted Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody id="predicted_amount_details">
 
                                         <?php
-                                        $i = 1; 
+                                        $i = 1;
                                         foreach($predict_cost as $row)
                                         { //print_r($row);
-                                            foreach ($row as $key => $value) { 
+                                            foreach ($row as $key => $value) {
                                                 ?>
                                             <tr>
                                                 <td>{{$i}}</td>
@@ -1047,12 +1069,12 @@
                                                 <td style="text-align: right;">
                                                     <?php
                                                         echo sprintf("%.2f", $value->pre_cost);
-                                                    ?> 
+                                                    ?>
                                                 </td>
-                                            </tr>        
+                                            </tr>
                                         <?php $i++; }
-                                       
-                                        } 
+
+                                        }
                                         ?>
                                     </tbody>
                                 </table>
@@ -1078,15 +1100,15 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Username</th>
-                                            <th scope="col">Total Amount</th>
+                                            <th scope="col" style="text-align: left;">Operator Name</th>
+                                            <th scope="col" style="text-align: right;">Total Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody id="proposal_amount_details">
                                         <?php
-                                        $i = 1; 
+                                        $i = 1;
                                         foreach ($proposal as $row) {
-                                            foreach ($row as $key => $value) { 
+                                            foreach ($row as $key => $value) {
                                                 ?>
                                                 <tr>
                                                     <td>{{$i}}</td>
@@ -1094,9 +1116,9 @@
                                                     <td style="text-align: right;">
                                                         <?php
                                                             echo sprintf("%.2f", $value->proposal_total);
-                                                        ?> 
+                                                        ?>
                                                     </td>
-                                                </tr>        
+                                                </tr>
                                             <?php $i++; }
                                         }
                                         ?>
@@ -1124,15 +1146,15 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Username</th>
-                                            <th scope="col">Total Amount</th>
+                                            <th scope="col" style="text-align: left;">Operator Name</th>
+                                            <th scope="col" style="text-align: right;">Total Amount</th>
                                         </tr>
                                     </thead>
                                     <tbody id="invoice_amount_details">
                                         <?php
-                                        $i = 1; 
+                                        $i = 1;
                                         foreach ($invoice as $row) {
-                                            foreach ($row as $key => $value) { 
+                                            foreach ($row as $key => $value) {
                                                 ?>
                                                 <tr>
                                                     <td>{{$i}}</td>
@@ -1140,9 +1162,9 @@
                                                     <td style="text-align: right;">
                                                         <?php
                                                             echo sprintf("%.2f", $value->invoice_total);
-                                                        ?> 
+                                                        ?>
                                                     </td>
-                                                </tr>        
+                                                </tr>
                                             <?php $i++; }
                                         }
                                         ?>
@@ -1154,7 +1176,7 @@
                 </div>
             <?php } ?>
         </div>
-        
+
         <div class="modal fade" id="TaskRemainder" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -1201,7 +1223,7 @@
                   //console.log(obj);
                   $.each(obj,function( index, value ) {
                     //alert(value.re_value);
-                    if (value.re_value == 1) 
+                    if (value.re_value == 1)
                       {
                         $('.RemainderTask #re_title').html(value.title);
                         $('.RemainderTask #re_datetime').html(value.date);
@@ -1378,8 +1400,8 @@
             $('#config-demo').daterangepicker({
             "startDate": "<?php echo $sdate; ?>",
             "endDate": "<?php echo $edate; ?>"
-            }, function(start, end, label) { 
-                
+            }, function(start, end, label) {
+
                 $('#dfrom').val(start.format('DD-MM-YYYY'));
                 $('#dto').val(end.format('DD-MM-YYYY'));
                 $('#dhid').submit();
@@ -1397,7 +1419,7 @@
                 url: "home/edit/todotask",
                 dataType: 'text',
                 data: {myid:myid},
-                success: function(edit_data) 
+                success: function(edit_data)
                 {
                     //console.log(edit_data);
                     var obj = jQuery.parseJSON(edit_data);
@@ -1422,7 +1444,7 @@
                 url: "home/crm_data",
                 dataType: 'text',
                 data: {date_from:date_from,date_to:date_to,groupadmin_id:groupadmin_id},
-                success: function(data) 
+                success: function(data)
                 {
                     //console.log(data);
                     var html = '';
@@ -1444,12 +1466,12 @@
 					var demo = '';
 					var unqualified = '';
 					var converted = '';
-                    
+
                     var obj = jQuery.parseJSON(data);
                     console.log(obj);
-                    
+
                     $.each(obj['users_list'], function( index, value ) {
-					  
+
 					  html += '<tr><td>'+i+'</td><td>'+value.opername+'</td><td>'+value.phonenumber+'</td><td>'+obj['lead_count'][value.id]+'</td><td><a href="{{ route('ListLeads') }}" class="text-success mr-2"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a></td></tr>';
 					  i++;
 					});
@@ -1465,32 +1487,32 @@
 									break;
 								case 'Contacted':
 									contacted = value1.lead_count;
-									break; 
+									break;
 								case 'Interested':
 									interested = value1.lead_count;
-									break; 
+									break;
 								case 'Under review':
 									under_review = value1.lead_count;
-									break; 
+									break;
 								case 'Demo':
 									demo = value1.lead_count;
-									break; 
+									break;
 								case 'Unqualified':
 									unqualified = value1.lead_count;
-									break; 
+									break;
 								case 'Converted':
 									converted = value1.lead_count;
-									break; 
+									break;
 							}*/
-							
+
 							if (value1.lead_stage == 'new') {
 								new1 = value1.lead_count;
 							}
 							else{
 								new1 = 0;
 							}
-							
-							if (value1.lead_stage == 'Contacted') { 
+
+							if (value1.lead_stage == 'Contacted') {
                                contacted =  value1.lead_count;
                            	}else{
                            		contacted = 0;
@@ -1531,7 +1553,7 @@
                            		converted = 0;
                            	}
 							html1 += '<tr><td>'+j+'</td><td>'+value1.opername+'</td><td>'+new1+'</td><td>'+contacted+'</td><td>'+interested+'</td><td>'+under_review+'</td><td>'+demo+'</td><td>'+unqualified+'</td><td>'+converted+'</td></tr>';
-							
+
 						});
 						j++;
 					});

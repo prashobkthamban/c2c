@@ -15,11 +15,20 @@
 
             </div>
             <div class="separator-breadcrumb border-top"></div>
+            <div class="row mb-3">
+                <div class="col-md-12" style="text-align: right;">
+                    <a title="Compact Sidebar" id="download" href="javascript:void(0)" class="btn btn-outline-secondary" style="margin-right: 15px;"> Download </a>
+                    <a title="Compact Sidebar" id="print" href="javascript:void(0)" class="btn btn-outline-secondary" style="margin-right: 15px;"> Print </a>
+                    <a title="Compact Sidebar" id="mail" href="{{ route('MailInvoice',$invoice->id) }}" class="btn btn-outline-secondary" style="margin-right: 15px;"> Mail </a>
+                    <a title="Compact Sidebar" id="add_converted" href="{{ route('InvoiceIndex') }}" class="btn btn-outline-secondary" style="margin-right: 15px;"> Back To Invoices </a>
+                    <a title="Compact Sidebar" id="add_converted" href="{{ route('editInvoice', $invoice->id) }}" class="btn btn-outline-secondary"> Edit Invoice </a>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-12">
                     <div class="card mb-4">
                         <div class="card-body">
-                        	<div class="col-md-12" style="text-align: right;">
+                        	{{-- <div class="col-md-12" style="text-align: right;">
 
                         		<a title="Compact Sidebar" id="download" href="javascript:void(0)" class="btn btn-outline-secondary" style="margin-right: 15px;"> Download </a>
 
@@ -32,8 +41,8 @@
                         		<a title="Compact Sidebar" id="add_converted" href="{{ route('editInvoice', $invoice->id) }}" class="btn btn-outline-secondary"> Edit Invoice </a>
 
                         		<!-- <button id="pdf" class="btn btn-primary" name="btn">Generate PDF</button> -->
-                        		
-                        	</div>
+
+                        	</div> --}}
                         	<div class="canvas_div_pdf" id="download_data" style="width: 100%;">
                         		<!-- <table border="0" cellspacing="0" cellpadding="2" style="width: 90%;margin-left: 30px;margin-top: 30px;" class="show_print">
 									<tbody>
@@ -41,7 +50,7 @@
 											<td></td>
 											<td></td>
 											<td><b>Invoice Number</b></td>
-											<td><b style="font-size: large;">INV-{{$invoice->invoice_number}}</b></td>			
+											<td><b style="font-size: large;">INV-{{$invoice->invoice_number}}</b></td>
 										</tr>
 										<tr>
 											<td></td>
@@ -59,7 +68,7 @@
 											<td><b>Company Name</b></td>
 											<td>{{$invoice->company_name}}</td>
 											<td><b>Company Name</b></td>
-											<td>{{$company_details->companyname}}</td>			
+											<td>{{$company_details->companyname}}</td>
 										</tr>
 										<tr>
 											<td><b>Address</b></td>
@@ -68,9 +77,9 @@
 											<td>{{$company_details->GST}}</td>
 										</tr>
 										<tr>
-											
 
-									
+
+
 									<td><b>First Name</b></td>
 											<td>{{$invoice->first_name}}</td>
 											<td><b>Address</b></td>
@@ -113,7 +122,7 @@
 										</tr>
 									</thead>
 									<tbody style="text-align: center;line-height: 154%;">
-										<?php 
+										<?php
 										$i = 1;
 										foreach ($invoice_details as $key => $invoice_detail) { ?>
 										<tr>
@@ -193,7 +202,7 @@
 										</tr>
 									</tfoot>
 								</table> -->
-								<div class="col-md-12">
+								<div class="col-md-10  offset-md-1">
 									<div class="row">
 										<div class="col-md-6"></div>
 										<div class="col-md-6">
@@ -219,7 +228,7 @@
 												</div>
 												<div class="col-md-8">
 													<p>{{$invoice->company_name}}</p>
-												</div>	
+												</div>
 												<div class="col-md-3"></div>
 											</div>
 										</div>
@@ -343,7 +352,7 @@
 								</div>
 								<div class="col-md-12" style="text-align: center;line-height: 154%;">
 									<div class="row">
-										<?php 
+										<?php
 										$i = 1;
 										foreach ($invoice_details as $key => $invoice_detail) { ?>
 											<div class="col-md-1">
@@ -400,9 +409,9 @@
 										</div>
 									</div>
 								</div>
-								<p id="sign" style="margin-left: 85%;margin-top: 12%;display: none;">Signature</p>
-                        	</div>	
-                           
+								<p id="sign" style="margin-left: 85%;margin-top: 5%;display: none;">Signature</p>
+                        	</div>
+
                         </div>
                     </div>
                 </div>
@@ -410,7 +419,7 @@
                 	<div class="card-body">
                     	<h3><center><b>Payments</b></center></h3>
                     	<?php
-                    	if (!empty($invoice_payments)) 
+                    	if (!empty($invoice_payments))
                     	{ ?>
                     		<table class="table" style="width: 100%;">
                     			<thead>
@@ -421,6 +430,7 @@
                     					<td>payment date</td>
                     					<td>payment mode</td>
                     					<td>payment status</td>
+                    					<td>Action</td>
                     				</tr>
                     			</thead>
                     			<tbody>
@@ -433,18 +443,21 @@
                     						<td>{{$payment->transaction_id}}</td>
                     						<td>{{$payment->payment_date}}</td>
                     						<td>{{$payment->payment_mode}}</td>
-                    						<td>{{$payment->status}}</td>
+                                            <td>{{$payment->status}}</td>
+                                            <td><a href="{{ route('deleteInvoicePayment', $payment->id) }}" onclick="return confirm('Are you sure you want to delete this Data?')" class="text-danger mr-2" data-toggle="tooltip" data-placement="top" title="Payment Delete">
+                                                <i class="nav-icon i-Close-Window font-weight-bold"></i>
+                                            </a></td>
                     					</tr>
                     				<?php $i++; }
                     				?>
                     			</tbody>
                     		</table>
                     	<?php
-                    		
+
                     	}
                     	else
                     	{
-                    		echo "<h5><center>No Payments Found!</center></h5>";  
+                    		echo "<h5><center>No Payments Found!</center></h5>";
                     	}
                     	?>
                     </div>
@@ -492,26 +505,26 @@ $(document).ready(function() {
 		var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
 		var canvas_image_width = HTML_Width;
 		var canvas_image_height = HTML_Height;
-		
+
 		var totalPDFPages = Math.ceil(HTML_Height/PDF_Height)-1;
-		
+
 
 		html2canvas($(".canvas_div_pdf")[0],{allowTaint:true}).then(function(canvas) {
 			canvas.getContext('2d');
-			
+
 			//console.log(canvas.height+"  "+canvas.width);
-			
-			
+
+
 			var imgData = canvas.toDataURL("image/jpeg", 1.0);
 			var pdf = new jsPDF('p', 'pt',  [PDF_Width, PDF_Height]);
 		    pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
-			
-			
-			for (var i = 1; i <= totalPDFPages; i++) { 
+
+
+			for (var i = 1; i <= totalPDFPages; i++) {
 				pdf.addPage(PDF_Width, PDF_Height);
 				pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
 			}
-			
+
 		    pdf.save("Invoice.pdf");
         });
 	};
@@ -527,26 +540,26 @@ $(document).ready(function() {
 		var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
 		var canvas_image_width = HTML_Width;
 		var canvas_image_height = HTML_Height;
-		
+
 		var totalPDFPages = Math.ceil(HTML_Height/PDF_Height)-1;
-		
+
 
 		html2canvas($(".canvas_div_pdf")[0],{allowTaint:true}).then(function(canvas) {
 			canvas.getContext('2d');
-			
+
 			//console.log(PDF_Width);
-			
-			
+
+
 			var imgData = canvas.toDataURL("image/jpeg", 1.0);
 			var pdf = new jsPDF('p', 'pt',  [PDF_Width, PDF_Height]);
 		    pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
-			
-			
-			for (var i = 1; i <= totalPDFPages; i++) { 
+
+
+			for (var i = 1; i <= totalPDFPages; i++) {
 				pdf.addPage(PDF_Width, PDF_Height);
 				pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
 			}
-			
+
 		    //pdf.save("Download.pdf");
 		    var blob = pdf.output("blob");
             //Getting URL of blob object

@@ -18,7 +18,7 @@ use App\Models\Invoice_Payment;
 
 use Illuminate\Support\Facades\Mail;
 
-date_default_timezone_set('Asia/Kolkata'); 
+date_default_timezone_set('Asia/Kolkata');
 
 class InvoiceController extends Controller
 {
@@ -35,7 +35,7 @@ class InvoiceController extends Controller
 
         $result = Invoice::getReport();
 
-        if (Auth::user()->usertype == 'admin') 
+        if (Auth::user()->usertype == 'admin')
         {
             $list_invoices = DB::table('invoice')
                     ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
@@ -45,7 +45,7 @@ class InvoiceController extends Controller
                     ->get();
         }
         elseif (Auth::user()->usertype == 'groupadmin') {
-           
+
            $list_invoices = DB::table('invoice')
                     ->where('invoice.user_id','=',Auth::user()->id)
                     ->orWhere('invoice.group_id','=',Auth::user()->groupid)
@@ -55,7 +55,7 @@ class InvoiceController extends Controller
                     ->orderBy('id', 'desc')
                     ->get();
         }
-        elseif (Auth::user()->usertype == 'reseller') 
+        elseif (Auth::user()->usertype == 'reseller')
         {
             $groupid = DB::table('resellergroup')->where('id',Auth::user()->resellerid)->first();
 
@@ -71,7 +71,7 @@ class InvoiceController extends Controller
                     ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','account.username','converted.company_name','accountgroup.name as accountgroup_name')
                     ->orderBy('id', 'desc')
                     ->get();
-            }   
+            }
         }
         else
         {
@@ -132,11 +132,11 @@ class InvoiceController extends Controller
             $tax = $request->get('tax');
             //print_r($tax);exit;
 
-            for ($i=0; $i < count($tax); $i++) { 
+            for ($i=0; $i < count($tax); $i++) {
                 $total_tax = implode(",", $tax);
             }
             //print_r($total_tax);exit;
-            for ($i=0; $i < $count; $i++) { 
+            for ($i=0; $i < $count; $i++) {
                  $invoice_details = new Invoice_details([
                     'invoice_id' => $id,
                     'product_id' => $request->get('products')[$i],
@@ -144,9 +144,9 @@ class InvoiceController extends Controller
                     'rate' => $request->get('rate')[$i],
                     'tax' => $total_tax,
                     'amount' => $request->get('amount')[$i],
-                ]); 
-             $invoice_details->save();              
-            }  
+                ]);
+             $invoice_details->save();
+            }
 
          /*   $invoice_details = DB::table('invoice_details')
                             ->where('invoice_id',$id)
@@ -176,8 +176,8 @@ class InvoiceController extends Controller
 
             $message->from($credential['from']);
             $message->to($credential['to'])->subject($credential['subject']);
-        });       */   
-            
+        });       */
+
             //print_r($id);exit;
             toastr()->success('Invoice added successfully.');
             return redirect()->route('InvoiceIndex');
@@ -189,6 +189,12 @@ class InvoiceController extends Controller
         DB::table('invoice_details')->where('invoice_id',$id)->delete();
         toastr()->success('Invoice delete successfully.');
         return redirect()->route('InvoiceIndex');
+    }
+
+    public function destroyPayment($id){
+        DB::table('invoice_payments')->where('id',$id)->delete();
+        toastr()->success('Payment deleted successfully.');
+        return redirect()->back();
     }
 
     public function edit($id){
@@ -214,7 +220,7 @@ class InvoiceController extends Controller
         //print_r($request->all());exit();
 
         $edit_invoice = Invoice::find($id);
-    
+
         $edit_invoice->billing_address = $request->address;
         $edit_invoice->customer_id = $request->customer_id;
         $edit_invoice->date = $request->date;
@@ -229,7 +235,7 @@ class InvoiceController extends Controller
             DB::table('invoice_details')->where('invoice_id',$id)->delete();
 
             $pro = $request->get('products');
-            
+
             if (empty($pro)) {
                 $count = 0;
             }else{
@@ -239,11 +245,11 @@ class InvoiceController extends Controller
             $tax = $request->get('tax');
             //print_r($tax);exit;
 
-            for ($i=0; $i < count($tax); $i++) { 
+            for ($i=0; $i < count($tax); $i++) {
                 $total_tax = implode(",", $tax);
             }
 
-            for ($i=0; $i < $count; $i++) { 
+            for ($i=0; $i < $count; $i++) {
                  $invoice_details = new Invoice_details([
                     'invoice_id' => $id,
                     'product_id' => $request->get('products')[$i],
@@ -251,10 +257,10 @@ class InvoiceController extends Controller
                     'rate' => $request->get('rate')[$i],
                     'tax' => $total_tax,
                     'amount' => $request->get('amount')[$i],
-                ]); 
-             $invoice_details->save();              
-            }            
-            
+                ]);
+             $invoice_details->save();
+            }
+
             //print_r($id);exit;
             toastr()->success('Invoice Updated successfully.');
             return redirect()->route('InvoiceIndex');
@@ -303,7 +309,7 @@ class InvoiceController extends Controller
         $status = $request->get('status');
 
 
-        if (Auth::user()->usertype == 'operator') 
+        if (Auth::user()->usertype == 'operator')
         {
             $filter_data = DB::table('invoice')
                 ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
@@ -327,10 +333,10 @@ class InvoiceController extends Controller
                 ->where('account.username','like','%'.$agent_name.'%')
                 ->where('invoice.payment_status',$status)
                 ->count();
-            
+
         }
         elseif (Auth::user()->usertype == 'groupadmin') {
-           
+
            $filter_data = DB::table('invoice')
                 ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
                 ->leftJoin('account','account.id','=','invoice.user_id')
@@ -378,7 +384,7 @@ class InvoiceController extends Controller
                 ->count();
         }
 
-        
+
 
         $newdata = array('filter_data' => $filter_data, 'count_data' => $count_data);
 
@@ -446,8 +452,8 @@ class InvoiceController extends Controller
 
             $message->from($credential['from']);
             $message->to($credential['to'])->subject($credential['subject']);
-        });*/     
-            
+        });*/
+
             //print_r($id);exit;
             toastr()->success('Invoice Mail send successfully.');
             return redirect()->route('InvoiceIndex');

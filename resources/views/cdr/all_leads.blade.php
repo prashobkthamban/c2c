@@ -10,18 +10,18 @@
 <link rel="stylesheet" href="{{asset('assets/styles/css/custom.css')}}">
 <style>
 .select2-container {
-    width: 100%!important;    
+    width: 100%!important;
 }
 
 .card {
-    border-radius: 0px !important; 
+    border-radius: 0px !important;
 }
 </style>
 @endsection
 
 @section('main-content')
   <div class="breadcrumb">
-        <h1> Cdr Leads </h1> 
+        <h1> Cdr Leads </h1>
     </div>
 
     <div class="modal fade" id="AddLead" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
@@ -36,32 +36,32 @@
                             <input type="hidden" name="cdrreport_id" id="cdrreport_id">
                             <div class="col-md-12 form-group mb-3">
                                 <label for="first_name">First Name*</label>
-                                <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter your First Name" required="" />  
+                                <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter your First Name" required="" />
                             </div>
 
                             <div class="col-md-12 form-group mb-3">
                                 <label for="last_name">Last Name*</label>
-                                <input type="text" name="last_name" id="last_name" class="form-control"placeholder="Enter your Last Name" required="" />  
+                                <input type="text" name="last_name" id="last_name" class="form-control"placeholder="Enter your Last Name" required="" />
                             </div>
 
                             <div class="col-md-12 form-group mb-3">
                                 <label for="company_name">Company Name</label>
-                                <input type="text" name="company_name" id="company_name" class="form-control"placeholder="Enter Company Name" />  
+                                <input type="text" name="company_name" id="company_name" class="form-control"placeholder="Enter Company Name" />
                             </div>
 
                             <div class="col-md-12 form-group mb-3">
                                 <label for="email">Email</label>
-                                <input type="email" name="email" id="email" class="form-control"placeholder="Enter Email Address" />  
+                                <input type="email" name="email" id="email" class="form-control"placeholder="Enter Email Address" />
                             </div>
 
                             <div class="col-md-6 form-group mb-3">
                                 <label for="phoneno">Phone No*</label>
-                                <input type="text" name="phoneno" id="phoneno" class="form-control"placeholder="Enter Phone No" required="" />  
+                                <input type="text" name="phoneno" id="phoneno" class="form-control"placeholder="Enter Phone No" required="" />
                             </div>
 
                             <div class="col-md-6 form-group mb-3">
                                 <label for="alt_phoneno">Another Phone No</label>
-                                <input type="text" name="alt_phoneno" id="alt_phoneno" class="form-control"placeholder="Enter Another Phone No" />  
+                                <input type="text" name="alt_phoneno" id="alt_phoneno" class="form-control"placeholder="Enter Another Phone No" />
                             </div>
 
                             <div class="col-md-12">
@@ -71,7 +71,7 @@
                                             <div class="table table-responsive">
                                             <!-- <h4>Select Details</h4> -->
                                             <table id="ppsale" class="table table-striped table-bordered" border="0">
-                                              
+
                                               <tbody id="TextBoxContainer">
                                                 <td style="width: 50%;">
                                                   <select name="products[]" id="products" class="form-control js-example-basic-single products">
@@ -81,15 +81,15 @@
                                                             <option value="{{$prod->id}}">{{$prod->name}}
                                                             </option>
                                                         @endforeach
-                                                    @endif 
-                                                  </select> 
+                                                    @endif
+                                                  </select>
                                                   <input type="hidden" name="pro_amount[]" id="pro_amount" class="form-control pro_amount">
                                                 </td>
                                                   <td>
-                                                    <input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" />  
+                                                    <input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" />
                                                   </td>
                                                   <td>
-                                                      <input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount"readonly="" /> 
+                                                      <input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount"readonly="" />
                                                   </td>
                                                 </tr>
                                               </tbody>
@@ -128,7 +128,7 @@
                             </div>
 
                             <div class="col-md-12 form-group mb-3">
-                                <label for="lead_stage">Lead Stage</label>  
+                                <label for="lead_stage">Lead Stage</label>
                                 <select class="js-example-basic-single" name="lead_stage" id="lead_stage">
                                     <option value="New">New</option>
                                     <option value="Contacted">Contacted</option>
@@ -136,7 +136,7 @@
                                     <option value="Under review">Under review</option>
                                     <option value="Demo">Demo</option>
                                     <option value="Unqualified">Unqualified</option>
-                                </select>  
+                                </select>
                             </div>
 
                             <div class="col-md-12">
@@ -148,7 +148,7 @@
             </div>
         </div>
     </div>
-   
+
     <div class="modal fade EditLead" id="EditLead" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
         <div class="col-md-12">
             <div class="card mb-4">
@@ -164,32 +164,32 @@
                                 <input type="hidden" name="id" id="id">
                                 <div class="col-md-12 form-group mb-3">
                                     <label for="first_name">First Name*</label>
-                                    <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter your First Name" required="" />  
+                                    <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter your First Name" required="" />
                                 </div>
 
                                 <div class="col-md-12 form-group mb-3">
                                     <label for="last_name">Last Name*</label>
-                                    <input type="text" name="last_name" id="last_name" class="form-control"placeholder="Enter your Last Name" required="" />  
+                                    <input type="text" name="last_name" id="last_name" class="form-control"placeholder="Enter your Last Name" required="" />
                                 </div>
 
                                 <div class="col-md-12 form-group mb-3">
                                     <label for="company_name">Company Name</label>
-                                    <input type="text" name="company_name" id="company_name" class="form-control"placeholder="Enter Company Name" />  
+                                    <input type="text" name="company_name" id="company_name" class="form-control"placeholder="Enter Company Name" />
                                 </div>
 
                                 <div class="col-md-12 form-group mb-3">
                                     <label for="email">Email</label>
-                                    <input type="email" name="email" id="email" class="form-control"placeholder="Enter Email Address" />  
+                                    <input type="email" name="email" id="email" class="form-control"placeholder="Enter Email Address" />
                                 </div>
 
                                 <div class="col-md-6 form-group mb-3">
                                     <label for="phoneno">Phone No*</label>
-                                    <input type="text" name="phoneno" id="phoneno" class="form-control"placeholder="Enter Phone No" required="" />  
+                                    <input type="text" name="phoneno" id="phoneno" class="form-control"placeholder="Enter Phone No" required="" />
                                 </div>
 
                                 <div class="col-md-6 form-group mb-3">
                                     <label for="alt_phoneno">Another Phone No</label>
-                                    <input type="text" name="alt_phoneno" id="alt_phoneno" class="form-control"placeholder="Enter Another Phone No" />  
+                                    <input type="text" name="alt_phoneno" id="alt_phoneno" class="form-control"placeholder="Enter Another Phone No" />
                                 </div>
 
                                 <div class="col-md-12">
@@ -198,7 +198,7 @@
                                              <section class="container col-xs-12">
                                                 <div class="table table-responsive">
                                                 <table id="ppsale" class="table table-striped table-bordered" border="0">
-                                                  
+
                                                   <tbody id="TextBoxContainer">
                                                     <td style="width: 50%;">
                                                       <select name="products[]" id="products" class="form-control js-example-basic-single" required="">
@@ -208,15 +208,15 @@
                                                                 <option value="{{$prod->id}}">{{$prod->name}}
                                                                 </option>
                                                             @endforeach
-                                                        @endif 
-                                                      </select> 
+                                                        @endif
+                                                      </select>
                                                       <input type="hidden" name="pro_amount[]" id="pro_amount" class="form-control pro_amount">
                                                     </td>
                                                       <td>
-                                                        <input type="number" name="quantity[]" id="quantity" class="form-control"placeholder="Enter Quantity" min="1" required="" />  
+                                                        <input type="number" name="quantity[]" id="quantity" class="form-control"placeholder="Enter Quantity" min="1" required="" />
                                                       </td>
                                                       <td>
-                                                      <input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount" readonly="" /> 
+                                                      <input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount" readonly="" />
                                                       </td>
                                                     </tr>
                                                   </tbody>
@@ -235,7 +235,7 @@
                                               </section>
                                         </div>
                                 </div>
-                                
+
                                 <div class="col-md-12 form-group mb-3">
                                     <label for="owner_name">Operator Name</label>
                                     <select id="owner_name" name="owner_name" class="form-control">
@@ -255,7 +255,7 @@
                                 </div>
 
                                 <div class="col-md-12 form-group mb-3">
-                                    <label for="lead_stage">Lead Stage</label>  
+                                    <label for="lead_stage">Lead Stage</label>
                                     <select class="js-example-basic-single" name="lead_stage" id="lead_stage">
                                         <option value="New">New</option>
                                         <option value="Contacted">Contacted</option>
@@ -263,8 +263,8 @@
                                         <option value="Under review">Under review</option>
                                         <option value="Demo">Demo</option>
                                         <option value="Unqualified">Unqualified</option>
-                                    </select>  
-                                </div>                            
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer col-md-12">
@@ -277,7 +277,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="modal fade Import_Lead" id="Import_Lead" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
         <div class="col-md-12">
             <div class="card mb-4">
@@ -286,7 +286,7 @@
                 </div>
                 <div class="card-body">
                     {!! Form::open(['action' => 'LeadController@addLead', 'method' => 'post','enctype' => 'multipart/form-data','onsubmit'=>'return Validate(this);']) !!}
-                    
+
                          {{ csrf_field() }}
                         <div class="modal-body">
                             <div class="row">
@@ -294,7 +294,7 @@
                                     <label for="csv_file">Add Data from CSV File</label>
                                     <a href="javascript:void(0)" id="excel" style="float: right;font-size: 15px;color: blue;">Sample excel file</a>
                                     <input type="file" name="csv_file" id="csv_file" class="form-control">
-                                </div>                           
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer col-md-12">
@@ -308,13 +308,13 @@
         </div>
 
     </div>
-   
+
             <div class="separator-breadcrumb border-top"></div>
 
             <div class="row">
                 <div class="col-lg-12 col-md-12">
                     <div class="row">
-                       
+
                         <div class="col-md-2">
                             <div class="card card-icon mb-4">
                                 <div class="card-body text-center" style="background: #A5D6A7;">
@@ -387,43 +387,50 @@
                             <a href="?" class="btn btn-primary" id="import_lead" data-toggle="modal" data-target="#Import_Lead" style="float: right;margin-top: -49px">Import Lead</a>
                             <br><br>
                             <div class="row">
+                                <form method="GET">
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-4">
                                             <label for="from_date">Date From:</label>
-                                            <input type="date" name="from_date" id="from_date" class="form-control">
+                                            <input type="date" name="from_date" id="from_date" class="form-control" required
+                                            value="<?php echo request()->get('from_date') ?? ''?>" >
                                         </div>
-                                     
+
                                         <div class="col-md-4">
                                             <label for="to_date">Date To:</label>
-                                            <input type="date" name="to_date" id="to_date" class="form-control" value="<?php echo date('Y-m-d');?>">
+                                            <input type="date" name="to_date" id="to_date" class="form-control" required
+                                            value="<?php echo request()->get('to_date') ?? date('Y-m-d');?>">
                                         </div>
                                         <div class="col-md-4">
                                             <label for="lead">Lead Stage</label>
                                             <select id="lead" class="form-control" name="lead">
-                                                <option value="New" selected="">New</option>
-                                                <option value="Contacted">Contacted</option>
-                                                <option value="Interested">Interested</option>
-                                                <option value="Under review">Under review</option>
-                                                <option value="Demo">Demo</option>
-                                                <option value="Unqualified">Unqualified</option>
-                                                <option value="Converted">Converted</option>
+                                                <option <?php echo (request()->get('lead') == "New") ? 'selected' : '';?> value="New" selected="">New</option>
+                                                <option <?php echo (request()->get('lead') == "Contacted") ? 'selected' : '';?> value="Contacted">Contacted</option>
+                                                <option <?php echo (request()->get('lead') == "Interested") ? 'selected' : '';?> value="Interested">Interested</option>
+                                                <option <?php echo (request()->get('lead') == "Under") ? 'selected' : '';?> value="Under review">Under review</option>
+                                                <option <?php echo (request()->get('lead') == "Demo") ? 'selected' : '';?> value="Demo">Demo</option>
+                                                <option <?php echo (request()->get('lead') == "Unqualified") ? 'selected' : '';?> value="Unqualified">Unqualified</option>
+                                                <option <?php echo (request()->get('lead') == "Converted") ? 'selected' : '';?> value="Converted">Converted</option>
                                             </select>
                                         </div>
                                         <div class="col-md-4">
                                             <label for="search_company_name">Company Name:</label>
-                                            <input type="text" name="search_company_name" id="search_company_name" class="form-control" value="">
+                                            <input type="text" name="search_company_name" id="search_company_name" class="form-control"
+                                            value="<?php echo request()->get('search_company_name') ?? '';?>">
                                         </div>
                                         <div class="col-md-4">
                                             <label for="search_agent_name">Agent Name:</label>
-                                            <input type="text" name="search_agent_name" id="search_agent_name" class="form-control" value="">
+                                            <input type="text" name="search_agent_name" id="search_agent_name" class="form-control"
+                                            value="<?php echo request()->get('search_agent_name') ?? '';?>">
                                         </div>
                                         <div class="col-md-6" style="margin-top: 24px;">
-                                            <button id="btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
-                                             <button id="export_lead" class="btn btn-outline-secondary" name="btn">Export Leads</button>
+                                            <button type="submit" class="btn btn-outline-success" style="margin-right: 15px;">Search</button>
+                                            <a href="{{route('ListLeads')}}" class="btn btn-outline-danger" style="margin-right: 15px;">Reset</a>
+                                             <button id="export_lead" class="btn btn-outline-secondary">Export Leads</button>
                                         </div>
                                     </div>
                                 </div>
+                                </form>
                             </div>
                             <br><br>
                             <input type="hidden" name="usertype" id="usertype" value="<?php echo Auth::user()->usertype; ?>">
@@ -451,7 +458,7 @@
                                             <th>Date</th>
                                             <th>Actions</th>
                                         </tr>
-                                    </thead>                                
+                                    </thead>
                                     <tbody class="filter_data">
                                         @if(Auth::user()->usertype == 'reseller')
                                             @foreach($list_leads as $list_lead)
@@ -509,10 +516,10 @@
                                                                     $stage = 'New';
                                                                 }
                                                                 ?>
-                                                            
+
                                                                 <a href="{{ route('lead_stages',[$up_lead->id,$id]) }}" class="dropdown-item">Change stage to {{$stage}}</a>
                                                                 @endif
-                                                    
+
 
                                                                 <a class="dropdown-item add_note assigned_to" href="javascript:void(0)" data-toggle="modal" data-id="{{$up_lead->id}}"  data-target="#lead_assigned" id="assigned">Lead Assigned to
                                                                 </a>
@@ -576,10 +583,10 @@
                                                             $stage = 'New';
                                                         }
                                                         ?>
-                                                    
+
                                                         <a href="{{ route('lead_stages',[$list_lead->id,$id]) }}" class="dropdown-item">Change stage to {{$stage}}</a>
                                                         @endif
-                                            
+
 
                                                         <a class="dropdown-item add_note assigned_to" href="javascript:void(0)" data-toggle="modal" data-id="{{$list_lead->id}}"  data-target="#lead_assigned" id="assigned">Lead Assigned to
                                                         </a>
@@ -611,11 +618,11 @@
                                         </tr>
                                     </tfoot>
                                 </table>
-                              
+
                             </div>
 
                         </div>
-                        <!-- <div class="pull-right">{{ $result->links() }}</div> -->
+
                     </div>
                 </div>
             </div>
@@ -662,11 +669,11 @@
                             {!! Form::open(['action' => 'LeadController@Reminder', 'method' => 'post']) !!}
                             <div class="modal-body">
                                 <div class="row">
-                                    <div class="col-md-2 form-group mb-3"> 
+                                    <div class="col-md-2 form-group mb-3">
                                         <input type="hidden" name="lead_id" id="lead_id">
                                     </div>
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Reminder Date</label> 
+                                        <label for="firstName1">Reminder Date</label>
                                         <input type="date" class="form-control" placeholder="yyyy-mm-dd" name="startdate">
                                     </div>
                                 </div>
@@ -674,16 +681,16 @@
                                     <div class="col-md-2 form-group mb-3"> </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Reminder Time</label> 
-                                        <input  placeholder="Followup Time" type="text"  size="10"  data-rel="timepicker" id="timepicker1" name="starttime" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" class="form-control" /> 
+                                        <label for="firstName1">Reminder Time</label>
+                                        <input  placeholder="Followup Time" type="text"  size="10"  data-rel="timepicker" id="timepicker1" name="starttime" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" class="form-control" />
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Title</label> 
-                                        <input  placeholder="Add Title" type="text"  size="10" id="title" name="title" class="form-control" /> 
+                                        <label for="firstName1">Title</label>
+                                        <input  placeholder="Add Title" type="text"  size="10" id="title" name="title" class="form-control" />
                                     </div>
                                 </div>
 
@@ -691,11 +698,11 @@
                                     <div class="col-md-2 form-group mb-3"> </div>
 
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="firstName1">Task</label> 
+                                        <label for="firstName1">Task</label>
                                         <textarea id="task" name="task" class="form-control" placeholder="Add Description"></textarea>
                                     </div>
                                 </div>
-                                
+
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -785,7 +792,7 @@
             url: '{{ URL::route("editLead") }}',
             dataType: 'text',
             data: {myid:myid},
-            success: function(edit_data) 
+            success: function(edit_data)
             {
                 //console.log(edit_data);
                 var obj = jQuery.parseJSON(edit_data);
@@ -813,7 +820,7 @@
             url: '{{ URL::route("LeadProduct") }}',
             dataType: 'text',
             data: {myid:myid},
-            success: function(lead_product) 
+            success: function(lead_product)
             {
                 //console.log(lead_product);
                 var lead_pro = jQuery.parseJSON(lead_product);
@@ -825,7 +832,7 @@
                     html += '<option value="'+data.product_id+'"selected>'+data.name+'</option>';
                     html +='</select><input type="hidden" name="pro_amount[]" id="pro_amount" class="form-control pro_amount" value="'+parseFloat(data.pro_amount).toFixed(2)+'"></td><td><input type="number" name="quantity[]" id="quantity" class="form-control" value="'+data.quantity+'" placeholder="Enter Quantity" min="1" /></td><td><input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" value="'+parseFloat(data.subtotal_amount).toFixed(2)+'" placeholder="Sub Amount"readonly="" /></td><td><button type="button" class="btn btn-danger remove" data-toggle="tooltip" data-original-title="Remove"><i class="nav-icon i-Close-Window"></i></button></td></tr>';
                   });
-                    
+
                 /*$.each(lead_pro,function(index,data){
                     alert(data.product_id);
 
@@ -846,7 +853,7 @@
         var lead_total = $('#total_leads').val();
         //alert(lead_count);
         //alert(lead_total);
-        if ($('#usertype').val() != 'admin' && $('#usertype').val() != 'reseller') 
+        if ($('#usertype').val() != 'admin' && $('#usertype').val() != 'reseller')
         {
             if (Number(lead_count) > Number(lead_total) || Number(lead_count) == Number(lead_total)) {
                 //alert('if');
@@ -854,16 +861,16 @@
                 $('#error_msg').html('Lead Limit access!!! Please contact to admin');
             }
         }
-        
-        
+
+
         $('.js-example-basic-single').select2();
-        
+
         $("#btnAdd").bind("click", function () {
             var div = $("<tr />");
             div.html(GetDynamicTextBox(""));
             $("#TextBoxContainer").append(div);
             $('.js-example-basic-single').select2();
-            
+
         });
         $("body").on("click", ".remove", function () {
 
@@ -875,7 +882,7 @@
                 $(this).closest("tr").remove();
                 total_amount();
             }
-          
+
         });
 
         $("body").on("change", ".products", function () {
@@ -887,12 +894,12 @@
                 url: '{{ URL::route("ProductAmount") }}',
                 dataType: 'text',
                 data: {pro_id:pro_id},
-                success: function(data) 
+                success: function(data)
                 {
                     //console.log(data);
                     var obj = jQuery.parseJSON(data);
                     //console.log(obj[0].selling_cost);
-                   
+
                     thiss.closest("td").find("input.pro_amount").val(parseFloat(obj[0].selling_cost).toFixed(2));
                     /*$('.pro_amount').val(obj[0].selling_cost);*/
                 }
@@ -910,7 +917,7 @@
         });
 
       });
-      function GetDynamicTextBox(value) 
+      function GetDynamicTextBox(value)
       {
           return '<td><select name="products[]" id="products" class="form-control js-example-basic-single products" required><option value="">Select Products</option>@if(!empty($products)) @foreach($products as $prod )<option value="{{$prod->id}}">{{$prod->name}}</option>@endforeach @endif</select><input type="hidden" name="pro_amount[]" id="pro_amount" class="form-control pro_amount"> </td><td><input type="number" name="quantity[]" id="quantity" class="form-control quantity"placeholder="Enter Quantity" min="1" required/></td><td><input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount" readonly="" /></td><td><button type="button" class="btn btn-danger remove" data-toggle="tooltip" data-original-title="Remove"><i class="nav-icon i-Close-Window"></i></button></td>';
       }
@@ -919,7 +926,7 @@
                 var sum = 0.0;
                 $('.sub_amount').each(function(){
                     //alert($(this).val());
-                    sum += Number($(this).val()); 
+                    sum += Number($(this).val());
                 });
                 $('#total_amount').val(parseFloat(sum).toFixed(2));
             }
@@ -932,19 +939,19 @@
     });
 
     $('#excel').click(function(e){
-        
+
             e.preventDefault();  //stop the browser from following
             window.location.href = 'general_file/Add_Lead.csv';
-        
+
     });
 
-    function exportexcel() { 
-    var table2excel = new Table2Excel(); 
-        table2excel.export(document.querySelectorAll('#pdf_view'));  
-    }  
+    function exportexcel() {
+    var table2excel = new Table2Excel();
+        table2excel.export(document.querySelectorAll('#pdf_view'));
+    }
 
-  
-    var _validFileExtensions = [".csv",".xlsx"];    
+
+    var _validFileExtensions = [".csv",".xlsx"];
     function Validate(oForm) {
         /*var arrInputs = oForm.getElementsByTagName("input");
         for (var i = 0; i < arrInputs.length; i++) {
@@ -961,7 +968,7 @@
                             break;
                         }
                     }
-                    
+
                     if (!blnValid) {
                         alert("Sorry, " + sFileName + " is invalid, allowed extensions are: " + _validFileExtensions.join(", "));
                         return false;
@@ -969,7 +976,7 @@
                 }
             }
         }
-      
+
         return true;*/
     }
 </script>
@@ -1004,14 +1011,14 @@
         var company_name = $('#search_company_name').val();
         var agent_name = $('#search_agent_name').val();
         //alert(date_from+date_to+lead);
-        if (date_from != '' && date_to != '') 
+        if (date_from != '' && date_to != '')
         {
             jQuery.ajax({
                 type: "POST",
                 url: '{{ URL::route("FilterData") }}',
                 dataType: 'text',
                 data: {date_to:date_to,date_from:date_from,lead:lead,company_name:company_name,agent_name:agent_name},
-                success: function(data) 
+                success: function(data)
                 {
                    // alert('qwerty');
                     //console.log(data);
@@ -1059,7 +1066,7 @@
                         }
 
                         var usertype = $('#usertype').val();
-                        if (usertype != 'operator') 
+                        if (usertype != 'operator')
                         {
                             var op = '<td>'+opername+'</td>';
                         }
@@ -1098,13 +1105,13 @@
                 exportexcel();
             });
 
-            function exportexcel() {  
-                $(".filter_data").table2excel({  
-                    name: "Table2Excel",  
-                    filename: "Lead_Data",  
-                    fileext: ".csv"  
-                });  
-            }  
+            function exportexcel() {
+                $(".filter_data").table2excel({
+                    name: "Table2Excel",
+                    filename: "Lead_Data",
+                    fileext: ".csv"
+                });
+            }
 </script>
 
 @endsection

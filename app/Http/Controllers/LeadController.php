@@ -33,8 +33,8 @@ use Maatwebsite\Excel\Concerns\ToModel;*/
 
 use Excel;
 
-date_default_timezone_set('Asia/Kolkata'); 
-    
+date_default_timezone_set('Asia/Kolkata');
+
 class LeadController extends Controller
 {
     public function __construct()
@@ -51,7 +51,7 @@ class LeadController extends Controller
         //print_r(Auth::user()->load('accountdetails')->accountdetails->crm);exit;
         $result = CdrReport_Lead::getReport();
 
-        if (Auth::user()->usertype == 'groupadmin') 
+        if (Auth::user()->usertype == 'groupadmin')
         {
             $list_leads = DB::table('cdrreport_lead')
             ->where('group_id','=',Auth::user()->groupid)
@@ -80,7 +80,7 @@ class LeadController extends Controller
                         ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
                         ->get();
         }
-        elseif (Auth::user()->usertype == 'admin') 
+        elseif (Auth::user()->usertype == 'admin')
         {
             $list_leads = DB::table('cdrreport_lead')
             ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
@@ -106,7 +106,7 @@ class LeadController extends Controller
                         ->select('operatoraccount.*')
                         ->get();
         }
-        elseif (Auth::user()->usertype == 'reseller') 
+        elseif (Auth::user()->usertype == 'reseller')
         {
             $groupid = DB::table('resellergroup')->where('id',Auth::user()->resellerid)->first();
 
@@ -134,7 +134,7 @@ class LeadController extends Controller
                 $users_lists[] = DB::table('operatoraccount')
                         ->select('operatoraccount.*')->where('groupid', $de_gpid)
                         ->get();
-                
+
 
             }
             //$tot_arr_sum =array_sum($level_1);
@@ -185,17 +185,17 @@ class LeadController extends Controller
                         ->get();
         }
 
-        
+
 
         if (Auth::user()->usertype == 'operator') {
             //$lead_allowed = DB::table('operatoraccount')->leftJoin('account','account.groupid','=','operatoraccount.groupid')->where('account.username',Auth::user()->username)->select('operatoraccount.lead_access')->get();
             $lead_allowed = DB::table('operatoraccount')->where('operatoraccount.groupid',Auth::user()->groupid)->where('operatoraccount.id', Auth::user()->operator_id)->select('operatoraccount.lead_access')->first();
             //dd($lead_allowed);
             $total_access_leads = $lead_allowed->lead_access;
-        }   
+        }
         else
         {
-            if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'reseller') 
+            if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'reseller')
             {
                 $total_access_leads = '';
             }
@@ -203,11 +203,17 @@ class LeadController extends Controller
             {
                 $total_access_leads = Auth::user()->load('accountdetails')->accountdetails->leads_access;
             }
-            
+
         }
 
-        /*echo "<pre>";
-        print_r($list_leads);exit;*/
+        // echo "<pre>";
+        // print_r($list_leads);exit;
+        $date_from = request()->get('from_date');
+        $date_to = request()->get('to_date');
+        if($date_from && $date_to) {
+            $list_leads = $this->FilterData(request());
+        }
+        // dd($list_leads);
         return view('cdr.all_leads',compact('list_leads','products','level_1','level_2','level_3','level_4','level_5','level_6','level_7','users_lists','result','lead_count','total_access_leads'));
     }
 
@@ -219,7 +225,7 @@ class LeadController extends Controller
             $row = 1;
             if (($handle = fopen($file, "r")) !== FALSE) {
                 $newdata = '';
-              while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) 
+              while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
               {
                 if($row == 1)
                 {
@@ -227,7 +233,7 @@ class LeadController extends Controller
                 }
                 else
                 {
-                    if ($row == 500) 
+                    if ($row == 500)
                     {
                         toastr()->success('Please Enter data within 500 limit.');
                         return redirect()->route('ListLeads');
@@ -304,13 +310,13 @@ class LeadController extends Controller
                             'cdrreport_lead_id' => $id,
                             'levels' => $stage,
                             'status' => 'active',
-                        ]); 
+                        ]);
 
                         $lead_stages->save();
                     }
-                    
+
                 }
-                
+
               }
               fclose($handle);
             }
@@ -322,7 +328,7 @@ class LeadController extends Controller
     public function editLead(Request $request)
     {
     	$user = DB::table('cdrreport_lead')->where('cdrreport_lead.id', $request->get('myid'))->leftJoin('lead_products', 'lead_products.cdrreport_lead_id', '=', 'cdrreport_lead.id')->first();
-        
+
         echo json_encode($user);
     }
 
@@ -347,7 +353,7 @@ class LeadController extends Controller
     	$id = $request->get('id');
     	//print_r($request->all());exit;
     	$edit_lead = CdrReport_Lead::find($id);
-    
+
         $edit_lead->first_name = $request->first_name;
         $edit_lead->last_name = $request->last_name;
         $edit_lead->company_name = $request->company_name;
@@ -368,17 +374,17 @@ class LeadController extends Controller
         	$count = count($request->get('products'));
         }
         //print_r($count);exit();
-        DB::table('lead_products')->where('cdrreport_lead_id', '=', $id)->delete();    
-        for ($i=0; $i < $count; $i++) { 
+        DB::table('lead_products')->where('cdrreport_lead_id', '=', $id)->delete();
+        for ($i=0; $i < $count; $i++) {
             $lead_product = new Lead_Products([
                 'cdrreport_lead_id' => $id,
                 'product_id' => $request->get('products')[$i],
                 'quantity' => $request->get('quantity')[$i],
                 'pro_amount' => $request->get('pro_amount')[$i],
                 'subtotal_amount' => $request->get('sub_amount')[$i],
-            ]); 
-        $lead_product->save();              
-        }   
+            ]);
+        $lead_product->save();
+        }
 
         $stage = $request->get('lead_stage');
 
@@ -399,7 +405,7 @@ class LeadController extends Controller
             }
             elseif ($stage == 'Unqualified') {
                 $lead_id = 6;
-            }          
+            }
             else{
                 $lead_id = 7;
             }
@@ -431,8 +437,14 @@ class LeadController extends Controller
 
     public function ViewLeadID($id)
     {
-    	$message = '';
-    	$lead = DB::table('cdrreport_lead')->where('id', $id)->get();
+        $operator_name = $message = '';
+        $lead = DB::table('cdrreport_lead')->where('id', $id)->get();
+        if(!empty($lead)){
+            $oid = $lead[0]->operatorid;
+            $operator = DB::table('operatoraccount')->where('id', $oid)->first();
+            $operator_name = $operator->opername ?? '';
+            // dd($operator_name);
+        }
     	$lead_stages = DB::table('lead_stages')->where('cdrreport_lead_id', $id)->first();
     	$lead_mails = DB::table('lead_mail')->where('cdrreport_lead_id', $id)->get();
     	$call_logs = DB::table('lead_call_log')->where('cdrreport_lead_id', $id)->get();
@@ -448,7 +460,8 @@ class LeadController extends Controller
             $mail_template = DB::table('email_template')->select('id','name')->get();
             $sms_template = DB::table('sms_template')->select('id','name')->get();
         }
-    	return view('cdr.parti_lead',compact('lead','id','lead_stages','message','lead_mails','call_logs','msgs','notes','recent_activities','mail_template','sms_template','products','proposal'));
+        // dd($lead);
+    	return view('cdr.parti_lead',compact('lead','operator_name','id','lead_stages','message','lead_mails','call_logs','msgs','notes','recent_activities','mail_template','sms_template','products','proposal'));
     }
 
     public function LeadStages($lead_id,$id)
@@ -494,7 +507,7 @@ class LeadController extends Controller
                 'cdrreport_lead_id' => $lead_id,
                 'levels' => $id,
                 'status' => 'active',
-            ]); 
+            ]);
 
 	        $lead_stages->save();
 
@@ -503,7 +516,7 @@ class LeadController extends Controller
                 'cdrreport_lead_id' => $lead_id,
                 'activity_data' => $id,
                 'inserted_date' => $now,
-            ]); 
+            ]);
 
             $active->save();
 
@@ -515,14 +528,14 @@ class LeadController extends Controller
     	else{
     		$lead_stages = lead_stages::where('cdrreport_lead_id','=',$lead_id)->first();
     		//print_r($lead_stages->status);exit;
-    		
+
     		if ($lead_stages->status) {
     			$status = 'active';
     		}
     		else{
     			$status = 'inactive';
     		}
-            
+
             $lead_stages->levels = $id;
             $lead_stages->status = $status;
             $lead_stages->updated_stages = $now;
@@ -534,7 +547,7 @@ class LeadController extends Controller
                 'cdrreport_lead_id' => $lead_id,
                 'activity_data' => $id,
                 'inserted_date' => $now,
-            ]); 
+            ]);
 
             $active->save();
             $message = toastr()->success('Lead Updated successfully.');
@@ -548,7 +561,7 @@ class LeadController extends Controller
     	//print_r($request->all());
 
     	$edit_lead = CdrReport_Lead::find($id);
-    
+
         $edit_lead->first_name = $request->first_name;
         $edit_lead->last_name = $request->last_name;
         $edit_lead->company_name = $request->company_name;
@@ -702,7 +715,7 @@ class LeadController extends Controller
                 'cdrreport_lead_id' => $request->get('lead_id'),
                 'activity_data' => $request->get('note_msg'),
                 'inserted_date' => $now,
-            ]); 
+            ]);
 
             $active->save();
             $message = toastr()->success('Notes Updated successfully.');
@@ -717,7 +730,7 @@ class LeadController extends Controller
         $now = date("Y-m-d H:i:s");
 
         $edit_note = Lead_Notes::find($request->get('note_id'));
-    
+
         $edit_note->note = $request->edit_note_msg;
         $edit_note->inserted_date = $now;
 
@@ -729,7 +742,7 @@ class LeadController extends Controller
                 'cdrreport_lead_id' => $request->get('lead_id'),
                 'activity_data' => $request->get('edit_note_msg'),
                 'inserted_date' => $now,
-            ]); 
+            ]);
 
         $active->save();
         $message = toastr()->success('Note Updated successfully.');
@@ -748,7 +761,7 @@ class LeadController extends Controller
     {
     	/*print_r($request->all());exit();*/
         $lead_id = $request->lead_id;
-        
+
         $now = date("Y-m-d H:i:s");
 
     	$edit_lead_data = lead_stages::where('cdrreport_lead_id',$lead_id)->get();
@@ -756,7 +769,7 @@ class LeadController extends Controller
         /*print_r($edit_lead);exit;*/
 
         $edit_lead = $edit_lead_data[0];
-    
+
         $edit_lead->levels = $request->uni_val;
         $edit_lead->uniq_reason = $request->unq_reason;
         $edit_lead->updated_stages = $now;
@@ -770,7 +783,7 @@ class LeadController extends Controller
                 'cdrreport_lead_id' => $lead_id,
                 'activity_data' => $request->uni_val,
                 'inserted_date' => $now,
-            ]); 
+            ]);
 
         $active->save();
 
@@ -782,7 +795,7 @@ class LeadController extends Controller
     public function Converted(Request $request)
     {
         //print_r($request->all());exit();
-        
+
         $lead_id = $request->lead_id;
         $now = date("Y-m-d H:i:s");
 
@@ -792,7 +805,7 @@ class LeadController extends Controller
         $update_edit['updated_stages'] = $now;
         //print_r($edit_lead);exit;
         if ($update_edit->save()) {
-            
+
             $add_converted = new Converted([
                 'user_id' => Auth::user()->id,
                 'group_id' => Auth::user()->groupid,
@@ -814,7 +827,7 @@ class LeadController extends Controller
                 'cdrreport_lead_id' => $lead_id,
                 'activity_data' => $request->con_val,
                 'inserted_date' => $now,
-            ]); 
+            ]);
 
             $active->save();
 
@@ -846,7 +859,7 @@ class LeadController extends Controller
                 'cdrreport_lead_id' => $request->get('lead_id'),
                 'activity_data' => $request->get('task'),
                 'inserted_date' => $now,
-            ]); 
+            ]);
 
             $active->save();
             $message = toastr()->success('Reminder Added successfully.');
@@ -878,25 +891,25 @@ class LeadController extends Controller
         for ($i=0; $i < $count_owner_name ; $i++) {
 
             $lead_details = CdrReport_Lead::find($id);
-            $ass_to = $lead_details->replicate(); 
+            $ass_to = $lead_details->replicate();
             $ass_to['operatorid'] = $request->get('owner_name')[$i];
             $ass_to->save();
 
             $last_inserted_id = DB::getPdo()->lastInsertId();
-            
+
             $lead_details_products = Lead_Products::where('cdrreport_lead_id',$id)->get();
             $ass_to_products = $lead_details_products[0]->replicate();
-            $ass_to_products['cdrreport_lead_id'] = $last_inserted_id; 
+            $ass_to_products['cdrreport_lead_id'] = $last_inserted_id;
             $ass_to_products->save();
 
             $lead_stage = lead_stages::where('cdrreport_lead_id',$id)->get();
             $ass_lead = $lead_stage[0]->replicate();
-            $ass_lead['cdrreport_lead_id'] = $last_inserted_id; 
+            $ass_lead['cdrreport_lead_id'] = $last_inserted_id;
             $ass_lead->save();
         }
         $message = toastr()->success('Lead Assigned successfully.');
         return Redirect::back()->with('message');
-        
+
     }
 
 
@@ -934,11 +947,11 @@ class LeadController extends Controller
             $tax = $request->get('tax');
             //print_r($tax);exit;
 
-            for ($i=0; $i < count($tax); $i++) { 
+            for ($i=0; $i < count($tax); $i++) {
                 $total_tax = implode(",", $tax);
             }
-            
-            for ($i=0; $i < $count; $i++) { 
+
+            for ($i=0; $i < $count; $i++) {
                  $proposal_details = new Product_details([
                     'proposal_id' => $id,
                     'product_id' => $request->get('products')[$i],
@@ -946,9 +959,9 @@ class LeadController extends Controller
                     'rate' => $request->get('rate')[$i],
                     'tax' => $total_tax,
                     'amount' => $request->get('amount')[$i],
-                ]); 
-             $proposal_details->save();              
-            } 
+                ]);
+             $proposal_details->save();
+            }
 
             $now = date("Y-m-d H:i:s");
 
@@ -957,10 +970,10 @@ class LeadController extends Controller
                 'cdrreport_lead_id' => $request->get('lead_id'),
                 'activity_data' => $request->get('subject'),
                 'inserted_date' => $now,
-            ]); 
+            ]);
 
-            $active->save();           
-            
+            $active->save();
+
             //print_r($id);exit;
             toastr()->success('Proposal added successfully.');
             return Redirect::back();
@@ -969,8 +982,8 @@ class LeadController extends Controller
     public function FilterData(Request $request)
     {
         //print_r($request->get('date_from'));exit();
-        $date_from = $request->get('date_from');
-        $date_to = $request->get('date_to');
+        $date_from = $request->get('from_date');
+        $date_to = $request->get('to_date');
         $lead = $request->get('lead');
         $company_name = $request->get('company_name');
         $agent_name = $request->get('agent_name');
@@ -984,10 +997,10 @@ class LeadController extends Controller
                 ->select('operatoraccount.opername','cdrreport_lead.*')
                 ->get();*/
 
-        if (Auth::user()->usertype == 'operator') 
+        if (Auth::user()->usertype == 'operator')
         {
-            
-            if ($agent_name != '' && $company_name != '') 
+
+            if ($agent_name != '' && $company_name != '')
             {
                 $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
@@ -1025,7 +1038,7 @@ class LeadController extends Controller
                     })
                     ->count();
             }
-            elseif ($agent_name == '' && $company_name != '') 
+            elseif ($agent_name == '' && $company_name != '')
             {
                 $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
@@ -1065,9 +1078,9 @@ class LeadController extends Controller
             }
 
         }
-        else if (Auth::user()->usertype == 'groupadmin') 
+        else if (Auth::user()->usertype == 'groupadmin')
         {
-            if ($agent_name != '' && $company_name != '') 
+            if ($agent_name != '' && $company_name != '')
             {
                 $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
@@ -1105,7 +1118,7 @@ class LeadController extends Controller
                     })
                     ->count();
             }
-            elseif ($agent_name == '' && $company_name != '') 
+            elseif ($agent_name == '' && $company_name != '')
             {
                 $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
@@ -1146,7 +1159,7 @@ class LeadController extends Controller
         }
         else
         {
-            if ($agent_name != '' && $company_name != '') 
+            if ($agent_name != '' && $company_name != '')
             {
                 $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
@@ -1180,7 +1193,7 @@ class LeadController extends Controller
                     })
                     ->count();
             }
-            elseif ($agent_name == '' && $company_name != '') 
+            elseif ($agent_name == '' && $company_name != '')
             {
                 $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
@@ -1215,10 +1228,11 @@ class LeadController extends Controller
                     ->count();
             }
         }
+        return $filter_data;
+        // dd($filter_data);
+        // $newdata = array('filter_data' => $filter_data, 'count_data' => $count_data);
 
-        $newdata = array('filter_data' => $filter_data, 'count_data' => $count_data);
-
-        echo json_encode($newdata);
+        // echo json_encode($newdata);
     }
 
     public function remainder_show()

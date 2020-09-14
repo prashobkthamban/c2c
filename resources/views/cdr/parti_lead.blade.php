@@ -56,6 +56,9 @@
     .select2-container {
         width: 100%!important;
     }
+    .ul-widget-s7__items:not(:last-child) {
+        border-bottom: 1px solid gray;
+    }
 
 </style>
 @endsection
@@ -98,7 +101,7 @@
 
                             </div> -->
                         </div>
-                        
+
                         <div class="row">
                             <div class="card" style="margin-left: 30px;">
                                 <div class="card-body col-md-12">
@@ -117,13 +120,13 @@
                                                         </th>
                                                         <th>Last Name</th>
                                                         <th>
-                                                            <input type="text" name="last_name" id="last_name" class="form-control input_border"placeholder="Enter your Last Name" required="" readonly="" value="{{$lead_data->last_name}}" />  
+                                                            <input type="text" name="last_name" id="last_name" class="form-control input_border"placeholder="Enter your Last Name" required="" readonly="" value="{{$lead_data->last_name}}" />
                                                         </th>
                                                     </tr>
                                                     <tr>
                                                         <th>Company Name</th>
                                                         <th>
-                                                            <input type="text" name="company_name" id="company_name" class="form-control input_border"placeholder="Enter Company Name" readonly="" value="{{$lead_data->company_name}}" />  
+                                                            <input type="text" name="company_name" id="company_name" class="form-control input_border"placeholder="Enter Company Name" readonly="" value="{{$lead_data->company_name}}" />
                                                         </th>
                                                         <th>Email</th>
                                                         <th>
@@ -171,7 +174,7 @@
                                                 </tbody>
                                             </table>
                                             @endforeach
-                                            @endif 
+                                            @endif
                                         </div>
                                         <div class="col-md-12">
                                             <button class="btn btn-primary" id="sub_lead" style="float: right;display: none;">Submit</button>
@@ -217,7 +220,7 @@
                                                             </a> -->
                                                             <a href="javascript:void(0)" _ngcontent-mfn-c9="" data-id="{{$note->id}}" id="edit_per_note" data-note="{{$note->note}}" class="btn btn-wide btn-outline-secondary mr-3 edit_per_note">Edit</a>
 
-                                                            <a href="{{ route('NoteDelete', $note->id) }}" onclick="return confirm('Are you sure you want to delete this Note?')" _ngcontent-rck-c7="" class="btn btn-outline-danger">Delete</a>  
+                                                            <a href="{{ route('NoteDelete', $note->id) }}" onclick="return confirm('Are you sure you want to delete this Note?')" _ngcontent-rck-c7="" class="btn btn-outline-danger">Delete</a>
                                                         </th>
                                                     </tr>
                                                     @endforeach
@@ -230,45 +233,45 @@
                                 </div>
                             </div>
                         </div>
-                        <?php 
-                        // PHP program to convert timestamp 
-                        // to time ago 
-                        date_default_timezone_set('Asia/Kolkata'); 
-                        function to_time_ago( $time ) { 
-                              
-                            // Calculate difference between current 
-                            // time and given timestamp in seconds 
-                            $diff = time() - $time; 
-                            if( $diff < 1 ) {  
-                                return 'less than 1 second ago';  
-                            } 
-                              
-                            $time_rules = array (  
-                                        12 * 30 * 24 * 60 * 60 => 'year', 
-                                        30 * 24 * 60 * 60       => 'month', 
-                                        24 * 60 * 60           => 'day', 
-                                        60 * 60                   => 'hour', 
-                                        60                       => 'minute', 
+                        <?php
+                        // PHP program to convert timestamp
+                        // to time ago
+                        date_default_timezone_set('Asia/Kolkata');
+                        function to_time_ago( $time ) {
+
+                            // Calculate difference between current
+                            // time and given timestamp in seconds
+                            $diff = time() - $time;
+                            if( $diff < 1 ) {
+                                return 'less than 1 second ago';
+                            }
+
+                            $time_rules = array (
+                                        12 * 30 * 24 * 60 * 60 => 'year',
+                                        30 * 24 * 60 * 60       => 'month',
+                                        24 * 60 * 60           => 'day',
+                                        60 * 60                   => 'hour',
+                                        60                       => 'minute',
                                         1                       => 'second'
-                            ); 
-                          
-                            foreach( $time_rules as $secs => $str ) { 
-                                  
-                                $div = $diff / $secs; 
-                          
-                                if( $div >= 1 ) { 
-                                      
-                                    $t = round( $div ); 
-                                      
-                                    return $t . ' ' . $str .  
-                                        ( $t > 1 ? 's' : '' ) . ' ago'; 
-                                } 
-                            } 
-                        } 
-                          
+                            );
+
+                            foreach( $time_rules as $secs => $str ) {
+
+                                $div = $diff / $secs;
+
+                                if( $div >= 1 ) {
+
+                                    $t = round( $div );
+
+                                    return $t . ' ' . $str .
+                                        ( $t > 1 ? 's' : '' ) . ' ago';
+                                }
+                            }
+                        }
+
                         ?>
                         <div class="card-body">
-                            <div class="card-title mb-3">Lead Stage Changed:<h6><?php 
+                            <div class="card-title mb-3">Lead Stage Changed:<h6><?php
                             if (!empty($lead_stages)) {
                                 $time_ago = strtotime($lead_stages->updated_stages);
                                 echo to_time_ago($time_ago);
@@ -278,7 +281,7 @@
                                 <div class="row">
                                     <input type="hidden" name="cdr_lead_id" id="cdr_lead_id" value="<?php print_r($id);?>">
                                     <?php $lead_id = $id; ?>
-                                	
+
                                     <a href="{{ route('lead_stages',[$lead_id,1]) }}" class="btn hover lead_stage" style="border-top-right-radius: 0;border-bottom-right-radius: 0;border: none;" title="New" id="1">New</a>
                                     <a href="{{ route('lead_stages',[$lead_id,2]) }}" class="btn lead_stage" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 0;border-bottom-right-radius: 0;border: none;" title="Contacted" id="2">Contacted</a>
                                     <a href="{{ route('lead_stages',[$lead_id,3]) }}" class="btn lead_stage" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 0;border-bottom-right-radius: 0;border: none;" title="Interested" id="3">Interested</a>
@@ -291,7 +294,7 @@
 
                                     <a href="javascript:void(0)" class="btn lead_stage lead_stage_last" data-toggle="modal" data-target="#unqualified" data-id="{{$lead_data->id}}" id="6" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 0;border-bottom-right-radius: 0;border: none;">Unqualified</a>
 
-                                    <a href="javascript:void(0)" class="btn lead_stage lead_stage_last" data-toggle="modal" data-target="#converted" data-id="{{$lead_data->id}}" id="7" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 0;border-bottom-right-radius: 0;border: none;">Converted</a>
+                                <a href="javascript:void(0)" class="btn lead_stage lead_stage_last" data-toggle="modal" <?php echo ($lead_stages->levels != 7) ? 'data-target="#converted"' :  "1231" ?>  data-id="{{$lead_data->id}}" id="7" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 0;border-bottom-right-radius: 0;border: none;">Converted</a>
 
                                     <!-- <select class="btn lead_stage lead_stage_last" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 0;border-bottom-right-radius: 0;border: none;width: auto;">
                                         <option value="">Converted/Unqualified</option>
@@ -301,7 +304,7 @@
 
                                     @if(!empty($lead_stages))
                                     <input type="hidden" name="level" id="level" value="<?php echo $lead_stages->levels;?>">
-                                    @endif 
+                                    @endif
                                 </div>
                          	<!-- Form Close -->
                         </div>
@@ -330,39 +333,39 @@
                                                             @endif
                                                         </select>
                                                     </div>
-                                                    <div class="input-group mb-3">
+                                                    {{-- <div class="input-group mb-3">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">From</span>
                                                         </div>
                                                         <input type="text" class="form-control" name="from" id="form">
-                                                    </div>
-                                                
+                                                    </div> --}}
+
                                                     <div class="input-group mb-3">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">TO</span>
                                                         </div>
-                                                        <input type="text" name="to" id="to" class="form-control" />  
+                                                        <input type="text" name="to" id="to" class="form-control" />
                                                     </div>
 
                                                     <div class="input-group mb-3">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">CC</span>
                                                         </div>
-                                                        <input type="text" name="cc" id="cc" class="form-control" />  
+                                                        <input type="text" name="cc" id="cc" class="form-control" />
                                                     </div>
 
                                                     <!-- <div class="input-group mb-3">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">BCC</span>
                                                         </div>
-                                                        <input type="text" name="bcc" id="bcc" class="form-control" />  
+                                                        <input type="text" name="bcc" id="bcc" class="form-control" />
                                                     </div> -->
 
                                                     <div class="input-group mb-3">
                                                         <div class="input-group-prepend">
                                                             <span class="input-group-text">Subject</span>
                                                         </div>
-                                                        <input type="text" name="subject" id="subject" class="form-control" />  
+                                                        <input type="text" name="subject" id="subject" class="form-control" />
                                                     </div>
 
                                                     <div class="col-md-12">
@@ -523,7 +526,7 @@
                         </div>
 
                         <div class="modal fade Unqualified" id="unqualified" tabindex="-1" role="dialog" aria-lavelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto; opacity: 1">
-                            
+
                             <div class="col-md-12">
                                 <div class="card mb-4">
                                     <div class="modal-header">
@@ -540,7 +543,7 @@
                                                     <option value="6" >Unqualified</option>
                                                 </select>
                                                 <label for="unq_reason">Unqualified Reason*</label>
-                                                
+
                                                 <select id="unq_reason" name="unq_reason" class="js-example-basic-single" required="">
                                                     <option value="">Select Reason</option>
                                                     <option value="Junk Lead">Junk Lead</option>
@@ -560,7 +563,7 @@
                         </div>
 
                         <div class="modal fade Converted" id="converted" tabindex="-1" role="dialog" aria-lavelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
-                            
+
                             <div class="col-md-12">
                                 <div class="card mb-4">
                                     <div class="modal-header">
@@ -581,7 +584,7 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label for="company_name_converted">Company Name*</label>
-                                                        <input type="text" name="company_name_converted" id="company_name_converted" class="form-control" placeholder="Enter Company Name">
+                                                        <input type="text" name="company_name_converted" id="company_name_converted" class="form-control" placeholder="Enter Company Name" required="">
                                                     </div>
                                                     <div class="col-md-6">
                                                         <label for="first_name_c">First Name*</label>
@@ -633,11 +636,11 @@
                                     {!! Form::open(['action' => 'LeadController@Reminder', 'method' => 'post']) !!}
                                     <div class="modal-body">
                                         <div class="row">
-                                            <div class="col-md-2 form-group mb-3"> 
+                                            <div class="col-md-2 form-group mb-3">
                                                 <input type="hidden" name="lead_id" id="lead_id">
                                             </div>
                                             <div class="col-md-8 form-group mb-3">
-                                                <label for="firstName1">Reminder Date</label> 
+                                                <label for="firstName1">Reminder Date</label>
                                                 <input type="date" class="form-control" placeholder="yyyy-mm-dd" name="startdate" required="">
                                             </div>
                                         </div>
@@ -645,16 +648,16 @@
                                             <div class="col-md-2 form-group mb-3"> </div>
 
                                             <div class="col-md-8 form-group mb-3">
-                                                <label for="firstName1">Reminder Time</label> 
-                                                <input  placeholder="Followup Time" type="text"  size="10"  data-rel="timepicker" id="timepicker1" name="starttime" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" class="form-control" required="" /> 
+                                                <label for="firstName1">Reminder Time</label>
+                                                <input  placeholder="Followup Time" type="text"  size="10"  data-rel="timepicker" id="timepicker1" name="starttime" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" class="form-control" required="" />
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-2 form-group mb-3"> </div>
 
                                             <div class="col-md-8 form-group mb-3">
-                                                <label for="firstName1">Title</label> 
-                                                <input  placeholder="Add Title" type="text"  size="10" id="title" name="title" class="form-control" required="" /> 
+                                                <label for="firstName1">Title</label>
+                                                <input  placeholder="Add Title" type="text"  size="10" id="title" name="title" class="form-control" required="" />
                                             </div>
                                         </div>
 
@@ -662,11 +665,11 @@
                                             <div class="col-md-2 form-group mb-3"> </div>
 
                                             <div class="col-md-8 form-group mb-3">
-                                                <label for="firstName1">Task</label> 
+                                                <label for="firstName1">Task</label>
                                                 <textarea id="task" name="task" class="form-control" placeholder="Add Description" required=""></textarea>
                                             </div>
                                         </div>
-                                        
+
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -688,7 +691,7 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                     </div>
-                                    {!! Form::open(['action' => 'LeadController@AddProposal', 'method' => 'post','autocomplete' => 'off']) !!} 
+                                    {!! Form::open(['action' => 'LeadController@AddProposal', 'method' => 'post','autocomplete' => 'off']) !!}
                                     <div class="modal-body">
                                        <div class="row">
                                         <input type="hidden" name="lead_id" id="lead_id">
@@ -727,11 +730,11 @@
                                                                             <option value="{{$prod->id}}">{{$prod->name}}
                                                                             </option>
                                                                         @endforeach
-                                                                    @endif 
-                                                                  </select> 
+                                                                    @endif
+                                                                  </select>
                                                                 </td>
                                                                   <td>
-                                                                    <input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" value="1" />  
+                                                                    <input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" value="1" />
                                                                   </td>
                                                                   <td>
                                                                     <input type="text" name="rate[]" id="rate" placeholder="Rate" class="rate form-control">
@@ -747,7 +750,7 @@
                                                                       <input type="hidden" name="tax_amount[]" id="tax_amount" class="tax_amount">
                                                                   </td>
                                                                   <td>
-                                                                      <input type="text" name="amount[]" id="amount" class="form-control amount" placeholder="Amount" readonly="" /> 
+                                                                      <input type="text" name="amount[]" id="amount" class="form-control amount" placeholder="Amount" readonly="" />
                                                                   </td>
                                                                 </tr>
                                                               </tbody>
@@ -828,34 +831,37 @@
                                                 </ul>
                                               </div> -->
                                             </div>
+                                            @if($operator_name)
+                                                <h3 class="mt-3">{{ 'Lead Assigned to : '. ucfirst($operator_name) }}</h3>
+                                            @endif
                                             <div class="ul-widget__body">
                                               <div class="tab-content">
                                                 <div class="tab-pane active show" id="__g-widget-s6-tab1-content">
                                                   <div class="ul-widget-s6__items">
-                                                    
+
                                                     @foreach($recent_activities as $recent_activity)
                                                     <?php
                                                     $lead_name = '';
                                                     if ($recent_activity->activity_name == 'lead' && $recent_activity->activity_data == '1') {
-                                                        $lead_name = 'Became New Lead';                   
+                                                        $lead_name = 'Became New Lead';
                                                     }
                                                     elseif ($recent_activity->activity_name == 'lead' && $recent_activity->activity_data == '2') {
-                                                        $lead_name = 'Became Contacted Lead';                   
+                                                        $lead_name = 'Became Contacted Lead';
                                                     }
                                                     elseif ($recent_activity->activity_name == 'lead' && $recent_activity->activity_data == '3') {
-                                                        $lead_name = 'Became Interested Lead';                   
+                                                        $lead_name = 'Became Interested Lead';
                                                     }
                                                     elseif ($recent_activity->activity_name == 'lead' && $recent_activity->activity_data == '4') {
-                                                        $lead_name = 'Became Under review Lead';                   
+                                                        $lead_name = 'Became Under review Lead';
                                                     }
                                                     elseif ($recent_activity->activity_name == 'lead' && $recent_activity->activity_data == '5') {
-                                                        $lead_name = 'Became Demo Lead';                   
+                                                        $lead_name = 'Became Demo Lead';
                                                     }
                                                     elseif ($recent_activity->activity_name == 'lead' && $recent_activity->activity_data == '6') {
-                                                        $lead_name = 'Became Unqualified Lead';                   
+                                                        $lead_name = 'Became Unqualified Lead';
                                                     }
                                                     elseif ($recent_activity->activity_name == 'lead' && $recent_activity->activity_data == '7') {
-                                                        $lead_name = 'Became Converted Lead';                   
+                                                        $lead_name = 'Became Converted Lead';
                                                     }
                                                     else{
                                                         $lead_name = $recent_activity->activity_data;
@@ -871,7 +877,7 @@
                                                                 <?php $time_ago = strtotime($recent_activity->inserted_date);
                                                                     echo to_time_ago($time_ago); ?>
                                                             </span>
-                                                        </div> 
+                                                        </div>
                                                     @endforeach
                                                   </div>
                                                 </div>
@@ -896,7 +902,7 @@
                                                     <div class="tab-pane active show" id="__g-widget-s7-tab1-content">
                                                         <div class="ul-widget-s7n">
                                                             @foreach($lead_mails as $lead_mail )
-                                                            <div class="ul-widget-s7__items mb-4">
+                                                            <div class="ul-widget-s7__items">
                                                                 <span class="ul-widget-s7__item-time" style="width: 20%;font-size: .813rem;">
                                                                     <!-- <h6>{{$lead_mail->from}}<br></h6> -->
                                                                     <?php $time_ago = strtotime($lead_mail->inserted_date);
@@ -911,7 +917,7 @@
                                                             </div>
                                                             @endforeach
                                                             @foreach($call_logs as $call_log)
-                                                            <div class="ul-widget-s7__items mb-4">
+                                                            <div class="ul-widget-s7__items">
                                                                 <span class="ul-widget-s7__item-time ul-middle"  style="width: 20%;font-size: .813rem;"><?php $time_ago = strtotime($call_log->inserted_date);
                                                                     echo to_time_ago($time_ago); ?></span>
                                                                 <div class="ul-widget-s7__item-circle">
@@ -921,7 +927,7 @@
                                                                     Call Type: {{$call_log->call_type}} &nbsp;&nbsp;
                                                                     Outcomes: {{$call_log->outcomes}} <br>
                                                                     Associate Phone call: <br>
-                                                                    {{$call_log->associate_call}} 
+                                                                    {{$call_log->associate_call}}
                                                                     Call Log Name: {{$call_log->call_log_name}} <br>
                                                                     Note:
                                                                     {{$call_log->notes}}
@@ -969,7 +975,7 @@
                                                 </div>
                                                 @endif
                                             </div>
-                                        </div>  
+                                        </div>
                                     </div>
                                 </div>
                         </div>
@@ -1016,19 +1022,19 @@
     $('.edit_data').click(function(){
         $('#sub_lead').css('display','block');
         $(this).css({"border-style":"1px solid;"});
-        $('#first_name').attr("readonly", false); 
-        $('#last_name').attr("readonly", false); 
-        $('#company_name').attr("readonly", false); 
-        $('#email').attr("readonly", false); 
-        $('#department').attr("readonly", false); 
+        $('#first_name').attr("readonly", false);
+        $('#last_name').attr("readonly", false);
+        $('#company_name').attr("readonly", false);
+        $('#email').attr("readonly", false);
+        $('#department').attr("readonly", false);
         $(':radio:not(:checked)').attr('disabled', false);
-        $('#address').attr("readonly", false); 
-        $('#work').attr("readonly", false); 
+        $('#address').attr("readonly", false);
+        $('#work').attr("readonly", false);
     })
 </script>
 
-<script> 
-        $(document).ready(function(){ 
+<script>
+        $(document).ready(function(){
 
             $("#mail_modal").click(function(){
                 myid = $(this).data('id');
@@ -1038,12 +1044,12 @@
                 $(".Mail #lead_id").val(myid);
                 $(".Mail #to").val(email);
             });
-            
-            $(".ql-editor").on("keyup", function(){ 
+
+            $(".ql-editor").on("keyup", function(){
                 /*alert($(this).html());*/
                 var data = $(this).html();
                 $("#mail_body").html(data);
-            }); 
+            });
 
             $("#sec_mail_link").click(function(){
                 myid = $(this).data('id');
@@ -1081,32 +1087,32 @@
                 $('#call_log_name').val('');
 
                 if ($(this).val() == 'Existing Contact') {
-                    $('#call_log_name').attr("placeholder", "Enter last Name");    
+                    $('#call_log_name').attr("placeholder", "Enter last Name");
                     $('.hidden').hide();
                     $('.name_hidden').show();
                 }else if ($(this).val() == 'New Contact') {
-                    $('#call_log_name').attr("placeholder", "Enter a contact Name"); 
+                    $('#call_log_name').attr("placeholder", "Enter a contact Name");
                     $('.hidden').hide();
-                    $('.name_hidden').show();   
+                    $('.name_hidden').show();
                 }else if ($(this).val() == 'Existing Account') {
                     $('.hidden').hide();
                     $('.name_hidden').show();
-                    $('#call_log_name').attr("placeholder", "Enter an account Name");  
+                    $('#call_log_name').attr("placeholder", "Enter an account Name");
                 }else if ($(this).val() == 'Existing Deal'){
                     $('.hidden').hide();
                     $('.name_hidden').show();
-                    $('#call_log_name').attr("placeholder", "Enter a deal Name"); 
+                    $('#call_log_name').attr("placeholder", "Enter a deal Name");
                 }else if($(this).val() == 'New Lead') {
                     $('.hidden').show();
                     $('.name_hidden').hide();
                     $('#last_name_calllog').attr('required',true);
                 }else{
                     $('.name_hidden').show();
-                    $('#call_log_name').attr("readonly", true); 
-                    $('#call_log_name').attr("placeholder", "Enter last Name"); 
+                    $('#call_log_name').attr("readonly", true);
+                    $('#call_log_name').attr("placeholder", "Enter last Name");
                     $('.hidden').hide();
                 }
-                
+
             });
 
             $('#sec_msg_link').click(function(){
@@ -1173,11 +1179,13 @@
             });
 
             $('#7').click(function(){
-                myid = $(this).data('id');
-                $(".Converted #lead_id").val(myid);
-                $(".Converted").animate({width: 'toggle'}, "slow");
+                if(parseInt($("#level").val(),0) < 6){
+                    myid = $(this).data('id');
+                    $(".Converted #lead_id").val(myid);
+                    $(".Converted").animate({width: 'toggle'}, "slow");
+                }
             });
-        }); 
+        });
 </script>
 <script type="text/javascript">
     $('#email_template').change(function(){
@@ -1188,7 +1196,7 @@
             url: '{{ URL::route("SelectMailTemp") }}',
             dataType: 'text',
             data: {myid:myid},
-            success: function(mail_template_data) 
+            success: function(mail_template_data)
             {
                 //console.log(mail_template_data);
                 var obj = jQuery.parseJSON(mail_template_data);
@@ -1209,7 +1217,7 @@
             url: '{{ URL::route("SelectSMSTemp") }}',
             dataType: 'text',
             data: {myid:myid},
-            success: function(sms_template_data) 
+            success: function(sms_template_data)
             {
                 //console.log(mail_template_data);
                 var obj = jQuery.parseJSON(sms_template_data);
@@ -1218,20 +1226,20 @@
             }
         });
     });
-</script> 
+</script>
 
 <script type="text/javascript">
     $(document).ready(function() {
         $('.js-example-basic-single').select2();
         $('.js-example-basic-multiple').select2();
-        
+
         $("#btnAdd").bind("click", function () {
             var div = $("<tr />");
             div.html(GetDynamicTextBox(""));
             $("#TextBoxContainer").append(div);
             $('.js-example-basic-single').select2();
             $('.js-example-basic-multiple').select2();
-            
+
         });
         $("body").on("click", ".remove", function () {
 
@@ -1247,7 +1255,7 @@
                 discount();
                 total_tax();
             }
-          
+
         });
 
         $("body").on("change", ".products", function () {
@@ -1260,14 +1268,14 @@
                 url: '{{ URL::route("ProductAmount") }}',
                 dataType: 'text',
                 data: {pro_id:pro_id},
-                success: function(data) 
+                success: function(data)
                 {
                     //console.log(data);
                     var obj = jQuery.parseJSON(data);
                     console.log(obj[0].selling_cost);
-                   
+
                     thiss.closest("tr").find("input.rate").val(parseFloat(obj[0].selling_cost).toFixed(2));
-                    
+
                     thiss.closest("tr").find("input.amount").val(parseFloat(obj[0].selling_cost).toFixed(2));
 
                     total_amount();
@@ -1315,7 +1323,7 @@
         });
 
       });
-      function GetDynamicTextBox(value) 
+      function GetDynamicTextBox(value)
       {
           return '<td><select name="products[]" id="products" class="form-control js-example-basic-single products"><option>Select Products</option>@if(!empty($products)) @foreach($products as $prod )<option value="{{$prod->id}}">{{$prod->name}}</option>@endforeach @endif</select></td><td><input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" value="1" /></td><td><input type="text" name="rate[]" id="rate" placeholder="Rate" class="form-control rate" readonly=""></td><td><select name="tax[]" id="tax" class="tax form-control js-example-basic-multiple" multiple><option value="0">No Tax</option><option value="5.00">5.00%</option><option value="10.00">10.00%</option><option value="18.00">18.00%</option></select><input type="hidden" name="tax_amount[]" id="tax_amount" class="tax_amount"></td><td><input type="text" name="amount[]" id="amount" class="form-control amount" placeholder="Amount" readonly="" /></td><td><button type="button" class="btn btn-danger remove" data-toggle="tooltip" data-original-title="Remove"><i class="nav-icon i-Close-Window"></i></button></td>';
       }
@@ -1324,7 +1332,7 @@
                 var sum = 0.0;
                 $('.amount').each(function(){
                     //alert($(this).val());
-                    sum += Number($(this).val()); 
+                    sum += Number($(this).val());
                 });
                 $('#total_amount').val(parseFloat(sum).toFixed(2));
             }

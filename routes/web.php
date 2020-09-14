@@ -419,6 +419,8 @@ Route::post('invoice/payment','InvoiceController@payment')->name('InvoicePayment
 Route::post('/invoice/filter_data','InvoiceController@FilterDataInvoice')->name('FilterDataInvoice');
 Route::get('invoice/view/{id}','InvoiceController@ViewInvoice')->name('ViewInvoice');
 Route::get('invoice/mail/{id}','InvoiceController@MailInvoice')->name('MailInvoice');
+Route::get('invoice/payment/{id}', 'InvoiceController@destroyPayment')->name('deleteInvoicePayment');
+
 
 //ToDoList
 Route::post('home/todotask','HomeController@ToDoTaskAdd')->name('ToDoTaskAdd');
