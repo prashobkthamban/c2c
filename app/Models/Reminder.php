@@ -20,13 +20,53 @@ class Reminder extends Model
         return $this->hasOne('App\Models\Contact', 'phone', 'number');
     }
 
-    public static function getReport( ){
+    public function operatorAccount() {
+        return $this->hasOne('App\Models\OperatorAccount', 'id', 'operatorid');
+    }
 
+    public static function getReport($params){
         $data = Reminder::select('name','opername','phonenumber','reminders.*')
             ->leftJoin('accountgroup', 'accountgroup.id', '=', 'reminders.groupid')
             ->leftJoin('resellergroup', 'resellergroup.id', '=', 'reminders.resellerid')
             ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'reminders.operatorid')
-            ->with(['cdrNotes', 'contacts']);
+            ->with(['cdrNotes', 'contacts', 'operatorAccount']);
+        if(isset($params['caller']) && $params['caller'] != '')
+        {
+            $data->where('reminders.number','LIKE','%' .$params['caller'].'%'  );
+        }
+        if(isset($params['department']) && $params['department'] != '')
+        {
+            $data->where('reminders.deptname','LIKE','%' .$params['department'].'%'  );
+        }
+        if(isset($params['status']) && $params['status'] != '')
+        {
+            $data->where('reminders.appoint_status', $params['status']);
+        }
+        if(isset($params['operator']) && $params['operator'] != '')
+        {
+            $data->where('operatoraccount.opername','LIKE','%' .$params['operator'].'%'  );
+        }
+        if(!empty($params['date'])) {
+            if($params['date'] == 'today')
+            $params['date_from'] = $params['date_to'] = date("Y-m-d");
+            elseif ($params['date'] == 'yesterday')
+                $params['date_from'] = $params['date_to'] = date("Y-m-d", strtotime("-1 day"));
+            elseif ($params['date'] == 'week') {
+                $params['date_from'] = date("Y-m-d", strtotime("-7 day"));
+                $params['date_to'] = date("Y-m-d");
+            }
+            elseif($params['date'] == 'month') {
+                $params['date_from'] = date("Y-m-d", strtotime("-1 month"));
+                $params['date_to'] = date("Y-m-d");
+            } 
+            elseif($params['date'] == 'custom') {
+                if($params['date_from'] != '')
+                    $params['date_from'] = date('Y-m-d',strtotime($params['date_from']));
+                if($params['date_to'] != '')
+                    $params['date_to'] = date('Y-m-d',strtotime($params['date_to']));
+            }
+            $query->whereBetween('followupdate',[$params['date_from'].'%',$params['date_to'].'%']);
+        }
         if( Auth::user()->usertype == 'reseller'){
             $data->where('reminders.resellerid',Auth::user()->resellerid );
         }
@@ -37,7 +77,7 @@ class Reminder extends Model
             //$data->where('cdrpbx.groupid',Auth::user()->groupid );
         }
         $result = $data->orderBy('followupdate','DESC')->groupBy('reminders.id')
-            ->paginate(30);
+            ->paginate(10);
         //dd($result);
         return $result;
     }
