@@ -8,7 +8,7 @@
 
 @section('main-content')
   <div class="breadcrumb">
-        <h1> Invoice </h1> 
+        <h1> Invoice </h1>
     </div>
             <div class="separator-breadcrumb border-top"></div>
 
@@ -17,41 +17,47 @@
                     <div class="card text-left">
                         <div class="card-body">
                             <a title="Compact Sidebar" id="add_converted" href="{{route('InvoiceAdd')}}" class="btn btn-primary" style="float: right;"> Add Invoice </a>
+                            <form method="GET">
                             <div class="row">
                                 <div class="col-md-4">
                                     <label for="date_from">Date From</label>
-                                    <input type="date" name="date_from" id="date_from" class="form-control">
+                                    <input type="date" name="date_from" id="date_from" class="form-control" required
+                                    value="<?php echo request()->get('date_from') ?? ''?>" >
                                 </div>
                                 <div class="col-md-4">
                                     <label for="date_to">Date To</label>
-                                    <input type="date" name="date_to" id="date_to" class="form-control" value="<?php echo date('Y-m-d');?>">
+                                    <input type="date" name="date_to" id="date_to" class="form-control" required
+                                    value="<?php echo request()->get('date_to') ?? date('Y-m-d');?>">
                                 </div>
                                 <div class="col-md-4"></div>
                                 <div class="col-md-4">
                                     <label for="company_name">Company Name</label>
-                                    <input type="text" name="company_name" id="company_name" class="form-control" value="">
+                                    <input type="text" name="company_name" id="company_name" class="form-control" value="<?php echo request()->get('company_name') ?? '';?>">
                                 </div>
                                 <?php
                                 if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin') { ?>
                                     <div class="col-md-4">
                                         <label for="agent_name">Agent Name</label>
-                                        <input type="text" name="agent_name" id="agent_name" class="form-control" value="">
+                                        <input type="text" name="agent_name" id="agent_name" class="form-control" value="<?php echo request()->get('agent_name') ?? '';?>">
                                     </div>
                                 <?php }
                                 ?>
                                 <div class="col-md-4">
                                     <label for="status">Payment Status</label>
                                         <select name="status" id="status" class="form-control">
-                                            <option value="pending">Pending</option>
-                                            <option value="partial">Partial</option>
-                                            <option value="paid">Paid</option>
+                                            <option <?php echo (request()->get('status') == "") ? 'selected' : '';?> value="">All</option>
+                                            <option <?php echo (request()->get('status') == "pending") ? 'selected' : '';?> value="pending">Pending</option>
+                                            <option <?php echo (request()->get('status') == "partial") ? 'selected' : '';?> value="partial">Partial</option>
+                                            <option <?php echo (request()->get('status') == "paid") ? 'selected' : '';?> value="paid">Paid</option>
                                         </select>
                                 </div>
-                                <div class="col-md-6" style="margin-top: 23px;margin-bottom: 15px;">
-                                    <button id="btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
+                                <div class="col-md-6 mt-3 mb-3">
+                                    <button class="btn btn-outline-success" style="margin-right: 15px;">Search</button>
+                                    <a href="{{route('InvoiceIndex')}}" class="btn btn-outline-danger" style="margin-right: 15px;">Reset</a>
                                     <button id="export_invoice" class="btn btn-outline-secondary" name="btn">Export Invoice</button>
                                 </div>
                             </div>
+                            </form>
 
                             <input type="hidden" name="usertype" id="usertype" value="<?php echo Auth::user()->usertype; ?>">
 
@@ -77,7 +83,7 @@
                                             <?php }?>
                                             <th>Actions</th>
                                         </tr>
-                                    </thead>                                
+                                    </thead>
                                     <tbody class="filter_data">
                                         @if(Auth::user()->usertype == 'reseller')
                                             @foreach($list_invoices as $list_invoice)
@@ -114,11 +120,11 @@
                                                         </a>
                                                         <a href="{{ route('deleteInvoice', $invoices->id) }}" onclick="return confirm('Are you sure you want to delete this Data?')" class="text-danger mr-2" data-toggle="tooltip" data-placement="top" title="Invoice Delete">
                                                             <i class="nav-icon i-Close-Window font-weight-bold"></i>
-                                                        </a>  
+                                                        </a>
                                                         <a href="javascript:void(0)" class="text-warning mr-2" data-toggle="modal" data-target="#payment" data-id="{{$invoices->id}}" data-amount="{{$invoices->grand_total}}" id="payment_modal"><i class="fa fa-credit-card" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Invoice Payment"></i>
                                                         </a>
                                                         <a href="{{ route('ViewInvoice', $invoices->id) }}" class="text-info mr-2" data-toggle="tooltip" data-placement="top" title="Invoice View"><i class="nav-icon fa fa-eye font-weight-bold"></i>
-                                                        </a>  
+                                                        </a>
 
                                                     </td>
                                                 </tr>
@@ -158,11 +164,11 @@
                                                     </a>
                                                     <a href="{{ route('deleteInvoice', $list_invoice->id) }}" onclick="return confirm('Are you sure you want to delete this Data?')" class="text-danger mr-2" data-toggle="tooltip" data-placement="top" title="Invoice Delete">
                                                         <i class="nav-icon i-Close-Window font-weight-bold"></i>
-                                                    </a>  
+                                                    </a>
                                                     <a href="javascript:void(0)" class="text-warning mr-2" data-toggle="modal" data-target="#payment" data-id="{{$list_invoice->id}}" data-amount="{{$list_invoice->grand_total}}" id="payment_modal"><i class="fa fa-credit-card" aria-hidden="true" data-toggle="tooltip" data-placement="top" title="Invoice Payment"></i>
                                                     </a>
                                                     <a href="{{ route('ViewInvoice', $list_invoice->id) }}" class="text-info mr-2" data-toggle="tooltip" data-placement="top" title="Invoice View"><i class="nav-icon fa fa-eye font-weight-bold"></i>
-                                                    </a>  
+                                                    </a>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -190,7 +196,7 @@
                                         </tr>
                                     </tfoot>
                                 </table>
-                              
+
                             </div>
 
                         </div>
@@ -200,7 +206,7 @@
             </div>
 
             <div class="modal fade Payment" id="payment" tabindex="-1" role="dialog" aria-lavelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
-                            
+
                             <div class="col-md-12">
                                 <div class="card mb-4">
                                     <div class="modal-header">
@@ -296,7 +302,7 @@
         var agent_name = $('#agent_name').val();
         var status = $('#status').val();
 
-        if (date_from == '') 
+        if (date_from == '')
         {
             alert('Please enter Date from');
         }
@@ -307,7 +313,7 @@
                 url: '{{ URL::route("FilterDataInvoice") }}',
                 dataType: 'text',
                 data: {date_to:date_to,date_from:date_from,company_name:company_name,agent_name:agent_name,status:status},
-                success: function(data) 
+                success: function(data)
                 {
                     //console.log(data);
                     var obj = jQuery.parseJSON(data);
@@ -328,7 +334,7 @@
 
                         url_view = url_view.replace(':data',data.id);
 
-                        if (data.payment_status == 'partial') 
+                        if (data.payment_status == 'partial')
                         {
                             var status = '<span class="badge badge-warning">'+data.payment_status+'</span>';
                         }
@@ -342,7 +348,7 @@
                         }
 
                         var usertype = $('#usertype').val();
-                        if (usertype != 'operator') 
+                        if (usertype != 'operator')
                         {
                             var op = '<td>'+opername+'</td>';
                         }
@@ -362,7 +368,7 @@
             });
         }
         //alert(date_from+date_to);
-        
+
     });
 
     $('#export_invoice').click(function(){
@@ -370,12 +376,12 @@
         exportexcel();
     });
 
-    function exportexcel() {  
-        $(".insert_to_excel").table2excel({  
-            name: "Table2Excel",  
-            filename: "Invoice_Data",  
-            fileext: ".xls"  
-        });  
-    }  
+    function exportexcel() {
+        $(".insert_to_excel").table2excel({
+            name: "Table2Excel",
+            filename: "Invoice_Data",
+            fileext: ".xls"
+        });
+    }
 </script>
 @endsection

@@ -85,6 +85,12 @@ class InvoiceController extends Controller
         /*echo "<pre>";
         print_r($list_invoices);exit;*/
 
+        $date_from = request()->get('date_from');
+        $date_to = request()->get('date_to');
+        if($date_from && $date_to) {
+            $list_invoices = $this->FilterDataInvoice(request());
+        }
+
         return view('invoice.index',compact('list_invoices','result'));
     }
 
@@ -308,87 +314,62 @@ class InvoiceController extends Controller
         $agent_name = $request->get('agent_name');
         $status = $request->get('status');
 
-
         if (Auth::user()->usertype == 'operator')
         {
             $filter_data = DB::table('invoice')
                 ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
                 ->leftJoin('account','account.id','=','invoice.user_id')
-                ->where('invoice.inserted_date','>=', $date_from)
-                ->where('invoice.inserted_date','<=', $date_to)
-                ->where('invoice.user_id','=',Auth::user()->id)
-                ->where('converted.company_name','like','%'.$company_name.'%')
-                ->where('account.username','like','%'.$agent_name.'%')
-                ->where('invoice.payment_status',$status)
-                ->select('converted.first_name','converted.last_name','invoice.*','converted.company_name','account.username')
-                ->get();
-
-            $count_data = DB::table('invoice')
-                ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
-                ->leftJoin('account','account.id','=','invoice.user_id')
-                ->where('invoice.inserted_date','>=', $date_from)
-                ->where('invoice.inserted_date','<=', $date_to)
-                ->where('invoice.user_id','=',Auth::user()->id)
-                ->where('converted.company_name','like','%'.$company_name.'%')
-                ->where('account.username','like','%'.$agent_name.'%')
-                ->where('invoice.payment_status',$status)
-                ->count();
-
+                ->whereBetween('invoice.inserted_date',[$date_from,$date_to])
+                ->where('invoice.user_id','=',Auth::user()->id);
+            if($company_name){
+                $filter_data->where('converted.company_name','like','%'.$company_name.'%');
+            }
+            if($agent_name){
+                $filter_data->where('account.username','like','%'.$agent_name.'%');
+            }
+            if($status){
+                $filter_data->where('invoice.payment_status',$status);
+            }
+            $filter_data = $filter_data->select('converted.first_name',
+                    'converted.last_name','invoice.*','converted.company_name','account.username')->get();
         }
         elseif (Auth::user()->usertype == 'groupadmin') {
-
            $filter_data = DB::table('invoice')
                 ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
                 ->leftJoin('account','account.id','=','invoice.user_id')
-                ->where('invoice.inserted_date','>=', $date_from)
-                ->where('invoice.inserted_date','<=', $date_to)
-                ->where('invoice.group_id','=',Auth::user()->groupid)
-                ->where('converted.company_name','like','%'.$company_name.'%')
-                ->where('account.username','like','%'.$agent_name.'%')
-                ->where('invoice.payment_status',$status)
-                ->select('converted.first_name','converted.last_name','invoice.*','converted.company_name','account.username')
-                ->get();
-
-            $count_data = DB::table('invoice')
-                ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
-                ->leftJoin('account','account.id','=','invoice.user_id')
-                ->where('invoice.inserted_date','>=', $date_from)
-                ->where('invoice.inserted_date','<=', $date_to)
-                ->where('invoice.group_id','=',Auth::user()->groupid)
-                ->where('converted.company_name','like','%'.$company_name.'%')
-                ->where('account.username','like','%'.$agent_name.'%')
-                ->where('invoice.payment_status',$status)
-                ->count();
+                ->whereBetween('invoice.inserted_date',[$date_from,$date_to])
+                ->where('invoice.group_id','=',Auth::user()->groupid);
+            if($company_name){
+                $filter_data->where('converted.company_name','like','%'.$company_name.'%');
+            }
+            if($agent_name){
+                $filter_data->where('account.username','like','%'.$agent_name.'%');
+            }
+            if($status){
+                $filter_data->where('invoice.payment_status',$status);
+            }
+            $filter_data = $filter_data->select('converted.first_name',
+                    'converted.last_name','invoice.*','converted.company_name','account.username')->get();
         }
         else
         {
             $filter_data = DB::table('invoice')
                 ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
                 ->leftJoin('account','account.id','=','invoice.user_id')
-                ->where('invoice.inserted_date','>=', $date_from)
-                ->where('invoice.inserted_date','<=', $date_to)
-                ->where('converted.company_name','like','%'.$company_name.'%')
-                ->where('account.username','like','%'.$agent_name.'%')
-                ->where('invoice.payment_status',$status)
-                ->select('converted.first_name','converted.last_name','invoice.*','converted.company_name','account.username')
-                ->get();
-
-            $count_data = DB::table('invoice')
-                ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
-                ->leftJoin('account','account.id','=','invoice.user_id')
-                ->where('invoice.inserted_date','>=', $date_from)
-                ->where('invoice.inserted_date','<=', $date_to)
-                ->where('converted.company_name','like','%'.$company_name.'%')
-                ->where('account.username','like','%'.$agent_name.'%')
-                ->where('invoice.payment_status',$status)
-                ->count();
+                ->whereBetween('invoice.inserted_date',[$date_from,$date_to]);
+            if($company_name){
+                $filter_data->where('converted.company_name','like','%'.$company_name.'%');
+            }
+            if($agent_name){
+                $filter_data->where('account.username','like','%'.$agent_name.'%');
+            }
+            if($status){
+                $filter_data->where('invoice.payment_status',$status);
+            }
+            $filter_data = $filter_data->select('converted.first_name',
+                    'converted.last_name','invoice.*','converted.company_name','account.username')->get();
         }
-
-
-
-        $newdata = array('filter_data' => $filter_data, 'count_data' => $count_data);
-
-        echo json_encode($newdata);
+        return $filter_data;
     }
 
     public function ViewInvoice($id)
