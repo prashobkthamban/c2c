@@ -765,7 +765,7 @@
                                                                             <div class="input-group-prepend">
                                                                                 <span class="input-group-text">%</span>
                                                                             </div>
-                                                                           <input type="text" name="discount" id="discount" class="form-control discount" required="">
+                                                                           <input type="text" name="discount" id="discount" value="0" class="form-control discount" required="">
                                                                         </div>
                                                                     </th>
                                                                     <th>
@@ -1281,6 +1281,7 @@
                     total_amount();
                     discount();
                     total_tax();
+                    grand_total();
                     /*$('.pro_amount').val(obj[0].selling_cost);*/
                 }
             });
@@ -1362,6 +1363,16 @@
         //alert(tax);
         $('#total_tax').val(tax);
     };
+
+    function grand_total(){
+        var sub_total = $('#total_amount').val();
+        var dis_val = $("#discount").val();
+        var discount = parseFloat((sub_total*dis_val)/100).toFixed(2);
+        var tax = $('#total_tax').val();
+        $('#dis_val').val(discount);
+        var grand_total = sub_total - discount + Number(tax);
+        $('#grand_total').val(parseFloat(grand_total).toFixed(2));
+    }
 </script>
 
 @endsection

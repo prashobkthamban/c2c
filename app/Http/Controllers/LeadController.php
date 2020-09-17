@@ -929,6 +929,7 @@ class LeadController extends Controller
                 'grand_total' => $request->get('grand_total'),
                 'discount' => $request->get('dis_val'),
                 'total_tax_amount' => $request->get('total_tax'),
+                'inserted_date' => date('Y-m-d H:i:s'),
             ]);
 
             //dd($add_proposal);exit;
@@ -981,258 +982,73 @@ class LeadController extends Controller
 
     public function FilterData(Request $request)
     {
-        //print_r($request->get('date_from'));exit();
         $date_from = $request->get('from_date');
         $date_to = $request->get('to_date');
         $lead = $request->get('lead');
-        $company_name = $request->get('company_name');
-        $agent_name = $request->get('agent_name');
-
-        /*$filter_data = DB::table('cdrreport_lead')
-                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->where('inserted_date','>=', $date_from)
-                ->where('inserted_date','<=', $date_to)
-                ->where('lead_stage',$lead)
-                ->orWhere('company_name','Like','%'.$company_name.'%')
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();*/
+        $company_name = $request->get('search_company_name');
+        $agent_name = $request->get('search_agent_name');
+        $lead_name = $request->get('search_name');
 
         if (Auth::user()->usertype == 'operator')
         {
-
-            if ($agent_name != '' && $company_name != '')
-            {
-                $filter_data = DB::table('cdrreport_lead')
+            $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
                 ->where('user_id','=',Auth::user()->id)
-                ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                    $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('opername',$agent_name)->where('company_name','like','%'.$company_name.'%');
-                })
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();
-
-                $count_data = DB::table('cdrreport_lead')
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->where('user_id','=',Auth::user()->id)
-                    ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                        $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('opername',$agent_name)->where('company_name','like','%'.$company_name.'%');
-                    })
-                    ->count();
+                ->whereBetween('inserted_date',[$date_from,$date_to]);
+            if($lead){
+            $filter_data->where('lead_stage','like','%'.$lead.'%');
             }
-            elseif($agent_name != '' && $company_name == '')
-            {
-                $filter_data = DB::table('cdrreport_lead')
-                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->where('user_id','=',Auth::user()->id)
-                ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                    $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('opername',$agent_name);
-                })
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();
-
-                $count_data = DB::table('cdrreport_lead')
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->where('user_id','=',Auth::user()->id)
-                    ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                        $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('opername',$agent_name);
-                    })
-                    ->count();
+            if($agent_name){
+            $filter_data->where('opername','like','%'.$agent_name.'%');
             }
-            elseif ($agent_name == '' && $company_name != '')
-            {
-                $filter_data = DB::table('cdrreport_lead')
-                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->where('user_id','=',Auth::user()->id)
-                ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                    $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('company_name','like','%'.$company_name.'%');
-                })
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();
-
-                $count_data = DB::table('cdrreport_lead')
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->where('user_id','=',Auth::user()->id)
-                    ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                        $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('company_name','like','%'.$company_name.'%');
-                    })
-                    ->count();
+            if($lead_name){
+            $filter_data->where(DB::raw('CONCAT(first_name, " ", last_name)'),'like','%'.$lead_name.'%');
             }
-            else
-            {
-                $filter_data = DB::table('cdrreport_lead')
-                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->where('user_id','=',Auth::user()->id)
-                ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                    $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%');
-                })
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();
-
-                $count_data = DB::table('cdrreport_lead')
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->where('user_id','=',Auth::user()->id)
-                    ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                        $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%');
-                    })
-                    ->count();
+            if($company_name){
+            $filter_data->where('company_name','like','%'.$company_name.'%');
             }
-
+            $filter_data = $filter_data->select('operatoraccount.opername','cdrreport_lead.*')->get();
         }
         else if (Auth::user()->usertype == 'groupadmin')
         {
-            if ($agent_name != '' && $company_name != '')
-            {
-                $filter_data = DB::table('cdrreport_lead')
+            $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
                 ->where('group_id',Auth::user()->groupid)
-                ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                    $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('opername',$agent_name)->where('company_name','like','%'.$company_name.'%');
-                })
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();
-
-                $count_data = DB::table('cdrreport_lead')
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->where('group_id',Auth::user()->groupid)
-                    ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                        $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('opername',$agent_name)->where('company_name','like','%'.$company_name.'%');
-                    })
-                    ->count();
+                ->whereBetween('inserted_date',[$date_from,$date_to]);
+            if($lead){
+                $filter_data->where('lead_stage','like','%'.$lead.'%');
             }
-            elseif($agent_name != '' && $company_name == '')
-            {
-                $filter_data = DB::table('cdrreport_lead')
-                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->where('group_id',Auth::user()->groupid)
-                ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                    $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('opername',$agent_name);
-                })
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();
-
-                $count_data = DB::table('cdrreport_lead')
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->where('group_id',Auth::user()->groupid)
-                    ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                        $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('opername',$agent_name);
-                    })
-                    ->count();
+            if($agent_name){
+                $filter_data->where('opername','like','%'.$agent_name.'%');
             }
-            elseif ($agent_name == '' && $company_name != '')
-            {
-                $filter_data = DB::table('cdrreport_lead')
-                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->where('group_id',Auth::user()->groupid)
-                ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                    $query->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('company_name','like','%'.$company_name.'%');
-                })
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();
-
-                $count_data = DB::table('cdrreport_lead')
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->where('group_id',Auth::user()->groupid)
-                    ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                        $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('company_name','like','%'.$company_name.'%');
-                    })
-                    ->count();
+            if($lead_name){
+                $filter_data->where(DB::raw('CONCAT(first_name, " ", last_name)'),'like','%'.$lead_name.'%');
             }
-            else
-            {
-                $filter_data = DB::table('cdrreport_lead')
-                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->where('group_id',Auth::user()->groupid)
-                ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                    $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%');
-                })
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();
-
-                $count_data = DB::table('cdrreport_lead')
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->where('group_id',Auth::user()->groupid)
-                    ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                        $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%');
-                    })
-                    ->count();
+            if($company_name){
+                $filter_data->where('company_name','like','%'.$company_name.'%');
             }
+            $filter_data = $filter_data->select('operatoraccount.opername','cdrreport_lead.*')->get();
         }
         else
         {
-            if ($agent_name != '' && $company_name != '')
-            {
-                $filter_data = DB::table('cdrreport_lead')
+            $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                    $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('opername',$agent_name)->where('company_name','like','%'.$company_name.'%');
-                })
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();
-
-                $count_data = DB::table('cdrreport_lead')
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                        $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('opername',$agent_name)->where('company_name','like','%'.$company_name.'%');
-                    })
-                    ->count();
+                ->whereBetween('inserted_date',[$date_from,$date_to]);
+            if($lead){
+                $filter_data->where('lead_stage','like','%'.$lead.'%');
             }
-            elseif($agent_name != '' && $company_name == '')
-            {
-                $filter_data = DB::table('cdrreport_lead')
-                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                    $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('opername',$agent_name);
-                })
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();
-
-                $count_data = DB::table('cdrreport_lead')
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                        $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('opername',$agent_name);
-                    })
-                    ->count();
+            if($agent_name){
+                $filter_data->where('opername','like','%'.$agent_name.'%');
             }
-            elseif ($agent_name == '' && $company_name != '')
-            {
-                $filter_data = DB::table('cdrreport_lead')
-                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                    $query->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('company_name','like','%'.$company_name.'%');
-                })
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();
-
-                $count_data = DB::table('cdrreport_lead')
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                        $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%')->where('company_name','like','%'.$company_name.'%');
-                    })
-                    ->count();
+            if($lead_name){
+                $filter_data->where(DB::raw('CONCAT(first_name, " ", last_name)'),'like','%'.$lead_name.'%');
             }
-            else
-            {
-                $filter_data = DB::table('cdrreport_lead')
-                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                    $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%');
-                })
-                ->select('operatoraccount.opername','cdrreport_lead.*')
-                ->get();
-
-                $count_data = DB::table('cdrreport_lead')
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->where(function($query) use ($lead,$date_to,$date_from,$company_name,$agent_name){
-                        $query ->whereBetween('inserted_date',[$date_from.'%',$date_to.'%'])->where('lead_stage','like','%'.$lead.'%');
-                    })
-                    ->count();
+            if($company_name){
+                $filter_data->where('company_name','like','%'.$company_name.'%');
             }
+            $filter_data = $filter_data->select('operatoraccount.opername','cdrreport_lead.*')->get();
         }
         return $filter_data;
-        // dd($filter_data);
-        // $newdata = array('filter_data' => $filter_data, 'count_data' => $count_data);
-
-        // echo json_encode($newdata);
     }
 
     public function remainder_show()
@@ -1241,31 +1057,6 @@ class LeadController extends Controller
 
         return view('cdr.lead_remainders',compact('show_all_remainder'));
     }
-
-
-
-
-
-
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ?>
+

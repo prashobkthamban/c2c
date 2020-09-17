@@ -23,7 +23,7 @@
     width: 100%!important;
 }
 .lead_modal {
-    border-radius: 0px !important; 
+    border-radius: 0px !important;
 }
 audio {
     margin-left: 82px;
@@ -33,7 +33,7 @@ audio {
 
 @section('main-content')
     <div class="breadcrumb">
-        <h1>CDR Report</h1> 
+        <h1>CDR Report</h1>
     </div>
 
     <div class="modal fade" id="AddLead" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
@@ -48,32 +48,32 @@ audio {
                             <input type="hidden" name="cdrreport_id" id="cdrreport_id">
                             <div class="col-md-12 form-group mb-3">
                                 <label for="first_name">First Name*</label>
-                                <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter your First Name" required="" />  
+                                <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter your First Name" required="" />
                             </div>
 
                             <div class="col-md-12 form-group mb-3">
                                 <label for="last_name">Last Name*</label>
-                                <input type="text" name="last_name" id="last_name" class="form-control"placeholder="Enter your Last Name" required="" />  
+                                <input type="text" name="last_name" id="last_name" class="form-control"placeholder="Enter your Last Name" required="" />
                             </div>
 
                             <div class="col-md-12 form-group mb-3">
                                 <label for="company_name">Company Name</label>
-                                <input type="text" name="company_name" id="company_name" class="form-control"placeholder="Enter Company Name" />  
+                                <input type="text" name="company_name" id="company_name" class="form-control"placeholder="Enter Company Name" />
                             </div>
 
                             <div class="col-md-12 form-group mb-3">
                                 <label for="email">Email</label>
-                                <input type="email" name="email" id="email" class="form-control"placeholder="Enter Email Address" />  
+                                <input type="email" name="email" id="email" class="form-control"placeholder="Enter Email Address" />
                             </div>
 
                             <div class="col-md-6 form-group mb-3">
                                 <label for="phoneno">Phone No*</label>
-                                <input type="text" name="phoneno" id="phoneno" class="form-control"placeholder="Enter Phone No" required="" />  
+                                <input type="text" name="phoneno" id="phoneno" class="form-control"placeholder="Enter Phone No" required="" />
                             </div>
 
                             <div class="col-md-6 form-group mb-3">
                                 <label for="alt_phoneno">Another Phone No</label>
-                                <input type="text" name="alt_phoneno" id="alt_phoneno" class="form-control"placeholder="Enter Another Phone No" />  
+                                <input type="text" name="alt_phoneno" id="alt_phoneno" class="form-control"placeholder="Enter Another Phone No" />
                             </div>
 
                             <div class="col-md-12">
@@ -83,7 +83,7 @@ audio {
                                             <div class="table table-responsive">
                                             <!-- <h4>Select Details</h4> -->
                                             <table id="ppsale" class="table table-striped table-bordered" border="0">
-                                                
+
                                                 <tbody id="TextBoxContainer">
                                                 <td style="width: 50%;">
                                                     <select name="products[]" id="products" class="form-control js-example-basic-single products">
@@ -93,15 +93,15 @@ audio {
                                                             <option value="{{$prod->id}}">{{$prod->name}}
                                                             </option>
                                                         @endforeach
-                                                    @endif 
-                                                    </select> 
+                                                    @endif
+                                                    </select>
                                                     <input type="hidden" name="pro_amount[]" id="pro_amount" class="form-control pro_amount">
                                                 </td>
                                                     <td>
-                                                    <input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" />  
+                                                    <input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" />
                                                     </td>
                                                     <td>
-                                                        <input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount"readonly="" /> 
+                                                        <input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount"readonly="" />
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -120,7 +120,7 @@ audio {
                                             </section>
                                     </div>
                             </div>
-                            
+
                             <div class="col-md-12 form-group mb-3">
                                 <label for="owner_name">Owner Name</label>
                                 <select id="owner_name" name="owner_name" class="form-control">
@@ -132,7 +132,7 @@ audio {
                             </div>
 
                             <div class="col-md-12 form-group mb-3">
-                                <label for="lead_stage">Lead Stage</label>  
+                                <label for="lead_stage">Lead Stage</label>
                                 <select class="js-example-basic-single" name="lead_stage" id="lead_stage">
                                     <option value="New">New</option>
                                     <option value="Contacted">Contacted</option>
@@ -140,7 +140,7 @@ audio {
                                     <option value="Under review">Under review</option>
                                     <option value="Demo">Demo</option>
                                     <option value="Unqualified">Unqualified</option>
-                                </select>  
+                                </select>
                             </div>
 
                             <div class="col-md-12">
@@ -162,7 +162,7 @@ audio {
             <div id="filter-panel" class="filter-panel collapse">
                 <h5 class="ml-3">Search Panel</h5></br>
                 <form class="form" role="form" id="cdr_filter_form">
-                    <div class="row" style="margin-right: 24px;margin-left: 24px;"> 
+                    <div class="row" style="margin-right: 24px;margin-left: 24px;">
                     @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
                     <div class="col-md-4">
                         <label class="filter-col"  for="pref-perpage">Departments</label>
@@ -174,9 +174,9 @@ audio {
                                     </option>
                                 @endforeach
                             @endif
-                            
-                        </select>                                
-                    </div> 
+
+                        </select>
+                    </div>
                     @endif
                     @if( Auth::user()->usertype == 'groupadmin' )
                     <div class="col-md-4">
@@ -188,17 +188,17 @@ audio {
                                     <option value="{{$opr->id}}">{{$opr->opername}}
                                     </option>
                                 @endforeach
-                            @endif   
-                        </select>                                
-                    </div> 
+                            @endif
+                        </select>
+                    </div>
                     <div class="col-md-4">
                         <label class="filter-col"  for="pref-perpage">Cdr Tag</label>
                         {!! Form::select('tag', $tags->prepend('Select Tag', ''), null,array('class' => 'form-control', 'id' => 'tag')) !!}
-                    </div> 
+                    </div>
                     <div class="col-md-4">
                         <label class="filter-col"  for="pref-perpage">Status</label>
-                        {!! Form::select('status', array('' => 'All', 'MISSED' => 'Missed', 'ANSWERED' => 'Answered', 'DIALING' => 'Dialing', 'LIVECALL' => 'Live call', 'AFTEROFFICE' => 'After Office'), null,array('class' => 'form-control')) !!}  
-                    </div> 
+                        {!! Form::select('status', array('' => 'All', 'MISSED' => 'Missed', 'ANSWERED' => 'Answered', 'DIALING' => 'Dialing', 'LIVECALL' => 'Live call', 'AFTEROFFICE' => 'After Office'), null,array('class' => 'form-control')) !!}
+                    </div>
                     @endif
                     @if( Auth::user()->usertype == 'groupadmin')
                     <div class="col-md-4">
@@ -210,9 +210,9 @@ audio {
                                     <option value="{{$opr->id}}">{{$opr->opername}}
                                     </option>
                                 @endforeach
-                            @endif 
-                        </select>                                
-                    </div> 
+                            @endif
+                        </select>
+                    </div>
                     @endif
                     <div class="col-md-4">
                         <label class="filter-col"  for="pref-perpage">Dnid Name</label>
@@ -223,13 +223,13 @@ audio {
                                     <option value="{{$dnid->did_no}}">{{$dnid->did_no}}
                                     </option>
                                 @endforeach
-                            @endif   
-                        </select>                                
+                            @endif
+                        </select>
                     </div>
                     <div class="col-md-4">
                         <label class="filter-col"  for="pref-search">By Caller Number</label>
                         <input type="text" class="form-control input-sm" name="caller_number">
-                    </div>  
+                    </div>
                     <div class="col-md-4">
                         <label class="filter-col"  for="pref-perpage">Date</label>
                         <select class="form-control" name="date" id="date_select">
@@ -239,8 +239,8 @@ audio {
                             <option value="week">1 Week</option>
                             <option value="month">1 Month</option>
                             <option value="custom">Custom</option>
-                        </select>                                
-                    </div> 
+                        </select>
+                    </div>
                     <!-- </div> -->
                     <!-- <div class="row mt-4" style="display: none;" id="custom_date_div">
                         <div class="col-md-3 form-group ml-5">
@@ -256,9 +256,9 @@ audio {
                         <button id="btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
                         <a href="{{url('cdrreport')}}" class="btn btn-outline-secondary" name="btn">Clear</a>
                     </div>
-                </form>      
+                </form>
             </div>
-                    <div class="col-md-2 mt-3 mt-md-0"> 
+                    <div class="col-md-2 mt-3 mt-md-0">
                     </div>
                         <!-- <a class="btn btn-secondary m-1" id="btn_download" href="{{ url('cdrexport') }}">Download</a>  -->
                         <div class="btn-group" id="assign" name="assign" >
@@ -266,10 +266,10 @@ audio {
                         <!-- <ul class="dropdown-menu" role="menu">
                             @foreach($operators as $operator)
                             @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
-                            <li> 
+                            <li>
                                 <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}});">{{$operator->opername}}</a><ul>
-                            @else 
-                            <li> 
+                            @else
+                            <li>
                                 <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}});">{{$operator->opername}}</a>
                             @endif
                             @if($account_service['smsservice_assign_cdr'] =='Yes')
@@ -281,10 +281,10 @@ audio {
                             <li>
                                 <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
                             </li>
-                            @endif 
+                            @endif
                             @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
                             </ul>
-                            @else 
+                            @else
                             </li>
                             @endif
                             @endforeach
@@ -292,14 +292,14 @@ audio {
                         </ul>  -->
                         </div>
                 </div>
-                    
+
             </div>
             </div>
         </div>
     </div>
     @endif
     @if(Auth::user()->usertype == 'groupadmin')
-    <!-- 
+    <!--
         -->
     @endif
     <div class="row mb-4" id="div_table">
@@ -307,7 +307,7 @@ audio {
             <div class="card text-left">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="cdr_table" class="display table table-bordered" style="width:100%">
+                        <table id="cdr_table" class="display table table-bordered table-striped" style="width:100%">
                             <thead>
                             <tr>
                                 @if(Auth::user()->usertype == 'groupadmin')
@@ -362,17 +362,17 @@ audio {
                             <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
                             <td>
                             @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
-                                <a class="btn bg-gray-100" title="More Details" onClick="moreOption({{$row->cdrid}},'{{$row->did_no ? $row->did_no : 0}}','{{$row->firstleg."(".$row->secondleg.")"}}','{{$row->creditused ? $row->creditused : 0}}','{{$row->operatorAssigned ? $row->operatorAssigned->opername : 0}}','{{$row->tag ? $row->tag : 0}}');return false;"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a> 
+                                <a class="btn bg-gray-100" title="More Details" onClick="moreOption({{$row->cdrid}},'{{$row->did_no ? $row->did_no : 0}}','{{$row->firstleg."(".$row->secondleg.")"}}','{{$row->creditused ? $row->creditused : 0}}','{{$row->operatorAssigned ? $row->operatorAssigned->opername : 0}}','{{$row->tag ? $row->tag : 0}}');return false;"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
                             @endif
                             @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator' || Auth::user()->usertype=='reseller')
                                 @if(!empty($row->recordedfilename))
                                     <a href="#" class="btn bg-gray-100 play_audio" title="Play Audio" data-toggle="modal" data-target="#play_modal" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
                                     <a href="{{ url('download_file/' .$row->recordedfilename) }}" class="btn bg-gray-100" title="Download File">
                                     <i class="i-Download1"></i></a>
-                                @endif   
+                                @endif
                             @endif
                             @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator' || Auth::user()->usertype=='reseller')
-                                @if(sizeof($row['cdrNotes']) > 0)              
+                                @if(sizeof($row['cdrNotes']) > 0)
                                     <a href="#" class="btn bg-gray-100 notes_list" title="Notes" data-toggle="modal" data-target="#notes_modal" id="notes_{{$row->uniqueid}}"><i class="i-Notepad"></i></a>
                                 @endif
                                 @if(Auth::user()->usertype=='groupadmin')
@@ -383,10 +383,10 @@ audio {
                                 <ul class="dropdown-menu" role="menu">
                                     @foreach($operators as $operator)
                                     @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
-                                    <li> 
+                                    <li>
                                         <a href="#">{{$operator->opername}}</a><ul>
-                                    @else 
-                                    <li> 
+                                    @else
+                                    <li>
                                         <a href="#">{{$operator->opername}}</a>
                                     @endif
                                     @if($account_service['smsservice_assign_cdr'] =='Yes')
@@ -398,10 +398,10 @@ audio {
                                     <li>
                                         <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
                                     </li>
-                                    @endif 
+                                    @endif
                                     @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
                                     </ul>
-                                    @else 
+                                    @else
                                     </li>
                                     @endif
                                     @endforeach
@@ -448,7 +448,7 @@ audio {
                                 @endif
                             </tbody>
                         </table>
-                       
+
                     </div>
                 </div>
             </div>
@@ -482,32 +482,32 @@ audio {
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    {!! Form::open(['method' => 'post', 'id' => 'dial_form']) !!} 
+                    {!! Form::open(['method' => 'post', 'id' => 'dial_form']) !!}
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="number">Customer Number</label> 
+                                <label for="number">Customer Number</label>
                                 <input type="number" id="customer_number" onpaste="return false;" class="form-control" placeholder="Customer Number" name="number">
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Operator Number</label> 
+                                <label for="firstName1">Operator Number</label>
                                 <input type="number" id="operator_number" onpaste="return false;" class="form-control" value="{{Auth::user()->phone_number}}" placeholder="Operator Number" name="phone">
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Call First</label> 
+                                <label for="firstName1">Call First</label>
                                 <label class="radio-inline"> {{ Form::radio('callf', 'cust') }} Customer</label>
                                     <label class="radio-inline">{{ Form::radio('callf', 'oper', true) }} Operator</label>
                             </div>
@@ -533,19 +533,19 @@ audio {
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    {!! Form::open(['method' => 'post', 'id' => 'msg_form']) !!} 
+                    {!! Form::open(['method' => 'post', 'id' => 'msg_form']) !!}
                     <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-2 form-group mb-3"> 
+                                <div class="col-md-2 form-group mb-3">
                                 </div>
 
                                 <div class="col-md-8 form-group mb-3">
-                                    <label for="number">Customer Number</label> 
+                                    <label for="number">Customer Number</label>
                                     <input type="number" id="cust_m_number" onpaste="return false;" class="form-control" placeholder="Customer Number" name="number">
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-2 form-group mb-3"> 
+                                <div class="col-md-2 form-group mb-3">
                                 </div>
 
                                 <div class="col-md-8 form-group mb-3">
@@ -601,14 +601,14 @@ audio {
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    {!! Form::open(['class' => 'graph_report', 'autocomplete' => 'off']) !!} 
+                    {!! Form::open(['class' => 'graph_report', 'autocomplete' => 'off']) !!}
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Start Date</label> 
+                                <label for="firstName1">Start Date</label>
                                 {!! Form::text('startdate', null, ['class' => 'form-control datepicker', 'placeholder' => 'dd-mm-yyyy']) !!}
                             </div>
                         </div>
@@ -616,7 +616,7 @@ audio {
                             <div class="col-md-2 form-group mb-3"> </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">End Date</label> 
+                                <label for="firstName1">End Date</label>
                                 {!! Form::text('enddate', null, ['class' => 'form-control datepicker', 'placeholder' => 'dd-mm-yyyy']) !!}
                             </div>
                         </div>
@@ -625,16 +625,16 @@ audio {
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Status</label> 
+                                <label for="firstName1">Status</label>
                                 {!! Form::select('status', array('
-                    ' => 'Status', 'ANSWERED' => 'Answered', 'DIALING' => 'Dialing'), null,array('class' => 'form-control')) !!}   
+                    ' => 'Status', 'ANSWERED' => 'Answered', 'DIALING' => 'Dialing'), null,array('class' => 'form-control')) !!}
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-2 form-group mb-3"></div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Departments</label> 
+                                <label for="firstName1">Departments</label>
                                 <select name="department" class="form-control">
                                     <option value="">All</option>
                                     @if(!empty($departments))
@@ -642,14 +642,14 @@ audio {
                                             <option value="{{$dept->dept_name}}">{{$dept->dept_name}}
                                             </option>
                                         @endforeach
-                                    @endif 
-                                </select>    
+                                    @endif
+                                </select>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button class="btn btn-primary collapsed m-1" data-toggle="modal" data-target="#graph_modal">Graph</button>  
+                        <button class="btn btn-primary collapsed m-1" data-toggle="modal" data-target="#graph_modal">Graph</button>
                     </div>
                     {!! Form::close() !!}
                 </div>
@@ -670,12 +670,12 @@ audio {
                     {!! Form::open(['class' => 'tag_form', 'method' => 'post']) !!}
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                                 {!! Form::hidden('cdrid', null, ['class' => 'form-control', 'id' => 'cdrid']) !!}
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Tag</label> 
+                                <label for="firstName1">Tag</label>
                                     {!! Form::select('tag', $tags->prepend('Select Tag', ''), null,array('class' => 'form-control', 'id' => 'tag')) !!}
                             </div>
                         </div>
@@ -710,9 +710,9 @@ audio {
                                     <th>Action</th>
                                 </tr>
                             </thead>
-                            <tbody> 
+                            <tbody>
                             </tbody>
-                        </table>  
+                        </table>
                     </div>
                 </div>
             </div>
@@ -740,9 +740,9 @@ audio {
                                     <!-- <th>Action</th> -->
                                 </tr>
                             </thead>
-                            <tbody> 
+                            <tbody>
                             </tbody>
-                        </table>  
+                        </table>
                     </div>
                 </div>
             </div>
@@ -791,12 +791,12 @@ audio {
                     {!! Form::open(['class' => 'reminder_form', 'method' => 'post']) !!}
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                                 {!! Form::hidden('cdr_id', null, ['id' => 'cdr_id']) !!}
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Reminder Date</label> 
+                                <label for="firstName1">Reminder Date</label>
                                 <input class="form-control datepicker" placeholder="dd-mm-yyyy" name="startdate">
                             </div>
                         </div>
@@ -804,11 +804,11 @@ audio {
                             <div class="col-md-2 form-group mb-3"> </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Reminder Time</label> 
-                                <input  placeholder="Followup Time" type="text"  size="10"  data-rel="timepicker" id="timepicker1" name="starttime" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" class="form-control" /> 
+                                <label for="firstName1">Reminder Time</label>
+                                <input  placeholder="Followup Time" type="text"  size="10"  data-rel="timepicker" id="timepicker1" name="starttime" data-template="dropdown" data-maxHours="24" data-show-meridian="false" data-minute-step="10" class="form-control" />
                             </div>
                         </div>
-                        
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -836,7 +836,7 @@ audio {
                             <div class="col-md-2 form-group mb-3"></div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">First Name</label> 
+                                <label for="firstName1">First Name</label>
                                 <input type="hidden" name="contact_id" id="contact_id">
                                 <input type="hidden" name="phone" id="phone">
                                 <input type="text" class="form-control" name="fname" id="fname" placeholder="First Name">
@@ -846,7 +846,7 @@ audio {
                             <div class="col-md-2 form-group mb-3"> </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Last Name</label> 
+                                <label for="firstName1">Last Name</label>
                                 <input type="text" name="lname" id="lname" class="form-control" placeholder="Last Name">
                             </div>
                         </div>
@@ -854,11 +854,11 @@ audio {
                             <div class="col-md-2 form-group mb-3"> </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Email</label> 
+                                <label for="firstName1">Email</label>
                                 <input type="email" name="email" id="emailaddress" class="form-control" placeholder="Email">
                             </div>
                         </div>
-                        
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -897,10 +897,10 @@ audio {
         <ul class="dropdown-menu" role="menu">
             @foreach($operators as $operator)
             @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
-            <li> 
+            <li>
                 <a href="#">{{$operator->opername}}</a><ul>
-            @else 
-            <li> 
+            @else
+            <li>
                 <a href="#">{{$operator->opername}}</a>
             @endif
             @if($account_service['smsservice_assign_cdr'] =='Yes')
@@ -912,10 +912,10 @@ audio {
             <li>
                 <a href="javascript:assignoper(0,{{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
             </li>
-            @endif 
+            @endif
             @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
             </ul>
-            @else 
+            @else
             </li>
             @endif
             @endforeach
@@ -934,12 +934,12 @@ audio {
         <a href="{{ url('cdrexport') }}" ><div class="handle">
             <i class="i-Download1"></i>
         </div></a>
-    </div>  
+    </div>
 
 @endsection
 
 @section('page-js')
-<script src="{{asset('assets/js/vendor/echarts.min.js')}}"></script> 
+<script src="{{asset('assets/js/vendor/echarts.min.js')}}"></script>
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script src="{{asset('assets/js/select2.min.js')}}"></script>
@@ -967,7 +967,7 @@ audio {
             ]
         });
         // var table = $('#cdr_table').DataTable();
- 
+
         // var data = table.buttons.exportData( {
         //     columns: ':visible'
         // } );
@@ -997,13 +997,13 @@ audio {
           $( ".allselect" ).prop( "checked", true );
         } else {
           $( ".allselect" ).prop( "checked", false );
-        }    
-    } 
+        }
+    }
 
     function xajax_show(id) {
         $(".cdr_form").addClass('d-none');
         $("#"+id).removeClass('d-none');
-    } 
+    }
 
     function xajax_hide() {
         $(".cdr_form").addClass('d-none');
@@ -1019,12 +1019,12 @@ audio {
 
     $(document).ready(function() {
         $('.more_data').hide();
-        $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });        
+        $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });
         $('.timepicker').pickatime();
 
         $( '#dial_form' ).on( 'submit', function(e) {
             e.preventDefault();
-            var errors = ''; 
+            var errors = '';
           $.ajax({
             type: "POST",
             url: '{{ URL::route("AddCdr") }}', // This is the url we gave in the route
@@ -1043,22 +1043,22 @@ audio {
                 } else {
                     $("#dial_modal").modal('hide');
                     toastr.success(res.success);
-                    setTimeout( function() { 
-                        location.reload(true); 
+                    setTimeout( function() {
+                        location.reload(true);
                     }, 300);
-                    
+
                 }
-               
+
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                 toastr.error('Some errors are occured');
             }
           });
         });
-        
+
         $( '#msg_form' ).on( 'submit', function(e) {
             e.preventDefault();
-            var errors = ''; 
+            var errors = '';
           $.ajax({
             type: "POST",
             url: '{{ URL::route("SendMessage") }}', // This is the url we gave in the route
@@ -1078,11 +1078,11 @@ audio {
                 } else {
                     $("#msg_modal").modal('hide');
                     toastr.success(res.success);
-                    setTimeout( function() { 
-                        location.reload(true); 
-                    }, 300);   
+                    setTimeout( function() {
+                        location.reload(true);
+                    }, 300);
                 }
-               
+
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                 toastr.error('Some errors are occured');
@@ -1093,7 +1093,7 @@ audio {
         //add reminder
         $( '.reminder_form' ).on( 'submit', function(e) {
             e.preventDefault();
-            var errors = ''; 
+            var errors = '';
           $.ajax({
             type: "POST",
             url: '{{ URL::route("addReminder") }}', // This is the url we gave in the route
@@ -1111,9 +1111,9 @@ audio {
                     toastr.error(errors);
                 } else {
                     $("#add_reminder_modal").modal('hide');
-                    toastr.success(res.success);                
+                    toastr.success(res.success);
                 }
-               
+
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                 toastr.error('Some errors are occured');
@@ -1124,7 +1124,7 @@ audio {
         //show graph
         $( '.graph_report' ).on( 'submit', function(e) {
             e.preventDefault();
-            var errors = ''; 
+            var errors = '';
           $.ajax({
             type: "POST",
             url: '{{ URL::route("graphReport") }}', // This is the url we gave in the route
@@ -1235,9 +1235,9 @@ audio {
                                 echartBar.resize();
                             }, 500);
                         });
-                    }     
+                    }
                 }
-               
+
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                 toastr.error('Some errors are occured');
@@ -1248,7 +1248,7 @@ audio {
         //filter operation
         $('#graph').on('change',function(e) {
             e.preventDefault();
-            var errors = ''; 
+            var errors = '';
             $.ajax({
             type: "GET",
             url: '/search_cdr/' + $(this).val(), // This is the url we gave in the route
@@ -1274,9 +1274,9 @@ audio {
                 $("#tag").val(tag);
             } else {
                 $("#tag_title").text("Add Tag");
-            }  
+            }
         });
-        
+
         $('.edit_contact').on('click',function(e)
         {
             var id = $(this).attr("id");
@@ -1295,7 +1295,7 @@ audio {
             } else {
                 $("#contact_title").text("Add Contact");
             }
-            
+
         });
 
         $('.play_audio').on('click',function(e)
@@ -1308,7 +1308,7 @@ audio {
         $(document).on('hide.bs.modal','#play_modal', function () {
             $("#audioSource").remove();
         });
-        
+
         $('.edit_reminder').on('click',function(e)
         {
             var id = $(this).attr("id");
@@ -1341,16 +1341,16 @@ audio {
                         noteHTML += "<td><a href='#' class='text-danger mr-2 delete_comment' id='" + obj.id + "'><i class='nav-icon i-Close-Window font-weight-bold'></td>";
                         noteHTML += "</tr>";
 
-                    }); 
+                    });
                 } else {
                     noteHTML += "<tr><td colspan='4'><center>No Data Found</center></td></tr>";
-                } 
+                }
                 $("#notes_list_table tbody").html(noteHTML);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }
             });
-            
+
         });
 
         $('.history_list').on('click',function(e)
@@ -1371,23 +1371,23 @@ audio {
                         historyHTML += "<td>" + obj.status  + "</td>";
                         historyHTML += "</tr>";
 
-                    }); 
+                    });
                 } else {
                     historyHTML += "<tr><td colspan='3'><center>No Data Found</center></td></tr>";
-                } 
+                }
                 $("#history_list_table tbody").html(historyHTML);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }
             });
-            
+
         });
 
     });
 
     $('.add_contact').click(function() {
         $("#contact_form").removeClass('hide');
-    }); 
+    });
 
     $(document).on("change","#date_select",function(){
         var date_val = $(this).val();
@@ -1402,7 +1402,7 @@ audio {
     $(document).on("click","#report_search_button",function(){
         get_report_search(1);
     });
-   
+
     $(document).on("click","#btn_refresh",function(){
         $("#cdr_filter_form")[0].reset();
         get_report_search(1);
@@ -1433,20 +1433,20 @@ audio {
         var id = $(this).data('id');
         $("#AddLead").animate({width: 'toggle'}, "slow");
         $("#AddLead #phoneno").val(number);
-        $("#AddLead #cdrreport_id").val(id);    
+        $("#AddLead #cdrreport_id").val(id);
     });
 </script>
 
 <script type="text/javascript">
     $(document).ready(function() {
         $('.js-example-basic-single').select2({dropdownParent: $("#AddLead")});
-        
+
         $("#btnAdd").bind("click", function () {
             var div = $("<tr />");
             div.html(GetDynamicTextBox(""));
             $("#TextBoxContainer").append(div);
             $('.js-example-basic-single').select2({dropdownParent: $("#AddLead")});
-            
+
         });
         $("body").on("click", ".remove", function () {
 
@@ -1458,7 +1458,7 @@ audio {
                 $(this).closest("tr").remove();
                 total_amount();
             }
-          
+
         });
         $("body").on("change", ".products", function () {
             //alert($(this).val());
@@ -1469,12 +1469,12 @@ audio {
                 url: '{{ URL::route("ProductAmount") }}',
                 dataType: 'text',
                 data: {pro_id:pro_id},
-                success: function(data) 
+                success: function(data)
                 {
                     //console.log(data);
                     var obj = jQuery.parseJSON(data);
                     //console.log(obj[0].selling_cost);
-                   
+
                     thiss.closest("td").find("input.pro_amount").val(parseFloat(obj[0].selling_cost).toFixed(2));
                     /*$('.pro_amount').val(obj[0].selling_cost);*/
                 }
@@ -1491,7 +1491,7 @@ audio {
         });
     });
 
-    function GetDynamicTextBox(value) 
+    function GetDynamicTextBox(value)
     {
         return '<td><select name="products[]" id="products" class="form-control js-example-basic-single products"><option>Select Products</option>@if(!empty($products)) @foreach($products as $prod )<option value="{{$prod->id}}">{{$prod->name}}</option>@endforeach @endif</select><input type="hidden" name="pro_amount[]" id="pro_amount" class="form-control pro_amount"> </td><td><input type="number" name="quantity[]" id="quantity" class="form-control quantity"placeholder="Enter Quantity" min="1" /></td><td><input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount" readonly="" /></td><td><button type="button" class="btn btn-danger remove" data-toggle="tooltip" data-original-title="Remove"><i class="nav-icon i-Close-Window"></i></button></td>';
     }
@@ -1500,7 +1500,7 @@ audio {
         var sum = 0.0;
         $('.sub_amount').each(function(){
             //alert($(this).val());
-            sum += Number($(this).val()); 
+            sum += Number($(this).val());
         });
         $('#total_amount').val(parseFloat(sum).toFixed(2));
     }

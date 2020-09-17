@@ -181,14 +181,14 @@
                             <a class="nav-item-hold" href="{{route('OperatorList')}}">
                                 <i class="nav-icon i-Administrator"></i>
                                 <span class="nav-text">Operator Account</span>
-                            </a> 
+                            </a>
                         </li>
                         <!-- <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('OperatorGroup')}}">
                                 <i class="nav-icon i-Folder-Organizing"></i>
                                 <span class="nav-text">Operator Departments</span>
-                            </a> 
-                        </li> 
+                            </a>
+                        </li>
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('contacts')}}">
                                 <i class="nav-icon i-Administrator"></i>
@@ -200,13 +200,13 @@
                             <a class="nav-item-hold" href="{{route('Voicemail')}}">
                                 <i class="nav-icon i-Mail-2"></i>
                                 <span class="nav-text">Voicemails</span>
-                            </a> 
-                        </li> 
+                            </a>
+                        </li>
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('BlackList')}}">
                                 <i class="nav-icon i-Security-Block"></i>
                                 <span class="nav-text">Blacklist</span>
-                            </a> 
+                            </a>
                         </li>-->
                         <!-- <li class="nav-item">
                             <a href="{{url('holiday')}}" class="nav-item-hold">
@@ -305,13 +305,13 @@
                     </li>
                     <li class="nav-item">
                         <a class="{{ Route::currentRouteName()=='cdrreportarchive' ? 'open' : '' }}" href="{{url('cdrreportarchive')}}" >
-                            <i class="nav-icon i-Over-Time"></i>
+                            <i class="nav-icon i-Folder-Archive"></i>
                             <span class="item-name">Archived CDR Report</span>
                         </a>
-                    </li>       
+                    </li>
                     <li class="nav-item">
                         <a class="{{ Route::currentRouteName()=='voicemail' ? 'open' : '' }}" href="{{url('voicemail')}}" >
-                            <i class="nav-icon i-Over-Time"></i>
+                            <i class="nav-icon i-Voicemail"></i>
                             <span class="item-name">Voice Mails</span>
                         </a>
                     </li>
@@ -343,12 +343,12 @@
                     <li class="nav-item">
                         <a href="{{route('dashboard')}}">
                             <span class="item-name">Dashboard</span>
-                        </a> 
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{route('OperatorGroup')}}">
                             <span class="item-name">Operator Departments</span>
-                        </a> 
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{route('OperatorShifts')}}">
@@ -358,7 +358,7 @@
                     <li class="nav-item">
                         <a href="{{route('Voicemail')}}">
                             <span class="item-name">Voicemails</span>
-                        </a> 
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{url('contacts')}}">
@@ -373,7 +373,7 @@
                     <li class="nav-item">
                         <a href="{{route('BlackList')}}">
                             <span class="item-name">Blacklist</span>
-                        </a> 
+                        </a>
                     </li>
                     <li class="nav-item" data-item="">
                         <a href="{{url('cdr_tags')}}">
@@ -400,7 +400,7 @@
                     <li class="nav-item">
                         <a href="{{route('DidList')}}">
                             <span class="item-name">Dids</span>
-                        </a> 
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{route('GateWay')}}">
@@ -411,7 +411,7 @@
                         <a href="{{url('languages')}}">
                             <span class="item-name">Multi Language</span>
                         </a>
-                    </li> 
+                    </li>
                     <li class="nav-item">
                         <a href="{{url('voice_files')}}">
                             <span class="item-name">Voicefiles Settings</span>
@@ -442,7 +442,7 @@
                             <span class="nav-text">Email Config</span>
                         </a>
                     </li>
-                </ul> 
+                </ul>
                 <ul class="childNav" data-parent="insight">
                     <li class="nav-item">
                         <a class="{{ Route::currentRouteName()=='operator' ? 'open' : '' }}" href="{{url('operator')}}" >
@@ -504,7 +504,7 @@
                         <a href="{{route('LeadList')}}">
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="item-name">Leads</span>
-                        </a> 
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a>
@@ -535,7 +535,7 @@
                             <span class="item-name">Operator Dpt Configure SMS</span>
                         </a>
                     </li>
-               
+
                 </ul>
                 <ul class="childNav" data-parent="pbx">
                     <li class="nav-item">
@@ -575,7 +575,7 @@
                             <span class="item-name">MOH Files</span>
                         </a>
                     </li>
-               
+
                 </ul>
 
                 <?php
@@ -585,13 +585,13 @@
                             <a href="{{url('settings/category')}}">
                                 <span class="item-name">Category</span>
                             </a>
-                        </li>  
+                        </li>
 
                         <li class="nav-item">
                             <a href="{{url('product')}}">
                                 <span class="item-name">Products</span>
                             </a>
-                        </li>  
+                        </li>
 
                         <li class="nav-item">
                             <a href="{{url('cdrreport_lists')}}">
@@ -603,19 +603,19 @@
                             <a href="{{url('cdrreport/converted')}}">
                                 <span class="item-name">Customer</span>
                             </a>
-                        </li>  
+                        </li>
 
                         <li class="nav-item">
                             <a href="{{url('proposal/list')}}">
                                 <span class="item-name">Proposal</span>
                             </a>
-                        </li>   
+                        </li>
 
                         <li class="nav-item">
                             <a href="{{url('invoice/list')}}">
                                 <span class="item-name">Invoice</span>
                             </a>
-                        </li> 
+                        </li>
 
                         <li class="nav-item">
                             <a href="{{url('email_template/list')}}">
@@ -648,7 +648,7 @@
                         </li>
 
 
-                    </ul>    
+                    </ul>
                 <?php }else{ ?>
                     <ul class="childNav" data-parent="settings">
                         <li class="nav-item">
@@ -661,19 +661,19 @@
                             <a href="{{url('cdrreport/converted')}}">
                                 <span class="item-name">Customer</span>
                             </a>
-                        </li>  
+                        </li>
 
                         <li class="nav-item">
                             <a href="{{url('proposal/list')}}">
                                 <span class="item-name">Proposal</span>
                             </a>
-                        </li>   
+                        </li>
 
                         <li class="nav-item">
                             <a href="{{url('invoice/list')}}">
                                 <span class="item-name">Invoice</span>
                             </a>
-                        </li> 
+                        </li>
 
                         <li class="nav-item">
                             <a href="{{url('email_template/list')}}">
@@ -685,11 +685,11 @@
                             <a href="{{url('sms_template/list')}}">
                                 <span class="item-name">SMS Template</span>
                             </a>
-                        </li> 
-  
-                    </ul> 
+                        </li>
+
+                    </ul>
                 <?php }?>
-                
+
 
             </div>
             <div class="sidebar-overlay"></div>
@@ -697,7 +697,7 @@
         <!--=============== Left side End ================-->
         <?php
         use Illuminate\Support\Facades\DB;
-        date_default_timezone_set('Asia/Kolkata'); 
+        date_default_timezone_set('Asia/Kolkata');
 
         $list_remainder = DB::table('lead_reminders')
                     ->where('lead_reminders.user_id','=',Auth::user()->id)
@@ -713,14 +713,14 @@
        // echo $date."::".$time;
         $i = 0;
         foreach ($list_remainder as $key => $value) {
-            
+
             if ($value->date == $date) {
 
                 //print_r($value);
                 //echo "<br>";
                 $cleantime=substr($value->time,0,5);
                 //echo $cleantime;
-                
+
                 if ($cleantime == $time) { ?>
 
                     <div class="alert alert-danger mine" id="myDIV<?php echo $i;?>">

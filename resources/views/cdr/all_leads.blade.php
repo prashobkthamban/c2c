@@ -385,8 +385,7 @@
                             <a href="?" class="btn btn-primary add_lead" id="add_lead" data-toggle="modal" data-target="#AddLead">Add Lead </a>
                             <p id="error_msg" style="font-size: 15px;color: red;text-align: center;"></p>
                             <a href="?" class="btn btn-primary" id="import_lead" data-toggle="modal" data-target="#Import_Lead" style="float: right;margin-top: -49px">Import Lead</a>
-                            <br><br>
-                            <div class="row">
+                            <div class="row mt-2">
                                 <form method="GET">
                                 <div class="col-md-12">
                                     <div class="row">
@@ -404,7 +403,8 @@
                                         <div class="col-md-4">
                                             <label for="lead">Lead Stage</label>
                                             <select id="lead" class="form-control" name="lead">
-                                                <option <?php echo (request()->get('lead') == "New") ? 'selected' : '';?> value="New" selected="">New</option>
+                                                <option <?php echo (request()->get('lead') == "") ? 'selected' : '';?> value="">All</option>
+                                                <option <?php echo (request()->get('lead') == "New") ? 'selected' : '';?> value="New">New</option>
                                                 <option <?php echo (request()->get('lead') == "Contacted") ? 'selected' : '';?> value="Contacted">Contacted</option>
                                                 <option <?php echo (request()->get('lead') == "Interested") ? 'selected' : '';?> value="Interested">Interested</option>
                                                 <option <?php echo (request()->get('lead') == "Under") ? 'selected' : '';?> value="Under review">Under review</option>
@@ -413,17 +413,22 @@
                                                 <option <?php echo (request()->get('lead') == "Converted") ? 'selected' : '';?> value="Converted">Converted</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mt-2">
+                                            <label for="search_company_name">Name:</label>
+                                            <input type="text" name="search_name" id="search_name" class="form-control"
+                                            value="<?php echo request()->get('search_name') ?? '';?>">
+                                        </div>
+                                        <div class="col-md-4 mt-2">
                                             <label for="search_company_name">Company Name:</label>
                                             <input type="text" name="search_company_name" id="search_company_name" class="form-control"
                                             value="<?php echo request()->get('search_company_name') ?? '';?>">
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 mt-2">
                                             <label for="search_agent_name">Agent Name:</label>
                                             <input type="text" name="search_agent_name" id="search_agent_name" class="form-control"
                                             value="<?php echo request()->get('search_agent_name') ?? '';?>">
                                         </div>
-                                        <div class="col-md-6" style="margin-top: 24px;">
+                                        <div class="col-md-6 mt-3">
                                             <button type="submit" class="btn btn-outline-success" style="margin-right: 15px;">Search</button>
                                             <a href="{{route('ListLeads')}}" class="btn btn-outline-danger" style="margin-right: 15px;">Reset</a>
                                              <button id="export_lead" class="btn btn-outline-secondary">Export Leads</button>

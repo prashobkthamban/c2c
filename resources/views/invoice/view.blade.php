@@ -202,10 +202,9 @@
 										</tr>
 									</tfoot>
 								</table> -->
-								<div class="col-md-10  offset-md-1">
+								<div class="col-md-10  offset-md-1 mt-3">
 									<div class="row">
-										<div class="col-md-6"></div>
-										<div class="col-md-6">
+                                        <div class="col-md-6 offset-md-6">
 											<div class="row">
 												<div class="col-md-4">
 													<b>Invoice Number</b>
@@ -500,7 +499,7 @@ $(document).ready(function() {
 		'<br><br>';
 		var HTML_Width = $(".canvas_div_pdf").width();
 		var HTML_Height = $(".canvas_div_pdf").height();
-		var top_left_margin = 15;
+		var top_left_margin = 10;
 		var PDF_Width = HTML_Width+(top_left_margin*2);
 		var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
 		var canvas_image_width = HTML_Width;
@@ -535,7 +534,7 @@ $(document).ready(function() {
 
 		var HTML_Width = $(".canvas_div_pdf").width();
 		var HTML_Height = $(".canvas_div_pdf").height();
-		var top_left_margin = 15;
+		var top_left_margin = 10;
 		var PDF_Width = HTML_Width+(top_left_margin*2);
 		var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
 		var canvas_image_width = HTML_Width;
