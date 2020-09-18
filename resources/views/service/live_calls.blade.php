@@ -59,7 +59,7 @@
                                         <td>{{ $row->priority }}</td>
                                         <td>{{ $interval->format('%H:%i:%s') }}</td>
                                         @if(Auth::user()->usertype == 'groupadmin')
-                                        <td><i class="i-Headphone" aria-hidden="true"></i></td>
+                                        <td><i class="i-Headphone" data-toggle="modal" data-target="#listen_modal"></i></td>
                                         @endif
                                     </tr>
                                     @endforeach
@@ -97,6 +97,49 @@
 
             </div>
             <!-- end of row -->
+
+        <!-- listen modal -->
+        <div class="modal fade" id="listen_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Listen</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {!! Form::open(['method' => 'post', 'id' => 'listen_form']) !!}
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3">
+                            </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="number">Listen from Number</label>
+                                <input type="number" id="customer_number" onpaste="return false;" class="form-control" placeholder="Customer Number" name="number">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3">
+                            </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <!-- <label for="firstName1">Option</label> -->
+                                <label class="radio-inline"> {{ Form::radio('option', 'Sw') }} Whisper Mode</label>
+                                <label class="radio-inline">{{ Form::radio('option', 'bs', true) }} Listen</label>
+                                <label class="radio-inline">{{ Form::radio('option', 'BS') }} BargeIn</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" id="dial_submit" class="btn btn-primary">Dialing</button>
+                        <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button> -->
+                    </div>
+                    {!! Form::close() !!}
+                </div>
+            </div>
+        </div>
+        <!-- end of listen modal -->
 
 
 @endsection
