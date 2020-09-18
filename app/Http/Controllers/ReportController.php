@@ -31,7 +31,7 @@ use App\Models\CdrReport_Lead;
 use App\Models\Product;
 use App\Models\lead_stages;
 
-date_default_timezone_set('Asia/Kolkata'); 
+date_default_timezone_set('Asia/Kolkata');
 
 class ReportController extends Controller
 {
@@ -59,11 +59,21 @@ class ReportController extends Controller
             $all_leads[$value->cdrid] = DB::table('cdrreport_lead')->where('cdrreport_id',$value->cdrid)->select('cdrreport_id')->get();
         }
 
-        
+
         return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup(),'products' => $products,'users_lists' => $users_lists,'all_leads' => $all_leads]);
     }
 
-    public function graphReport(Request $request) { 
+    public function ViewLeadReport($id){
+        $lead = DB::table('cdrreport_lead')->where('cdrreport_id', $id)->first();
+        $products = [];
+        if($lead){
+            $products = DB::table('lead_products')->where('cdrreport_lead_id', $lead->id)
+            ->leftJoin('products','products.id','=','lead_products.product_id')->get();
+        }
+        return json_encode(['lead' => $lead, 'products' => $products]);
+    }
+
+    public function graphReport(Request $request) {
         $data = array();
         $max = 0;
         $result = CdrReport::getGraphReport($request->all());
@@ -103,19 +113,19 @@ class ReportController extends Controller
         $data['dialed'] = $dialed;
         $data['answered'] = $answered;
         return $data;
-    
+
     }
 
-    public function addContact(Request $request) 
+    public function addContact(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'fname' => 'required',
             'lname' => 'required',
             'email' => 'required|email',
-        ]);    
+        ]);
 
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $contact = ['fname' => $request->get('fname'),
                      'lname'=> $request->get('lname'),
@@ -134,20 +144,20 @@ class ReportController extends Controller
                 $data['success'] = 'Contact added successfully.';
                 $data['fname'] = $request->get('fname');
             }
-           
-        } 
+
+        }
          return $data;
     }
-    
-    public function addCdrTag(Request $request) 
+
+    public function addCdrTag(Request $request)
     {
         //dd($request->all());
         $validator = Validator::make($request->all(), [
             'tag' => 'required',
-        ]);    
+        ]);
 
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $tag = ['tag' => $request->get('tag')];
             DB::table('cdr')
@@ -155,30 +165,30 @@ class ReportController extends Controller
                 ->update($tag);
             $data['success'] = 'Tag update successfully.';
             $data['tag'] = $request->get('tag');
-        } 
+        }
          return $data;
     }
-    
 
-    public function addNote(Request $request) 
+
+    public function addNote(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'note' => 'required',
-        ]);    
+        ]);
 
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $note = ['operator' => Auth::user()->username,
                      'note'=> $request->get('note'),
-                     'uniqueid'=> $request->get('uniqueid'), 
+                     'uniqueid'=> $request->get('uniqueid'),
                      'datetime' => NOW()
                     ];
             $id = DB::table('cdr_notes')->insertGetId($note);
             $data['result'] = $note;
             $data['id'] = $id;
             $data['success'] = 'Note added successfully.';
-        } 
+        }
          return $data;
     }
 
@@ -192,7 +202,7 @@ class ReportController extends Controller
         return CdrReport::where('number', $number)->get();
     }
 
-    public function addReminder(Request $request) 
+    public function addReminder(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'startdate' => 'required',
@@ -200,17 +210,17 @@ class ReportController extends Controller
         ], [
             'startdate.required' => 'Reminder date is required',
             'starttime.required' => 'Reminder time is required'
-        ]);   
+        ]);
 
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $date = Carbon::parse($request->get('startdate'))->format('Y-m-d')." ".$request->get('starttime').":00";
             if(!empty($request->get('id'))) {
                 $reminder = [
                      'followupdate'=> $date,
                      'appoint_status'=> $request->get('appoint_status'),
-                    ]; 
+                    ];
                 DB::table('reminders')
                     ->where('id', $request->get('id'))
                     ->update($reminder);
@@ -230,12 +240,12 @@ class ReportController extends Controller
                      'uniqueid'=> $cdr_query[0]->uniqueid,
                      'secondleg'=> $cdr_query[0]->secondleg,
                      'assignedto'=> $cdr_query[0]->assignedto,
-                    ]; 
+                    ];
                 DB::table('reminders')->insert($reminder);
                 $data['success'] = 'Reminder added successfully.';
             }
-            
-        } 
+
+        }
          return $data;
     }
 
@@ -250,7 +260,7 @@ class ReportController extends Controller
     //     return redirect()->route('Reminder');
     // }
 
-    public function addCdr(Request $request) 
+    public function addCdr(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'number' => 'required|max:12',
@@ -258,30 +268,30 @@ class ReportController extends Controller
         ], [
             'number.required' => 'Customer number field is required.',
             'phone.required' => 'Operator number field is required.'
-        ]);    
-          
+        ]);
+
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $res = callConfig($request->all());
             if($res['status']) {
                 $data['success'] = 'Cdr added successfully.';
-            }    
-        } 
+            }
+        }
         return $data;
     }
 
-    public function sendMessage(Request $request) 
+    public function sendMessage(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'number' => 'required|max:12',
             'message' => 'required'
         ], [
             'number.required' => 'Customer number field is required.',
-        ]);    
-          
+        ]);
+
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $res = smsConfig($request->all());
             //dd($res);
@@ -290,11 +300,11 @@ class ReportController extends Controller
             } else {
                 $data['error'] = $res['error'];
             }
-        } 
+        }
         return $data;
     }
 
-    public function assignCdr(Request $request) 
+    public function assignCdr(Request $request)
     {
         foreach($_POST['cdr_id'] as $cdrid) {
             if(isset($_POST['opr_id']) && $_POST['opr_id'] !== '0') {
@@ -303,12 +313,12 @@ class ReportController extends Controller
                 ->update(['assignedto' => $_POST['opr_id']]);
 
                 $oprAccount = DB::table('operatoraccount')->select('deviceid')->where('id',$_POST['opr_id'])->get();
-            
+
                 if($oprAccount[0]->deviceid != null) {
 
                     $cdr = DB::table('cdr')->select('number', 'datetime', 'deptname', 'status')->where('cdrid', $cdrid)->get();
                     $cdrrow = $cdr[0];
-                    
+
                     $message='There is new call assigned to you from ' .$cdrrow->number. ' called at ' .$cdrrow->datetime. ' to ' .$cdrrow->deptname. ' call status: ' .$cdrrow->status;
                     $assigncdr = ['message' => $message,
                                 'operatorid' => $_POST['opr_id'],
@@ -333,7 +343,7 @@ class ReportController extends Controller
                             ];
                     DB::table('assigncdr_sms_operator')->insert($assign_sms);
                 }
-               
+
             } else {
                 DB::table('cdr')
                 ->where('cdrid', $cdrid)
@@ -363,8 +373,9 @@ class ReportController extends Controller
     }
     public function cdrreportout(){
         //department - deptname from cdrpbx
-        
-        return view('home.cdrreportout', ['result' => CdrPbx::getReport(),'departments'=> CdrPbx::get_dept_by_group(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrPbx::getstatus(),'dnidnames'=>CdrPbx::getdids(),'tags'=>CdrTag::getTag()]);
+
+        return view('home.cdrreportout', ['result' => CdrPbx::getReport(),
+        'departments'=> CdrPbx::get_dept_by_group(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrPbx::getstatus(),'dnidnames'=>CdrPbx::getdids(),'tags'=>CdrTag::getTag()]);
     }
     public function operator(){
         return view('home.operator', ['result' => OperatorAccount::getReport(),'operators'=>OperatorAccount::getOperatorbygroup()]);
@@ -387,10 +398,10 @@ class ReportController extends Controller
     public function addConference(Request $request) {
         $validator = Validator::make($request->all(), [
             'moderator' => 'required|max:12',
-        ]);  
+        ]);
 
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $conference_data = [
                 'moderator' => $request->get('moderator'),
@@ -399,7 +410,7 @@ class ReportController extends Controller
                 'comments' => $request->get('comments'),
                 'status' => 'LIVE',
             ];
-            
+
             $conference = new Conference($conference_data);
             $conference->save();
             if(!empty($conference->id)) {
@@ -411,7 +422,7 @@ class ReportController extends Controller
                         $conf_log = [
                             'member' => $request->get($j),
                             'confrence_id' => $conference->id,
-                            'dialstatus' => 'NOT Dialed'  
+                            'dialstatus' => 'NOT Dialed'
                         ];
                         DB::table('confrence_member_log')->insert(
                             $conf_log
@@ -419,9 +430,9 @@ class ReportController extends Controller
                     }
                 }
             }
-            $data['success'] = 'Conference added successfully.';   
+            $data['success'] = 'Conference added successfully.';
         }
-                      
+
         return $data;
     }
 
@@ -430,7 +441,7 @@ class ReportController extends Controller
             Conference::where('id', $request->get('conf_id'))->update(['comments' => $request->get('comments')]);
             $data['success'] = 'Comment update successfully.';
         } else {
-            $data['error'] = 'Some error occured.';   
+            $data['error'] = 'Some error occured.';
         }
 
         return $data;
@@ -469,8 +480,8 @@ class ReportController extends Controller
         }
 
         $cdrexports = CdrPbx::cdroutExport();
-    
- 
+
+
 
         $result_array = array( $columns);
         if(!empty($cdrexports))
@@ -488,16 +499,16 @@ class ReportController extends Controller
                 elseif(Auth::user()->usertype ==  'operator')
                 {
                     $array = array($cdrr->uniqueid,$cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->opername);
-                    
+
                 }
-               
+
                 $result_array[] = $array;
             }
         }
 
         $collection = collect($result_array);
         return Excel::download($collection, 'Report.csv');
-            
+
     }
 
     public function operatordept()
@@ -552,17 +563,17 @@ class ReportController extends Controller
                  $count = count($request->get('products'));
             }
             //print_r($count);exit();
-            
-            for ($i=0; $i < $count; $i++) { 
+
+            for ($i=0; $i < $count; $i++) {
                  $lead_product = new Lead_Products([
                     'cdrreport_lead_id' => $id,
                     'product_id' => $request->get('products')[$i],
                     'quantity' => $request->get('quantity')[$i],
                     'pro_amount' => $request->get('pro_amount')[$i],
                     'subtotal_amount' => $request->get('sub_amount')[$i],
-                ]); 
-             $lead_product->save();              
-            }  
+                ]);
+             $lead_product->save();
+            }
 
             $stage = $request->get('lead_stage');
 
@@ -583,7 +594,7 @@ class ReportController extends Controller
             }
             elseif ($stage == 'Unqualified') {
                 $lead_id = 6;
-            }          
+            }
             else{
                 $lead_id = 7;
             }
@@ -593,7 +604,7 @@ class ReportController extends Controller
                 'cdrreport_lead_id' => $id,
                 'levels' => $lead_id,
                 'status' => 'active',
-            ]); 
+            ]);
 
             $lead_stages->save();
 

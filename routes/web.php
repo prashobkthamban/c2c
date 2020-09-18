@@ -375,6 +375,7 @@ Route::patch('/cdrreport_update', 'LeadController@update')->name('update');
 Route::post('/cdrreport_pro_amount', 'LeadController@ProductAmount')->name('ProductAmount');
 Route::get('/cdrreport_delete_lead/{id}', 'LeadController@deleteLead')->name('deleteLead');
 Route::get('/cdrreport/lead/{id}', 'LeadController@ViewLeadID')->name('ViewLeadID');
+Route::get('/cdrreport/lead/view/{id}', 'ReportController@ViewLeadReport')->name('ViewLeadReport');
 Route::get('lead_stages/{lead_id}/{id}', [
     'uses'  => 'LeadController@LeadStages',
     'as'    => 'lead_stages'

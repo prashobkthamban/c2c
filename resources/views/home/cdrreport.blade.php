@@ -153,6 +153,80 @@ audio {
         </div>
     </div>
 
+    <div class="modal fade" id="ViewLead" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
+        <div class="col-md-12">
+            <div class="card mb-4 lead_modal">
+                <div class="card-body">
+                    <div class="card-title mb-3">View Lead<a href="" class="btn btn-primary" style="float: right;">Back</a></div>
+                        <div class="row">
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="first_name">First Name</label>
+                                <input type="text" id="view_lead_first_name" class="form-control" />
+                            </div>
+
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="last_name">Last Name</label>
+                                <input type="text" id="view_lead_last_name" class="form-control"/>
+                            </div>
+
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="company_name">Company Name</label>
+                                <input type="text" id="view_lead_company_name" class="form-control"/>
+                            </div>
+
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="email">Email</label>
+                                <input type="email"id="view_lead_email" class="form-control"/>
+                            </div>
+
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="phoneno">Phone No</label>
+                                <input type="text" id="view_lead_phoneno" class="form-control"/>
+                            </div>
+
+                            <div class="col-md-6 form-group mb-3">
+                                <label for="alt_phoneno">Another Phone No</label>
+                                <input type="text" id="view_lead_alt_phoneno" class="form-control"/>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label for="products">Products</label>
+                                <div class="row">
+                                    <section class="container col-xs-12">
+                                        <div class="table table-responsive">
+                                            <table class="table table-striped table-bordered" border="0">
+                                                <tbody>
+
+                                                </tbody>
+                                                <tfoot>
+                                                <tr>
+                                                    <th>
+                                                        <label for="total_amount">Total Amount:</label>
+                                                        <input type="text" id="view_lead_total_amount" class="form-control"/>
+                                                    </th>
+                                                </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    </section>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="owner_name">Owner Name</label>
+                                <input type="text" id="view_lead_owner_name" class="form-control"/>
+                            </div>
+
+                            <div class="col-md-12 form-group mb-3">
+                                <label for="lead_stage">Lead Stage</label>
+                                <input type="text" id="view_lead_lead_stage" class="form-control"/>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="separator-breadcrumb border-top"></div>
     @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype=='operator')
     <div class="row">
@@ -419,14 +493,22 @@ audio {
                                 <?php
                                 if (sizeof($all_leads[$row->cdrid]) != '0') {
                                     $add_cl = 'btn-primary';
+                                    $lead_view_type = 'view_lead';
+                                    $lead_target = '#ViewLead';
+                                    $title = 'View Lead';
                                 }
                                 else
                                 {
                                     $add_cl = 'btn-success';
+                                    $lead_view_type = 'add_lead';
+                                    $lead_target = '#AddLead';
+                                    $title = 'Add Lead';
                                 }
                                 ?>
                                 @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
-                                <a href="?" class="btn {{$add_cl}} add_lead" title="Add Lead" id="add_lead" data-toggle="modal" data-number="{{$row->number}}" data-id="{{$row->cdrid}}" data-target="#AddLead"><i class="i-Notepad"></i></a>
+                                    <a href="?" class="btn {{$add_cl}} {{$lead_view_type}}" title="{{$title}}"
+                                    id="{{$lead_view_type}}" data-toggle="modal" data-number="{{$row->number}}"
+                                    data-id="{{$row->cdrid}}" data-target="{{$lead_target}}"><i class="i-Notepad"></i></a>
                                 @endif
                                 <div class="dropdown-menu" aria-labelledby="action_{{$row->cdrid}}">
                                 <a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" id="contact_{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-phone="{{$row->number}}">{{isset($row->contacts->fname) ? 'Update Contact': 'Add Contact'}}</a>
@@ -1064,7 +1146,6 @@ audio {
             url: '{{ URL::route("SendMessage") }}', // This is the url we gave in the route
             data: $('#msg_form').serialize(),
             success: function(res){ // What to do if we succeed
-                console.log('res', res);
                 if(res.error) {
                     $.each(res.error, function(index, value)
                     {
@@ -1488,6 +1569,48 @@ audio {
             //alert(quantity*am);
             $(this).closest("tr").find("input.sub_amount").val(parseFloat(sub_amount).toFixed(2));
             total_amount();
+        });
+
+        $("body").on("click", ".view_lead", function () {
+        var number = $(this).data('number');
+        var id = $(this).data('id');
+        $("#view_lead_first_name").val('');
+        $("#view_lead_last_name").val('');
+        $("#view_lead_company_name").val('');
+        $("#view_lead_email").val('');
+        $("#view_lead_phoneno").val('');
+        $("#view_lead_alt_phoneno").val('');
+        $("#view_lead_total_amount").val('');
+        $("#view_lead_owner_name").val('');
+        $("#view_lead_lead_stage").val('');
+        $("#ViewLead").animate({width: 'toggle'}, "slow");
+         jQuery.ajax({
+            type: "GET",
+            url: "/cdrreport/lead/view/" + id,
+            dataType: 'text',
+            success: function(res){
+                var obj = jQuery.parseJSON(res);
+                $("#view_lead_first_name").val(obj.lead.first_name);
+                $("#view_lead_last_name").val(obj.lead.last_name);
+                $("#view_lead_company_name").val(obj.lead.company_name);
+                $("#view_lead_email").val(obj.lead.email);
+                $("#view_lead_phoneno").val(obj.lead.phoneno);
+                $("#view_lead_alt_phoneno").val(obj.lead.alt_phoneno);
+                $("#view_lead_total_amount").val(obj.lead.total_amount);
+                $("#view_lead_owner_name").val(obj.lead.owner_name);
+                $("#view_lead_lead_stage").val(obj.lead.lead_stage);
+
+                var html_code = '';
+                if(obj.products.length > 0){
+                    obj.products.forEach(pro => {
+                        html_code += '<td><input type="text" class="form-control" value="'+ pro.name + '"/></td>';
+                        html_code += '<td><input type="text" class="form-control" value="'+ pro.quantity + '"/></td>';
+                        html_code += '<td><input type="text" class="form-control" value="'+ pro.subtotal_amount + '"/></td>';
+                        });
+                    $("#ViewLead table tbody").html(html_code);
+                }
+            }
+        });
         });
     });
 

@@ -14,8 +14,8 @@
         <div class="col-md-12 mb-4">
             <div class="card text-left">
                 <div class="card-body">
-                    <?php $operatorCount = sizeof($operators); 
-                    $target = ($operatorCount < Auth::user()->load('accountdetails')->accountdetails['operator_no_logins']) ? '#operator_account' : ''; 
+                    <?php $operatorCount = sizeof($operators);
+                    $target = ($operatorCount < Auth::user()->load('accountdetails')->accountdetails['operator_no_logins']) ? '#operator_account' : '';
                     ?>
                     <a title="Add Operator" href="javascript:void(0)" data-toggle="modal" data-target="<?php echo $target; ?>" class="btn btn-primary add_account">Add Operator</a>
                     <p><center><b id="crm_error" style="display:none;color: red;">CRM Access Limit is over.Please contact to Administration!!!</b></center></p>
@@ -44,7 +44,7 @@
                                     <td>{{($operator->accounts != null) ? $operator->accounts->user_pwd : ''}}</td>
                                     <td>{{$operator->lead_access}}</td>
                                     <td><a href="#" data-toggle="modal" class="stickey_list" id="{{$operator->id}}" data-opername="{{$operator->opername}}" data-target="#stickey_modal"><i class="i-Administrator"></i></a></td>
-                                    <td>{{$operator->oper_status}}</td>   
+                                    <td>{{$operator->oper_status}}</td>
                                     <td><a href="#" data-toggle="modal" data-target="#operator_account" class="text-success mr-2 edit_account" id="{{$operator->id}}">
                                             <i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                         </a>
@@ -53,7 +53,7 @@
                                     </td>
                                 </tr>
                                 @endforeach
-                                
+
                             </tbody>
                             <tfoot>
                                 <tr>
@@ -96,9 +96,9 @@
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        <tbody> 
+                        <tbody>
                         </tbody>
-                    </table> 
+                    </table>
                 </div>
             </div>
         </div>
@@ -115,10 +115,10 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                    {!! Form::open(['class' => 'add_account_form', 'method' => 'post', 'autocomplete' => 'off']) !!} 
+                    {!! Form::open(['class' => 'add_account_form', 'method' => 'post', 'autocomplete' => 'off']) !!}
                 <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                                 <input type="hidden" name="id" id="account_id" />
                             </div>
                             <div class="col-md-8 form-group mb-3">
@@ -127,15 +127,15 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Operator *</label>
                                     <input type="text" class="form-control" placeholder="Operator" name="opername" id="opername">
                             </div>
-                        </div> 
+                        </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Login Id *</label>
@@ -143,7 +143,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Password *</label>
@@ -151,15 +151,15 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Status</label>
                                 {!! Form::select('oper_status', array('Online' => 'Online', 'Offline' => 'Offline'), 'Online', array('class' => 'form-control', 'id' => 'oper_status')) !!}
-                            </div> 
+                            </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Live Transfer no *</label>
@@ -167,14 +167,14 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Shift *</label>
-                                {!! Form::select('shift_id', 
+                                {!! Form::select('shift_id',
                                 shiftList()->prepend('Select Shift', ''), 0,array('class' => 'form-control', 'id' => 'shift_id')) !!}
                             </div>
-                        </div>   
+                        </div>
                         <div class="row">
                             <div class="col-md-2 form-group mb-3"></div>
                             <div class="col-md-8 form-group mb-3">
@@ -188,9 +188,9 @@
                                 <button type="button" id="Sat" class="btn btn-rounded m-1 week_days" onClick="selectDay('Sat');" title="Saturday">S</button>
                                 <input type='hidden' id="working_days" name='working_days' value="" />
                             </div>
-                        </div>                                  
+                        </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Andriod App</label>
@@ -198,15 +198,15 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">CDR Download</label>
-                                {!! Form::select('edit', array('1' => 'Yes', '0' => 'No'), 0,array('class' => 'form-control', 'id' => 'edit')) !!} 
+                                {!! Form::select('edit', array('1' => 'Yes', '0' => 'No'), 0,array('class' => 'form-control', 'id' => 'edit')) !!}
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Rec Download</label>
@@ -214,7 +214,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Rec Play</label>
@@ -226,7 +226,11 @@
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="crm_access">CRM Access</label>
-                                {!! Form::select('crm_access', array('yes' => 'Yes', 'no' => 'No'), 0,array('class' => 'form-control', 'id' => 'crm_access')) !!}
+                                @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
+                                    {!! Form::select('crm_access', array('yes' => 'Yes', 'no' => 'No'), 0,array('class' => 'form-control', 'id' => 'crm_access')) !!}
+                                @else
+                                    <input type="text" value="no" class="form-control" name="crm_access" id="crm_access" readonly>
+                                @endif
                             </div>
                         </div>
                         <div class="row">
@@ -234,7 +238,11 @@
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="lead_access">No of Lead Access</label>
-                                <input type="number" class="form-control" placeholder="No of Leads" name="lead_access" id="lead_access">
+                                @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
+                                    <input type="number" class="form-control" placeholder="No of Leads" name="lead_access" id="lead_access">
+                                @else
+                                    <input type="number" readonly value="0" class="form-control" placeholder="No of Leads" name="lead_access" id="lead_access">
+                                @endif
                             </div>
                         </div>
                 </div>
@@ -260,7 +268,7 @@
             days.push(day);
         } else {
             $("#" + day).removeClass('btn-primary');
-            var dayIndex = days.indexOf(day); 
+            var dayIndex = days.indexOf(day);
             days.splice(dayIndex, 1);
         }
         $("#working_days").val(days);
@@ -269,7 +277,7 @@
     $(document).ready(function() {
         $( '.add_account_form' ).on( 'submit', function(e) {
             e.preventDefault();
-            var errors = ''; 
+            var errors = '';
           $.ajax({
             type: "POST",
             url: '{{ URL::route("AddOperatorAccount") }}',
@@ -278,7 +286,7 @@
                 console.log(res);
                 if(res.error) {
                     $.each(res.error, function(index, value)
-                    { 
+                    {
                         if (value.length != 0)
                         {
                             errors += value[0];
@@ -286,7 +294,7 @@
                         }
                     });
                     toastr.error(errors);
-                } else { 
+                } else {
                     $(this).prop('disabled',true);
                     $("#operator_account").modal('hide');
                     $(".add_account_form")[0].reset();
@@ -295,11 +303,11 @@
                         $('#crm_error').css('display','block');
                     }
                     else{
-                     $('#crm_error').css('display','none');   
+                     $('#crm_error').css('display','none');
                     }
-                    setTimeout(function(){ location.reload() }, 300);               
+                    setTimeout(function(){ location.reload() }, 300);
                 }
-               
+
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                 toastr.error('Some errors are occured');
@@ -314,19 +322,19 @@
             $.ajax({
             type: "GET",
             url: '/get_operator_account/'+ id, // This is the url we gave in the route
-            success: function(result) { 
+            success: function(result) {
                 var res = result[0];
                 $("#account_id").val(res.id);
                 $("#phonenumber").val(res.phonenumber);
                 $("#opername").val(res.opername);
                 $("#username").val(res.username);
-                $("#password").val(res.user_pwd);        
-                $("#oper_status").val(res.oper_status);        
-                $("#livetrasferid").val(res.livetrasferid);        
-                $("#shift_id").val(res.shift_id);        
-                $("#app_use").val(res.app_use);        
-                $("#edit").val(res.edit);        
-                $("#download").val(res.download);        
+                $("#password").val(res.user_pwd);
+                $("#oper_status").val(res.oper_status);
+                $("#livetrasferid").val(res.livetrasferid);
+                $("#shift_id").val(res.shift_id);
+                $("#app_use").val(res.app_use);
+                $("#edit").val(res.edit);
+                $("#download").val(res.download);
                 $("#play").val(res.play);
                 $("#crm_access").val(res.crm_access);
                 $('#lead_access').val(res.lead_access);
@@ -361,10 +369,10 @@
                         stickeyHTML += "<td><a href='#' id='" + obj.id + "' class='delete_stickey text-danger mr-2'><i class='nav-icon i-Close-Window font-weight-bold'></i></a></td>";;
                         stickeyHTML += "</tr>";
 
-                    }); 
+                    });
                 } else {
                     stickeyHTML += "<tr><td colspan='3'><center>No Data Found</center></td></tr>";
-                } 
+                }
                 $("#stickey_table tbody").html(stickeyHTML);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
@@ -381,12 +389,12 @@
                         toastr.error('Limit exceeded');
                     } else {
                         $('.add_account').attr('data-target', '#operator_account');
-                    }           
+                    }
                 }
             });
             $("#modal-title").text('Add Operator Account');
             $(".week_days").removeClass('btn-primary');
-            $(".add_account_form")[0].reset();    
+            $(".add_account_form")[0].reset();
         });
 
         $(document).on("click", ".delete_stickey", function(event)
@@ -403,12 +411,12 @@
                            $("#stickey_row_" + stickeyId).remove();
                            toastr.success('Stickey data delete successfully.')
                         }
-                        
+
                     }
                 });
             }
         });
-        
+
     });
 </script>
 @endsection
