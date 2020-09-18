@@ -19,6 +19,7 @@
             </div>
 
             <div class="row">
+                @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
                 <div class="col-lg-6 col-sm-12">
                     <div class="card mb-4">
                         <div class="card-body">
@@ -35,6 +36,16 @@
                         </div>
                     </div>
                 </div>
+                @else
+                <div class="col-md-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="card-title">Pie Chart Based on Call Status</div>
+                            <div id="echartPie" style="height: 300px;"></div>
+                        </div>
+                    </div>
+                </div>
+                @endif
                 <div class="col-lg-12 col-md-12">
                     <div class="card mb-4">
                         <div class="card-body">
@@ -42,11 +53,11 @@
                             <div id="multiLine1" style="height: 300px;"></div>
                         </div>
                     </div>
-                </div>       
+                </div>
             </div>
-
+            @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
             <div class="row">
-                <div class="col-lg-8 col-md-12">
+                <div class="col-md-12">
                     <div class="card mb-4">
                         <div class="card-body">
                             <div class="card-title">This Year Sales</div>
@@ -55,6 +66,7 @@
                     </div>
                 </div>
             </div>
+            @endif
 
 @endsection
 
@@ -78,9 +90,9 @@
             var answered_bar = <?php echo !empty($new_ans) ? json_encode($new_ans) : json_encode(array()); ?>;
             var missed_bar =  <?php echo !empty($new_miss) ? json_encode($new_miss) : json_encode(array()); ?>;
             var c_data = <?php echo !empty($crm_data) ? json_encode($crm_data) : json_encode(array()); ?>;
-            
+
             //console.log(c_data);
-            
+
             var newans = [];
             $.each(answered_bar, function(index,value){
                 newans.push(value);
@@ -91,11 +103,11 @@
                 newmiss.push(value);
             });
 
-            /*alert(Math.max.apply(Math,newmiss)); 
+            /*alert(Math.max.apply(Math,newmiss));
             alert(Math.min.apply(Math,newmiss));
-            alert(Math.max.apply(Math,newans)); 
+            alert(Math.max.apply(Math,newans));
             alert(Math.min.apply(Math,newans));*/
-            if (Math.min.apply(Math,newans) > Math.min.apply(Math,newmiss)) 
+            if (Math.min.apply(Math,newans) > Math.min.apply(Math,newmiss))
             {
                 var min = Math.min.apply(Math,newans);
             }
@@ -103,14 +115,14 @@
             {
                 var min = Math.min.apply(Math,newmiss);
             }
-            if (Math.max.apply(Math,newans) > Math.max.apply(Math,newmiss)) 
+            if (Math.max.apply(Math,newans) > Math.max.apply(Math,newmiss))
             {
                 var max = Math.max.apply(Math,newans);
             }
             else
             {
                 var max = Math.max.apply(Math,newmiss);
-            }            
+            }
             /*alert(max);*/
 
             /*console.log('sds', newmiss);
@@ -158,7 +170,7 @@
                             }
                         }
                     }]
-                    
+
                 });
                 $(window).on('resize', function () {
                     setTimeout(function () {
@@ -407,8 +419,8 @@
             $('#config-demo').daterangepicker({
             "startDate": "<?php echo $sdate; ?>",
             "endDate": "<?php echo $edate; ?>"
-            }, function(start, end, label) { 
-                
+            }, function(start, end, label) {
+
                 $('#dfrom').val(start.format('DD-MM-YYYY'));
                 $('#dto').val(end.format('DD-MM-YYYY'));
                 $('#dhid').submit();

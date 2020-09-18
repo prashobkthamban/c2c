@@ -314,7 +314,7 @@
                     </div>
                 </div>
             <?php } ?>
-
+            @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
             <div class="row">
                 <h1>CRM</h1>
                 <div class="col-lg-12 col-md-12">
@@ -383,6 +383,7 @@
                     </div>
                 </div>
             </div>
+            @endif
 
     <div class="modal fade" id="ToDoTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
         <div class="col-md-12">
@@ -440,7 +441,7 @@
             </div>
         </div>
     </div>
-
+    @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
         <div class="col-lg-6 col-xl-6 mt-4">
                 <div class="card">
                   <div class="card-body">
@@ -539,7 +540,8 @@
                   </div>
                 </div>
         </div>
-
+        @endif
+        @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
         <div class="col-lg-6 col-xl-6 mt-4">
             <?php
             if (Auth::user()->usertype == 'groupadmin' /*|| Auth::user()->usertype == 'admin'*/) { ?>
@@ -638,9 +640,9 @@
                 </div>
             <?php }?>
         </div>
-
+        @endif
         <!-- <div class="col-lg-6 col-xl-6 mt-4"></div> -->
-
+        @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
         <div class="col-lg-12 col-xl-12 mt-4">
             <?php
             if (Auth::user()->usertype == 'groupadmin' /*|| Auth::user()->usertype == 'admin'*/) { ?>
@@ -723,7 +725,8 @@
                 </div>
             <?php } ?>
         </div>
-
+        @endif
+        @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
         <div class="col-lg-4 col-xl-4 mt-4">
             <?php
             if (Auth::user()->usertype == 'groupadmin' /*|| Auth::user()->usertype == 'admin'*/) { ?>
@@ -771,7 +774,8 @@
                 </div>
             <?php } ?>
         </div>
-
+        @endif
+        @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
         <div class="col-lg-4 col-xl-4 mt-4">
             <?php
             if (Auth::user()->usertype == 'groupadmin' /*|| Auth::user()->usertype == 'admin'*/) { ?>
@@ -817,7 +821,8 @@
                 </div>
             <?php } ?>
         </div>
-
+        @endif
+        @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
         <div class="col-lg-4 col-xl-4 mt-4">
             <?php
             if (Auth::user()->usertype == 'groupadmin' /*|| Auth::user()->usertype == 'admin'*/) { ?>
@@ -863,7 +868,7 @@
                 </div>
             <?php } ?>
         </div>
-
+        @endif
         <div class="col-md-12 col-xl-12 mt-4">
         	<?php
             if (Auth::user()->usertype == 'reseller') { ?>
@@ -893,7 +898,6 @@
         	</div>
         	<?php } ?>
         </div>
-
         <div class="col-lg-6 col-xl-6 mt-4">
             <?php
             if (Auth::user()->usertype == 'reseller') { ?>
@@ -951,7 +955,6 @@
                 </div>
             <?php } ?>
         </div>
-
         <div class="col-lg-12 col-xl-12 mt-4">
             <?php
             if (Auth::user()->usertype == 'reseller') { ?>

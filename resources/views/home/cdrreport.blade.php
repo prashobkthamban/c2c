@@ -489,7 +489,7 @@ audio {
                                     <i class="nav-icon i-Gear-2"></i>
                                 </button>
                                 @endif
-
+                                @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
                                 <?php
                                 if (sizeof($all_leads[$row->cdrid]) != '0') {
                                     $add_cl = 'btn-primary';
@@ -509,6 +509,7 @@ audio {
                                     <a href="?" class="btn {{$add_cl}} {{$lead_view_type}}" title="{{$title}}"
                                     id="{{$lead_view_type}}" data-toggle="modal" data-number="{{$row->number}}"
                                     data-id="{{$row->cdrid}}" data-target="{{$lead_target}}"><i class="i-Notepad"></i></a>
+                                @endif
                                 @endif
                                 <div class="dropdown-menu" aria-labelledby="action_{{$row->cdrid}}">
                                 <a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" id="contact_{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-phone="{{$row->number}}">{{isset($row->contacts->fname) ? 'Update Contact': 'Add Contact'}}</a>
@@ -1603,9 +1604,21 @@ audio {
                 var html_code = '';
                 if(obj.products.length > 0){
                     obj.products.forEach(pro => {
-                        html_code += '<td><input type="text" class="form-control" value="'+ pro.name + '"/></td>';
-                        html_code += '<td><input type="text" class="form-control" value="'+ pro.quantity + '"/></td>';
-                        html_code += '<td><input type="text" class="form-control" value="'+ pro.subtotal_amount + '"/></td>';
+                        if(pro.name){
+                            html_code += '<td><input type="text" class="form-control" value="'+ pro.name + '"/></td>';
+                        }else{
+                            html_code += '<td><input type="text" class="form-control" value=""/></td>';
+                        }
+                        if(pro.quantity){
+                            html_code += '<td><input type="text" class="form-control" value="'+ pro.quantity + '"/></td>';
+                        }else{
+                            html_code += '<td><input type="text" class="form-control" value=""/></td>';
+                        }
+                        if(pro.subtotal_amount){
+                            html_code += '<td><input type="text" class="form-control" value="'+ pro.subtotal_amount + '"/></td>';
+                        }else{
+                            html_code += '<td><input type="text" class="form-control" value=""/></td>';
+                        }
                         });
                     $("#ViewLead table tbody").html(html_code);
                 }
