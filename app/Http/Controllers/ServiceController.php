@@ -186,16 +186,17 @@ class ServiceController extends Controller
     }
 
     public function liveCalls() {
+        //dd(Auth::user());
         $query = DB::table('cur_channel_used')
             ->leftJoin('accountgroup', 'cur_channel_used.groupid', '=', 'accountgroup.id')
             ->leftJoin('operatoraccount', 'cur_channel_used.operatorid', '=', 'operatoraccount.id')
             ->leftJoin('operatordepartment', 'cur_channel_used.departmentid', '=', 'operatordepartment.id');
 
         if(Auth::user()->usertype == 'reseller') {
-            $query->where('accountgroup.resellerid', Auth::user()->resellerid);
+            $query->where('cur_channel_used.resellerid', Auth::user()->resellerid);
             $query->where('cur_channel_used.calltype', 'ivr');
-        } elseif(Auth::user()->usertype != 'groupadmin') {
-            $query->where('accountgroup.id', Auth::user()->groupid);
+        } elseif(Auth::user()->usertype == 'groupadmin') {
+            $query->where('cur_channel_used.groupid', Auth::user()->groupid);
             $query->where('cur_channel_used.calltype', 'ivr');
         } elseif(Auth::user()->usertype != 'admin') {
 
