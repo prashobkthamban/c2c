@@ -676,7 +676,7 @@
                                             $new = $converted = $interested = $under_review = $demo = $unqualified = $converted = '0';
                                             foreach ($row as $key => $value) {
 
-                                               if ($value->lead_stage == 'new') {
+                                               if ($value->lead_stage == 'New') {
                                                    $new = $value->lead_count;
                                                }
                                                if ($value->lead_stage == 'Contacted') {
@@ -989,7 +989,7 @@
                                             $new = $converted = $interested = $under_review = $demo = $unqualified = $converted = '0';
                                             foreach ($row as $key => $value) {
 
-                                               if ($value->lead_stage == 'new') {
+                                               if ($value->lead_stage == 'New') {
                                                    $new = $value->lead_count;
                                                }
                                                if ($value->lead_stage == 'Contacted') {
@@ -1508,7 +1508,7 @@
 									break;
 							}*/
 
-							if (value1.lead_stage == 'new') {
+							if (value1.lead_stage == 'New') {
 								new1 = value1.lead_count;
 							}
 							else{
