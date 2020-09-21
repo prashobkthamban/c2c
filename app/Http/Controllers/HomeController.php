@@ -44,6 +44,39 @@ class HomeController extends Controller
         $qedate = date("Y-m-d",strtotime($edate));
         $qsdate = date("Y-m-d",strtotime($sdate));
 
+        $incoming_calls = [];
+$operator_leads = [];
+$opcallList = [];
+$insight_ivr = [];
+$insightData = [];
+$announcements = [];
+$activeoperator = [];
+$g_callstoday = [];
+$g_activecalls = [];
+$activecalls = [];
+$ivranswer = [];
+$ivrmissed = [];
+// $sdate = [];
+// $edate = [];
+$nousers = [];
+$inusers = [];
+$level_1 = [];
+$level_2 = [];
+$level_3 = [];
+$level_4 = [];
+$level_5 = [];
+$level_6 = [];
+$level_7 = [];
+$todo_lists = [];
+$users_list = [];
+$remainders = [];
+$lead_count = [];
+$operator_lead_stage = [];
+$predict_cost = [];
+$proposal = [];
+$invoice = [];
+$group_admin = [];
+
         if(Auth::user()->usertype == 'admin') {
             $nousers = DB::table('accountgroup')->count();
             $inusers = DB::table('accountgroup')

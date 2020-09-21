@@ -17,8 +17,17 @@
                     <?php $operatorCount = sizeof($operators);
                     $target = ($operatorCount < Auth::user()->load('accountdetails')->accountdetails['operator_no_logins']) ? '#operator_account' : '';
                     ?>
-                    <a title="Add Operator" href="javascript:void(0)" data-toggle="modal" data-target="<?php echo $target; ?>" class="btn btn-primary add_account">Add Operator</a>
-                    <p><center><b id="crm_error" style="display:none;color: red;">CRM Access Limit is over.Please contact to Administration!!!</b></center></p>
+                    <div class="row">
+                        <div class="col-md-6 float-left">
+                            <a title="Add Operator" href="javascript:void(0)" data-toggle="modal" data-target="<?php echo $target; ?>" class="btn btn-primary add_account">Add Operator</a>
+                        </div>
+                        <div class="col-md-6 float-right">
+                            @if($access_count)
+                                <div class="float-right text-danger">*CRM Access Limit is over.</div>
+                            @endif
+                        </div>
+                    </div>
+
                     <div class="table-responsive">
                         <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                             <thead>
@@ -299,12 +308,12 @@
                     $("#operator_account").modal('hide');
                     $(".add_account_form")[0].reset();
                     toastr.success(res.success);
-                    if (res.crm_access_error == 1) {
-                        $('#crm_error').css('display','block');
-                    }
-                    else{
-                     $('#crm_error').css('display','none');
-                    }
+                    // if (res.crm_access_error == 1) {
+                    //     $('#crm_error').css('display','block');
+                    // }
+                    // else{
+                    //  $('#crm_error').css('display','none');
+                    // }
                     setTimeout(function(){ location.reload() }, 300);
                 }
 

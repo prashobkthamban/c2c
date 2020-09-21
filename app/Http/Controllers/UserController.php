@@ -72,7 +72,7 @@ class UserController extends Controller
         $sms_gateway = $sms_gateway->prepend('Select gateway', '0');
         $did_list = $this->did->get_did();
         $did_list = $did_list->prepend('Select Did', '');
-        
+
         return view('user.add_user', compact('lang', 'coperate', 'default', 'did_list', 'sms_gateway', 'c2capi', 'cdr_api_key'));
     }
 
@@ -100,7 +100,7 @@ class UserController extends Controller
         }
         $validator = Validator::make($request->all(), $rules);
         if($validator->fails()) {
-            $messages = $validator->messages(); 
+            $messages = $validator->messages();
             return redirect()->back()->withErrors($validator)->withInput();
         } else {
 
@@ -162,17 +162,17 @@ class UserController extends Controller
 	//@savitha we need to insert this entry in to billing
 	//$querys = "INSERT INTO billing(resellerid,groupid)VALUES ('" .$request->get('resellerid') . "', '" . $account_group->id . "');";
         toastr()->success('User added successfully.');
-        } 
+        }
         return redirect()->route('UserList');
-        
+
     }
 
     public function edit($id)
     {
         $account_group = new Accountgroup();
         $did = new Dids();
-        $user_edit = $account_group->findOrFail($id);     
-        //dd($user_edit);   
+        $user_edit = $account_group->findOrFail($id);
+        //dd($user_edit);
         $lang = $account_group->get_language();
         $lang = $lang->prepend('Select language', '0');
         $coperate = $account_group->get_coperate();
@@ -183,7 +183,7 @@ class UserController extends Controller
         $did_list = $did_list->prepend('Select Did', '');
         return view('user.edit_user', compact('user_edit','lang', 'coperate', 'did_list', 'sms_gateway'));
     }
-	
+
  public function editSettings($id)
     {
         $account_group = new Accountgroup();
@@ -232,7 +232,7 @@ public function updatesettings($id, Request $request) {
             $user_edit->fill($account_group)->save();
             toastr()->success('User update successfully.');
             return redirect()->route('UserList');
-        }      
+        }
 }
 
 
@@ -323,7 +323,7 @@ public function updatesettings($id, Request $request) {
             toastr()->success('User update successfully.');
             return redirect()->route('UserList');
         }
-        
+
     }
 
     public function deleteAccount($id)
@@ -371,7 +371,7 @@ public function updatesettings($id, Request $request) {
 
     public function editAccount($id = null) {
         $account = new Account();
-        return $account->findOrFail($id); 
+        return $account->findOrFail($id);
     }
 
     public function getCustomer($usertype, $resellerid) {
@@ -382,24 +382,24 @@ public function updatesettings($id, Request $request) {
         return getDidList($groupid);
     }
 
-    public function addAccount(Request $request) 
+    public function addAccount(Request $request)
     {
         $rules = [
             'username' => 'required',
             'usertype' => 'required',
-        ];   
-        
+        ];
+
         if(empty($request->get('id'))) {
             $rules['password'] = 'required';
         }
         $validator = Validator::make($request->all(), $rules);
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $account = ['username' => $request->get('username'),
                      'password'=> Hash::make($request->get('password')),
                      'user_pwd'=> $request->get('password'),
-                     'usertype'=> $request->get('usertype'), 
+                     'usertype'=> $request->get('usertype'),
                      'resellerid' => $request->get('resellerid'),
                      'groupid' => $request->get('groupid'),
                      'phone_number' => $request->get('phone_number'),
@@ -420,7 +420,7 @@ public function updatesettings($id, Request $request) {
                     $data['success'] = 'Account updated successfully.';
             }
 
-        } 
+        }
          return $data;
     }
 
@@ -453,24 +453,30 @@ public function updatesettings($id, Request $request) {
 
             DB::table('blacklist')->insert(
                 $blacklist_data
-            );  
+            );
             $data['success'] = 'Blacklist added successfully.';
-        } 
+        }
         return $data;
-        
+
     }
 
     public function operators() {
         $operators = OperatorAccount::with(['accounts'])
         ->where('groupid', Auth::user()->groupid)
         ->orderBy('adddate','DESC')->paginate(10);
-        return view('user.operator_list', compact('operators'));
+        $crm_users = DB::table('operatoraccount')->where('groupid',Auth::user()->groupid)->where('crm_access','yes')->get();
+        if(count($crm_users) >= Auth::user()->load('accountdetails')->accountdetails['crm_users']){
+            $access_count = true;
+        }else{
+            $access_count = false;
+        }
+        return view('user.operator_list', compact('operators','access_count'));
     }
 
     public function operatorCount() {
         return OperatorAccount::where('groupid', Auth::user()->groupid)->count();
     }
-    
+
     public function stickey_list($id) {
         return $stickey = DB::table('ast_sticky_agents')
             ->select('ast_sticky_agents.id','ast_sticky_agents.caller','accountgroup.name','operatordepartment.dept_name','operatoraccount.opername')->leftJoin('accountgroup', 'ast_sticky_agents.groupid', '=', 'accountgroup.id')->leftJoin('operatordepartment', 'ast_sticky_agents.departmentid', '=', 'operatordepartment.id')->leftJoin('operatoraccount', 'ast_sticky_agents.operatorid', '=', 'operatoraccount.id')->where('operatorid', $id)->get();
@@ -496,113 +502,68 @@ public function updatesettings($id, Request $request) {
             'shift_id' => 'required',
             'working_days' => 'required',
             'lead_access' => 'required'
-        ]);  
+        ]);
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $crm_users = DB::table('operatoraccount')->where('groupid',Auth::user()->groupid)->where('crm_access','yes')->get();
-            if (count($crm_users) <= Auth::user()->load('accountdetails')->accountdetails['crm_users']) 
+            $workingDays = explode(',', $request->working_days);
+            $operator_data = [
+                'phonenumber' => $request->get('phonenumber'),
+                'groupid' => Auth::user()->groupid,
+                'opername'=> $request->get('opername'),
+                'oper_status'=> $request->get('oper_status'),
+                'livetrasferid'=> $request->get('livetrasferid'),
+                'shift_id'=> $request->get('shift_id'),
+                'app_use'=> $request->get('app_use'),
+                'edit'=> $request->get('edit'),
+                'download'=> $request->get('download'),
+                'play'=> $request->get('play'),
+                'working_days' => json_encode($workingDays),
+                'lead_access' => $request->get('lead_access'),
+            ];
+            if($request->get('crm_access') == 'yes' && count($crm_users) < Auth::user()->load('accountdetails')->accountdetails['crm_users'])
             {
-                $workingDays = explode(',', $request->working_days);
-                $operator_data = [
-                    'phonenumber' => $request->get('phonenumber'),
-                    'groupid' => Auth::user()->groupid,
-                    'opername'=> $request->get('opername'),
-                    'oper_status'=> $request->get('oper_status'),
-                    'livetrasferid'=> $request->get('livetrasferid'),
-                    'shift_id'=> $request->get('shift_id'),
-                    'app_use'=> $request->get('app_use'),
-                    'edit'=> $request->get('edit'),
-                    'download'=> $request->get('download'),
-                    'play'=> $request->get('play'),
-                    'working_days' => json_encode($workingDays),
-                    'crm_access' => 'no',
-                    'lead_access' => $request->get('lead_access'),
-                ];
-                
-                $account_data = [
-                    'username'=> $request->get('username'),
-                    'password'=> Hash::make($request->get('password')),
-                    'user_pwd'=> $request->get('password'),
-                    'usertype' => 'operator',
-                    'groupid' => Auth::user()->groupid
-                ];
-                if(!empty($request->get('id'))) {
-                    OperatorAccount::where('id', $request->get('id'))->update($operator_data);
-                    DB::table('account')
-                    ->where('operator_id', $request->get('id'))
-                    ->update($account_data);
-                    $data['success'] = 'Operator update successfully.';
-                    $data['crm_access_error'] = '1';
-                } else {
-                    $operator_data = new OperatorAccount($operator_data);
-                    $operator_data->save();
-                    if(!empty($operator_data->id)){
-                        $account_data = array_merge($account_data, ['operator_id'=> $operator_data->id]);
-                        DB::table('account')->insert(
-                            $account_data
-                        );
-                    }
-                    $data['success'] = 'Operator added successfully.';  
-                    $data['crm_access_error'] = '1';
-                }
+                $operator_data['crm_access'] = 'yes';
+            }else{
+                $operator_data['crm_access'] = 'no';
             }
-            else
-            {
-                $workingDays = explode(',', $request->working_days);
-                $operator_data = [
-                    'phonenumber' => $request->get('phonenumber'),
-                    'groupid' => Auth::user()->groupid,
-                    'opername'=> $request->get('opername'),
-                    'oper_status'=> $request->get('oper_status'),
-                    'livetrasferid'=> $request->get('livetrasferid'),
-                    'shift_id'=> $request->get('shift_id'),
-                    'app_use'=> $request->get('app_use'),
-                    'edit'=> $request->get('edit'),
-                    'download'=> $request->get('download'),
-                    'play'=> $request->get('play'),
-                    'working_days' => json_encode($workingDays),
-                    'crm_access' => $request->get('crm_access'),
-                    'lead_access' => $request->get('lead_access'),
-                ];
-                
-                $account_data = [
-                    'username'=> $request->get('username'),
-                    'password'=> Hash::make($request->get('password')),
-                    'user_pwd'=> $request->get('password'),
-                    'usertype' => 'operator',
-                    'groupid' => Auth::user()->groupid
-                ];
-                if(!empty($request->get('id'))) {
-                    OperatorAccount::where('id', $request->get('id'))->update($operator_data);
-                    DB::table('account')
-                    ->where('operator_id', $request->get('id'))
-                    ->update($account_data);
-                    $data['success'] = 'Operator update successfully.';
-                    $data['crm_access_error'] = '0';
-                } else {
-                    $operator_data = new OperatorAccount($operator_data);
-                    $operator_data->save();
-                    if(!empty($operator_data->id)){
-                        $account_data = array_merge($account_data, ['operator_id'=> $operator_data->id]);
-                        DB::table('account')->insert(
-                            $account_data
-                        );
-                    }
-                    $data['success'] = 'Operator added successfully.';  
-                    $data['crm_access_error'] = '0'; 
+
+            $account_data = [
+                'username'=> $request->get('username'),
+                'password'=> Hash::make($request->get('password')),
+                'user_pwd'=> $request->get('password'),
+                'usertype' => 'operator',
+                'groupid' => Auth::user()->groupid
+            ];
+            if(!empty($request->get('id'))) {
+                OperatorAccount::where('id', $request->get('id'))->update($operator_data);
+                DB::table('account')
+                ->where('operator_id', $request->get('id'))
+                ->update($account_data);
+                $data['success'] = 'Operator update successfully.';
+                // $data['crm_access_error'] = '1';
+            } else {
+                $operator_data = new OperatorAccount($operator_data);
+                $operator_data->save();
+                if(!empty($operator_data->id)){
+                    $account_data = array_merge($account_data, ['operator_id'=> $operator_data->id]);
+                    DB::table('account')->insert(
+                        $account_data
+                    );
                 }
-                     //print_r($data);exit;
-            }             
-        } 
+                $data['success'] = 'Operator added successfully.';
+                // $data['crm_access_error'] = '1';
+            }
+        }
         return $data;
     }
 
     public function getOprAccount($id) {
         $data=  DB::table('operatoraccount')->select('operatoraccount.id', 'lead_access', 'crm_access', 'phonenumber', 'opername', 'oper_status', 'livetrasferid', 'shift_id', 'app_use', 'edit', 'download', 'play','working_days', 'account.username', 'account.password', 'account.user_pwd', 'operator_shifts.shift_name')->leftJoin('account', 'operatoraccount.id', '=', 'account.operator_id')->leftJoin('operator_shifts', 'operatoraccount.shift_id', '=', 'operator_shifts.id')->where('operatoraccount.id', $id)->get();
-	return $data;   
+	return $data;
  }
-    
+
     public function destroyOperator($id)
     {
         $operator = OperatorAccount::find($id);
@@ -615,7 +576,7 @@ public function updatesettings($id, Request $request) {
         toastr()->success('Operator delete successfully.');
         return redirect()->route('OperatorList');
     }
-    
+
     public function operatorShifts() {
         $results = DB::table('operator_shifts')->where('groupid', Auth::user()->groupid)->paginate(10);
         return view('user.operator_shifts', compact('results'));
@@ -629,10 +590,10 @@ public function updatesettings($id, Request $request) {
             'end_time' => 'after:start_time'
         ], [
             'end_time.after' => 'End Time greater than Start Time.',
-        ]);    
+        ]);
 
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $shift = ['shift_name' => $request->get('shift_name'),
                      'start_time' => $request->get('start_time'),
@@ -648,8 +609,8 @@ public function updatesettings($id, Request $request) {
                     ->update($shift);
                 $data['success'] = 'Operator Shift updated successfully.';
             }
-            
-        } 
+
+        }
          return $data;
     }
 
@@ -663,7 +624,7 @@ public function updatesettings($id, Request $request) {
         return DB::table('operator_shifts')
                     ->where('id', $id)->get();
     }
-    
+
     public function operatorgrp() {
         $acc_grp = DB::table('accountgroup')->where('id', Auth::user()->groupid)->select('operator_dpt', 'c2c')->get();
         if($acc_grp[0]->operator_dpt == 'Yes')
@@ -671,7 +632,7 @@ public function updatesettings($id, Request $request) {
             $operatordept = DB::table('operatordepartment')->where('groupid', Auth::user()->groupid)->where('DT', '1')->where('C2C', '0')->get();
 
         } else {
-           $operatordept = DB::table('operatordepartment')->where('groupid', Auth::user()->groupid)->where('DT', '0')->where('C2C', '0')->get(); 
+           $operatordept = DB::table('operatordepartment')->where('groupid', Auth::user()->groupid)->where('DT', '0')->where('C2C', '0')->get();
         }
         return view('user.operatorgrp', compact('operatordept'));
     }
@@ -685,10 +646,10 @@ public function updatesettings($id, Request $request) {
             'dialtime' => 'required',
             'starttime' => 'required',
             'endtime' => 'required',
-        ]);  
+        ]);
 
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $operator_data = [
                 'opt_calltype' => $request->get('opt_calltype'),
@@ -699,27 +660,27 @@ public function updatesettings($id, Request $request) {
                 'endtime'=> $request->get('endtime'),
                 'id' => $request->get('oprid'),
             ];
-            
+
             if(!empty($request->get('oprid'))) {
                 OperatorDepartment::where('id', $request->get('oprid'))->update($operator_data);
                 $data['success'] = 'Operator Department update successfully.';
             } else {
-                $data['error'] = 'Some error occured.';   
+                $data['error'] = 'Some error occured.';
             }
-                     
-        } 
+
+        }
         return $data;
     }
 
     public function operatorgrp_details($id) {
         $data['details'] = OperatorDepartment::find($id);
         $sql = "SELECT operatoraccount.id,operatoraccount.opername,phonenumber,priority,operatortype,operator_dept_assgin.id as oprId FROM  `operatoraccount`
-LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN operator_dept_assgin ON operator_dept_assgin.operatorid = operatoraccount.id LEFT JOIN operatordepartment ON operator_dept_assgin.departmentid = operatordepartment.id"; 
+LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN operator_dept_assgin ON operator_dept_assgin.operatorid = operatoraccount.id LEFT JOIN operatordepartment ON operator_dept_assgin.departmentid = operatordepartment.id";
         if(Auth::user()->usertype == 'groupadmin') {
             $sql .= " WHERE departmentid=" .$id ." and accountgroup.id = ".Auth::user()->groupid." ";
-        } 
+        }
         $query = DB::select($sql);
-        $data['operators'] =  DB::table('operatoraccount')->where('groupid', Auth::user()->groupid)->select('id', 'opername')->get(); 
+        $data['operators'] =  DB::table('operatoraccount')->where('groupid', Auth::user()->groupid)->select('id', 'opername')->get();
         //dd($query);
         $data['account_det'] = $query;
         return $data;
@@ -729,10 +690,10 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         $validator = Validator::make($request->all(), [
             'operatorid' => 'required',
             'priority' => 'required',
-        ]);    
+        ]);
 
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $dept = ['operatorid' => $request->get('operatorid'),
                      'departmentid' => $request->get('departmentid'),
@@ -741,7 +702,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
 
             DB::table('operator_dept_assgin')->insert($dept);
             $data['success'] = 'Operator added successfully.';
-        } 
+        }
          return $data;
     }
 
@@ -751,10 +712,10 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
             'opname' => 'required',
             'priority' => 'required',
             'livetransfer' => 'required',
-        ]);    
+        ]);
 
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
 
             $dept = ['groupid' => Auth::user()->groupid,
@@ -779,7 +740,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
             } else {
                 $data['error'] = 'Some errors are occured.';
             }
-        } 
+        }
          return $data;
     }
 
@@ -790,7 +751,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         if($operator->operatortype == 'web') {
             DB::table('operator_dept_assgin')->where('id',$opid)->delete();
 
-        } 
+        }
         if($operator->operatortype == 'mob') {
             DB::table('operatoraccount')->where('id',$opacc)->delete();
             DB::table('operator_dept_assgin')->where('id', $opid)->delete();
@@ -805,7 +766,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         //dd($users);
         return view('leads.lead_list', compact('leads'));
     }
-    
+
     public function addLead()
     {
         $category = DB::table('crm_category')->where('crm_category_active',1)->pluck('crm_category_name','id');
@@ -813,11 +774,11 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         //$subcategory = $subcategory->prepend('Select category', '0');
         return view('leads.add_lead',compact('category'));
     }
-    
+
     public function storeLead(Request $request)
     {
         $crmleads = new CrmLeads();
-        
+
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required',
@@ -832,7 +793,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         if($validator->fails()) {
             $category = DB::table('crm_category')->where('crm_category_active',1)->pluck('crm_category_name','id');
             $category = $category->prepend('Select category', '0');
-            $messages = $validator->messages(); 
+            $messages = $validator->messages();
             return view('leads.add_lead',compact('messages','category'));
         } else {
             $crmleads = new CrmLeads([
@@ -847,20 +808,20 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                 'lead_owner' => $request->get('lead_owner'),
                 'category_id' => $request->get('category_id'),
                 'sub_category_id' => $request->get('sub_category_id'),
-                
+
             ]);
         //dd($users);
         $crmleads->save();
         toastr()->success('Lead added successfully.');
-        } 
-        return redirect()->route('LeadList');     
+        }
+        return redirect()->route('LeadList');
     }
-    
+
     public function editLead($id)
     {
         $category = DB::table('crm_category')->where('crm_category_active',1)->pluck('crm_category_name','id');
         $category = $category->prepend('Select category', '0');
-        $lead_edit = CrmLeads::where('lead_id', $id)->firstOrFail(); 
+        $lead_edit = CrmLeads::where('lead_id', $id)->firstOrFail();
         $subcategory = DB::table('crm_sub_category')->where('crm_category_id',$lead_edit->category_id)->pluck('crm_sub_category_name','id');
         $subcategory = $subcategory->prepend('Select sub category', '0');
         return view('leads.edit_lead', compact('lead_edit','category','subcategory'));
@@ -870,9 +831,9 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         //dd($id);
        // $crm_leads = new CrmLeads();
         $crm_lead = new CrmLeads();
-       
+
         $lead_edit = $crm_lead->findOrFail($id);
-       
+
         $validator = Validator::make($request->all(), [
            'name' => 'required',
             'email' => 'required',
@@ -908,7 +869,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
             toastr()->success('Lead update successfully.');
             return redirect()->route('LeadList');
         }
-        
+
     }
     public function destroyLead($id)
     {
@@ -932,7 +893,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                 ->get();
     }
 
-    public function addCoperate(Request $request) 
+    public function addCoperate(Request $request)
     {
         if(!empty($request->get('id'))) {
             $validator = Validator::make($request->all(), [
@@ -948,10 +909,10 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                 'password' => 'required',
                 'cdr_apikey' => 'required',
             ]);
-        }        
-        
+        }
+
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $reseller = ['resellername' => $request->get('resellername'),
                      'cdr_apikey'=> $request->get('cdr_apikey'),
@@ -962,7 +923,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                          'username' => $request->get('username'),
                          'password'=> Hash::make($request->get('password')),
                          'user_pwd' => $request->get('password'),
-                        ]; 
+                        ];
 
             if(empty($request->get('id'))) {
                 $id = DB::table('resellergroup')->insertGetId($reseller);
@@ -981,7 +942,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                     ->update($account);
                 $data['success'] = 'Coperate updated successfully.';
             }
-        } 
+        }
         return $data;
     }
 
@@ -992,7 +953,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
             $days = Auth::user()->accountdetails->working_days;
             $did = Auth::user()->load('extradid')->extradid;
             //dd($did);
-            
+
         } else {
             $days = [];
             $did = [];
@@ -1001,28 +962,28 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         return view('user.my_profile',compact('acGrp','did', 'days'));
     }
 
-    public function editProfile(Request $request) 
+    public function editProfile(Request $request)
     {
         $rules = [
             'email' => 'required',
             'password' => 'required',
             'phone_number' => 'required',
-        ];   
+        ];
 
         $validator = Validator::make($request->all(), $rules);
         if($validator->fails()) {
-            $data['error'] = $validator->messages(); 
+            $data['error'] = $validator->messages();
         } else {
             $profile = ['email' => $request->get('email'),
                      'password'=> Hash::make($request->get('password')),
                      'user_pwd'=> $request->get('password'),
-                     'phone_number'=> $request->get('phone_number'), 
+                     'phone_number'=> $request->get('phone_number'),
                     ];
             $workingDays = explode(',', $request->working_days);
             $accGroup = ['office_start' => $request->get('office_start'),
-                     'office_end'=> $request->get('office_end'), 
-                     'aocalltransfer'=> $request->get('aocalltransfer'), 
-                     'playaom'=> $request->get('playaom'), 
+                     'office_end'=> $request->get('office_end'),
+                     'aocalltransfer'=> $request->get('aocalltransfer'),
+                     'playaom'=> $request->get('playaom'),
                      'working_days'=> json_encode($workingDays)
                     ];
 
@@ -1032,24 +993,24 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                 DB::table('accountgroup')
                     ->where('id', Auth::user()->groupid)
                     ->update($accGroup);
-                
+
 
                     $data['success'] = 'Profile updated successfully.';
                     $data['data'] = $profile;
                     $data['data'] = array_merge($data['data'], $accGroup);
 
-        } 
+        }
          return $data;
     }
 
-    public function crmSettings(Request $request) 
+    public function crmSettings(Request $request)
     {
        if(!empty($request->all())) {
             $crm = ['companyname' => $request->get('companyname'),
                      'GST'=> $request->get('GST'),
                      'billing_address'=> $request->get('billing_address'),
-                     'shipping_address'=> $request->get('shipping_address'), 
-                     'PAN'=> $request->get('PAN'), 
+                     'shipping_address'=> $request->get('shipping_address'),
+                     'PAN'=> $request->get('PAN'),
                     ];
 
             DB::table('accountgroup')
