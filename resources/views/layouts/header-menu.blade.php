@@ -40,12 +40,12 @@
                     </div>
                 </a>
                     <!-- Notification dropdown -->
-                    
+
                     <div class="dropdown-menu dropdown-menu-right notification-dropdown rtl-ps-none" aria-labelledby="dropdownNotification" data-perfect-scrollbar data-suppress-scroll-x="true">
                         @foreach($notifyList['not_list'] as $listOne)
                         <div class="dropdown-item d-flex" id="not_id_{{$listOne->id}}">
                             <div class="notification-icon">
-                                <i class="i-Speach-Bubble-6 text-primary mr-1"></i>
+                                <i class="i-Bell text-primary mr-1"></i>
                             </div>
                             <div class="notification-details flex-grow-1">
                                 <p class="m-0 d-flex align-items-center">
@@ -59,14 +59,14 @@
                         </div>
                         @endforeach
                     </div>
-                    
+
                 </div>
                 <!-- Notificaiton End -->
 
                 <!-- CRM DropDown -->
                 <div class="dropdown">
                     <div class="badge-top-container" role="button" id="remainders" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <?php 
+                        <?php
 
                         $remainders = DB::table('lead_reminders')->where('user_id',Auth::user()->id)->orderBy('date','desc')->limit(3)->get();
                         $count_remainders = DB::table('lead_reminders')->where('user_id',Auth::user()->id)->count();
@@ -76,7 +76,7 @@
                         <i class="i-Speach-Bubble-6 text-muted header-icon"></i>
                     </div>
                     <!-- Notification dropdown -->
-                    
+
                     <div class="dropdown-menu dropdown-menu-right notification-dropdown rtl-ps-none" aria-labelledby="remainders" data-perfect-scrollbar data-suppress-scroll-x="true">
                         @foreach($remainders as $remainder)
                         <div class="dropdown-item d-flex" id="{{$remainder->id}}">
@@ -96,7 +96,7 @@
                         @endforeach
                         <a href="{{ route('RemainderIndex') }}" class="text-small text-muted m-0">click here for more..</a>
                     </div>
-                    
+
                 </div>
                 <!-- User avatar dropdown -->
                 @guest

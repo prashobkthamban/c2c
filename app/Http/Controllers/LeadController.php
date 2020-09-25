@@ -64,8 +64,6 @@ class LeadController extends Controller
             ->where('user_id','=',Auth::user()->id)
             ->count();
 
-            //print_r(Auth::user()->id);exit;
-
             $level_1 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '1')->get()->count();
             $level_2 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '2')->get()->count();
             $level_3 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '3')->get()->count();
@@ -221,26 +219,31 @@ class LeadController extends Controller
     {
         $now = date("Y-m-d H:i:s");
         $file = $_FILES['csv_file']['tmp_name'];
+        $fp = file($file, FILE_SKIP_EMPTY_LINES);
+        if(count($fp) > 500){
+            toastr()->success('Please Enter data within 500 limit.');
+            return redirect()->route('ListLeads');
+        }
             //$handle = fopen($file, "r");
-            $row = 1;
+            // $row = 1;
             if (($handle = fopen($file, "r")) !== FALSE) {
-                $newdata = '';
+                // $newdata = '';
+                fgetcsv($handle);
               while (($data = fgetcsv($handle, 1000, ",")) !== FALSE)
               {
-                if($row == 1)
-                {
-                    $row++;
-                }
-                else
-                {
-                    if ($row == 500)
-                    {
-                        toastr()->success('Please Enter data within 500 limit.');
-                        return redirect()->route('ListLeads');
-                    }
-                    else
-                    {
-                        $num = count($data);
+                // if($row == 1)
+                // {
+                //     $row++;
+                // }
+                // else
+                // {
+                //     if ($row == 500)
+                //     {
+
+                //     }
+                //     else
+                //     {
+                        // $num = count($data);
 
                         /*echo '<pre>';
                         print_r($data);*/
@@ -253,7 +256,7 @@ class LeadController extends Controller
                             $operator_id = $data[11];
                             $owner_name = 'operator';
                         }
-                        $insert_data[] = array(
+                        $insert_data = array(
                              'user_id' => Auth::user()->id,
                              'group_id' => Auth::user()->groupid,
                              'cdrreport_id' => '0',
@@ -271,9 +274,10 @@ class LeadController extends Controller
                         );
                         DB::table('cdrreport_lead')->insert($insert_data);
                         $id = DB::getPdo()->lastInsertId();
-                        $pro_data[] = array(
+                        $product = DB::table('products')->where('name',$data[6])->first();
+                        $pro_data = array(
                             'cdrreport_lead_id' => $id,
-                            'product_id' => $data[6],
+                            'product_id' => $product->id ?? 0,
                             'quantity' => $data[7],
                             'pro_amount' => $data[8],
                             'subtotal_amount' => $data[9]
@@ -313,9 +317,9 @@ class LeadController extends Controller
                         ]);
 
                         $lead_stages->save();
-                    }
+                    // }
 
-                }
+                // }
 
               }
               fclose($handle);
@@ -692,7 +696,7 @@ class LeadController extends Controller
 
             //dd($add_msg);exit;
             $add_msg->save();
-            $message = toastr()->success('Lead Updated successfully.');
+            $message = toastr()->success('Message sent.');
    	 	/*return redirect()->route('ListLeads');*/
    	 	return Redirect::back()->with('message');
     }
@@ -916,6 +920,14 @@ class LeadController extends Controller
     public function AddProposal(Request $request)
     {
 
+        $pro = $request->get('products');
+        // dd($pro);
+        if (!empty($pro) && $pro[0] == "Select Products") {
+            $message = toastr()->error('Please select valid product.');
+            return Redirect::back()->with('message');
+        }else{
+            $count = count($request->get('products'));
+        }
         //print_r($request->all());exit;
 
         $add_proposal = new Proposal([
@@ -925,32 +937,27 @@ class LeadController extends Controller
                 'cdrreport_lead_id' => $request->get('lead_id') ? $request->get('lead_id') : '',
                 'cutomer_id' => $request->get('customer_id') ? $request->get('customer_id') : '',
                 'date'=> $request->get('date'),
-                'total_amount'=> $request->get('total_amount'),
-                'grand_total' => $request->get('grand_total'),
-                'discount' => $request->get('dis_val'),
-                'total_tax_amount' => $request->get('total_tax'),
+                'total_amount'=> $request->get('total_amount') ?? 0,
+                'grand_total' => $request->get('grand_total') ?? 0,
+                'discount' => $request->get('dis_val') ?? 0,
+                'total_tax_amount' => $request->get('total_tax') ?? 0,
                 'inserted_date' => date('Y-m-d H:i:s'),
             ]);
 
             //dd($add_proposal);exit;
             $add_proposal->save();
             $id = DB::getPdo()->lastInsertId();
-
-            $pro = $request->get('products');
-
-            if (empty($pro)) {
-                $count = 0;
-            }else{
-                 $count = count($request->get('products'));
-            }
             //print_r($count);exit();
 
             $tax = $request->get('tax');
-            //print_r($tax);exit;
-
-            for ($i=0; $i < count($tax); $i++) {
-                $total_tax = implode(",", $tax);
+            $total_tax = 0;
+            if($tax){
+                for ($i=0; $i < count($tax); $i++) {
+                    $total_tax = implode(",", $tax);
+                }
             }
+
+
 
             for ($i=0; $i < $count; $i++) {
                  $proposal_details = new Product_details([
@@ -994,7 +1001,7 @@ class LeadController extends Controller
             $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
                 ->where('user_id','=',Auth::user()->id)
-                ->whereBetween('inserted_date',[$date_from,$date_to]);
+                ->whereBetween(DB::raw('DATE(inserted_date)'),[$date_from,$date_to]);
             if($lead){
             $filter_data->where('lead_stage','like','%'.$lead.'%');
             }
@@ -1014,7 +1021,7 @@ class LeadController extends Controller
             $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
                 ->where('group_id',Auth::user()->groupid)
-                ->whereBetween('inserted_date',[$date_from,$date_to]);
+                ->whereBetween(DB::raw('DATE(inserted_date)'),[$date_from,$date_to]);
             if($lead){
                 $filter_data->where('lead_stage','like','%'.$lead.'%');
             }
@@ -1033,7 +1040,7 @@ class LeadController extends Controller
         {
             $filter_data = DB::table('cdrreport_lead')
                 ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->whereBetween('inserted_date',[$date_from,$date_to]);
+                ->whereBetween(DB::raw('DATE(inserted_date)'),[$date_from,$date_to]);
             if($lead){
                 $filter_data->where('lead_stage','like','%'.$lead.'%');
             }

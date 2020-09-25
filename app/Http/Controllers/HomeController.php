@@ -311,7 +311,8 @@ $group_admin = [];
             $level_3 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '3')->get()->count();
             $level_4 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '4')->get()->count();
             $level_5 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '5')->get()->count();
-            $level_6_7 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '>=', '6')->get()->count();
+            $level_7 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '6')->get()->count();
+            $level_6 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '7')->get()->count();
 
         }
 
@@ -408,7 +409,8 @@ $group_admin = [];
             $level_3 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '3')->get()->count();
             $level_4 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '4')->get()->count();
             $level_5 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '5')->get()->count();
-            $level_6_7 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '>=', '6')->get()->count();
+            $level_6 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '6')->get()->count();
+            $level_7 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '7')->get()->count();
 
             $users_list = '';
 

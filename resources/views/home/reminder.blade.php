@@ -23,23 +23,23 @@
                                 <div class="col-md-4">
                                     <label class="filter-col"  for="pref-perpage">Departments</label>
                                     {!! Form::select('department', $depts->prepend('All', ''), (isset($_GET['department'])) ? $_GET['department'] : '',array('class' => 'form-control', 'id' => 'department')) !!}
-                                </div> 
+                                </div>
                                 <div class="col-md-4">
                                     <label class="filter-col"  for="pref-perpage">Status</label>
                                     <select name="status" class="form-control">
                                         <option value="">All</option>
                                         <option value="live" <?= ($params['status'] == 'live') ? 'selected' : ''; ?>>Live</option>
                                         <option value="close" <?= ($params['status'] == 'close') ? 'selected' : ''; ?>>Close</option>
-                                    </select>                                
-                                </div> 
+                                    </select>
+                                </div>
                                 <div class="col-md-4">
                                     <label class="filter-col"  for="pref-search">By Caller Number</label>
                                     <input type="text" class="form-control input-sm" value="<?= $params['caller']; ?>" name="caller_number">
-                                </div> 
+                                </div>
                                 <div class="col-md-4">
                                     <label class="filter-col"  for="pref-search">By Operator Name</label>
                                     <input type="text" class="form-control input-sm" value="<?= $params['operator']; ?>" name="operator">
-                                </div>  
+                                </div>
                                 <div class="col-md-4">
                                     <label class="filter-col"  for="pref-perpage">Date</label>
                                     <select class="form-control" name="date" id="date_select">
@@ -49,8 +49,8 @@
                                         <option value="week" <?= ($params['date'] == 'week') ? 'selected' : ''; ?>>1 Week</option>
                                         <option value="month" <?= ($params['date'] == 'month') ? 'selected' : ''; ?>>1 Month</option>
                                         <option value="custom" <?= ($params['date'] == 'custom') ? 'selected' : ''; ?>>Custom</option>
-                                    </select>                                
-                                </div> 
+                                    </select>
+                                </div>
                                 <div class="col-md-4 custom_date_div d-none">
                                     <label class="filter-col"  for="pref-search">Date From</label>
                                     <input type="text" name="date_from" value="<?= (isset($_GET['date_from'])) ? $_GET['date_from'] : ''; ?>" class="form-control input-sm datepicker" >
@@ -107,35 +107,18 @@
                                 <td>{{$row->assignedname}}</td>
                                 <td>
                                 @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
-                                        <a href="#" class="btn play_audio" <?php echo (!empty($row->recordedfilename)) ? "style=''" : "style='visibility:hidden'"; ?> title="Play Audio" data-toggle="modal" data-target="#play_modal" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>   
+                                        <a href="#" class="btn play_audio" <?php echo (!empty($row->recordedfilename)) ? "style=''" : "style='visibility:hidden'"; ?> title="Play Audio" data-toggle="modal" data-target="#play_modal" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
                                 @endif
                                     <a href="#" data-toggle="modal" data-target="#edit_reminder" class="text-success mr-2 edit_reminder" id="{{$row->id}}">
                                             <i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                     </a>
-                                   
+
                                     <a href="javascript:void(0)" onClick="deleteItem({{$row->id}}, 'reminders')" class="text-danger mr-2">
                                         <i class="nav-icon i-Close-Window font-weight-bold"></i>
                                     </a>
                                 </td>
                             </tr>
-                            <!-- <div id="more_option_{{$row->id}}">
 
-                            </div> -->
-                            <!-- <tr id="accordion_{{$row->id}}" class="collapse more_option">
-                                <td colspan="8">
-                                    <div >
-                                        @if(!empty($row->contacts->fname))
-                                        <button type="button" onClick="xajax_show('contact_form_{{$row->id}}')" class="btn btn-info m-1 clickable" >View Contact</button>
-                                        @else
-                                        <button type="button" onClick="xajax_show('contact_form_{{$row->id}}')" class="btn btn-info m-1 clickable">Add Contact</button>
-                                        @endif
-                                        <button type="button" onClick="xajax_show('notes_{{$row->id}}')" class="btn btn-info m-1">Notes</button>
-                                        <button type="button" onClick="xajax_show('add_tag_{{$row->id}}')" class="btn btn-info m-1">Tag</button>
-                                        
-                                    </div>
-                                </td>
-                            </tr>
-                             -->
                             @endforeach
                                 @endif
 
@@ -161,37 +144,37 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                    {!! Form::open(['class' => 'edit_reminder_form', 'method' => 'post', 'autocomplete' => 'off']) !!} 
+                    {!! Form::open(['class' => 'edit_reminder_form', 'method' => 'post', 'autocomplete' => 'off']) !!}
                 <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                                 {!! Form::hidden('id', '', array('id' =>'reminder_id')) !!}
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Reminder Date</label> 
+                                <label for="firstName1">Reminder Date</label>
                                     {!! Form::text('startdate', null, ['class' => 'form-control datepicker', 'id' => 'startdate', 'placeholder' => 'Followup Date']) !!}
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Reminder Time</label> 
+                                <label for="firstName1">Reminder Time</label>
                                     {!! Form::text('starttime', null, ['class' => 'form-control', 'id' => 'timepicker1', 'placeholder' => 'Followup Time', 'data-rel' => 'timepicker', 'data-template' => 'dropdown', 'data-maxHours' => '24', 'data-show-meridian' => 'false', 'data-minute-step' => '10']) !!}
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Followup Status</label> 
+                                <label for="firstName1">Followup Status</label>
                                 {!! Form::select('appoint_status', ['live' => 'Live', 'close' => 'Close'], null,array('class' => 'form-control', 'id' => 'appoint_status')) !!}
                             </div>
-                        </div>  
-                                            
+                        </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -236,13 +219,13 @@
     function xajax_show(id) {
         $(".cdr_form").addClass('d-none');
         $("#"+id).removeClass('d-none');
-    } 
+    }
 
     function xajax_hide() {
         $(".cdr_form").addClass('d-none');
     }
 
-   
+
     function moreOption(id, name) {
         console.log(id);
         console.log(name);
@@ -281,7 +264,7 @@
             success: function(result){ // What to do if we succeed
                 var res = result[0];
                 var date = moment(res.followupdate).format("DD-MM-YYYY");
-                var time = moment(res.followupdate).format("HH:mm"); 
+                var time = moment(res.followupdate).format("HH:mm");
                 $("#reminder_id").val(res.id);
                 $("#startdate").val(date);
                 $("#timepicker1").val(time);
@@ -294,7 +277,7 @@
 
         $( '.edit_reminder_form' ).on( 'submit', function(e) {
             e.preventDefault();
-            var errors = ''; 
+            var errors = '';
           $.ajax({
             type: "POST",
             url: '{{ URL::route("addReminder") }}', // This is the url we gave in the route
@@ -312,10 +295,10 @@
                     toastr.error(errors);
                 } else {
                     $("#edit_reminder").modal('hide');
-                    toastr.success(res.success); 
-                    setTimeout(function(){ location.reload() }, 3000);               
+                    toastr.success(res.success);
+                    setTimeout(function(){ location.reload() }, 3000);
                 }
-               
+
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                 toastr.error('Some errors are occured');
@@ -324,18 +307,5 @@
         });
     });
  </script>
- <!-- // <td colspan="8">
-        //         <div >
-        //             @if(!empty($row->contacts->fname))
-        //             <button type="button" onClick="xajax_show('contact_form_{{$row->id}}')" class="btn btn-info m-1 clickable" >View Contact</button>
-        //             @else
-        //             <button type="button" onClick="xajax_show('contact_form_{{$row->id}}')" class="btn btn-info m-1 clickable">Add Contact</button>
-        //             @endif
-        //             <button type="button" onClick="xajax_show('notes_{{$row->id}}')" class="btn btn-info m-1">Notes</button>
-        //             <button type="button" onClick="xajax_show('add_tag_{{$row->id}}')" class="btn btn-info m-1">Tag</button>
-                    
-        //         </div>
-        //     </td> -->
-
 @endsection
 

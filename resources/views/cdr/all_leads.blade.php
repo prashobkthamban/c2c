@@ -136,6 +136,7 @@
                                     <option value="Under review">Under review</option>
                                     <option value="Demo">Demo</option>
                                     <option value="Unqualified">Unqualified</option>
+                                    <option value="Converted">Converted</option>
                                 </select>
                             </div>
 
@@ -263,6 +264,7 @@
                                         <option value="Under review">Under review</option>
                                         <option value="Demo">Demo</option>
                                         <option value="Unqualified">Unqualified</option>
+                                        <option value="Converted">Converted</option>
                                     </select>
                                 </div>
                             </div>
@@ -461,7 +463,7 @@
                                                 <th>Group Name</th>
                                             <?php }?>
                                             <th>Date</th>
-                                            <th>Actions</th>
+                                            <th style="width: 9%">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody class="filter_data">
@@ -483,7 +485,7 @@
                                                             <td>{{$up_lead->accountgroup_name}}</td>
                                                         <?php }?>
                                                         <td>{{$up_lead->inserted_date}}</td>
-                                                        <td>
+                                                        <td style="width: 9%">
                                                             <a href="javascript:void(0)" class="text-success mr-2 edit_lead" id="edit_lead" data-toggle="modal" data-target="#EditLead" data-id="{{$up_lead->id}}"><i class="nav-icon i-Pen-2 font-weight-bold" data-toggle="tooltip" data-placement="top" title="Lead Edit"></i>
                                                             </a>
                                                             <a href="{{ route('deleteLead', $up_lead->id) }}" onclick="return confirm('Are you sure you want to delete this Lead?')" class="text-danger mr-2" data-toggle="tooltip" data-placement="top" title="Lead Delete">
@@ -517,8 +519,8 @@
                                                                     $stage = 'Unqualified';
                                                                 }
                                                                 else {
-                                                                    $id = 1;
-                                                                    $stage = 'New';
+                                                                    $id = 7;
+                                                                    $stage = 'Converted';
                                                                 }
                                                                 ?>
 
@@ -584,8 +586,8 @@
                                                             $stage = 'Unqualified';
                                                         }
                                                         else {
-                                                            $id = 1;
-                                                            $stage = 'New';
+                                                            $id = 7;
+                                                            $stage = 'Converted';
                                                         }
                                                         ?>
 
