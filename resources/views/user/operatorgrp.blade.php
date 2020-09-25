@@ -102,7 +102,7 @@
                         <div class="col-md-8 form-group mb-3">
                             <label for="firstName1">Live Transfer No
                              *</label> 
-                            <input type="text" class="form-control" placeholder="Live Transfer No" name="livetransfer" value="99">
+                            <input type="text" class="form-control" placeholder="Live Transfer No" name="livetransfer" value="<?= $opCount+10; ?>">
                         </div>
                     </div>
                     <div class="row">

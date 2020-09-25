@@ -30,12 +30,15 @@
                    <!-- Notificaiton -->
 
                 <div class="dropdown">
-                    <div class="badge-top-container" role="button" id="dropdownNotification" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <a href="{{ route('notification') }}">
+                <!-- data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" -->
+                    <div class="badge-top-container" role="button" id="dropdownNotification">
                         <?php $notifyList = unreadNotification();
                         //dd($notifyList); ?>
                         <span class="badge badge-primary notification_count"><?php echo $notifyList['not_count']; ?></span>
                         <i class="i-Bell text-muted header-icon"></i>
                     </div>
+                </a>
                     <!-- Notification dropdown -->
                     
                     <div class="dropdown-menu dropdown-menu-right notification-dropdown rtl-ps-none" aria-labelledby="dropdownNotification" data-perfect-scrollbar data-suppress-scroll-x="true">

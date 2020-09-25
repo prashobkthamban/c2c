@@ -597,8 +597,8 @@ audio {
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" id="dial_submit" class="btn btn-primary">Dial Now</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <input type="submit" id="dial_submit" class="btn btn-primary" value="Dial Now" />
+                        <input type="button" class="btn btn-secondary" data-dismiss="modal" value="Dial Now" />
                     </div>
                     {!! Form::close() !!}
                 </div>
@@ -1107,6 +1107,7 @@ audio {
 
         $( '#dial_form' ).on( 'submit', function(e) {
             e.preventDefault();
+            $('#dial_submit').val('Dialing...');
             var errors = '';
           $.ajax({
             type: "POST",

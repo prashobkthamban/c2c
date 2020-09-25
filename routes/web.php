@@ -475,7 +475,7 @@ Route::get('transfer_leads/index','TranferLeadsController@index')->name('Tranfer
 Route::post('transfer_leads/transferleads','TranferLeadsController@transferleads')->name('transferleads');
 
 //Lead Remainder Index
-Route::get('remainder/index','LeadController@remainder_show')->name('RemainderIndex');
+Route::get('remainder','LeadController@remainder_show')->name('RemainderIndex');
 
 //Notification ToDo
 Route::get('notification/todo','HomeController@NotificationToDo')->name('NotificationToDo');
