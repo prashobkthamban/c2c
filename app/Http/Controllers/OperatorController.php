@@ -237,7 +237,6 @@ class OperatorController extends Controller
         }
         $query->select('sms_content.*', 'resellergroup.resellername', 'operatordepartment.dept_name', 'accountgroup.name')->orderBy('id', 'desc');
         $sms = $query->paginate(10);
-        //dd($sms);
         return view('operator.sms_list', compact('sms'));
     }
 
@@ -245,6 +244,7 @@ class OperatorController extends Controller
         $validator = Validator::make($request->all(), [
             'groupid' => 'required',
             'type' => 'required',
+            'content' => 'required'
         ]);    
 
         if($validator->fails()) {
@@ -256,7 +256,6 @@ class OperatorController extends Controller
                      'addtional_alert' => $request->get('addtional_alert'),
                      'content' => $request->get('content'),
                     ];
-
             if(empty($request->get('id'))) {
                 DB::table('sms_content')->insert($smsData);
                 $data['success'] = 'Sms added successfully.';

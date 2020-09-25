@@ -627,10 +627,11 @@ public function updatesettings($id, Request $request) {
 
     public function operatorgrp() {
         $acc_grp = DB::table('accountgroup')->where('id', Auth::user()->groupid)->select('operator_dpt', 'c2c')->get();
+        //$opCount =  DB::table('operatoraccount')->where('groupid', Auth::user()->groupid)->count();
+        //dd($opCount);
         if($acc_grp[0]->operator_dpt == 'Yes')
         {
-            $operatordept = DB::table('operatordepartment')->where('groupid', Auth::user()->groupid)->where('DT', '1')->where('C2C', '0')->get();
-
+           $operatordept = DB::table('operatordepartment')->where('groupid', Auth::user()->groupid)->where('DT', '1')->where('C2C', '0')->get();
         } else {
            $operatordept = DB::table('operatordepartment')->where('groupid', Auth::user()->groupid)->where('DT', '0')->where('C2C', '0')->get();
         }
@@ -712,6 +713,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
             'opname' => 'required',
             'priority' => 'required',
             'livetransfer' => 'required',
+            'shift_id' => 'required',
         ]);
 
         if($validator->fails()) {
@@ -726,6 +728,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                      'start_work'=> '00:00:00',
                      'end_work'=> '23:59:59',
                      'operatortype'=> 'mob',
+                     'shift_id'=> $request->get('shift_id'),
                      'adddate'=> now(),
                     ];
 

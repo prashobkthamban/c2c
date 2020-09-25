@@ -105,6 +105,15 @@
                             <input type="text" class="form-control" placeholder="Live Transfer No" name="livetransfer" value="99">
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-2 form-group mb-3"> 
+                        </div>
+                        <div class="col-md-8 form-group mb-3">
+                            <label for="picker1">Shift *</label>
+                            {!! Form::select('shift_id', 
+                            shiftList()->prepend('Select Shift', ''), 0,array('class' => 'form-control', 'id' => 'shift_id')) !!}
+                        </div>
+                    </div>
             </div>
             <div class="modal-footer">
 
