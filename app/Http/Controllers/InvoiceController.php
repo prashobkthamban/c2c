@@ -104,7 +104,6 @@ class InvoiceController extends Controller
 
     public function store(Request $request)
     {
-        //print_r($request->all());exit;
         $now = date("Y-m-d H:i:s");
 
         $add_invoice = new Invoice([
@@ -134,13 +133,15 @@ class InvoiceController extends Controller
                  $count = count($request->get('products'));
             }
             //print_r($count);exit();
-
+            $total_tax = 0;
             $tax = $request->get('tax');
             //print_r($tax);exit;
-
-            for ($i=0; $i < count($tax); $i++) {
-                $total_tax = implode(",", $tax);
+            if($tax){
+                for ($i=0; $i < count($tax); $i++) {
+                    $total_tax = implode(",", $tax);
+                }
             }
+
             //print_r($total_tax);exit;
             for ($i=0; $i < $count; $i++) {
                  $invoice_details = new Invoice_details([
@@ -319,7 +320,7 @@ class InvoiceController extends Controller
             $filter_data = DB::table('invoice')
                 ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
                 ->leftJoin('account','account.id','=','invoice.user_id')
-                ->whereBetween('invoice.inserted_date',[$date_from,$date_to])
+                ->whereBetween(DB::raw('DATE(invoice.date)'),[$date_from,$date_to])
                 ->where('invoice.user_id','=',Auth::user()->id);
             if($company_name){
                 $filter_data->where('converted.company_name','like','%'.$company_name.'%');
@@ -334,10 +335,11 @@ class InvoiceController extends Controller
                     'converted.last_name','invoice.*','converted.company_name','account.username')->get();
         }
         elseif (Auth::user()->usertype == 'groupadmin') {
+            DB::enableQueryLog();
            $filter_data = DB::table('invoice')
                 ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
                 ->leftJoin('account','account.id','=','invoice.user_id')
-                ->whereBetween('invoice.inserted_date',[$date_from,$date_to])
+                ->whereBetween(DB::raw('DATE(invoice.date)'),[$date_from,$date_to])
                 ->where('invoice.group_id','=',Auth::user()->groupid);
             if($company_name){
                 $filter_data->where('converted.company_name','like','%'.$company_name.'%');
@@ -350,13 +352,14 @@ class InvoiceController extends Controller
             }
             $filter_data = $filter_data->select('converted.first_name',
                     'converted.last_name','invoice.*','converted.company_name','account.username')->get();
+                    // dd(DB::getQueryLog());
         }
         else
         {
             $filter_data = DB::table('invoice')
                 ->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
                 ->leftJoin('account','account.id','=','invoice.user_id')
-                ->whereBetween('invoice.inserted_date',[$date_from,$date_to]);
+                ->whereBetween(DB::raw('DATE(invoice.date)'),[$date_from,$date_to]);
             if($company_name){
                 $filter_data->where('converted.company_name','like','%'.$company_name.'%');
             }

@@ -292,9 +292,9 @@
 
                                     <!-- <a href="{{ route('lead_stages',[$lead_id,7]) }}" class="btn lead_stage" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border: none;" title="Unqualified" id="7">Unqualified</a> -->
 
-                                    <a href="javascript:void(0)" class="btn lead_stage lead_stage_last" data-toggle="modal" data-target="#unqualified" data-id="{{$lead_data->id}}" id="6" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 0;border-bottom-right-radius: 0;border: none;">Unqualified</a>
+                                    <a href="javascript:void(0)" class="btn lead_stage lead_stage_last" data-toggle="modal" <?php echo ($lead_stages->levels == 7) ? '' :  '"data-target="#unqualified"' ?> data-id="{{$lead_data->id}}" id="6" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 0;border-bottom-right-radius: 0;border: none;">Unqualified</a>
 
-                                <a href="javascript:void(0)" class="btn lead_stage lead_stage_last" data-toggle="modal" <?php echo ($lead_stages->levels != 7) ? 'data-target="#converted"' :  "1231" ?>  data-id="{{$lead_data->id}}" id="7" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 0;border-bottom-right-radius: 0;border: none;">Converted</a>
+                                <a href="javascript:void(0)" class="btn lead_stage lead_stage_last" data-toggle="modal" <?php echo ($lead_stages->levels != 7) ? 'data-target="#converted"' :  "" ?>  data-id="{{$lead_data->id}}" id="7" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 0;border-bottom-right-radius: 0;border: none;">Converted</a>
 
                                     <!-- <select class="btn lead_stage lead_stage_last" style="border-top-left-radius: 0;border-bottom-left-radius: 0;border-top-right-radius: 0;border-bottom-right-radius: 0;border: none;width: auto;">
                                         <option value="">Converted/Unqualified</option>
@@ -1172,10 +1172,12 @@
             });*/
 
             $('#6').click(function(){
-                $('.js-example-basic-single').select2({dropdownParent: $("#unqualified")});
-                myid = $(this).data('id');
-                $(".Unqualified #lead_id").val(myid);
-                $(".Unqualified").animate({width: 'toggle'}, "slow");
+                if(parseInt($("#level").val(),0) > 4 && parseInt($("#level").val(),0) < 7){
+                    $('.js-example-basic-single').select2({dropdownParent: $("#unqualified")});
+                    myid = $(this).data('id');
+                    $(".Unqualified #lead_id").val(myid);
+                    $(".Unqualified").animate({width: 'toggle'}, "slow");
+                }
             });
 
             $('#7').click(function(){
