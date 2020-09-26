@@ -467,8 +467,17 @@ class LeadController extends Controller
             $mail_template = DB::table('email_template')->select('id','name')->get();
             $sms_template = DB::table('sms_template')->select('id','name')->get();
         }
-        $smsApi = DB::table('sms_api')->where('user_id', Auth::user()->id)->count();
-        $emailApi = DB::table('email_api')->where('user_id', Auth::user()->id)->count();
+        $smsApi = $emailApi = 0;
+        if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin') {
+            $smsApi = DB::table('sms_api')->where('user_id', Auth::user()->id)->count();
+            $emailApi = DB::table('email_api')->where('user_id', Auth::user()->id)->count();
+        }else{
+            $ga = DB::table('account')->where('groupid', Auth::user()->groupid)->where('usertype','groupadmin')->first();
+            if($ga){
+                $smsApi = DB::table('sms_api')->where('user_id',$ga->id)->count();
+                $emailApi = DB::table('email_api')->where('user_id',$ga->id)->count();
+            }
+        }
     	return view('cdr.parti_lead',compact('lead','operator_name','id','lead_stages','message','lead_mails','call_logs','msgs','notes','recent_activities','mail_template','sms_template','products','proposal','smsApi','emailApi'));
     }
 
@@ -589,7 +598,15 @@ class LeadController extends Controller
 
     public function Mail(Request $request)
     {
-        $emailApi = DB::table('email_api')->where('user_id', Auth::user()->id)->first();
+        $emailApi = 0;
+        if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin') {
+            $emailApi = DB::table('email_api')->where('user_id', Auth::user()->id)->first();
+        }else{
+            $ga = DB::table('account')->where('groupid', Auth::user()->groupid)->where('usertype','groupadmin')->first();
+            if($ga){
+                $emailApi = DB::table('email_api')->where('user_id',$ga->id)->first();
+            }
+        }
         if($emailApi){
             try {
                 $transport = new Swift_SmtpTransport($emailApi->smtp_host, $emailApi->port,$emailApi->type);
@@ -661,7 +678,15 @@ class LeadController extends Controller
 
     public function SendMsg(Request $request)
     {
-        $smsApi = DB::table('sms_api')->where('user_id', Auth::user()->id)->first();
+        $smsApi = 0;
+        if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin') {
+            $smsApi = DB::table('sms_api')->where('user_id', Auth::user()->id)->first();
+        }else{
+            $ga = DB::table('account')->where('groupid', Auth::user()->groupid)->where('usertype','groupadmin')->first();
+            if($ga){
+                $smsApi = DB::table('sms_api')->where('user_id',$ga->id)->first();
+            }
+        }
         if($smsApi){
             $now = date("Y-m-d H:i:s");
             $link = trim($smsApi->link);
