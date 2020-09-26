@@ -627,7 +627,7 @@ public function updatesettings($id, Request $request) {
 
     public function operatorgrp() {
         $acc_grp = DB::table('accountgroup')->where('id', Auth::user()->groupid)->select('operator_dpt', 'c2c')->get();
-        //$opCount =  DB::table('operatoraccount')->where('groupid', Auth::user()->groupid)->count();
+        $opCount =  DB::table('operatoraccount')->where('groupid', Auth::user()->groupid)->count();
         //dd($opCount);
         if($acc_grp[0]->operator_dpt == 'Yes')
         {
@@ -635,7 +635,7 @@ public function updatesettings($id, Request $request) {
         } else {
            $operatordept = DB::table('operatordepartment')->where('groupid', Auth::user()->groupid)->where('DT', '0')->where('C2C', '0')->get();
         }
-        return view('user.operatorgrp', compact('operatordept'));
+        return view('user.operatorgrp', compact('operatordept', 'opCount'));
     }
 
     public function editOprDept(Request $request)
