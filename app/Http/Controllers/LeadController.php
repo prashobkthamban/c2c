@@ -61,7 +61,7 @@ class LeadController extends Controller
             ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
             ->select('operatoraccount.opername','cdrreport_lead.*')
             ->latest('cdrreport_lead.id')
-            ->get();
+            ->paginate(10);
 
             $lead_count = DB::table('cdrreport_lead')
             ->where('user_id','=',Auth::user()->id)
@@ -87,7 +87,7 @@ class LeadController extends Controller
             ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
             ->select('operatoraccount.opername','cdrreport_lead.*')
             ->latest('cdrreport_lead.id')
-            ->get();
+            ->paginate(10);
 
             $lead_count = DB::table('cdrreport_lead')->count();
 
@@ -161,7 +161,7 @@ class LeadController extends Controller
             ->orWhere('operatorid','=',Auth::user()->operator_id)
             ->select('*')
             ->orderBy('id', 'DESC')
-            ->get();
+            ->paginate(10);
 
             $lead_count = DB::table('cdrreport_lead')
             ->where('user_id','=',Auth::user()->id)
@@ -1022,7 +1022,7 @@ class LeadController extends Controller
             if($company_name){
             $filter_data->where('company_name','like','%'.$company_name.'%');
             }
-            $filter_data = $filter_data->select('operatoraccount.opername','cdrreport_lead.*')->get();
+            $filter_data = $filter_data->select('operatoraccount.opername','cdrreport_lead.*')->paginate(10);
         }
         else if (Auth::user()->usertype == 'groupadmin')
         {
@@ -1042,7 +1042,7 @@ class LeadController extends Controller
             if($company_name){
                 $filter_data->where('company_name','like','%'.$company_name.'%');
             }
-            $filter_data = $filter_data->select('operatoraccount.opername','cdrreport_lead.*')->get();
+            $filter_data = $filter_data->select('operatoraccount.opername','cdrreport_lead.*')->paginate(10);
         }
         else
         {
@@ -1061,7 +1061,7 @@ class LeadController extends Controller
             if($company_name){
                 $filter_data->where('company_name','like','%'.$company_name.'%');
             }
-            $filter_data = $filter_data->select('operatoraccount.opername','cdrreport_lead.*')->get();
+            $filter_data = $filter_data->select('operatoraccount.opername','cdrreport_lead.*')->paginate(10);
         }
         return $filter_data;
     }

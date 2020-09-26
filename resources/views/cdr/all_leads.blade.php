@@ -433,7 +433,7 @@
                                         <div class="col-md-6 mt-3">
                                             <button type="submit" class="btn btn-outline-success" style="margin-right: 15px;">Search</button>
                                             <a href="{{route('ListLeads')}}" class="btn btn-outline-danger" style="margin-right: 15px;">Reset</a>
-                                             <button id="export_lead" class="btn btn-outline-secondary">Export Leads</button>
+                                             <button type="button" id="export_lead" class="btn btn-outline-secondary">Export Leads</button>
                                         </div>
                                     </div>
                                 </div>
@@ -552,7 +552,7 @@
                                                     <td>{{$list_lead->opername}}</td>
                                                 <?php }?>
                                                 <td><?php echo date('d-m-Y',strtotime($list_lead->inserted_date)); ?></td>
-                                                <td>
+                                                <td class="noExport">
                                                     <a href="javascript:void(0)" class="text-success mr-2 edit_lead" id="edit_lead" data-toggle="modal" data-target="#EditLead" data-id="{{$list_lead->id}}"><i class="nav-icon i-Pen-2 font-weight-bold" data-toggle="tooltip" data-placement="top" title="Lead Edit"></i>
                                                     </a>
                                                     <a href="{{ route('deleteLead', $list_lead->id) }}" onclick="return confirm('Are you sure you want to delete this Lead?')" class="text-danger mr-2" data-toggle="tooltip" data-placement="top" title="Lead Delete">
@@ -603,33 +603,12 @@
                                             @endforeach
                                         @endif
                                     </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>First_Name</th>
-                                            <th>Last Name</th>
-                                            <th>Company Name</th>
-                                            <th>Email</th>
-                                            <th>Owner Number</th>
-                                            <th>Lead Stage</th>
-                                            <?php
-                                            if (Auth::user()->usertype == 'groupadmin') { ?>
-                                                <th>Agent Name</th>
-                                            <?php }?>
-                                            <?php
-                                            if (Auth::user()->usertype == 'reseller') { ?>
-                                                <th>Group Name</th>
-                                            <?php }?>
-                                            <th>Date</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </tfoot>
                                 </table>
-
                             </div>
-
+                            <div class="float-right mt-2">
+                                {{ $list_leads->appends(Request::except('page'))->links() }}
+                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -782,7 +761,9 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#lead_table').DataTable( {
-            "order": [[0, "desc" ]]
+            "order": [[0, "desc" ]],
+            "bPaginate": false,
+            "info": false
         } );
     } );
 </script>
@@ -1116,7 +1097,8 @@
                 $(".filter_data").table2excel({
                     name: "Table2Excel",
                     filename: "Lead_Data",
-                    fileext: ".csv"
+                    fileext: ".csv",
+                    exclude: ".noExport",
                 });
             }
 </script>
