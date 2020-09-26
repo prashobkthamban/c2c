@@ -11,7 +11,7 @@ class EmailApi extends Model
     protected $table = 'email_api';
     public $timestamps = false;
     protected $primaryKey = 'id';
-    protected $fillable = ['id','smtp_host','port','username','password','type','inserted_date'];
+    protected $fillable = ['id','user_id','user_type','smtp_host','port','username','password','type','inserted_date'];
 
     public static function getReport( ){
 

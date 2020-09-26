@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\SMSApi;
 use App\Models\EmailApi;
 
-date_default_timezone_set('Asia/Kolkata'); 
+date_default_timezone_set('Asia/Kolkata');
 
 class SMSApiController extends Controller
 {
@@ -28,14 +28,13 @@ class SMSApiController extends Controller
 
     public function index()
     {
-        $result = SMSApi::getReport();
-
-        $list_smsapis = DB::table('sms_api')
-                    ->where('user_id','=',Auth::user()->id)
-                    ->orderBy('id', 'desc')
-                    ->paginate(10);
-
-        return view('sms_api.index',compact('list_smsapis','result'));
+        $sms = DB::table('sms_api')->where('user_id','=',Auth::user()->id)->first();
+        $email = DB::table('email_api')->where('user_id','=',Auth::user()->id)->first();
+        if($sms && $email){
+            return view('sms_api.edit',compact('sms','email'));
+        }else{
+            return view('sms_api.add');
+        }
     }
 
     public function add()
@@ -57,7 +56,7 @@ class SMSApiController extends Controller
             'password_email' => 'required',
             'smtp_host' => 'required',
             'port' => 'required',
-        ]);    
+        ]);
 
         if ($validator->fails()) {
             $messages = $validator->messages();
@@ -110,7 +109,7 @@ class SMSApiController extends Controller
         //print_r($request->all());exit;
 
         $edit_api = SMSApi::find($id);
-    
+
         $edit_api->link = $request->link;
         $edit_api->sender_id = $request->sender_id;
         $edit_api->username = $request->username;
@@ -128,7 +127,7 @@ class SMSApiController extends Controller
         $edit_emailapi->type = $request->type_email;
 
         $edit_emailapi->save();
-        
+
         toastr()->success('SMS Api Updated successfully.');
         return redirect()->route('SMSApiIndex');
     }

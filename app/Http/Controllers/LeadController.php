@@ -32,6 +32,9 @@ use File;
 use Maatwebsite\Excel\Concerns\ToModel;*/
 
 use Excel;
+use Swift_Mailer;
+use Swift_Message;
+use Swift_SmtpTransport;
 
 date_default_timezone_set('Asia/Kolkata');
 
@@ -464,8 +467,9 @@ class LeadController extends Controller
             $mail_template = DB::table('email_template')->select('id','name')->get();
             $sms_template = DB::table('sms_template')->select('id','name')->get();
         }
-        // dd($lead);
-    	return view('cdr.parti_lead',compact('lead','operator_name','id','lead_stages','message','lead_mails','call_logs','msgs','notes','recent_activities','mail_template','sms_template','products','proposal'));
+        $smsApi = DB::table('sms_api')->where('user_id', Auth::user()->id)->count();
+        $emailApi = DB::table('email_api')->where('user_id', Auth::user()->id)->count();
+    	return view('cdr.parti_lead',compact('lead','operator_name','id','lead_stages','message','lead_mails','call_logs','msgs','notes','recent_activities','mail_template','sms_template','products','proposal','smsApi','emailApi'));
     }
 
     public function LeadStages($lead_id,$id)
@@ -585,60 +589,53 @@ class LeadController extends Controller
 
     public function Mail(Request $request)
     {
-    	//print_r($request->all());exit;
+        $emailApi = DB::table('email_api')->where('user_id', Auth::user()->id)->first();
+        if($emailApi){
+            try {
+                $transport = new Swift_SmtpTransport($emailApi->smtp_host, $emailApi->port,$emailApi->type);
+                $transport->setUsername($emailApi->username);
+                $transport->setPassword($emailApi->password);
+                $swift_mailer = new Swift_Mailer($transport);
+                // / Create a message
+                $message = (new Swift_Message($request->get('subject')))
+                ->setFrom([$emailApi->username])
+                ->setTo([$request->get('to')])
+                ->addPart("<!DOCTYPE html><html><head><title></title></head><body>".$request->get('mail_body')."</body></html>", 'text/html');
+                if($request->get('cc')){
+                    $message->setCc($request->get('cc'));
+                }
+                // Send the message
+                if ($swift_mailer->send($message))
+                {
+                    $now = date("Y-m-d H:i:s");
+                    $add_mail = new Lead_Mail([
+                        'cdrreport_lead_id' => $request->get('lead_id'),
+                        'from' =>$emailApi->username,
+                        'to'=> $request->get('to'),
+                        'cc'=> $request->get('cc') ? $request->get('cc') : '',
+                        'bcc'=> $request->get('bcc')? $request->get('bcc') : '',
+                        'subject'=> $request->get('subject') ? $request->get('subject') : '',
+                        'body'=> $request->get('mail_body'),
+                        'inserted_date' => $now,
+                    ]);
+                    $add_mail->save();
+                    $message = toastr()->success('Mail sent successfully.');
+                    return Redirect::back()->with('message');
+                }
+                else
+                {
+                    $message = toastr()->error('Please check your Email Api.');
+                    return Redirect::back()->with('message');
+                }
 
-    	$data = array(
-            'body' => $request->get('mail_body', 'text/html'),
-        );
-
-    	$credential = array(
-    		'from' => $request->get('from'),
-    		'to' => $request->get('to'),
-    		'subject' => $request->get('subject'),
-    		'cc' => $request->get('cc') ? $request->get('cc') : '',
-    		'bcc' => $request->get('bcc') ? $request->get('bcc') : '',
-    	);
-
-    	/*print_r($credential);exit;*/
-
-       /* print_r($credential);*/
-
-    	 Mail::send('cdr.email', $data, function ($message) use ($credential){
-
-	        if ($credential['cc'] == '' && $credential['bcc'] == '') {
-	        	$message->from($credential['from']);
-	        	$message->to($credential['to'])->subject($credential['subject']);
-	        }
-	        elseif ($credential['cc'] == '') {
-	        	$message->from($credential['from']);
-	        	$message->to($credential['to'])->subject($credential['subject']);
-	        	$message->cc($credential['bcc']);
-	        }
-	        else{
-	        	$message->from($credential['from']);
-	        	$message->to($credential['to'])->subject($credential['subject']);
-	        	$message->cc($credential['cc']);
-	        }
-	    });
-
-    	$now = date("Y-m-d H:i:s");
-
-    	$add_mail = new Lead_Mail([
-                'cdrreport_lead_id' => $request->get('lead_id'),
-                'from' => $request->get('from'),
-                'to'=> $request->get('to'),
-                'cc'=> $request->get('cc') ? $request->get('cc') : '',
-                'bcc'=> $request->get('bcc')? $request->get('bcc') : '',
-                'subject'=> $request->get('subject') ? $request->get('subject') : '',
-                'body'=> $request->get('mail_body'),
-                'inserted_date' => $now,
-            ]);
-
-            //dd($add_mail);exit;
-            $add_mail->save();
-            $message = toastr()->success('Lead Updated successfully.');
-   	 	/*return redirect()->route('ListLeads');*/
-   	 	return Redirect::back()->with('message');
+            } catch (\Exception $e) {
+                $message = toastr()->error('Please check your Email Api.');
+                return Redirect::back()->with('message');
+            }
+        }else{
+            $message = toastr()->error('Please check your Email Api.');
+            return Redirect::back()->with('message');
+        }
     }
 
     public function CallLog(Request $request)
@@ -664,41 +661,52 @@ class LeadController extends Controller
 
     public function SendMsg(Request $request)
     {
-    	//print_r($request->all());exit;
-    	$now = date("Y-m-d H:i:s");
+        $smsApi = DB::table('sms_api')->where('user_id', Auth::user()->id)->first();
+        if($smsApi){
+            $now = date("Y-m-d H:i:s");
+            $link = trim($smsApi->link);
+            $username = $smsApi->username;
+            $apiKey = $smsApi->password;
+            $sender = $smsApi->sender_id;
+            $apiRequest = 'Text';
+            // Message details
+            $numbers = $request->get('msg_to'); // Multiple numbers separated by comma
+            $message = $request->get('msg_text');
+            // Route details
+            $apiRoute =  $smsApi->type;
+            // Prepare data for POST request
+            $data = 'username='.$username.'&apikey='.$apiKey.'&apirequest='.$apiRequest.'&route='.$apiRoute.'&mobile='.$numbers.'&sender='.$sender."&message=".$message;
+            // Send the GET request with cURL
+            $url = $link.'?'.$data;
+            $url = preg_replace("/ /", "%20", $url);
+            // Process your response here
+            try{
+                $response = file_get_contents($url);
+                $status = json_decode($response, true);
+                if($status['status'] == "success"){
+                    $add_msg = new Lead_Msg([
+                        'cdrreport_lead_id' => $request->get('lead_id'),
+                        //'msg_from' => $request->get('msg_from'),
+                        'msg_to'=> $request->get('msg_to'),
+                        'message'=> $request->get('msg_text'),
+                        'inserted_date' => $now,
+                    ]);
+                    $add_msg->save();
+                    $message = toastr()->success($status['message']);
+                    return Redirect::back()->with('message');
+                }else{
+                    $message = toastr()->error($status['message']);
+                    return Redirect::back()->with('message');
+                }
+            } catch (\Exception $e) {
+                $message = toastr()->error('Please check your SMS Api.');
+                return Redirect::back()->with('message');
+            }
 
-        $username = 'demosms';
-        $apiKey = '624AD-63599';
-        $apiRequest = 'Text';
-        // Message details
-        $numbers = $request->get('msg_to'); // Multiple numbers separated by comma
-        $sender = 'DEMOAC';
-        $message = $request->get('msg_text');
-        // Route details
-        $apiRoute = 'DND';
-        // Prepare data for POST request
-        $data = 'username='.$username.'&apikey='.$apiKey.'&apirequest='.$apiRequest.'&route='.$apiRoute.'&mobile='.$numbers.'&sender='.$sender."&message=".$message;
-        // Send the GET request with cURL
-        $url = 'http://smsdnd.voiceetc.co.in/sms-panel/api/http/index.php?'.$data;
-        $url = preg_replace("/ /", "%20", $url);
-        //print_r($url);
-        $response = file_get_contents($url);
-        // Process your response here
-       // echo $response;exit();
-
-    	$add_msg = new Lead_Msg([
-                'cdrreport_lead_id' => $request->get('lead_id'),
-                //'msg_from' => $request->get('msg_from'),
-                'msg_to'=> $request->get('msg_to'),
-                'message'=> $request->get('msg_text'),
-                'inserted_date' => $now,
-            ]);
-
-            //dd($add_msg);exit;
-            $add_msg->save();
-            $message = toastr()->success('Message sent.');
-   	 	/*return redirect()->route('ListLeads');*/
-   	 	return Redirect::back()->with('message');
+        }else{
+            $message = toastr()->error('Please check your SMS Api.');
+            return Redirect::back()->with('message');
+        }
     }
 
     public function Notes(Request $request)

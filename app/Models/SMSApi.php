@@ -11,7 +11,7 @@ class SMSApi extends Model
     protected $table = 'sms_api';
     public $timestamps = false;
     protected $primaryKey = 'id';
-    protected $fillable = ['id','link','sender_id','username','password','type','inserted_date'];
+    protected $fillable = ['id','user_id','user_type','link','sender_id','username','password','type','inserted_date'];
 
     public static function getReport( ){
 

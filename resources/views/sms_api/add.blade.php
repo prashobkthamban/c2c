@@ -26,77 +26,77 @@
                 <div class="col-md-12">
                     <div class="card mb-4">
                         <div class="card-body">
-                            <div class="card-title mb-3">Add SMS Api</div>
-                            {!! Form::open(['action' => 'SMSApiController@store', 'method' => 'post','autocomplete' => 'off']) !!} 
+                            <div class="card-title mb-3">SMS Api</div>
+                            {!! Form::open(['action' => 'SMSApiController@store', 'method' => 'post','autocomplete' => 'off']) !!}
                                 <div class="row">
 
                                     <div class="col-md-12 form-group mb-3">
                                         <label for="link">Link*</label>
-                                        <input type="text" class="form-control" id="link" placeholder="link" name="link">
+                                        <input type="text" class="form-control" id="link" placeholder="link" name="link" required>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('link', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="sender_id">Sender ID*</label>
-                                        <input type="text" class="form-control" id="sender_id" placeholder="Sender ID" name="sender_id">
+                                        <input type="text" class="form-control" id="sender_id" placeholder="Sender ID" name="sender_id" required>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('sender_id', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="username">Username*</label>
-                                        <input type="text" class="form-control" id="username" placeholder="Username" name="username">
+                                        <input type="text" class="form-control" id="username" placeholder="Username" name="username" required>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('username', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="password">Password*</label>
-                                        <input type="text" class="form-control" id="password" placeholder="Password" name="password">
+                                        <input type="text" class="form-control" id="password" placeholder="Password" name="password" required>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('password', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="type">SMS Type</label>
-                                        <select id="type" name="type" class="form-control">
+                                        <select id="type" name="type" class="form-control" required>
                                             <option value="">Select Type</option>
-                                            <option value="Transactional">Transactional</option>
-                                            <option value="Promotional">Promotional</option>
+                                            <option value="DND">DND</option>
+                                            <option value="NDND">NDND</option>
                                         </select>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('type', ':message') : '' !!}</p>
                                     </div>
                                 </div>
-                            <div class="card-title mb-3">Add Email Api</div>
+                            <div class="card-title mb-3">Email Api</div>
                             <div class="row">
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="username_email">Username*</label>
-                                        <input type="text" class="form-control" id="username_email" placeholder="Username" name="username_email">
+                                        <input type="text" class="form-control" id="username_email" placeholder="Username" name="username_email" required>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('username_email', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="password_email">Password*</label>
-                                        <input type="text" class="form-control" id="password_email" placeholder="Password" name="password_email">
+                                        <input type="text" class="form-control" id="password_email" placeholder="Password" name="password_email" required>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('password_email', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="smtp_host">SMTP Host*</label>
-                                        <input type="text" class="form-control" id="smtp_host" placeholder="SMTP Host" name="smtp_host">
+                                        <input type="text" class="form-control" id="smtp_host" placeholder="SMTP Host" name="smtp_host" required>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('smtp_host', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="port">Port*</label>
-                                        <input type="text" class="form-control" id="port" placeholder="Port" name="port">
+                                        <input type="text" class="form-control" id="port" placeholder="Port" name="port" required>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('port', ':message') : '' !!}</p>
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="type_email">Email Type</label>
-                                        <select id="type_email" name="type_email" class="form-control">
+                                        <select id="type_email" name="type_email" class="form-control" required>
                                             <option value="">Select Type</option>
-                                            <option value="SSL">SSL</option>
-                                            <option value="TLS">TLS</option>
+                                            <option value="ssl">SSL</option>
+                                            <option value="tls">TLS</option>
                                         </select>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('type_email', ':message') : '' !!}</p>
                                     </div>

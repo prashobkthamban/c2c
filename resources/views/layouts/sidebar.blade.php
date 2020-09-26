@@ -631,7 +631,7 @@
 
                         <li class="nav-item">
                             <a href="{{url('sms_api/list')}}">
-                                <span class="item-name">SMS Api</span>
+                                <span class="item-name">SMS/Email Api</span>
                             </a>
                         </li>
 

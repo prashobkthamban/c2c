@@ -77,11 +77,11 @@
                         <div class="row">
                             <div class="col-md-8">
                                 <h1>&nbsp;&nbsp;&nbsp;<?php echo $lead_data->first_name;?>
-                                    <a href="javascript:void(0)" class="btn btn-primary fa fa-envelope" data-toggle="modal" data-target="#mail" data-id="{{$lead_data->id}}" data-email="{{$lead_data->email}}" id="mail_modal" style="padding: 10px;"> Mail</a>
+                                <a href="javascript:void(0)" class="btn btn-primary fa fa-envelope {{$emailApi > 0 ? '' : 'disabled' }}" data-toggle="modal" data-target="#mail" data-id="{{$lead_data->id}}" data-email="{{$lead_data->email}}" id="mail_modal" style="padding: 10px;"> Mail</a>
 
                                     <a href="javascript:void(0)" class="btn btn-primary fa fa-phone" data-toggle="modal" data-target="#call_log" data-id="{{$lead_data->id}}" data-name="{{$lead_data->first_name.' '.$lead_data->last_name}}"  id="call_log_modal" style="padding: 10px;"> Add Call Log</a>
 
-                                    <a href="javascript:void(0)" class="btn btn-primary fa fa-sms" data-toggle="modal" data-target="#send_msg" data-id="{{$lead_data->id}}" data-name="{{$lead_data->first_name.' '.$lead_data->last_name}}"  id="msg_modal" style="padding: 10px;"> Send Message</a>
+                                    <a href="javascript:void(0)" class="btn btn-primary fa fa-sms {{$smsApi > 0 ? '' : 'disabled' }}" data-toggle="modal" data-target="#send_msg" data-id="{{$lead_data->id}}" data-name="{{$lead_data->first_name.' '.$lead_data->last_name}}"  id="msg_modal" style="padding: 10px;"> Send Message</a>
 
                                     <a href="javascript:void(0)" class="btn btn-danger fa fa-clock"  data-toggle="modal" data-target="#add_reminder_modal" data-id="{{$lead_data->id}}" id="remainder_modal" style="padding: 10px;">Add Reminder</a>
 
@@ -321,7 +321,7 @@
                                              {{ csrf_field() }}
                                             <div class="modal-body">
                                                 <div class="row">
-                                                    <input type="hidden" name="lead_id" id="lead_id">
+                                                    <input type="hidden" name="lead_id" id="lead_id" value="{{$lead_data->id}}">
                                                     <div class="col-md-12 form-group mb-3">
                                                         <label for="email_template">Select Email Template</label>
                                                         <select id="email_template" name="email_template" class="form-control">
@@ -398,7 +398,7 @@
                                         <form method="post">
                                              {{ csrf_field() }}
                                             <div class="modal-body" style="background-color: #f5f5f5;">
-                                                <input type="hidden" name="lead_id" id="lead_id">
+                                                <input type="hidden" name="lead_id" id="lead_id" value="{{$lead_data->id}}">
                                                 <table border="0" cellpadding="10" cellspacing="0" style="width: 100%;">
                                                     <tbody>
                                                         <tr>
@@ -487,7 +487,7 @@
                                         <form method="post">
                                              {{ csrf_field() }}
                                             <div class="modal-body">
-                                                <input type="hidden" name="lead_id" id="lead_id">
+                                                <input type="hidden" name="lead_id" id="lead_id" value="{{$lead_data->id}}">
                                                 <div class="col-md-12 form-group mb-3">
                                                     <label for="sms_template">Select SMS Template</label>
                                                     <select id="sms_template" name="sms_template" class="form-control">
@@ -537,7 +537,7 @@
                                         <form method="post">
                                              {{ csrf_field() }}
                                             <div class="modal-body">
-                                                <input type="hidden" name="lead_id" id="lead_id">
+                                                <input type="hidden" name="lead_id" id="lead_id" value="{{$lead_data->id}}">
                                                 <label for="stage">Stage Selected</label>
                                                 <select class="form-control"id="6" name="uni_val">
                                                     <option value="6" >Unqualified</option>
@@ -574,7 +574,7 @@
                                         <form method="post">
                                              {{ csrf_field() }}
                                             <div class="modal-body">
-                                                <input type="hidden" name="lead_id" id="lead_id">
+                                                <input type="hidden" name="lead_id" id="lead_id" value="{{$lead_data->id}}">
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <label for="stage">Stage Selected</label>
@@ -637,7 +637,7 @@
                                     <div class="modal-body">
                                         <div class="row">
                                             <div class="col-md-2 form-group mb-3">
-                                                <input type="hidden" name="lead_id" id="lead_id">
+                                                <input type="hidden" name="lead_id" id="lead_id" value="{{$lead_data->id}}">
                                             </div>
                                             <div class="col-md-8 form-group mb-3">
                                                 <label for="firstName1">Reminder Date</label>
@@ -694,7 +694,7 @@
                                     {!! Form::open(['action' => 'LeadController@AddProposal', 'method' => 'post','autocomplete' => 'off']) !!}
                                     <div class="modal-body">
                                        <div class="row">
-                                        <input type="hidden" name="lead_id" id="lead_id">
+                                        <input type="hidden" name="lead_id" id="lead_id" value="{{$lead_data->id}}">
                                             <div class="col-md-4 form-group mb-3">
                                                 <label for="subject">Subject*</label>
                                                 <input type="text" class="form-control" id="subject" placeholder="subject" name="subject" required="">
