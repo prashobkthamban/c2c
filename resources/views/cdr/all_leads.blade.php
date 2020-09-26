@@ -605,6 +605,11 @@
                                     </tbody>
                                 </table>
                             </div>
+                            @if($list_leads->total() > 0)
+                            <div class="float-left">
+                                Showing {{ $list_leads->firstItem() }} to {{ $list_leads->lastItem() }} of {{ $list_leads->total() }} entries
+                            </div>
+                            @endif
                             <div class="float-right mt-2">
                                 {{ $list_leads->appends(Request::except('page'))->links() }}
                             </div>

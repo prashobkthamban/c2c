@@ -683,7 +683,7 @@
 
                         <!-- Add Proposal -->
                         <div class="modal fade Proposal" id="add_proposal_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document" style="width: 900px;max-width: 900px;">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title">Add Proposal</h5>
@@ -727,7 +727,8 @@
                                                                       <option>Select Products</option>
                                                                       @if(!empty($products))
                                                                         @foreach($products as $prod )
-                                                                            <option value="{{$prod->id}}">{{$prod->name}}
+                                                                            <option value="{{$prod->id}}" data-price="{{$prod->selling_cost}}">
+                                                                                {{$prod->name}}
                                                                             </option>
                                                                         @endforeach
                                                                     @endif
@@ -765,7 +766,7 @@
                                                                             <div class="input-group-prepend">
                                                                                 <span class="input-group-text">%</span>
                                                                             </div>
-                                                                           <input type="text" name="discount" id="discount" value="0" class="form-control discount" required="">
+                                                                           <input type="number" min="0" max="100" name="discount" id="discount" value="0" class="form-control discount" required="">
                                                                         </div>
                                                                     </th>
                                                                     <th>
@@ -1244,136 +1245,127 @@
 
         });
         $("body").on("click", ".remove", function () {
-
             var sub = $(this).closest("tr").find("input.amount").val();
             if (sub != '') {
                 $(this).closest("tr").remove();
-                total_amount();
-                discount();
-               total_tax();
+                all_in_one();
             }else{
                 $(this).closest("tr").remove();
-                total_amount();
-                discount();
-                total_tax();
+                all_in_one();
             }
-
         });
-
         $("body").on("change", ".products", function () {
-            //alert($(this).val());
             var pro_id = $(this).val();
             var thiss = $(this);
-            //alert(thiss);
-            jQuery.ajax({
-                type: "POST",
-                url: '{{ URL::route("ProductAmount") }}',
-                dataType: 'text',
-                data: {pro_id:pro_id},
-                success: function(data)
-                {
-                    //console.log(data);
-                    var obj = jQuery.parseJSON(data);
-                    console.log(obj[0].selling_cost);
-
-                    thiss.closest("tr").find("input.rate").val(parseFloat(obj[0].selling_cost).toFixed(2));
-
-                    thiss.closest("tr").find("input.amount").val(parseFloat(obj[0].selling_cost).toFixed(2));
-
-                    total_amount();
-                    discount();
-                    total_tax();
-                    grand_total();
-                    /*$('.pro_amount').val(obj[0].selling_cost);*/
-                }
-            });
-        });
-
-        $("body").on("change", ".quantity", function () {
-            //alert($(this).val());
-            var quantity = $(this).val();
-            var am = $(this).closest("tr").find("input.rate").val();
-            var sub_amount = quantity * am;
-            //alert(quantity*am);
-            $(this).closest("tr").find("input.amount").val(parseFloat(sub_amount).toFixed(2));
-            total_amount();
-            discount();
-        });
-
-        $("body").on("change",".tax",function(){
-            var thisss = $(this);
-            var tax = $(this).val();
-            var am = 0.0;
-            var amount_tax = 0.0;
+            var price = $(this).find(':selected').data('price');
+            thiss.closest("tr").find("input.rate").val(parseFloat(price).toFixed(2));
+            var quantity = parseInt(thiss.closest("tr").find("input.quantity").val());
+            var rate = $(this).closest("tr").find("input.rate").val();
+            var tax = $(this).closest("tr").find("select.tax").val();
+            var ammount = rate*quantity;
             var total_tax = 0.0;
-            //alert(tax);
             $.each(tax,function(index,data){
-                //alert(data);
                 total_tax += Number(data);
             });
-            am = thisss.closest("tr").find("input.amount").val();
-            amount_tax = parseFloat((am*total_tax)/100).toFixed(2);
-            //alert(total_tax);
-            $(this).closest("td").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
-            $('#total_tax').val(parseFloat(amount_tax).toFixed(2));
-            //$('#total_tax').html(tax+"%");
-        });
-
-        $("body").on("keyup",".rate",function(){
-            var rate = $(this).closest("tr").find("input.rate").val();
-            $(this).closest("tr").find("input.amount").val(parseFloat(rate).toFixed(2));
-            //alert(rate);
-        });
-
-      });
-      function GetDynamicTextBox(value)
-      {
-          return '<td><select name="products[]" id="products" class="form-control js-example-basic-single products"><option>Select Products</option>@if(!empty($products)) @foreach($products as $prod )<option value="{{$prod->id}}">{{$prod->name}}</option>@endforeach @endif</select></td><td><input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" value="1" /></td><td><input type="text" name="rate[]" id="rate" placeholder="Rate" class="form-control rate" readonly=""></td><td><select name="tax[]" id="tax" class="tax form-control js-example-basic-multiple" multiple><option value="0">No Tax</option><option value="5.00">5.00%</option><option value="10.00">10.00%</option><option value="18.00">18.00%</option></select><input type="hidden" name="tax_amount[]" id="tax_amount" class="tax_amount"></td><td><input type="text" name="amount[]" id="amount" class="form-control amount" placeholder="Amount" readonly="" /></td><td><button type="button" class="btn btn-danger remove" data-toggle="tooltip" data-original-title="Remove"><i class="nav-icon i-Close-Window"></i></button></td>';
-      }
-
-      function total_amount(){
-                var sum = 0.0;
-                $('.amount').each(function(){
-                    //alert($(this).val());
-                    sum += Number($(this).val());
-                });
-                $('#total_amount').val(parseFloat(sum).toFixed(2));
+            if(total_tax > 0){
+                var amount_tax = parseFloat((ammount*total_tax)/100).toFixed(2);
+                $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
+                var ttl_am = ammount - amount_tax;
+                $(this).closest("tr").find("input.amount").val(parseFloat(ttl_am).toFixed(2));
+            }else{
+                $(this).closest("tr").find("input.tax_amount").val(0);
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }
-
-    function discount(){
-        $('#discount').keyup(function(){
-            var discount = 0.0;
-            var sub_total = $('#total_amount').val();
-            //alert(sub_total);
-            var dis_val = $(this).val();
-            discount = parseFloat((sub_total*dis_val)/100).toFixed(2);
-            var tax = $('#total_tax').val();
-            //alert(tax);
-            //alert(discount);
-            $('#dis_val').val(discount);
-            var grand_total = sub_total - discount + Number(tax);
-            //alert(grand_total);
-            $('#grand_total').val(parseFloat(grand_total).toFixed(2));
+            all_in_one();
         });
-    }
-
-    function total_tax(){
-        var tax = 0;
-        $('.tax_amount').each(function(){
-            tax += Number($(this).val());
+        $("body").on("change", ".quantity", function () {
+            var quantity = $(this).val();
+            var rate = $(this).closest("tr").find("input.rate").val();
+            var tax = $(this).closest("tr").find("select.tax").val();
+            var ammount = rate*quantity;
+            var total_tax = 0.0;
+            $.each(tax,function(index,data){
+                total_tax += Number(data);
+            });
+            console.log(quantity,rate,tax,total_tax,ammount);
+            if(total_tax > 0){
+                var amount_tax = parseFloat((ammount*total_tax)/100).toFixed(2);
+                $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
+                var ttl_am = ammount - amount_tax;
+                $(this).closest("tr").find("input.amount").val(parseFloat(ttl_am).toFixed(2));
+            }else{
+                $(this).closest("tr").find("input.tax_amount").val(0);
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
+            }
+            all_in_one();
         });
-        //alert(tax);
-        $('#total_tax').val(tax);
-    };
+        $("body").on("change",".tax",function(){
+            var quantity = $(this).closest("tr").find("input.quantity").val();
+            var rate = $(this).closest("tr").find("input.rate").val();
+            var tax = $(this).val();
+            var ammount = rate*quantity;
+            var total_tax = 0.0;
+            $.each(tax,function(index,data){
+                total_tax += Number(data);
+            });
+            console.log(quantity,rate,tax,total_tax,ammount);
+            if(total_tax > 0){
+                var amount_tax = parseFloat((ammount*total_tax)/100).toFixed(2);
+                $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
+                var ttl_am = ammount - amount_tax;
+                $(this).closest("tr").find("input.amount").val(parseFloat(ttl_am).toFixed(2));
+            }else{
+                $(this).closest("tr").find("input.tax_amount").val(0);
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
+            }
+            all_in_one();
+        });
+        $("body").on("keyup",".rate",function(){
+            var quantity = $(this).closest("tr").find("input.quantity").val();
+            var rate = $(this).val();
+            var tax = $(this).closest("tr").find("select.tax").val();
+            var ammount = rate*quantity;
+            var total_tax = 0.0;
+            $.each(tax,function(index,data){
+                total_tax += Number(data);
+            });
+            console.log(quantity,rate,tax,total_tax,ammount);
+            if(total_tax > 0){
+                var amount_tax = parseFloat((ammount*total_tax)/100).toFixed(2);
+                $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
+                var ttl_am = ammount - amount_tax;
+                $(this).closest("tr").find("input.amount").val(parseFloat(ttl_am).toFixed(2));
+            }else{
+                $(this).closest("tr").find("input.tax_amount").val(0);
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
+            }
+        });
+        $("body").on("change",".discount",function(){
+            all_in_one();
+        });
+        function all_in_one(){
+            var disc = $('.discount').val();
+            var tmt = $('#total_amount').val();
+            var amount_tax = parseFloat((tmt*disc)/100).toFixed(2);
+            $('#dis_val').val(parseFloat(amount_tax,2));
 
-    function grand_total(){
-        var sub_total = $('#total_amount').val();
-        var dis_val = $("#discount").val();
-        var discount = parseFloat((sub_total*dis_val)/100).toFixed(2);
-        var tax = $('#total_tax').val();
-        $('#dis_val').val(discount);
-        var grand_total = sub_total - discount + Number(tax);
-        $('#grand_total').val(parseFloat(grand_total).toFixed(2));
+            var discn = $('#dis_val').val();
+            var ttax = tamt = gttl = 0;
+            $('.tax_amount').each(function(){
+                ttax += Number($(this).val());
+            });
+            $('.amount').each(function(){
+                tamt += Number($(this).val());
+            });
+            gttl = tamt + ttax - discn;
+            $('#total_tax').val(parseFloat(ttax,2));
+            $('#total_amount').val(parseFloat(tamt,2));
+            $('#grand_total').val(parseFloat(gttl,2));
+        }
+    });
+    function GetDynamicTextBox(value)
+    {
+        return '<td><select name="products[]" id="products" class="form-control js-example-basic-single products"><option>Select Products</option>@if(!empty($products)) @foreach($products as $prod )<option value="{{$prod->id}}" data-price="{{$prod->selling_cost}}">{{$prod->name}}</option>@endforeach @endif</select></td><td><input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" value="1" /></td><td><input type="text" name="rate[]" id="rate" placeholder="Rate" class="form-control rate" readonly=""></td><td><select name="tax[]" id="tax" class="tax form-control js-example-basic-multiple" multiple><option value="0">No Tax</option><option value="5.00">5.00%</option><option value="10.00">10.00%</option><option value="18.00">18.00%</option></select><input type="hidden" name="tax_amount[]" id="tax_amount" class="tax_amount"></td><td><input type="text" name="amount[]" id="amount" class="form-control amount" placeholder="Amount" readonly="" /></td><td><button type="button" class="btn btn-danger remove" data-toggle="tooltip" data-original-title="Remove"><i class="nav-icon i-Close-Window"></i></button></td>';
     }
 </script>
 
