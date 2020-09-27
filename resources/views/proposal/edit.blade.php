@@ -26,7 +26,7 @@
                         <div class="card-title mb-3">
                             Edit Proposal
                             <a href="javascript:void(0)" class="btn btn-warning" data-toggle="modal" data-target="#invoice" style="float: right;">
-                                Convert to Invoice
+                                Convert to Invoice**
                             </a>
                         </div>
                             {!! Form::model($proposal, ['method' => 'PATCH', 'route' => ['updateProposal', $proposal->id]]) !!}
@@ -155,10 +155,63 @@
                                 </div>
                             {!! Form::close() !!}
                         </div>
+                        <div class="card-footer"><label class="text-danger float-right">**Please save Proposal before converting to Invoice.</label>
+                        </div>
                     </div>
                 </div>
             </div>
             <!-- end of row -->
+            <div class="modal fade Invoice" id="invoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="margin-top: 80px; margin-left: 23%; display: block; max-width: 800px; padding-right: 16px;">
+                <div class="row">
+                <div class="col-md-12">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="card-title mb-3">Invoice<a href="" style="float: right;">X</a></div>
+                            {!! Form::open(['action' => 'InvoiceController@store', 'method' => 'post','autocomplete' => 'off']) !!}
+                                <div class="row">
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="invoice_number">Invoice Number</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">INV-</span>
+                                            </div>
+                                           <input type="text" name="invoice_number" id="invoice_number" value="00{{$invoice_number+1}}" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="customer_id">Customer*</label>
+                                        <select id="customer_id" name="customer_id" class="js-example-basic-single" required="">
+                                            <option value="{{$proposal->c_id}}">{{$proposal->first_name .' '.$proposal->last_name}}</option>
+                                            <option value="">Select Customer</option>
+                                            @if(!empty($customers))
+                                                @foreach($customers as $customer )
+                                                    <option value="{{$customer->id}}">{{$customer->first_name.' '.$customer->last_name}}
+                                                    </option>
+                                                @endforeach
+                                            @endif
+                                        </select>
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('subject', ':message') : '' !!}</p>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="address">Address*</label>
+                                        <textarea id="address" name="address" class="form-control"><?php echo $proposal->address;?></textarea>
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('address', ':message') : '' !!}</p>
+                                    </div>
+                                    <div class="col-md-6 form-group mb-3">
+                                        <label for="date">Date*</label>
+                                        <input type="date" class="form-control" id="date" name="date" value="<?php echo $proposal->date;?>">
+                                        <p class="text-danger">{!! !empty($messages) ? $messages->first('date', ':message') : '' !!}</p>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <input type="hidden" name="pid" value={{$proposal->id}}>
+                                        <button class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
+                            {!! Form::close() !!}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 @endsection
 
@@ -301,7 +354,7 @@
             var disc_rate = $('.discount').val();
             var discount_value = parseFloat((tamt*disc_rate)/100).toFixed(2);
             $('#dis_val').val(parseFloat(discount_value,2));
-            gttl = tamt + ttax - discount_value;
+            gttl = tamt - discount_value;
             $('#grand_total').val(parseFloat(gttl,2)).change();
         }
       });

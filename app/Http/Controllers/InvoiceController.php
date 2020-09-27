@@ -104,90 +104,43 @@ class InvoiceController extends Controller
 
     public function store(Request $request)
     {
-        $now = date("Y-m-d H:i:s");
-
-        $add_invoice = new Invoice([
-                'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
-                'user_id' => Auth::user()->id,
-                'group_id' => Auth::user()->groupid,
-                'billing_address' => $request->get('address'),
-                'customer_id' => $request->get('customer_id'),
-                'date'=> $request->get('date'),
-                'total_amount'=> $request->get('total_amount'),
-                'grand_total' => $request->get('grand_total'),
-                'discount' => $request->get('dis_val'),
-                'invoice_number' => $request->get('invoice_number'),
-                'total_tax_amount' => $request->get('total_tax'),
-                'inserted_date' => $now,
-            ]);
-
-            //dd($add_invoice);exit;
-            $add_invoice->save();
-            $id = DB::getPdo()->lastInsertId();
-
-            $pro = $request->get('products');
-
-            if (empty($pro)) {
-                $count = 0;
-            }else{
-                 $count = count($request->get('products'));
-            }
-            //print_r($count);exit();
-            $total_tax = 0;
-            $tax = $request->get('tax');
-            //print_r($tax);exit;
-            if($tax){
-                for ($i=0; $i < count($tax); $i++) {
-                    $total_tax = implode(",", $tax);
-                }
-            }
-
-            //print_r($total_tax);exit;
-            for ($i=0; $i < $count; $i++) {
-                 $invoice_details = new Invoice_details([
-                    'invoice_id' => $id,
-                    'product_id' => $request->get('products')[$i],
-                    'qty' => $request->get('quantity')[$i],
-                    'rate' => $request->get('rate')[$i],
-                    'tax' => $total_tax,
-                    'amount' => $request->get('amount')[$i],
+        $pid = $request->get('pid');
+        $proposal = DB::table('proposal')->where('proposal.id', $pid)->first();
+        $proposal_details = DB::table('proposal_details')->where('proposal_id',$pid)->get();
+        if($proposal &&  count($proposal_details)) {
+            $add_invoice = new Invoice([
+                    'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
+                    'user_id' => Auth::user()->id,
+                    'group_id' => Auth::user()->groupid,
+                    'billing_address' => $request->get('address'),
+                    'customer_id' => $request->get('customer_id'),
+                    'date'=> $request->get('date'),
+                    'total_amount'=> $proposal->total_amount,
+                    'grand_total' => $proposal->grand_total,
+                    'discount' => $proposal->discount,
+                    'invoice_number' => $request->get('invoice_number'),
+                    'total_tax_amount' => $proposal->total_tax_amount,
+                    'inserted_date' => date("Y-m-d H:i:s"),
                 ]);
-             $invoice_details->save();
-            }
-
-         /*   $invoice_details = DB::table('invoice_details')
-                            ->where('invoice_id',$id)
-                            ->leftJoin('products','products.id','=','invoice_details.product_id')
-                            ->select('invoice_details.*','products.id as p_id','products.name')
-                            ->get();
-
-            $data = array(
-                'billing_address' => $request->get('address'),
-                'customer_id' => $request->get('customer_id'),
-                'date'=> $request->get('date'),
-                'total_amount'=> $request->get('total_amount'),
-                'grand_total' => $request->get('grand_total'),
-                'discount' => $request->get('dis_val'),
-                'invoice_number' => $request->get('invoice_number'),
-                'total_tax_amount' => $request->get('total_tax'),
-                'invoice_details' => $invoice_details,
-            );
-
-        $credential = array(
-            'from' => 'prachi.itrd@gmail.com',
-            'to' => 'prachikkothari@gmail.com',
-            'subject' => 'Your Genrated Invoice',
-        );
-
-         Mail::send('invoice.mail_invoice', $data, function ($message) use ($credential){
-
-            $message->from($credential['from']);
-            $message->to($credential['to'])->subject($credential['subject']);
-        });       */
-
-            //print_r($id);exit;
-            toastr()->success('Invoice added successfully.');
+                $add_invoice->save();
+                $id = DB::getPdo()->lastInsertId();
+                foreach($proposal_details as $prop) {
+                    $invoice_details = new Invoice_details([
+                        'invoice_id' => $id,
+                        'product_id' =>$prop->product_id,
+                        'qty' =>$prop->qty,
+                        'rate' =>$prop->rate,
+                        'tax' => $prop->tax,
+                        'amount' =>$prop->amount,
+                    ]);
+                    $invoice_details->save();
+                }
+                toastr()->success('Invoice added successfully.');
+                return redirect()->route('InvoiceIndex');
+        } else {
+            toastr()->error('Please check proposal details.');
             return redirect()->route('InvoiceIndex');
+        }
     }
 
     public function destroy($id){

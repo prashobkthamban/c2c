@@ -1353,7 +1353,7 @@
             var disc_rate = $('.discount').val();
             var discount_value = parseFloat((tamt*disc_rate)/100).toFixed(2);
             $('#dis_val').val(parseFloat(discount_value,2));
-            gttl = tamt + ttax - discount_value;
+            gttl = tamt - discount_value;
             $('#grand_total').val(parseFloat(gttl,2)).change();
         }
     });
