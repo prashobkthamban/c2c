@@ -952,72 +952,50 @@ class LeadController extends Controller
 
     public function AddProposal(Request $request)
     {
-
         $pro = $request->get('products');
-        // dd($pro);
-        if (!empty($pro) && $pro[0] == "Select Products") {
+        if (!empty($pro) && array_search("Select Products",$pro['name'])) {
             $message = toastr()->error('Please select valid product.');
             return Redirect::back()->with('message');
-        }else{
-            $count = count($request->get('products'));
         }
-        //print_r($request->all());exit;
-
+        $discount = $request->get('discount') ? $request->get('discount').'-'.$request->get('dis_val') : '';
         $add_proposal = new Proposal([
-                'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
-                'user_id' => Auth::user()->id,
-                'subject' => $request->get('subject'),
-                'cdrreport_lead_id' => $request->get('lead_id') ? $request->get('lead_id') : '',
-                'cutomer_id' => $request->get('customer_id') ? $request->get('customer_id') : '',
-                'date'=> $request->get('date'),
-                'total_amount'=> $request->get('total_amount') ?? 0,
-                'grand_total' => $request->get('grand_total') ?? 0,
-                'discount' => $request->get('dis_val') ?? 0,
-                'total_tax_amount' => $request->get('total_tax') ?? 0,
-                'inserted_date' => date('Y-m-d H:i:s'),
+            'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
+            'user_id' => Auth::user()->id,
+            'group_id' => Auth::user()->groupid,
+            'subject' => $request->get('subject'),
+            'cdrreport_lead_id' => $request->get('lead_id') ? $request->get('lead_id') : '',
+            'cutomer_id' => $request->get('customer_id') ? $request->get('customer_id') : '',
+            'date'=> $request->get('date'),
+            'total_amount'=> $request->get('total_amount') ?? 0,
+            'grand_total' => $request->get('grand_total') ?? 0,
+            'discount' => $discount,
+            'total_tax_amount' => $request->get('total_tax') ?? 0,
+            'inserted_date' => date('Y-m-d H:i:s'),
+        ]);
+        $add_proposal->save();
+        $id = DB::getPdo()->lastInsertId();
+        $all_products = $request->get('products');
+        $products = $all_products['name'];
+        foreach($products as $i => $product) {
+            $proposal_details = new Product_details([
+                'proposal_id' => $id,
+                'product_id' => $product,
+                'qty' => $all_products['quantity'][$i] ?? 0,
+                'rate' => $all_products['rate'][$i] ?? 0,
+                'tax' => $all_products['tax'][$i] ?? 0.00,
+                'amount' => $all_products['amount'][$i] ?? 0,
             ]);
-
-            //dd($add_proposal);exit;
-            $add_proposal->save();
-            $id = DB::getPdo()->lastInsertId();
-            //print_r($count);exit();
-
-            $tax = $request->get('tax');
-            $total_tax = 0;
-            if($tax){
-                for ($i=0; $i < count($tax); $i++) {
-                    $total_tax = implode(",", $tax);
-                }
-            }
-
-
-
-            for ($i=0; $i < $count; $i++) {
-                 $proposal_details = new Product_details([
-                    'proposal_id' => $id,
-                    'product_id' => $request->get('products')[$i],
-                    'qty' => $request->get('quantity')[$i],
-                    'rate' => $request->get('rate')[$i],
-                    'tax' => $total_tax,
-                    'amount' => $request->get('amount')[$i],
-                ]);
-             $proposal_details->save();
-            }
-
-            $now = date("Y-m-d H:i:s");
-
-            $active = new Lead_activity([
-                'activity_name' => 'Proposal',
-                'cdrreport_lead_id' => $request->get('lead_id'),
-                'activity_data' => $request->get('subject'),
-                'inserted_date' => $now,
-            ]);
-
-            $active->save();
-
-            //print_r($id);exit;
-            toastr()->success('Proposal added successfully.');
-            return Redirect::back();
+            $proposal_details->save();
+        }
+        $active = new Lead_activity([
+            'activity_name' => 'Proposal',
+            'cdrreport_lead_id' => $request->get('lead_id'),
+            'activity_data' => $request->get('subject'),
+            'inserted_date' => date("Y-m-d H:i:s"),
+        ]);
+        $active->save();
+        toastr()->success('Proposal added successfully.');
+        return Redirect::back();
     }
 
     public function FilterData(Request $request)
