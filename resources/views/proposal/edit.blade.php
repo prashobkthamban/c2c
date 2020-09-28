@@ -25,7 +25,7 @@
                     <div class="card-body">
                         <div class="card-title mb-3">
                             Edit Proposal
-                            <a href="javascript:void(0)" class="btn btn-warning" data-toggle="modal" data-target="#invoice" style="float: right;">
+                            <a href="javascript:void(0)" class="btn btn-warning invoice_convert" data-toggle="modal" data-target="#invoice" style="float: right;">
                                 Convert to Invoice**
                             </a>
                         </div>
@@ -160,8 +160,9 @@
                     </div>
                 </div>
             </div>
+        </div>
             <!-- end of row -->
-            <div class="modal fade Invoice" id="invoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="margin-top: 80px; margin-left: 23%; display: block; max-width: 800px; padding-right: 16px;">
+            <div class="modal fade Invoice" id="invoice" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="margin-top: 80px; margin-left: 23%; display: block; max-width: 800px; padding-right: 16px;z-index: -99;">
                 <div class="row">
                 <div class="col-md-12">
                     <div class="card mb-4">
@@ -213,6 +214,7 @@
                 </div>
             </div>
         </div>
+    </div>
 @endsection
 
 @section('page-js')
@@ -233,6 +235,9 @@
         $('.js-example-basic-single').select2();
         $('.js-example-basic-multiple').select2();
 
+        $("body").on("click", ".invoice_convert", function () {
+            $("#invoice").css('z-index','1050')
+        });
         $("#btnAdd").bind("click", function () {
             var div = $("<tr />");
             div.html(GetDynamicTextBox(""));

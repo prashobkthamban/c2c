@@ -25,10 +25,10 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12 canvas_div_pdf">
                     <div class="card">
                         <div class="card-body">
-                        	<div class="canvas_div_pdf" id="download_data" style="width: 100%;padding-top: 60px;">
+                        	<div id="download_data" style="width: 100%;">
 								<div class="col-md-10  offset-md-1 mt-3">
 									<div class="row">
                                         <div class="col-md-6 offset-md-6">
@@ -217,7 +217,16 @@
 													<p>Total Discount</p>
 												</div>
 												<div class="col-md-6">
-													<p>₹{{sprintf("%.2f",$invoice->discount)}}</p>
+                                                    @php
+                                                        $disc = $invoice->discount;
+                                                        $dis = (explode('-',$disc));
+                                                        if(count($dis) == 2){
+                                                            $dvalue = $dis[1];
+                                                        }else{
+                                                            $dvalue = 0;
+                                                        }
+                                                    @endphp
+													<p>₹{{sprintf("%.2f",$dvalue)}}</p>
 												</div>
 												<div class="col-md-6">
 													<p>Total Tax</p>
@@ -331,34 +340,21 @@ $(document).ready(function() {
 		var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
 		var canvas_image_width = HTML_Width;
 		var canvas_image_height = HTML_Height;
-
 		var totalPDFPages = Math.ceil(HTML_Height/PDF_Height)-1;
-
-
 		html2canvas($(".canvas_div_pdf")[0],{allowTaint:true}).then(function(canvas) {
 			canvas.getContext('2d');
-
-			//console.log(canvas.height+"  "+canvas.width);
-
-
 			var imgData = canvas.toDataURL("image/jpeg", 1.0);
 			var pdf = new jsPDF('p', 'pt',  [PDF_Width, PDF_Height]);
 		    pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
-
-
 			for (var i = 1; i <= totalPDFPages; i++) {
 				pdf.addPage(PDF_Width, PDF_Height);
 				pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
 			}
-
 		    pdf.save("Invoice.pdf");
         });
 	};
 
 	function getPRINT(){
-
-		// $('#sign').show();
-
 		var HTML_Width = $(".canvas_div_pdf").width();
 		var HTML_Height = $(".canvas_div_pdf").height();
 		var top_left_margin = 10;
@@ -366,16 +362,11 @@ $(document).ready(function() {
 		var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
 		var canvas_image_width = HTML_Width;
 		var canvas_image_height = HTML_Height;
-
 		var totalPDFPages = Math.ceil(HTML_Height/PDF_Height)-1;
 
 
 		html2canvas($(".canvas_div_pdf")[0],{allowTaint:true}).then(function(canvas) {
 			canvas.getContext('2d');
-
-			//console.log(PDF_Width);
-
-
 			var imgData = canvas.toDataURL("image/jpeg", 1.0);
 			var pdf = new jsPDF('p', 'pt',  [PDF_Width, PDF_Height]);
 		    pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
@@ -385,12 +376,8 @@ $(document).ready(function() {
 				pdf.addPage(PDF_Width, PDF_Height);
 				pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
 			}
-
-		    //pdf.save("Download.pdf");
 		    var blob = pdf.output("blob");
-            //Getting URL of blob object
             var blobURL = URL.createObjectURL(blob);
-            //alert(blobURL);
             window.open(blobURL, '_blank');
         });
 	};

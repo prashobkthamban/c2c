@@ -104,42 +104,22 @@ class InvoiceController extends Controller
 
     public function store(Request $request)
     {
-        $pid = $request->get('pid');
-        $proposal = DB::table('proposal')->where('proposal.id', $pid)->first();
-        $proposal_details = DB::table('proposal_details')->where('proposal_id',$pid)->get();
-        if($proposal &&  count($proposal_details)) {
-            $add_invoice = new Invoice([
-                    'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
-                    'user_id' => Auth::user()->id,
-                    'group_id' => Auth::user()->groupid,
-                    'billing_address' => $request->get('address'),
-                    'customer_id' => $request->get('customer_id'),
-                    'date'=> $request->get('date'),
-                    'total_amount'=> $proposal->total_amount,
-                    'grand_total' => $proposal->grand_total,
-                    'discount' => $proposal->discount,
-                    'invoice_number' => $request->get('invoice_number'),
-                    'total_tax_amount' => $proposal->total_tax_amount,
-                    'inserted_date' => date("Y-m-d H:i:s"),
-                ]);
-                $add_invoice->save();
-                $id = DB::getPdo()->lastInsertId();
-                foreach($proposal_details as $prop) {
-                    $invoice_details = new Invoice_details([
-                        'invoice_id' => $id,
-                        'product_id' =>$prop->product_id,
-                        'qty' =>$prop->qty,
-                        'rate' =>$prop->rate,
-                        'tax' => $prop->tax,
-                        'amount' =>$prop->amount,
-                    ]);
-                    $invoice_details->save();
-                }
+        if($request->get('add_invoice')){
+            if($this->createInvoice($request)){
                 toastr()->success('Invoice added successfully.');
                 return redirect()->route('InvoiceIndex');
+            } else {
+                toastr()->error('Please check product details.');
+                return redirect()->route('InvoiceIndex');
+            }
         } else {
-            toastr()->error('Please check proposal details.');
-            return redirect()->route('InvoiceIndex');
+            if($this->proposalToInvoice($request)){
+                toastr()->success('Invoice added successfully.');
+                return redirect()->back();
+            } else {
+                toastr()->error('Please check product details.');
+                return redirect()->back();
+            }
         }
     }
 
@@ -172,56 +152,47 @@ class InvoiceController extends Controller
 
         $products = Product::select('*')->get();
         $customers = Converted::select('*')->get();
-
-        return view('invoice.edit',compact('invoice','invoice_details','products','customers'));
+        $disc = explode('-',$invoice->discount);
+        if(count($disc) == 2){
+            $discount = $disc[0] ?? 0;
+            $discount_value = $disc[1] ?? 0;
+        }else{
+            $discount = $discount_value = 0;
+        }
+        return view('invoice.edit',compact('invoice','invoice_details','products','customers','discount','discount_value'));
     }
 
     public function update(Request $request,$id){
-        //print_r($request->all());exit();
-
+        $pro = $request->get('products');
+        if (!empty($pro) && array_search("Select Products",$pro['name'])) {
+            $message = toastr()->error('Please select valid product.');
+            return Redirect::back()->with('message');
+        }
+        $discount = $request->get('discount') ? $request->get('discount').'-'.$request->get('dis_val') : '';
         $edit_invoice = Invoice::find($id);
-
         $edit_invoice->billing_address = $request->address;
         $edit_invoice->customer_id = $request->customer_id;
         $edit_invoice->date = $request->date;
         $edit_invoice->total_amount = $request->total_amount;
         $edit_invoice->grand_total = $request->grand_total;
-        $edit_invoice->discount = $request->dis_val;
+        $edit_invoice->discount = $discount;
         $edit_invoice->invoice_number = $request->invoice_number;
         $edit_invoice->total_tax_amount = $request->total_tax;
-
         if ($edit_invoice->save()) {
-
             DB::table('invoice_details')->where('invoice_id',$id)->delete();
-
-            $pro = $request->get('products');
-
-            if (empty($pro)) {
-                $count = 0;
-            }else{
-                 $count = count($request->get('products'));
-            }
-
-            $tax = $request->get('tax');
-            //print_r($tax);exit;
-
-            for ($i=0; $i < count($tax); $i++) {
-                $total_tax = implode(",", $tax);
-            }
-
-            for ($i=0; $i < $count; $i++) {
-                 $invoice_details = new Invoice_details([
+            $all_products = $request->get('products');
+            $products = $all_products['name'];
+            foreach($products as $i => $product) {
+                $invoice_details = new Invoice_details([
                     'invoice_id' => $id,
-                    'product_id' => $request->get('products')[$i],
-                    'qty' => $request->get('quantity')[$i],
-                    'rate' => $request->get('rate')[$i],
-                    'tax' => $total_tax,
-                    'amount' => $request->get('amount')[$i],
+                    'product_id' => $product,
+                    'qty' => $all_products['quantity'][$i] ?? 0,
+                    'rate' => $all_products['rate'][$i] ?? 0,
+                    'tax' => $all_products['tax'][$i] ?? 0.00,
+                    'amount' => $all_products['amount'][$i] ?? 0,
                 ]);
-             $invoice_details->save();
+                $invoice_details->save();
             }
-
-            //print_r($id);exit;
             toastr()->success('Invoice Updated successfully.');
             return redirect()->route('InvoiceIndex');
         }
@@ -394,6 +365,82 @@ class InvoiceController extends Controller
             //print_r($id);exit;
             toastr()->success('Invoice Mail send successfully.');
             return redirect()->route('InvoiceIndex');
+    }
+
+    public function proposalToInvoice($request){
+        $pid = $request->get('pid');
+        $proposal = DB::table('proposal')->where('proposal.id', $pid)->first();
+        $proposal_details = DB::table('proposal_details')->where('proposal_id',$pid)->get();
+        if($proposal && count($proposal_details)) {
+            $add_invoice = new Invoice([
+                    'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
+                    'user_id' => Auth::user()->id,
+                    'group_id' => Auth::user()->groupid,
+                    'billing_address' => $request->get('address'),
+                    'customer_id' => $request->get('customer_id'),
+                    'date'=> $request->get('date'),
+                    'total_amount'=> $proposal->total_amount,
+                    'grand_total' => $proposal->grand_total,
+                    'discount' => $proposal->discount,
+                    'invoice_number' => $request->get('invoice_number'),
+                    'total_tax_amount' => $proposal->total_tax_amount,
+                    'inserted_date' => date("Y-m-d H:i:s"),
+                ]);
+                $add_invoice->save();
+                $id = DB::getPdo()->lastInsertId();
+                foreach($proposal_details as $prop) {
+                    $invoice_details = new Invoice_details([
+                        'invoice_id' => $id,
+                        'product_id' =>$prop->product_id,
+                        'qty' =>$prop->qty,
+                        'rate' =>$prop->rate,
+                        'tax' => $prop->tax,
+                        'amount' =>$prop->amount,
+                    ]);
+                    $invoice_details->save();
+                }
+                return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function createInvoice($request) {
+        $pro = $request->get('products');
+        if (!empty($pro) && array_search("Select Products",$pro['name'])) {
+            return false;
+        }
+        $discount = $request->get('discount') ? $request->get('discount').'-'.$request->get('dis_val') : '';
+        $add_invoice = new Invoice([
+            'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
+            'user_id' => Auth::user()->id,
+            'group_id' => Auth::user()->groupid,
+            'billing_address' => $request->get('address') ?? '',
+            'customer_id' => $request->get('customer_id'),
+            'date'=> $request->get('date'),
+            'total_amount'=> $request->get('total_amount') ?? 0,
+            'grand_total' => $request->get('grand_total'),
+            'discount' => $discount,
+            'invoice_number' => $request->get('invoice_number'),
+            'total_tax_amount' => $request->get('total_tax') ?? 0,
+            'inserted_date' => date("Y-m-d H:i:s"),
+        ]);
+        $add_invoice->save();
+        $id = DB::getPdo()->lastInsertId();
+        $all_products = $request->get('products');
+        $products = $all_products['name'];
+        foreach($products as $i => $product) {
+            $proposal_details = new Invoice_details([
+                'invoice_id' => $id,
+                'product_id' => $product,
+                'qty' => $all_products['quantity'][$i] ?? 0,
+                'rate' => $all_products['rate'][$i] ?? 0,
+                'tax' => $all_products['tax'][$i] ?? 0.00,
+                'amount' => $all_products['amount'][$i] ?? 0,
+            ]);
+            $proposal_details->save();
+        }
+        return true;
     }
 }
 

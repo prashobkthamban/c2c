@@ -60,10 +60,9 @@
                                             <div class="row">
                                                  <section class="container col-xs-12">
                                                     <div class="table table-responsive">
-                                                    <!-- <h4>Select Details</h4> -->
                                                     <table id="ppsale" class="table table-striped table-bordered" border="0">
-
                                                       <tbody id="TextBoxContainer">
+                                                        <tr>
                                                         <td style="width: 20%;">
                                                           <select name="products[name][]" id="products" class="form-control js-example-basic-single products" required="">
                                                               <option value="">Select Products</option>
@@ -83,7 +82,6 @@
                                                             <input type="text" name="products[rate][]" id="rate" placeholder="Rate" class="rate form-control">
                                                           </td>
                                                           <td>
-                                                              <!-- <input type="text" name="tax[]" id="tax" class="tax form-control" placeholder="Tax"> -->
                                                               <select name="tax[]" id="tax" class="tax form-control js-example-basic-multiple" multiple>
                                                                   <option value="5.00">5.00%</option>
                                                                   <option value="10.00">10.00%</option>

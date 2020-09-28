@@ -161,7 +161,7 @@ class ProposalController extends Controller
 
         $invoice_number = Invoice::max('id');
         $disc = explode('-',$proposal->discount);
-        if($disc){
+        if(count($disc) == 2){
             $discount = $disc[0] ?? 0;
             $discount_value = $disc[1] ?? 0;
         }else{
@@ -199,9 +199,10 @@ class ProposalController extends Controller
                     'rate' => $all_products['rate'][$i] ?? 0,
                     'tax' => $all_products['tax'][$i] ?? 0.00,
                     'amount' => $all_products['amount'][$i] ?? 0,
-                ]);
-                $proposal_details->save();
-            }
+                    ]);
+                    $proposal_details->save();
+                    // dd($request->all(),$request->customer_id,$edit_proposal,$proposal_details);
+                }
             toastr()->success('Proposal Updated successfully.');
             return redirect()->route('ProposalIndex');
         }
