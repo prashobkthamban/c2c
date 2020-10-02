@@ -422,6 +422,8 @@ Route::post('/invoice/filter_data','InvoiceController@FilterDataInvoice')->name(
 Route::get('invoice/view/{id}','InvoiceController@ViewInvoice')->name('ViewInvoice');
 Route::get('invoice/mail/{id}','InvoiceController@MailInvoice')->name('MailInvoice');
 Route::get('invoice/payment/{id}', 'InvoiceController@destroyPayment')->name('deleteInvoicePayment');
+Route::get('invoice/download/{id}','InvoiceController@downloadInvoice')->name('downloadInvoice');
+Route::get('invoice/print/{id}','InvoiceController@printInvoice')->name('printInvoice');
 
 
 //ToDoList
@@ -476,6 +478,8 @@ Route::post('transfer_leads/transferleads','TranferLeadsController@transferleads
 
 //Lead Remainder Index
 Route::get('remainder','LeadController@remainder_show')->name('RemainderIndex');
+Route::get('remainder/{id}','LeadController@remainder_delete')->name('deleteRemainder');
+Route::get('remainder/view/{id}','LeadController@remainder_view')->name('viewRemainder');
 
 //Notification ToDo
 Route::get('notification/todo','HomeController@NotificationToDo')->name('NotificationToDo');

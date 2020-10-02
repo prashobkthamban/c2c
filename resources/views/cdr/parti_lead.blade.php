@@ -771,14 +771,14 @@
                                                                         </div>
                                                                     </th>
                                                                     <th>
-                                                                        <label for="total_amount">Sub Amount:</label>
-                                                                        <input type="text" id="total_amount" name="total_amount" style="border:none;width: 82px;text-align: right;"><br>
+                                                                        <label for="total_amount">Sub Total:</label>
+                                                                        <input readonly type="text" id="total_amount" name="total_amount" style="border:none;float:right;"><br>
                                                                         <label for="dis_val">Discount:</label>
-                                                                        <input type="text" id="dis_val" name="dis_val" style="border:none;width: 100px;text-align: right;"><br>
+                                                                        <input readonly type="text" id="dis_val" name="dis_val" style="border:none;float:right;"><br>
                                                                         <label for="total_tax">Total Tax:</label>
-                                                                        <input type="text" name="total_tax" id="total_tax" style="border:none;text-align: right;width: 100px;"><br>
-                                                                        <label for="grand_total">Grand Total:</label>
-                                                                        <input type="text" id="grand_total" name="grand_total" style="border:none;width: 82px;text-align: right;">
+                                                                        <input readonly type="text" name="total_tax" id="total_tax" style="border:none;float:right;"><br>
+                                                                        <label for="grand_total">Total:</label>
+                                                                        <input readonly type="text" id="grand_total" name="grand_total" style="border:none;float:right;">
                                                                     </th>
                                                                     <th colspan="5">
                                                                         <button id="btnAdd" type="button" class="btn btn-success" data-toggle="tooltip" data-original-title="Add more" style="float: right;">+</button>
@@ -1268,8 +1268,8 @@
             if(total_tax > 0){
                 var amount_tax = parseFloat((ammount*total_tax)/100).toFixed(2);
                 $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
-                var ttl_am = ammount - amount_tax;
-                $(this).closest("tr").find("input.amount").val(parseFloat(ttl_am).toFixed(2));
+                // var ttl_am = Number(ammount) + Number(amount_tax);
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }else{
                 $(this).closest("tr").find("input.tax_amount").val(0);
                 $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
@@ -1288,8 +1288,8 @@
             if(total_tax > 0){
                 var amount_tax = parseFloat((ammount*total_tax)/100).toFixed(2);
                 $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
-                var ttl_am = ammount - amount_tax;
-                $(this).closest("tr").find("input.amount").val(parseFloat(ttl_am).toFixed(2));
+                // var ttl_am = Number(ammount) + Number(amount_tax);
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }else{
                 $(this).closest("tr").find("input.tax_amount").val(0);
                 $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
@@ -1300,6 +1300,8 @@
             var quantity = $(this).closest("tr").find("input.quantity").val();
             var rate = $(this).closest("tr").find("input.rate").val();
             var tax = $(this).val();
+            $(this).closest("tr").find("input.htax").val(tax);
+            console.log(tax);
             var ammount = rate*quantity;
             var total_tax = 0.0;
             $.each(tax,function(index,data){
@@ -1308,8 +1310,8 @@
             if(total_tax > 0){
                 var amount_tax = parseFloat((ammount*total_tax)/100).toFixed(2);
                 $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
-                var ttl_am = ammount - amount_tax;
-                $(this).closest("tr").find("input.amount").val(parseFloat(ttl_am).toFixed(2));
+                // var ttl_am = Number(ammount) + Number(amount_tax);
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }else{
                 $(this).closest("tr").find("input.tax_amount").val(0);
                 $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
@@ -1328,8 +1330,8 @@
             if(total_tax > 0){
                 var amount_tax = parseFloat((ammount*total_tax)/100).toFixed(2);
                 $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
-                var ttl_am = ammount - amount_tax;
-                $(this).closest("tr").find("input.amount").val(parseFloat(ttl_am).toFixed(2));
+                // var ttl_am = Number(ammount) + Number(amount_tax);
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }else{
                 $(this).closest("tr").find("input.tax_amount").val(0);
                 $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
@@ -1347,16 +1349,17 @@
             $('.amount').each(function(){
                 tamt += Number($(this).val());
             });
-            $('#total_amount').val(parseFloat(tamt,2)).change();
-            $('#total_tax').val(parseFloat(ttax,2)).change();
+            $('#total_amount').val(parseFloat(tamt,2).toFixed(2)).change();
+            $('#total_tax').val(parseFloat(ttax,2).toFixed(2)).change();
 
-            var disc_rate = $('.discount').val();
+            var disc_rate = Number($('.discount').val());
             var discount_value = parseFloat((tamt*disc_rate)/100).toFixed(2);
-            $('#dis_val').val(parseFloat(discount_value,2));
-            gttl = tamt - discount_value;
-            $('#grand_total').val(parseFloat(gttl,2)).change();
+            $('#dis_val').val(parseFloat(discount_value,2).toFixed(2));
+            console.log(tamt,discount_value,ttax);
+            gttl = (tamt - discount_value) + ttax;
+            $('#grand_total').val(parseFloat(gttl,2).toFixed(2)).change();
         }
-    });
+      });
     function GetDynamicTextBox(value)
     {
         return '<td><select name="products[name][]" id="products" class="form-control js-example-basic-single products"><option>Select Products</option>@if(!empty($products)) @foreach($products as $prod )<option value="{{$prod->id}}" data-price="{{$prod->selling_cost}}">{{$prod->name}}</option>@endforeach @endif</select></td><td><input type="number" name="products[quantity][]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" value="1" /></td><td><input type="text" name="products[rate][]" id="rate" placeholder="Rate" class="form-control rate"></td><td><select name="tax[]" id="tax" class="tax form-control js-example-basic-multiple" multiple><option value="5.00">5.00%</option><option value="10.00">10.00%</option><option value="18.00">18.00%</option></select><input type="hidden" name="products[tax][]" class="htax"><input type="hidden" name="products[tax_amount][]" id="tax_amount" class="tax_amount"></td><td><input type="text" name="products[amount][]" id="amount" class="form-control amount" placeholder="Amount" readonly="" /></td><td><button type="button" class="btn btn-danger remove" data-toggle="tooltip" data-original-title="Remove"><i class="nav-icon i-Close-Window"></i></button></td>';

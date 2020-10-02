@@ -1071,9 +1071,25 @@ class LeadController extends Controller
 
     public function remainder_show()
     {
-        $show_all_remainder = DB::table('lead_reminders')->leftJoin('cdrreport_lead','cdrreport_lead.id','=','lead_reminders.cdrreport_lead_id')->where('lead_reminders.user_id',Auth::user()->id)->select('lead_reminders.*','cdrreport_lead.first_name','cdrreport_lead.last_name','cdrreport_lead.company_name','cdrreport_lead.email','cdrreport_lead.phoneno')->paginate(10);
+        $show_all_remainder = DB::table('lead_reminders')->leftJoin('cdrreport_lead','cdrreport_lead.id','=','lead_reminders.cdrreport_lead_id')->where('lead_reminders.user_id',Auth::user()->id)->where('is_read',0)->select('lead_reminders.*','cdrreport_lead.first_name','cdrreport_lead.last_name','cdrreport_lead.company_name','cdrreport_lead.email','cdrreport_lead.phoneno')->paginate(10);
 
         return view('cdr.lead_remainders',compact('show_all_remainder'));
+    }
+
+    public function remainder_view($id)
+    {
+        $rem = Lead_Reminder::find($id);
+        $rem->is_read = 1;
+        $rem->save();
+        $count = DB::table('lead_reminders')->where('lead_reminders.user_id',Auth::user()->id)->where('is_read',0)->count();
+        return json_encode(['count' => $count]);
+    }
+
+    public function remainder_delete($id)
+    {
+        DB::table('lead_reminders')->where('id', '=', $id)->delete();
+        $message = toastr()->success('Remainder Deleted successfully.');
+        return Redirect::back()->with('message');
     }
 }
 ?>

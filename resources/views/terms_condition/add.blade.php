@@ -27,7 +27,7 @@
                     <div class="card mb-4">
                         <div class="card-body">
                             <div class="card-title mb-3">Add/Edit Terms And Condition for Invoice</div>
-                            {!! Form::open(['action' => 'TermsAndConditionController@store', 'method' => 'post','autocomplete' => 'off']) !!} 
+                            {!! Form::open(['action' => 'TermsAndConditionController@store', 'method' => 'post','autocomplete' => 'off']) !!}
                                 <div class="row">
                                     <input type="hidden" name="uid" id="uid" value="<?php if (!empty($list_tc_invoices)) { echo $list_tc_invoices->id; } ?>">
 
@@ -85,17 +85,15 @@
 
 <script type="text/javascript">
     $(document).ready(function(){
-        $(".mx-auto .ql-editor").on("keyup", function(){ 
-            //alert($(this).html());
+        $(".mx-auto .ql-editor").on("click keyup keydown change keypress", function(){
             var data = $(this).html();
             $("#mail_body_invoice").html(data);
-        }); 
+        });
 
-        $(".mx-auto_1 .ql-editor").on("keyup", function(){ 
-            //alert($(this).html());
+        $(".mx-auto_1 .ql-editor").on("click keyup keydown change keypress", function(){
             var data = $(this).html();
             $("#mail_body_proposal").html(data);
-        }); 
+        });
 
     });
 </script>

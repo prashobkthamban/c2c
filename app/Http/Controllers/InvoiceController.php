@@ -15,7 +15,7 @@ use App\Models\Product;
 use App\Models\Invoice_details;
 use App\Models\Invoice;
 use App\Models\Invoice_Payment;
-
+use PDF;
 use Illuminate\Support\Facades\Mail;
 
 date_default_timezone_set('Asia/Kolkata');
@@ -441,6 +441,32 @@ class InvoiceController extends Controller
             $proposal_details->save();
         }
         return true;
+    }
+
+    public function downloadInvoice($id){
+        $invoice = DB::table('invoice')->where('invoice.id', $id)->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
+        ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','converted.company_name','converted.gst_no','converted.email','converted.mobile_no')
+        ->first();
+        $invoice_details = DB::table('invoice_details')->where('invoice_id',$id)->leftJoin('products','products.id','=','invoice_details.product_id')
+        ->select('invoice_details.*','products.id as p_id','products.name')->get();
+        $company_details = DB::table('accountgroup')->where('id',Auth::user()->groupid)->first();
+        $invoice_payments = DB::table('invoice_payments')->where('invoice_id',$id)->get();
+        $tnc = DB::table('terms_condition_invoice')->where('user_id',Auth::user()->id)->first();
+        $pdf = PDF::loadView('invoice.print', compact('invoice','invoice_details','invoice_payments','company_details','tnc'))->setPaper('a4');
+        return $pdf->download("INV-".$invoice->invoice_number.'-'.date('d-m-Y'). '.pdf');
+    }
+
+    public function printInvoice($id){
+        $invoice = DB::table('invoice')->where('invoice.id', $id)->leftJoin('converted', 'converted.id', '=', 'invoice.customer_id')
+        ->select('invoice.*','converted.id as c_id','converted.first_name','converted.last_name','converted.company_name','converted.gst_no','converted.email','converted.mobile_no')
+        ->first();
+        $invoice_details = DB::table('invoice_details')->where('invoice_id',$id)->leftJoin('products','products.id','=','invoice_details.product_id')
+        ->select('invoice_details.*','products.id as p_id','products.name')->get();
+        $company_details = DB::table('accountgroup')->where('id',Auth::user()->groupid)->first();
+        $invoice_payments = DB::table('invoice_payments')->where('invoice_id',$id)->get();
+        $tnc = DB::table('terms_condition_invoice')->where('user_id',Auth::user()->id)->first();
+        $pdf = PDF::loadView('invoice.print', compact('invoice','invoice_details','invoice_payments','company_details','tnc'))->setPaper('a4');
+        return $pdf->stream("INV-".$invoice->invoice_number.'-'.date('d-m-Y'). '.pdf');
     }
 }
 

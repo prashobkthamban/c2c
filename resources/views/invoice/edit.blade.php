@@ -159,14 +159,14 @@
                                                                 </div>
                                                             </th>
                                                             <th>
-                                                                <label for="total_amount">Sub Amount:</label>
-                                                                <input type="text" id="total_amount" name="total_amount" value="{{$invoice->total_amount}}" style="border:none;width: 82px;text-align: right;"><br>
+                                                                <label for="total_amount">Sub Total:</label>
+                                                                <input readonly type="text" id="total_amount" name="total_amount" value="{{$invoice->total_amount}}" style="border:none;float:right;"><br>
                                                                 <label for="dis_val">Discount:</label>
-                                                                <input type="text" id="dis_val" name="dis_val" value="{{$discount_value}}" style="border:none;width: 100px;text-align: right;"><br>
+                                                                <input readonly type="text" id="dis_val" name="dis_val" value="{{$discount_value}}" style="border:none;float:right;"><br>
                                                                 <label for="total_tax">Total Tax:</label>
-                                                                <input type="text" name="total_tax" id="total_tax" value="{{$invoice->total_tax_amount}}" style="border:none;text-align: right;width: 100px;"><br>
-                                                                <label for="grand_total">Grand Total:</label>
-                                                               <input type="text" id="grand_total" name="grand_total" value="{{$invoice->grand_total}}" style="border:none;width: 82px;text-align: right;">
+                                                                <input readonly type="text" name="total_tax" id="total_tax" value="{{$invoice->total_tax_amount}}" style="border:none;float:right;"><br>
+                                                                <label for="grand_total">Total:</label>
+                                                               <input readonly type="text" id="grand_total" name="grand_total" value="{{$invoice->grand_total}}" style="border:none;float:right;">
                                                             </th>
                                                           <th colspan="5">
                                                           <button id="btnAdd" type="button" class="btn btn-success" data-toggle="tooltip" data-original-title="Add more" style="float: right;">+</button></th>
@@ -257,7 +257,7 @@
             var pro_id = $(this).val();
             var thiss = $(this);
             var price = $(this).find(':selected').data('price');
-            thiss.closest("tr").find("input.rate").val(parseFloat(price).toFixed(2)).change();
+            thiss.closest("tr").find("input.rate").val(parseFloat(price).toFixed(2));
             var quantity = parseInt(thiss.closest("tr").find("input.quantity").val());
             var rate = $(this).closest("tr").find("input.rate").val();
             var tax = $(this).closest("tr").find("select.tax").val();
@@ -268,12 +268,12 @@
             });
             if(total_tax > 0){
                 var amount_tax = parseFloat((ammount*total_tax)/100).toFixed(2);
-                $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2)).change();
-                var ttl_am = ammount - amount_tax;
-                $(this).closest("tr").find("input.amount").val(parseFloat(ttl_am).toFixed(2)).change();
+                $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
+                // var ttl_am = Number(ammount) + Number(amount_tax);
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }else{
                 $(this).closest("tr").find("input.tax_amount").val(0);
-                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2)).change();
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }
             all_in_one();
         });
@@ -288,12 +288,12 @@
             });
             if(total_tax > 0){
                 var amount_tax = parseFloat((ammount*total_tax)/100).toFixed(2);
-                $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2)).change();
-                var ttl_am = ammount - amount_tax;
-                $(this).closest("tr").find("input.amount").val(parseFloat(ttl_am).toFixed(2)).change();
+                $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
+                // var ttl_am = Number(ammount) + Number(amount_tax);
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }else{
                 $(this).closest("tr").find("input.tax_amount").val(0);
-                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2)).change();
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }
             all_in_one();
         });
@@ -302,6 +302,7 @@
             var rate = $(this).closest("tr").find("input.rate").val();
             var tax = $(this).val();
             $(this).closest("tr").find("input.htax").val(tax);
+            console.log(tax);
             var ammount = rate*quantity;
             var total_tax = 0.0;
             $.each(tax,function(index,data){
@@ -309,12 +310,12 @@
             });
             if(total_tax > 0){
                 var amount_tax = parseFloat((ammount*total_tax)/100).toFixed(2);
-                $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2)).change();
-                var ttl_am = ammount - amount_tax;
-                $(this).closest("tr").find("input.amount").val(parseFloat(ttl_am).toFixed(2)).change();
+                $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
+                // var ttl_am = Number(ammount) + Number(amount_tax);
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }else{
                 $(this).closest("tr").find("input.tax_amount").val(0);
-                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2)).change();
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }
             all_in_one();
         });
@@ -329,12 +330,12 @@
             });
             if(total_tax > 0){
                 var amount_tax = parseFloat((ammount*total_tax)/100).toFixed(2);
-                $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2)).change();
-                var ttl_am = ammount - amount_tax;
-                $(this).closest("tr").find("input.amount").val(parseFloat(ttl_am).toFixed(2)).change();
+                $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
+                // var ttl_am = Number(ammount) + Number(amount_tax);
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }else{
                 $(this).closest("tr").find("input.tax_amount").val(0);
-                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2)).change();
+                $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
             }
         });
         $("body").on("change",".discount",function(){
@@ -349,14 +350,15 @@
             $('.amount').each(function(){
                 tamt += Number($(this).val());
             });
-            $('#total_amount').val(parseFloat(tamt,2)).change();
-            $('#total_tax').val(parseFloat(ttax,2)).change();
+            $('#total_amount').val(parseFloat(tamt,2).toFixed(2)).change();
+            $('#total_tax').val(parseFloat(ttax,2).toFixed(2)).change();
 
-            var disc_rate = $('.discount').val();
+            var disc_rate = Number($('.discount').val());
             var discount_value = parseFloat((tamt*disc_rate)/100).toFixed(2);
-            $('#dis_val').val(parseFloat(discount_value,2));
-            gttl = tamt - discount_value;
-            $('#grand_total').val(parseFloat(gttl,2)).change();
+            $('#dis_val').val(parseFloat(discount_value,2).toFixed(2));
+            console.log(tamt,discount_value,ttax);
+            gttl = (tamt - discount_value) + ttax;
+            $('#grand_total').val(parseFloat(gttl,2).toFixed(2)).change();
         }
       });
       function GetDynamicTextBox(value)

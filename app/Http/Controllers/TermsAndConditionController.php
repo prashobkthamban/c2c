@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Terms_Condition_Invoice;
 use App\Models\Terms_Condition_Proposal;
 
-date_default_timezone_set('Asia/Kolkata'); 
+date_default_timezone_set('Asia/Kolkata');
 
 class TermsAndConditionController extends Controller
 {
@@ -57,17 +57,17 @@ class TermsAndConditionController extends Controller
 
     public function store(Request $request)
     {
-    
+
         //print_r($request->all());exit;
-        
+
         $now = date("Y-m-d H:i:s");
 
-        if (!empty(DB::table('terms_condition_invoice')->where('id', $request->uid)->first())) 
+        if (!empty(DB::table('terms_condition_invoice')->where('id', $request->uid)->first()))
         {
             $edit_tc_invoice = Terms_Condition_Invoice::find($request->uid);
-        
+
             $edit_tc_invoice->name = $request->mail_body_invoice;
-            
+
 
             $edit_tc_invoice->save();
 
@@ -105,7 +105,7 @@ class TermsAndConditionController extends Controller
             toastr()->success('T&C added successfully.');
         }
 
-        
+
         return redirect()->route('TermsAndConditionAdd');
     }
 
@@ -121,9 +121,9 @@ class TermsAndConditionController extends Controller
         //print_r($request->all());exit;
 
         $edit_tc_invoice = Terms_Condition_Invoice::find($id);
-        
+
         $edit_tc_invoice->name = $request->mail_body_invoice;
-        
+
 
         $edit_tc_invoice->save();
 
@@ -132,7 +132,7 @@ class TermsAndConditionController extends Controller
         $edit_tc_proposal->name = $request->mail_body_proposal;
 
         $edit_tc_proposal->save();
-        
+
         toastr()->success('T&C Updated successfully.');
         return redirect()->route('TermsAndConditionIndex');
     }

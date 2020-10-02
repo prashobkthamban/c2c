@@ -44,18 +44,18 @@
                                 <td><a href="#" title="View Notification" class="text-primary mr-2 view_modal" data-toggle="modal" data-target="#view" id="view_{{$row->id}}" onClick="replyModal({{$row->id}})">
                                     @if(Auth::user()->id == $row->send_from_id && ($row->sendfromusertype == 'operator' || $row->sendfromusertype == 'groupadmin' || $row->sendfromusertype == 'admin'))
                                         <i class="nav-icon vghv {{($row->adm_read_status == '1') ? 'i-Folder-Open' :'i-Mail-2'}} font-weight-bold"></i>
-                                    @elseif(Auth::user()->id == $row->send_to_id && ( $row->sendtousertype == 'operator' || $row->sendtousertype == 'groupadmin') || $row->sendtousertype == 'admin') 
+                                    @elseif(Auth::user()->id == $row->send_to_id && ( $row->sendtousertype == 'operator' || $row->sendtousertype == 'groupadmin') || $row->sendtousertype == 'admin')
                                         <i class="nav-icon jhg {{($row->grp_readstatus == '1') ? 'i-Folder-Open' :'i-Mail-2'}} font-weight-bold"></i>
                                     @endif
                                     </a>
-                                    
+
                                     <a href="{{ route('deleteNotification', $row->id) }}" title="Delete Notification" onclick="return confirm('Are you sure want to delete this notification ?')" class="text-danger mr-2">
                                             <i class="nav-icon i-Close-Window font-weight-bold"></i>
                                     </a>
                                     <a href="#" title="Reply Notification" class="text-primary mr-2 reply_modal" data-toggle="modal" data-target="#reply" onClick="replyModal({{$row->id}})">
                                         <i class="nav-icon i-Mail-Reply font-weight-bold"></i>
                                     </a>
-                                    
+
                                 </td>
 
                             </tr>
@@ -95,15 +95,15 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                 {!! Form::open(['class' => 'notification_form', 'method' => 'post']) !!} 
+                 {!! Form::open(['class' => 'notification_form', 'method' => 'post']) !!}
                 <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
- 
+
                             <div class="col-md-8 form-group mb-3">
                                 <label for="firstName1">Customer *</label>
-                                <?php if(Auth::user()->usertype == 'groupadmin') { 
+                                <?php if(Auth::user()->usertype == 'groupadmin') {
                                     $oprList = getOperatorList(); ?>
                                  <select name="send_to_id" class="form-control">
                                     <option value="631,admin">Admin</option>
@@ -112,10 +112,10 @@
                                             <option value="{{$opr->id}},{{$opr->usertype}}">{{$opr->opername}}
                                             </option>
                                         @endforeach
-                                    @endif   
-                                </select>  
-                                <?php } ?> 
-                                <?php if(Auth::user()->usertype == 'operator' || Auth::user()->usertype == 'admin') { 
+                                    @endif
+                                </select>
+                                <?php } ?>
+                                <?php if(Auth::user()->usertype == 'operator' || Auth::user()->usertype == 'admin') {
                                     $grpList = getGroupList(); ?>
                                 <select name="send_to_id" class="form-control">
                                     <option value="">Select Customer</option>
@@ -127,30 +127,30 @@
                                             <option value="{{$grp->id}},groupadmin">{{$grp->name}}
                                             </option>
                                         @endforeach
-                                    @endif  
-                                </select>  
+                                    @endif
+                                </select>
                                 <?php } ?>
 
                             </div>
-                        </div>  
+                        </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Title *</label> 
+                                <label for="firstName1">Title *</label>
                                 {!! Form::text('title', null, ['class' => 'form-control', 'id' => 'title']) !!}
                             </div>
-                        </div>  
+                        </div>
                         <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
+                            <div class="col-md-2 form-group mb-3">
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Description *</label> 
+                                <label for="firstName1">Description *</label>
                                 {!! Form::textarea('description', null, ['class' => 'form-control', 'id' => 'description', 'rows' => 5, 'cols' => 15]) !!}
                             </div>
-                        </div>               
+                        </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -171,10 +171,10 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body"> 
+                <div class="modal-body">
                     <div class="chat-content perfect-scrollbar ps ps--active-y" data-suppress-scroll-x="true">
-        
-                    </div>   
+
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -193,15 +193,15 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                {!! Form::open(['class' => 'reply_form', 'method' => 'post']) !!} 
-                <div class="modal-body"> 
+                {!! Form::open(['class' => 'reply_form', 'method' => 'post']) !!}
+                <div class="modal-body">
                     <div class="chat-content perfect-scrollbar ps ps--active-y" data-suppress-scroll-x="true">
-        
+
                     </div>
                     <div class="form-group">
                         {!! Form::hidden('not_id', '', array('id' =>'not_id')) !!}
                         {!! Form::textarea('description', null, ['placeholder' => 'Reply', 'class' => 'form-control form-control-rounded', 'id' => 'desc', 'rows' => 3, 'cols' => 30]) !!}
-                    </div>      
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -239,14 +239,14 @@
                         res.push({'desc' : item.sub_description, 'name' : item.sub_username, 'datetime': item.sub_datetime});
                     });
                 }
-                
+
                 //console.log('resr1', res);
                 $.each(res, function (i, item) {
                     //console.log('reee', item);
                     if(item.name == login_user) {
-                        chatHtml += '<div class="d-flex mb-4 user"><img src="http://127.0.0.1:8181/assets/images/faces/1.jpg" alt="" class="avatar-sm rounded-circle mr-3"><div class="message flex-grow-1"><div class="d-flex"><p class="mb-1 text-title text-16 flex-grow-1">'+ item.name +'</p><span class="text-small text-muted">24 min ago</span></div><p class="m-0">'+ item.desc +'</p></div></div>';
+                        chatHtml += '<div class="d-flex mb-4 user"><img src="http://127.0.0.1:8181/assets/images/faces/1.jpg" alt="" class="avatar-sm rounded-circle mr-3"><div class="message flex-grow-1"><div class="d-flex"><p class="mb-1 text-title text-16 flex-grow-1">'+ item.name +'</p></div><p class="m-0">'+ item.desc +'</p></div></div>';
                     } else {
-                        chatHtml += '<div class="d-flex mb-4"><div class="message flex-grow-1"><div class="d-flex"><p class="mb-1 text-title text-16 flex-grow-1">'+ item.name +'</p><span class="text-small text-muted">24 min ago</span></div><p class="m-0">'+ item.desc +'</p></div><img src="http://127.0.0.1:8181/assets/images/faces/13.jpg" alt="" class="avatar-sm rounded-circle ml-3"></div>';
+                        chatHtml += '<div class="d-flex mb-4"><div class="message flex-grow-1"><div class="d-flex"><p class="mb-1 text-title text-16 flex-grow-1">'+ item.name +'</p></div><p class="m-0">'+ item.desc +'</p></div><img src="http://127.0.0.1:8181/assets/images/faces/13.jpg" alt="" class="avatar-sm rounded-circle ml-3"></div>';
                     }
                 });
                 $('.chat-content').append(chatHtml);
@@ -258,10 +258,10 @@
     $(document).ready(function() {
         $( '.notification_form' ).on( 'submit', function(e) {
             e.preventDefault();
-            var errors = ''; 
+            var errors = '';
           $.ajax({
             type: "POST",
-            url: '{{ URL::route("addNotification") }}', 
+            url: '{{ URL::route("addNotification") }}',
             data: $('.notification_form').serialize(),
             success: function(res){ // What to do if we succeed
                 if(res.error) {
@@ -276,20 +276,20 @@
                     toastr.error(errors);
                 } else {
                     $("#add_notification").modal('hide');
-                    toastr.success(res.success); 
-                    setTimeout(function(){ location.reload() }, 400);               
+                    toastr.success(res.success);
+                    setTimeout(function(){ location.reload() }, 400);
                 }
-               
+
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                 toastr.error('Some errors are occured');
             }
           });
         });
-  
+
         $( '.reply_form' ).on( 'submit', function(e) {
             e.preventDefault();
-            var errors = ''; 
+            var errors = '';
           $.ajax({
             type: "POST",
             url: '{{ URL::route("addSubNotification") }}', // This is the url we gave in the route
@@ -306,10 +306,10 @@
                     });
                     toastr.error(errors);
                 } else {
-                    replyModal(res.id);   
-                    $("#desc").val('');         
+                    replyModal(res.id);
+                    $("#desc").val('');
                 }
-               
+
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                 toastr.error('Some errors are occured');

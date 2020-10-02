@@ -978,13 +978,13 @@
     $(document).ready(function(){
         $('.reminder').click(function(){
             myid = $(this).data('id');
-            alert(myid);
+            // alert(myid);
             $(".Reminder #lead_id").val(myid);
         });
 
         $('.note').click(function(){
             myid = $(this).data('id');
-            alert(myid);
+            // alert(myid);
             $(".Note #lead_id").val(myid);
         });
 

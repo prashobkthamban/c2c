@@ -17,8 +17,8 @@
             <div class="separator-breadcrumb border-top"></div>
             <div class="row mb-3">
                 <div class="col-md-12" style="text-align: right;">
-                    <a title="Compact Sidebar" id="download" href="javascript:void(0)" class="btn btn-outline-secondary" style="margin-right: 15px;"> Download </a>
-                    <a title="Compact Sidebar" id="print" href="javascript:void(0)" class="btn btn-outline-secondary" style="margin-right: 15px;"> Print </a>
+                    <a title="Compact Sidebar" id="download" href="{{ route('downloadInvoice',$invoice->id) }}" class="btn btn-outline-secondary" style="margin-right: 15px;"> Download </a>
+                    <a title="Compact Sidebar"  target="_blank" id="print" href="{{ route('printInvoice',$invoice->id) }}" class="btn btn-outline-secondary" style="margin-right: 15px;"> Print </a>
                     <a title="Compact Sidebar" id="mail" href="{{ route('MailInvoice',$invoice->id) }}" class="btn btn-outline-secondary" style="margin-right: 15px;"> Mail </a>
                     <a title="Compact Sidebar" id="add_converted" href="{{ route('InvoiceIndex') }}" class="btn btn-outline-secondary" style="margin-right: 15px;"> Back To Invoices </a>
                     <a title="Compact Sidebar" id="add_converted" href="{{ route('editInvoice', $invoice->id) }}" class="btn btn-outline-secondary"> Edit Invoice </a>
@@ -320,16 +320,16 @@
 <script type="text/javascript">
 $(document).ready(function() {
 	$('#sign').hide();
-	$('#download').click(function() {
-		$('#sign').show();
-		getPDF();
-		$('#sign').hide();
-	});
-	$('#print').click(function() {
-		$('#sign').show();
-		getPRINT();
-		$('#sign').hide();
-	});
+	// $('#download').click(function() {
+	// 	$('#sign').show();
+	// 	getPDF();
+	// 	$('#sign').hide();
+	// });
+	// $('#print').click(function() {
+	// 	$('#sign').show();
+	// 	getPRINT();
+	// 	$('#sign').hide();
+	// });
 });
 	function getPDF(){
 		'<br><br>';

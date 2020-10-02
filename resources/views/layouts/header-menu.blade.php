@@ -68,8 +68,8 @@
                     <div class="badge-top-container" role="button" id="remainders" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <?php
 
-                        $remainders = DB::table('lead_reminders')->where('user_id',Auth::user()->id)->orderBy('date','desc')->limit(3)->get();
-                        $count_remainders = DB::table('lead_reminders')->where('user_id',Auth::user()->id)->count();
+                        $remainders = DB::table('lead_reminders')->where('user_id',Auth::user()->id)->where('is_read',0)->orderBy('date','desc')->limit(3)->get();
+                        $count_remainders = DB::table('lead_reminders')->where('user_id',Auth::user()->id)->where('is_read',0)->count();
 
                         //dd($notifyList); ?>
                         <span class="badge badge-primary notification_count"><?php echo $count_remainders; ?></span>
