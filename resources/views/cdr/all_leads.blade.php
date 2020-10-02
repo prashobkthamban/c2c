@@ -409,7 +409,7 @@
                                                 <option <?php echo (request()->get('lead') == "New") ? 'selected' : '';?> value="New">New</option>
                                                 <option <?php echo (request()->get('lead') == "Contacted") ? 'selected' : '';?> value="Contacted">Contacted</option>
                                                 <option <?php echo (request()->get('lead') == "Interested") ? 'selected' : '';?> value="Interested">Interested</option>
-                                                <option <?php echo (request()->get('lead') == "Under") ? 'selected' : '';?> value="Under review">Under review</option>
+                                                <option <?php echo (request()->get('lead') == "Under review") ? 'selected' : '';?> value="Under review">Under review</option>
                                                 <option <?php echo (request()->get('lead') == "Demo") ? 'selected' : '';?> value="Demo">Demo</option>
                                                 <option <?php echo (request()->get('lead') == "Unqualified") ? 'selected' : '';?> value="Unqualified">Unqualified</option>
                                                 <option <?php echo (request()->get('lead') == "Converted") ? 'selected' : '';?> value="Converted">Converted</option>
@@ -720,7 +720,7 @@
                                 <div class="row">
                                     <div class="col-sm-12">
                                         <input type="hidden" name="lead_id" id="lead_id">
-                                        <select id="owner_name" name="owner_name[]" class="form-control js-example-basic-multiple" multiple="multiple">
+                                        <select id="owner_name" name="owner_name" class="form-control js-example-basic-single">
                                             <option value="">Select Account</option>
                                             @if(Auth::user()->usertype == 'reseller')
                                                 @foreach($users_lists as $users_list)
@@ -989,7 +989,7 @@
         });
 
         $('.assigned_to').click(function(){
-            $('.js-example-basic-multiple').select2({dropdownParent: $("#lead_assigned")});
+            $('.js-example-basic-single').select2({dropdownParent: $("#lead_assigned")});
             myid = $(this).data('id');
             $(".Lead_Assigned #lead_id").val(myid);
         });

@@ -211,9 +211,9 @@
               <tr class="border-0">
                 <td class=" border-0">{{ $key+1 }}</td>
                 <td class=" border-0">{{ $item->name }}</td>
-                <td class=" border-0">{{ number_format($item->qty,2) }}</td>
+                <td class=" border-0">{{ $item->qty }}</td>
                 <td class=" border-0">{{ number_format($item->rate,2) }}</td>
-                <td class=" border-0">{{ number_format($item->tax,2)}}</td>
+                <td class=" border-0">{{ $item->tax}}</td>
                 <td class=" border-0">{{ number_format($item->amount,2) }}</td>
               </tr>
               @endforeach

@@ -11,7 +11,7 @@
 				<td>Company Name</td>
 				<td>Test</td>
 				<td><b>Invoice Number</b></td>
-				<td><b>INV-{{$invoice_number}}</b></td>			
+				<td><b>INV-{{$invoice_number}}</b></td>
 			</tr>
 			<tr>
 				<td>Address</td>
@@ -34,16 +34,16 @@
 			</tr>
 		</thead>
 		<tbody style="text-align: center;line-height: 154%;">
-			<?php 
+			<?php
 			$i = 1;
 			foreach ($invoice_details as $key => $invoice_detail) { ?>
 			<tr>
 				<td>{{$i}}</td>
 				<td>{{$invoice_detail->name}}</td>
 				<td>{{$invoice_detail->qty}}</td>
-				<td>₹{{$invoice_detail->rate}}</td>
+				<td>₹{{number_format($invoice_detail->rate,2)}}</td>
 				<td>{{$invoice_detail->tax}}%</td>
-				<td>₹{{$invoice_detail->amount}}</td>
+				<td>₹{{number_format($invoice_detail->amount,2)}}</td>
 			</tr>
 			<?php $i++; }?>
 			<tr>
@@ -86,15 +86,15 @@
 				<td style="border-top: 1px solid;border-color: transparent;"></td>
 				<td style="border-top: 1px solid;border-color: transparent;"></td>
 				<td style="border-top: 1px solid;text-align: right;border-color: transparent;">Sub Total</td>
-				<td style="border-top: 1px solid;border-right: 1px solid;text-align: center;border-color: transparent;">₹{{$total_amount}}</td>
+				<td style="border-top: 1px solid;border-right: 1px solid;text-align: center;border-color: transparent;">₹{{number_format($total_amount,2)}}</td>
 			</tr>
 			<tr>
 				<td style="border-left: 1px solid; border-top: 1px solid;border-color: transparent;"></td>
 				<td style="border-top: 1px solid;border-color: transparent;"></td>
 				<td style="border-top: 1px solid;border-color: transparent;"></td>
 				<td style="border-top: 1px solid;border-color: transparent;"></td>
-				<td style="border-top: 1px solid;text-align: right;border-color: transparent;">Total Discount</td>
-				<td style="border-top: 1px solid;border-right: 1px solid;text-align: center;border-color: transparent;">₹{{$discount}}</td>
+                <td style="border-top: 1px solid;text-align: right;border-color: transparent;">Total Discount</td>
+				<td style="border-top: 1px solid;border-right: 1px solid;text-align: center;border-color: transparent;">₹{{number_format($discount,2)}}</td>
 			</tr>
 			<tr>
 				<td style="border-left: 1px solid; border-top: 1px solid;border-color: transparent;"></td>
@@ -102,15 +102,15 @@
 				<td style="border-top: 1px solid;border-color: transparent;"></td>
 				<td style="border-top: 1px solid;border-color: transparent;"></td>
 				<td style="border-top: 1px solid;text-align: right;border-color: transparent;">Total Tax</td>
-				<td style="border-top: 1px solid;border-right: 1px solid;text-align: center;border-color: transparent;">₹{{$total_tax_amount}}</td>
+				<td style="border-top: 1px solid;border-right: 1px solid;text-align: center;border-color: transparent;">₹{{number_format($total_tax_amount,2)}}</td>
 			</tr>
 			<tr>
 				<td style="border-bottom: 1px solid;border-left: 1px solid;border-color: transparent;"></td>
 				<td style="border-bottom: 1px solid;border-color: transparent;"></td>
 				<td style="border-bottom: 1px solid;border-color: transparent;"></td>
 				<td style="border-bottom: 1px solid;border-color: transparent;"></td>
-				<td style="border-bottom: 1px solid;text-align: right;border-color: transparent;">Total</td>
-				<td style="border-bottom: 1px solid;border-right: 1px solid;text-align: center;border-color: transparent;">₹{{$grand_total}}</td>
+				<td style="border-bottom: 1px solid;text-align: right;border-color: transparent;">Grand Total</td>
+				<td style="border-bottom: 1px solid;border-right: 1px solid;text-align: center;border-color: transparent;">₹{{number_format($grand_total,2)}}</td>
 			</tr>
 		</tfoot>
 	</table>

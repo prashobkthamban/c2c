@@ -193,6 +193,13 @@ class LeadController extends Controller
             $lead_allowed = DB::table('operatoraccount')->where('operatoraccount.groupid',Auth::user()->groupid)->where('operatoraccount.id', Auth::user()->operator_id)->select('operatoraccount.lead_access')->first();
             //dd($lead_allowed);
             $total_access_leads = $lead_allowed->lead_access;
+            $level_1 = DB::table('cdrreport_lead')->where('operatorid','=',Auth::user()->operator_id)->where('lead_stage', '=', 'New')->get()->count();
+            $level_2 = DB::table('cdrreport_lead')->where('operatorid','=',Auth::user()->operator_id)->where('lead_stage', '=', 'Contacted')->get()->count();
+            $level_3 = DB::table('cdrreport_lead')->where('operatorid','=',Auth::user()->operator_id)->where('lead_stage', '=', 'Interested')->get()->count();
+            $level_4 = DB::table('cdrreport_lead')->where('operatorid','=',Auth::user()->operator_id)->where('lead_stage', '=', 'Under review')->get()->count();
+            $level_5 = DB::table('cdrreport_lead')->where('operatorid','=',Auth::user()->operator_id)->where('lead_stage', '=', 'Demo')->get()->count();
+            $level_6 = DB::table('cdrreport_lead')->where('operatorid','=',Auth::user()->operator_id)->where('lead_stage', '=', 'Unqualified')->get()->count();
+            $level_7 = DB::table('cdrreport_lead')->where('operatorid','=',Auth::user()->operator_id)->where('lead_stage', '=', 'Converted')->get()->count();
         }
         else
         {
@@ -919,31 +926,33 @@ class LeadController extends Controller
 
     public function Assigned_Lead(Request $request)
     {
-        //print_r($request->all());
-        //exit();
         $id = $request->get('lead_id');
-        $count_owner_name = count($request->get('owner_name'));
-        //echo $count_owner_name;exit;
+        $owner_name = $request->get('owner_name');
+        $lead_details = CdrReport_Lead::find($id);
+        $lead_details->operatorid = $owner_name;
+        $lead_details->save();
 
-        for ($i=0; $i < $count_owner_name ; $i++) {
+        // //echo $count_owner_name;exit;
 
-            $lead_details = CdrReport_Lead::find($id);
-            $ass_to = $lead_details->replicate();
-            $ass_to['operatorid'] = $request->get('owner_name')[$i];
-            $ass_to->save();
+        // for ($i=0; $i < $count_owner_name ; $i++) {
 
-            $last_inserted_id = DB::getPdo()->lastInsertId();
+        //     $lead_details = CdrReport_Lead::find($id);
+        //     $ass_to = $lead_details->replicate();
+        //     $ass_to['operatorid'] = $request->get('owner_name')[$i];
+        //     $ass_to->save();
 
-            $lead_details_products = Lead_Products::where('cdrreport_lead_id',$id)->get();
-            $ass_to_products = $lead_details_products[0]->replicate();
-            $ass_to_products['cdrreport_lead_id'] = $last_inserted_id;
-            $ass_to_products->save();
+        //     $last_inserted_id = DB::getPdo()->lastInsertId();
 
-            $lead_stage = lead_stages::where('cdrreport_lead_id',$id)->get();
-            $ass_lead = $lead_stage[0]->replicate();
-            $ass_lead['cdrreport_lead_id'] = $last_inserted_id;
-            $ass_lead->save();
-        }
+        //     $lead_details_products = Lead_Products::where('cdrreport_lead_id',$id)->get();
+        //     $ass_to_products = $lead_details_products[0]->replicate();
+        //     $ass_to_products['cdrreport_lead_id'] = $last_inserted_id;
+        //     $ass_to_products->save();
+
+        //     $lead_stage = lead_stages::where('cdrreport_lead_id',$id)->get();
+        //     $ass_lead = $lead_stage[0]->replicate();
+        //     $ass_lead['cdrreport_lead_id'] = $last_inserted_id;
+        //     $ass_lead->save();
+        // }
         $message = toastr()->success('Lead Assigned successfully.');
         return Redirect::back()->with('message');
 

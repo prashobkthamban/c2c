@@ -17,6 +17,10 @@ use App\Models\Invoice;
 use App\Models\Invoice_Payment;
 use PDF;
 use Illuminate\Support\Facades\Mail;
+use Swift_Mailer;
+use Swift_Message;
+use Swift_SmtpTransport;
+use View;
 
 date_default_timezone_set('Asia/Kolkata');
 
@@ -337,18 +341,54 @@ class InvoiceController extends Controller
                     ->get();
 
         //print_r($invoice);exit;
-
+        $disc = $invoice->discount;
+        $dis = (explode('-',$disc));
+        if(count($dis) == 2){
+            $dvalue = $dis[1];
+        }else{
+            $dvalue = 0;
+        }
         $data = array(
                 'billing_address' => $invoice->billing_address,
                 'customer_id' => $invoice->customer_id,
                 'date'=> $invoice->date,
                 'total_amount'=> $invoice->total_amount,
                 'grand_total' => $invoice->grand_total,
-                'discount' => $invoice->discount,
+                'discount' => $dvalue,
                 'invoice_number' => $invoice->invoice_number,
                 'total_tax_amount' => $invoice->total_tax_amount,
                 'invoice_details' => $invoice_details,
             );
+        $emailApi = 0;
+        if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin') {
+            $emailApi = DB::table('email_api')->where('user_id', Auth::user()->id)->first();
+        }else{
+            $ga = DB::table('account')->where('groupid', Auth::user()->groupid)->where('usertype','groupadmin')->first();
+            if($ga){
+                $emailApi = DB::table('email_api')->where('user_id',$ga->id)->first();
+            }
+        }
+        if($emailApi){
+            try {
+            $view = View::make('invoice.mail_invoice', $data);
+            $html = (string) $view;
+            // dd($html);
+            $transport = new Swift_SmtpTransport($emailApi->smtp_host, $emailApi->port,$emailApi->type);
+            $transport->setUsername($emailApi->username);
+            $transport->setPassword($emailApi->password);
+            $swift_mailer = new Swift_Mailer($transport);
+            // / Create a message
+            $message = (new Swift_Message('Invoice'))
+            ->setFrom([$emailApi->username])
+            ->setTo([$invoice->email])
+            ->addPart($html, 'text/html');
+            // Send the message
+            $swift_mailer->send($message);
+            } catch (\Exception $e) {
+                $message = toastr()->error('Please check your Email Api.');
+                return Redirect::back()->with('message');
+            }
+        }
 
         /*$credential = array(
             'from' => 'prachi.itrd@gmail.com',
@@ -363,8 +403,8 @@ class InvoiceController extends Controller
         });*/
 
             //print_r($id);exit;
-            toastr()->success('Invoice Mail send successfully.');
-            return redirect()->route('InvoiceIndex');
+        toastr()->success('Invoice Mail send successfully.');
+        return Redirect::back();
     }
 
     public function proposalToInvoice($request){
