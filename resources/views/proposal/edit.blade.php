@@ -25,7 +25,8 @@
                     <div class="card-body">
                         <div class="card-title mb-3">
                             Edit Proposal
-                            <a href="javascript:void(0)" class="btn btn-warning invoice_convert" data-toggle="modal" data-target="#invoice" style="float: right;">
+                            <a href="{{ route('mailProposal',$proposal->id) }}" class="btn btn-primary" style="float: right;">Mail</a>
+                            <a href="javascript:void(0)" class="btn btn-warning invoice_convert" data-toggle="modal" data-target="#invoice" style="float:right;margin-right:20px;">
                                 Convert to Invoice**
                             </a>
                         </div>

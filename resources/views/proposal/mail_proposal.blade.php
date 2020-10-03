@@ -8,16 +8,10 @@
 	<table border="0" cellspacing="0" cellpadding="2" style="width: 90%;margin-left: 30px;">
 		<tbody>
 			<tr>
-				<td>Company Name</td>
-                <td>{{$company_name}}</td>
-				<td><b>Invoice Number</b></td>
-				<td><b>INV-{{$invoice_number}}</b></td>
-			</tr>
-			<tr>
-				<td>Address</td>
-				<td style="width: 60%;">{{$billing_address}}</td>
-				<td>Invoice Date</td>
-				<td>{{$date}}</td>
+				<td style="float: left;">Customer Name</td>
+                <td style="float: left;">{{$customer}}</td>
+                <td></td>
+                <td></td>
 			</tr>
 		</tbody>
 	</table>
@@ -25,25 +19,25 @@
 	<table border="0" cellspacing="0" cellpadding="3" style="width: 90%;margin-left: 30px;">
 		<thead style="background-color: #80808045;text-align: center;line-height: 154%;">
 			<tr>
-				<td style="border-left:1px solid;border-top: 1px solid;border-bottom: 1px solid;    border-color: transparent;">#</td>
-				<td style="border-left:1px solid;border-top: 1px solid;border-bottom: 1px solid;    border-color: transparent;">Item</td>
-				<td style="border-left:1px solid;border-top: 1px solid;border-bottom: 1px solid;    border-color: transparent;">Qty</td>
-				<td style="border-left:1px solid;border-top: 1px solid;border-bottom: 1px solid;    border-color: transparent;">Rate</td>
-				<td style="border-left:1px solid;border-top: 1px solid;border-bottom: 1px solid;    border-color: transparent;">Tax</td>
-				<td style="border-left:1px solid;border-top: 1px solid;border-right: 1px solid;    border-bottom: 1px solid;border-color: transparent;">Amount</td>
+				<td style="border-left:1px solid;border-top: 1px solid;border-bottom: 1px solid;border-color: transparent;">#</td>
+				<td style="border-left:1px solid;border-top: 1px solid;border-bottom: 1px solid;border-color: transparent;">Item</td>
+				<td style="border-left:1px solid;border-top: 1px solid;border-bottom: 1px solid;border-color: transparent;">Qty</td>
+				<td style="border-left:1px solid;border-top: 1px solid;border-bottom: 1px solid;border-color: transparent;">Rate</td>
+				<td style="border-left:1px solid;border-top: 1px solid;border-bottom: 1px solid;border-color: transparent;">Tax</td>
+				<td style="border-left:1px solid;border-top: 1px solid;border-right: 1px solid;border-bottom: 1px solid;border-color: transparent;">Amount</td>
 			</tr>
 		</thead>
 		<tbody style="text-align: center;line-height: 154%;">
 			<?php
 			$i = 1;
-			foreach ($invoice_details as $key => $invoice_detail) { ?>
+			foreach ($proposal_details as $key => $proposal_detail) { ?>
 			<tr>
 				<td>{{$i}}</td>
-				<td>{{$invoice_detail->name}}</td>
-				<td>{{$invoice_detail->qty}}</td>
-				<td>₹{{number_format($invoice_detail->rate,2)}}</td>
-				<td>{{$invoice_detail->tax}}%</td>
-				<td>₹{{number_format($invoice_detail->amount,2)}}</td>
+				<td>{{$proposal_detail->name}}</td>
+				<td>{{$proposal_detail->qty}}</td>
+				<td>₹{{number_format($proposal_detail->rate,2)}}</td>
+				<td>{{$proposal_detail->tax}}%</td>
+				<td>₹{{number_format($proposal_detail->amount,2)}}</td>
 			</tr>
 			<?php $i++; }?>
 			<tr>

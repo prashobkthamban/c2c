@@ -16,6 +16,10 @@ use App\Models\Product;
 use App\Models\Product_details;
 use App\Models\Lead_activity;
 use App\Models\Invoice;
+use Swift_Mailer;
+use Swift_Message;
+use Swift_SmtpTransport;
+use View;
 
 date_default_timezone_set('Asia/Kolkata');
 
@@ -206,6 +210,67 @@ class ProposalController extends Controller
             toastr()->success('Proposal Updated successfully.');
             return redirect()->route('ProposalIndex');
         }
+    }
+
+    public function mailProposal($id){
+        $proposal = DB::table('proposal')
+                    ->where('proposal.id', $id)
+                    ->leftJoin('converted', 'converted.id', '=', 'proposal.cutomer_id')
+                    ->select('proposal.*','converted.id as c_id','converted.first_name','converted.last_name','converted.company_name','converted.gst_no','converted.email','converted.mobile_no')
+                    ->first();
+
+        $proposal_details = DB::table('proposal_details')
+                    ->where('proposal_id',$id)
+                    ->leftJoin('products','products.id','=','proposal_details.product_id')
+                    ->select('proposal_details.*','products.id as p_id','products.name')
+                    ->get();
+        $disc = $proposal->discount;
+        $dis = (explode('-',$disc));
+        if(count($dis) == 2){
+            $dvalue = $dis[1];
+        }else{
+            $dvalue = 0;
+        }
+        $tnc = DB::table('terms_condition_proposal')->where('user_id',Auth::user()->id)->first();
+        $data = array(
+                'customer' => ucwords($proposal->first_name.' '.$proposal->last_name),
+                'total_amount'=> $proposal->total_amount,
+                'grand_total' => $proposal->grand_total,
+                'discount' => $dvalue,
+                'total_tax_amount' => $proposal->total_tax_amount,
+                'proposal_details' => $proposal_details,
+                'tnc'=> $tnc->name ?? ''
+            );
+        $emailApi = 0;
+        if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin') {
+            $emailApi = DB::table('email_api')->where('user_id', Auth::user()->id)->first();
+        }else{
+            $ga = DB::table('account')->where('groupid', Auth::user()->groupid)->where('usertype','groupadmin')->first();
+            if($ga){
+                $emailApi = DB::table('email_api')->where('user_id',$ga->id)->first();
+            }
+        }
+        // dd($emailApi,$id);
+        if($emailApi){
+            try {
+            $view = View::make('proposal.mail_proposal', $data);
+            $html = (string) $view;
+            $transport = new Swift_SmtpTransport($emailApi->smtp_host, $emailApi->port,$emailApi->type);
+            $transport->setUsername($emailApi->username);
+            $transport->setPassword($emailApi->password);
+            $swift_mailer = new Swift_Mailer($transport);
+            $message = (new Swift_Message($proposal->subject))
+            ->setFrom([$emailApi->username])
+            ->setTo([$proposal->email])
+            ->addPart($html, 'text/html');
+            $swift_mailer->send($message);
+            } catch (\Exception $e) {
+                $message = toastr()->error('Please check your Email Api.');
+                return Redirect::back()->with('message');
+            }
+        }
+        toastr()->success('Proposal mail sent successfully.');
+        return Redirect::back();
     }
 }
 ?>

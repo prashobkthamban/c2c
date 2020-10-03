@@ -408,6 +408,7 @@ Route::post('proposal/store','ProposalController@store')->name('ProposalStore');
 Route::get('proposal/{id}', 'ProposalController@destroy')->name('deleteProposal');
 Route::get('proposal/edit/{id}', 'ProposalController@edit')->name('editProposal');
 Route::patch('proposal/update/{id}', 'ProposalController@update')->name('updateProposal');
+Route::get('proposal/mail/{id}', 'ProposalController@mailProposal')->name('mailProposal');
 
 //Invoice
 Route::get('invoice/list','InvoiceController@index')->name('InvoiceIndex');

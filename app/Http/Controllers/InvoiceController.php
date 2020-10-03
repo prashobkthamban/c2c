@@ -348,6 +348,7 @@ class InvoiceController extends Controller
         }else{
             $dvalue = 0;
         }
+        $tnc = DB::table('terms_condition_invoice')->where('user_id',Auth::user()->id)->first();
         $data = array(
                 'billing_address' => $invoice->billing_address,
                 'customer_id' => $invoice->customer_id,
@@ -358,6 +359,8 @@ class InvoiceController extends Controller
                 'invoice_number' => $invoice->invoice_number,
                 'total_tax_amount' => $invoice->total_tax_amount,
                 'invoice_details' => $invoice_details,
+                'company_name'=>$invoice->company_name,
+                'tnc'=> $tnc->name ?? ''
             );
         $emailApi = 0;
         if (Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin') {
@@ -403,7 +406,7 @@ class InvoiceController extends Controller
         });*/
 
             //print_r($id);exit;
-        toastr()->success('Invoice Mail send successfully.');
+        toastr()->success('Invoice mail sent successfully.');
         return Redirect::back();
     }
 
