@@ -57,7 +57,7 @@
                                         <select id="type" name="type" class="form-control" required>
                                             <option value="">Select Type</option>
                                             <option value="DND" {{ $sms->type == 'DND' ? 'selected' : ''}}>DND</option>
-                                            <option value="NDND" {{ $sms->type == 'NDND' ? 'selected' : ''}}>NDND</option>
+                                            <option value="TRANS" {{ $sms->type == 'TRANS' ? 'selected' : ''}}>TRANS</option>
                                         </select>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('type', ':message') : '' !!}</p>
                                     </div>

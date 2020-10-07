@@ -166,7 +166,7 @@
                                                         </th>
                                                     </tr>
                                                     <tr>
-                                                         <th>Address</th>
+                                                        <th>Address</th>
                                                         <th>
                                                            <textarea name="address" id="address" class="form-control input_border" readonly="">{{$lead_data->address}}</textarea>
                                                         </th>
@@ -807,7 +807,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <div class="card">
+                                    <div class="card" style="height: 385px;overflow-y: auto;">
                                           <div class="card-body">
                                             <div class="ul-widget__head">
                                               <div class="ul-widget__head-label">
@@ -862,6 +862,9 @@
                                                     elseif ($recent_activity->activity_name == 'lead' && $recent_activity->activity_data == '7') {
                                                         $lead_name = 'Became Converted Lead';
                                                     }
+                                                    elseif ($recent_activity->activity_name == 'lead_assign') {
+                                                        $lead_name = 'Lead assigned by ' . $recent_activity->activity_data;
+                                                    }
                                                     else{
                                                         $lead_name = $recent_activity->activity_data;
                                                     }
@@ -886,7 +889,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-8">
-                                    <div class="card" style="height: 338px;overflow-y: auto;">
+                                    <div class="card" style="height: 385px;overflow-y: auto;">
                                         <div class="card-body">
                                             <div class="ul-widget__head">
                                               <div class="ul-widget__head-label">
@@ -902,14 +905,14 @@
                                                         <div class="ul-widget-s7n">
                                                             @foreach($lead_mails as $lead_mail )
                                                             <div class="ul-widget-s7__items">
-                                                                <span class="ul-widget-s7__item-time" style="width: 20%;font-size: .813rem;">
+                                                                <span class="ul-widget-s7__item-time" style="width: 12%;font-size: .813rem;">
                                                                     <!-- <h6>{{$lead_mail->from}}<br></h6> -->
                                                                     <?php $time_ago = strtotime($lead_mail->inserted_date);
                                                                     echo to_time_ago($time_ago); ?></span>
                                                                 <div class="ul-widget-s7__item-circle">
                                                                     <p class="ul-vertical-line bg-success "></p>
                                                                 </div>
-                                                                <div class="ul-widget-s7__item-text">
+                                                                <div class="ul-widget-s7__item-text" style="width: 88%;">
                                                                     Subject: {{$lead_mail->subject ? $lead_mail->subject : 'No Subject Found'}}
                                                                     Mail Body: {!!$lead_mail->body!!}
                                                                 </div>
@@ -917,12 +920,12 @@
                                                             @endforeach
                                                             @foreach($call_logs as $call_log)
                                                             <div class="ul-widget-s7__items">
-                                                                <span class="ul-widget-s7__item-time ul-middle"  style="width: 20%;font-size: .813rem;"><?php $time_ago = strtotime($call_log->inserted_date);
+                                                                <span class="ul-widget-s7__item-time ul-middle"  style="width: 12%;font-size: .813rem;"><?php $time_ago = strtotime($call_log->inserted_date);
                                                                     echo to_time_ago($time_ago); ?></span>
                                                                 <div class="ul-widget-s7__item-circle">
                                                                     <p class="ul-vertical-line bg-danger "></p>
                                                                 </div>
-                                                                <div class="ul-widget-s7__item-text">
+                                                                <div class="ul-widget-s7__item-text" style="width: 88%;">
                                                                     Call Type: {{$call_log->call_type}} &nbsp;&nbsp;
                                                                     Outcomes: {{$call_log->outcomes}} <br>
                                                                     Associate Phone call: <br>
@@ -935,12 +938,12 @@
                                                             @endforeach
                                                             @foreach($msgs as $msg)
                                                             <div class="ul-widget-s7__items">
-                                                                <span class="ul-widget-s7__item-time ul-middle"  style="width: 20%;font-size: .813rem;"><?php $time_ago = strtotime($msg->inserted_date);
+                                                                <span class="ul-widget-s7__item-time ul-middle"  style="width: 12%;font-size: .813rem;"><?php $time_ago = strtotime($msg->inserted_date);
                                                                     echo to_time_ago($time_ago); ?></span>
                                                                 <div class="ul-widget-s7__item-circle">
                                                                     <p class="ul-vertical-line bg-warning "></p>
                                                                 </div>
-                                                                <div class="ul-widget-s7__item-text">
+                                                                <div class="ul-widget-s7__item-text" style="width: 88%;">
                                                                     Phone Number : {{$msg->msg_to}} <br>
                                                                     Text Message: {{$msg->message}}
                                                                 </div>
@@ -948,12 +951,12 @@
                                                             @endforeach
                                                             @foreach($proposal as $pro)
                                                             <div class="ul-widget-s7__items">
-                                                                <span class="ul-widget-s7__item-time ul-middle"  style="width: 20%;font-size: .813rem;"><?php $time_ago = strtotime($pro->inserted_date);
+                                                                <span class="ul-widget-s7__item-time ul-middle"  style="width: 12%;font-size: .813rem;"><?php $time_ago = strtotime($pro->inserted_date);
                                                                     echo to_time_ago($time_ago); ?></span>
                                                                 <div class="ul-widget-s7__item-circle">
                                                                     <p class="ul-vertical-line bg-warning "></p>
                                                                 </div>
-                                                                <div class="ul-widget-s7__item-text">
+                                                                <div class="ul-widget-s7__item-text" style="width: 88%;">
                                                                     First Name: {{$pro->first_name}} &nbsp;&nbsp;
                                                                     Last Name: {{$pro->last_name}} <br>
                                                                     Subject: {{$pro->subject}} &nbsp;&nbsp;

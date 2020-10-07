@@ -59,7 +59,7 @@
                                         <select id="type" name="type" class="form-control" required>
                                             <option value="">Select Type</option>
                                             <option value="DND">DND</option>
-                                            <option value="NDND">NDND</option>
+                                            <option value="TRANS">TRANS</option>
                                         </select>
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('type', ':message') : '' !!}</p>
                                     </div>

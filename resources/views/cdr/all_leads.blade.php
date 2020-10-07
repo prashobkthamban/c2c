@@ -519,8 +519,8 @@
                                                                     $stage = 'Unqualified';
                                                                 }
                                                                 else {
-                                                                    $id = 7;
-                                                                    $stage = 'Converted';
+                                                                    $id = 1;
+                                                                    $stage = 'New';
                                                                 }
                                                                 ?>
 
@@ -586,8 +586,8 @@
                                                             $stage = 'Unqualified';
                                                         }
                                                         else {
-                                                            $id = 7;
-                                                            $stage = 'Converted';
+                                                            $id = 1;
+                                                            $stage = 'New';
                                                         }
                                                         ?>
 

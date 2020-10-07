@@ -932,6 +932,14 @@ class LeadController extends Controller
         $lead_details->operatorid = $owner_name;
         $lead_details->save();
 
+        $activity = new Lead_activity([
+            'activity_name' => 'lead_assign',
+            'cdrreport_lead_id' => $request->get('lead_id'),
+            'activity_data' => Auth::user()->username.' ('.Auth::user()->usertype.')',
+            'inserted_date' => date("Y-m-d H:i:s"),
+        ]);
+        $activity->save();
+
         // //echo $count_owner_name;exit;
 
         // for ($i=0; $i < $count_owner_name ; $i++) {

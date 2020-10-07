@@ -4,7 +4,7 @@
 	<title></title>
 </head>
 <body style="border:1px solid;">
-	<h1><center>Your Generated Invoice</center></h1>
+	<h1><center>Your Generated Proposal</center></h1>
 	<table border="0" cellspacing="0" cellpadding="2" style="width: 90%;margin-left: 30px;">
 		<tbody>
 			<tr>

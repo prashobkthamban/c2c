@@ -147,43 +147,43 @@
             </tr>
             <tr class="border-0">
                 <th class="border-0"><strong>Company Name</strong></th>
-                <td class="border-0">{{$invoice->company_name}}</td>
+                <td class="border-0">{{$invoice->company_name ?? ''}}</td>
                 <th class="border-0"><strong>Company Name</strong></th>
-                <td class="border-0">{{$company_details->companyname}}</td>
+                <td class="border-0">{{$company_details->companyname ?? ''}}</td>
             </tr>
             <tr class="border-0">
                 <th class="border-0"><strong>Address</strong></th>
                 <td class="border-0">{{$invoice->billing_address}}</td>
                 <th class="border-0"><strong>GST Number</strong></th>
-                <td class="border-0">{{$company_details->GST}}</td>
+                <td class="border-0">{{$company_details->GST ?? ''}}</td>
             </tr>
             <tr class="border-0">
                 <th class="border-0"><strong>First Name</strong></th>
                 <td class="border-0">{{$invoice->first_name}}</td>
                 <th class="border-0"><strong>Address</strong></th>
-                <td class="border-0">{{$company_details->shipping_address}}</td>
+                <td class="border-0">{{$company_details->shipping_address ?? ''}}</td>
             </tr>
             <tr class="border-0">
                 <th class="border-0"><strong>Last Name</strong></th>
-                <td class="border-0">{{$invoice->last_name}}</td>
+                <td class="border-0">{{$invoice->last_name ?? ''}}</td>
                 <th class="border-0"></th>
                 <td class="border-0"></td>
             </tr>
             <tr class="border-0">
                 <th class="border-0"><strong>Email Address</strong></th>
-                <td class="border-0">{{$invoice->email}}</td>
+                <td class="border-0">{{$invoice->email ?? ''}}</td>
                 <th class="border-0"></th>
                 <td class="border-0"></td>
             </tr>
             <tr class="border-0">
                 <th class="border-0"><strong>Phone Number</strong></th>
-                <td class="border-0">{{$invoice->mobile_no}}</td>
+                <td class="border-0">{{$invoice->mobile_no ?? ''}}</td>
                 <th class="border-0"></th>
                 <td class="border-0"></td>
             </tr>
             <tr class="border-0">
                 <th class="border-0"><strong>GST Number</strong></th>
-                <td class="border-0">{{$invoice->gst_no}}</td>
+                <td class="border-0">{{$invoice->gst_no ?? ''}}</td>
                 <th class="border-0"></th>
                 <td class="border-0"></td>
             </tr>

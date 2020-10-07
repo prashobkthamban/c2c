@@ -36,7 +36,7 @@
                         <?php $notifyList = unreadNotification();
                         //dd($notifyList); ?>
                         <span class="badge badge-primary notification_count"><?php echo $notifyList['not_count']; ?></span>
-                        <i class="i-Bell text-muted header-icon"></i>
+                        <i class="i-Speach-Bubble-6 text-muted header-icon"></i>
                     </div>
                 </a>
                     <!-- Notification dropdown -->
@@ -45,7 +45,7 @@
                         @foreach($notifyList['not_list'] as $listOne)
                         <div class="dropdown-item d-flex" id="not_id_{{$listOne->id}}">
                             <div class="notification-icon">
-                                <i class="i-Bell text-primary mr-1"></i>
+                                <i class="i-Speach-Bubble-6 text-primary mr-1"></i>
                             </div>
                             <div class="notification-details flex-grow-1">
                                 <p class="m-0 d-flex align-items-center">
@@ -73,7 +73,7 @@
 
                         //dd($notifyList); ?>
                         <span class="badge badge-primary notification_count"><?php echo $count_remainders; ?></span>
-                        <i class="i-Speach-Bubble-6 text-muted header-icon"></i>
+                        <i class="i-Bell text-muted header-icon"></i>
                     </div>
                     <!-- Notification dropdown -->
 
