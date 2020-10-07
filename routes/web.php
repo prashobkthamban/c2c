@@ -481,6 +481,7 @@ Route::post('transfer_leads/transferleads','TranferLeadsController@transferleads
 Route::get('remainder','LeadController@remainder_show')->name('RemainderIndex');
 Route::get('remainder/{id}','LeadController@remainder_delete')->name('deleteRemainder');
 Route::get('remainder/view/{id}','LeadController@remainder_view')->name('viewRemainder');
+Route::post('lead/reminder','LeadController@updateLeadReminder')->name('updateLeadReminder');
 
 //Notification ToDo
 Route::get('notification/todo','HomeController@NotificationToDo')->name('NotificationToDo');

@@ -23,7 +23,7 @@ use App\Models\Lead_activity;
 use App\Models\Lead_Reminder;
 use App\Models\Proposal;
 use App\Models\Product_details;
-
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
 use File;
@@ -1106,6 +1106,18 @@ class LeadController extends Controller
     {
         DB::table('lead_reminders')->where('id', '=', $id)->delete();
         $message = toastr()->success('Remainder Deleted successfully.');
+        return Redirect::back()->with('message');
+    }
+
+    public function updateLeadReminder()
+    {
+        // dd(request()->all());
+        $date = Carbon::parse(request()->get('date'))->format('Y-m-d');
+        $edit_lead = Lead_Reminder::find(request()->get('id'));
+        $edit_lead->date = $date;
+        $edit_lead->time = request()->get('time');
+        $edit_lead->save();
+        $message = toastr()->success('Remainder updated successfully.');
         return Redirect::back()->with('message');
     }
 }
