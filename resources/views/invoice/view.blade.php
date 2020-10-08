@@ -217,16 +217,7 @@
 													<p>Total Discount</p>
 												</div>
 												<div class="col-md-6">
-                                                    @php
-                                                        $disc = $invoice->discount;
-                                                        $dis = (explode('-',$disc));
-                                                        if(count($dis) == 2){
-                                                            $dvalue = $dis[1];
-                                                        }else{
-                                                            $dvalue = 0;
-                                                        }
-                                                    @endphp
-													<p>₹{{sprintf("%.2f",$dvalue)}}</p>
+													<p>₹{{sprintf("%.2f",$invoice->discount)}}</p>
 												</div>
 												<div class="col-md-6">
 													<p>Total Tax</p>

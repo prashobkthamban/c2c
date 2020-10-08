@@ -974,7 +974,7 @@ class LeadController extends Controller
             $message = toastr()->error('Please select valid product.');
             return Redirect::back()->with('message');
         }
-        $discount = $request->get('discount') ? $request->get('discount').'-'.$request->get('dis_val') : '';
+        $discount = $request->get('dis_val');
         $add_proposal = new Proposal([
             'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
             'user_id' => Auth::user()->id,
@@ -1001,6 +1001,8 @@ class LeadController extends Controller
                 'rate' => $all_products['rate'][$i] ?? 0,
                 'tax' => $all_products['tax'][$i] ?? 0.00,
                 'amount' => $all_products['amount'][$i] ?? 0,
+                'discount_rate' => $all_products['product_discount'][$i] ?? 0,
+                'discount_amount' => $all_products['discount_amount'][$i] ?? 0,
             ]);
             $proposal_details->save();
         }

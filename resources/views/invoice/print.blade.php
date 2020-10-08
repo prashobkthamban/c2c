@@ -221,18 +221,9 @@
                 <td colspan="4" class="bg-light-2 text-right"><strong>Sub Total</strong></td>
                 <td colspan="2" class="bg-light-2 text-right">{{ number_format($invoice->total_amount,2) }}</td>
               </tr>
-              @php
-                $disc = $invoice->discount;
-                $dis = (explode('-',$disc));
-                if(count($dis) == 2){
-                $dvalue = $dis[1];
-                }else{
-                $dvalue = 0;
-                }
-            @endphp
               <tr>
                 <td colspan="4" class="bg-light-2 text-right"><strong>Total Discount</strong></td>
-                <td colspan="2" class="bg-light-2 text-right">{{ number_format($dvalue,2) }}</td>
+                <td colspan="2" class="bg-light-2 text-right">{{ number_format($invoice->discount,2) }}</td>
               </tr>
               <tr>
                 <td colspan="4" class="bg-light-2 text-right"><strong>Total Tax</strong></td>

@@ -106,7 +106,7 @@ class ProposalController extends Controller
             $message = toastr()->error('Please select valid product.');
             return Redirect::back()->with('message');
         }
-        $discount = $request->get('discount') ? $request->get('discount').'-'.$request->get('dis_val') : '';
+        $discount = $request->get('dis_val');
         $add_proposal = new Proposal([
             'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
             'user_id' => Auth::user()->id,
@@ -132,6 +132,8 @@ class ProposalController extends Controller
                 'rate' => $all_products['rate'][$i] ?? 0,
                 'tax' => $all_products['tax'][$i] ?? 0.00,
                 'amount' => $all_products['amount'][$i] ?? 0,
+                'discount_rate' => $all_products['product_discount'][$i] ?? 0,
+                'discount_amount' => $all_products['discount_amount'][$i] ?? 0,
             ]);
             $proposal_details->save();
         }
@@ -164,16 +166,9 @@ class ProposalController extends Controller
         $customers = Converted::select('*')->where('group_id',Auth::user()->groupid)->get();
 
         $invoice_number = Invoice::max('id');
-        $disc = explode('-',$proposal->discount);
-        if(count($disc) == 2){
-            $discount = $disc[0] ?? 0;
-            $discount_value = $disc[1] ?? 0;
-        }else{
-            $discount = $discount_value = 0;
-        }
         //print_r($invoice_number);exit;
         // dd($proposal,$proposal_details,$products,$customers,$invoice_number);
-        return view('proposal.edit',compact('proposal','proposal_details','products','customers','invoice_number','discount','discount_value'));
+        return view('proposal.edit',compact('proposal','proposal_details','products','customers','invoice_number'));
     }
 
     public function update(Request $request,$id){
@@ -182,7 +177,7 @@ class ProposalController extends Controller
             $message = toastr()->error('Please select valid product.');
             return Redirect::back()->with('message');
         }
-        $discount = $request->get('discount') ? $request->get('discount').'-'.$request->get('dis_val') : '';
+        $discount = $request->get('dis_val');
         $edit_proposal = Proposal::find($id);
         $edit_proposal->subject = $request->subject;
         $edit_proposal->cutomer_id = $request->customer_id;
@@ -203,6 +198,8 @@ class ProposalController extends Controller
                     'rate' => $all_products['rate'][$i] ?? 0,
                     'tax' => $all_products['tax'][$i] ?? 0.00,
                     'amount' => $all_products['amount'][$i] ?? 0,
+                    'discount_rate' => $all_products['product_discount'][$i] ?? 0,
+                    'discount_amount' => $all_products['discount_amount'][$i] ?? 0,
                     ]);
                     $proposal_details->save();
                     // dd($request->all(),$request->customer_id,$edit_proposal,$proposal_details);
@@ -224,13 +221,7 @@ class ProposalController extends Controller
                     ->leftJoin('products','products.id','=','proposal_details.product_id')
                     ->select('proposal_details.*','products.id as p_id','products.name')
                     ->get();
-        $disc = $proposal->discount;
-        $dis = (explode('-',$disc));
-        if(count($dis) == 2){
-            $dvalue = $dis[1];
-        }else{
-            $dvalue = 0;
-        }
+        $dvalue = $proposal->discount;
         $tnc = DB::table('terms_condition_proposal')->where('user_id',Auth::user()->id)->first();
         $data = array(
                 'customer' => ucwords($proposal->first_name.' '.$proposal->last_name),

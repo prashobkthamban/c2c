@@ -156,14 +156,7 @@ class InvoiceController extends Controller
 
         $products = Product::select('*')->get();
         $customers = Converted::select('*')->get();
-        $disc = explode('-',$invoice->discount);
-        if(count($disc) == 2){
-            $discount = $disc[0] ?? 0;
-            $discount_value = $disc[1] ?? 0;
-        }else{
-            $discount = $discount_value = 0;
-        }
-        return view('invoice.edit',compact('invoice','invoice_details','products','customers','discount','discount_value'));
+        return view('invoice.edit',compact('invoice','invoice_details','products','customers'));
     }
 
     public function update(Request $request,$id){
@@ -172,7 +165,7 @@ class InvoiceController extends Controller
             $message = toastr()->error('Please select valid product.');
             return Redirect::back()->with('message');
         }
-        $discount = $request->get('discount') ? $request->get('discount').'-'.$request->get('dis_val') : '';
+        $discount = $request->get('dis_val');
         $edit_invoice = Invoice::find($id);
         $edit_invoice->billing_address = $request->address;
         $edit_invoice->customer_id = $request->customer_id;
@@ -194,6 +187,8 @@ class InvoiceController extends Controller
                     'rate' => $all_products['rate'][$i] ?? 0,
                     'tax' => $all_products['tax'][$i] ?? 0.00,
                     'amount' => $all_products['amount'][$i] ?? 0,
+                    'discount_rate' => $all_products['product_discount'][$i] ?? 0,
+                    'discount_amount' => $all_products['discount_amount'][$i] ?? 0,
                 ]);
                 $invoice_details->save();
             }
@@ -341,13 +336,7 @@ class InvoiceController extends Controller
                     ->get();
 
         //print_r($invoice);exit;
-        $disc = $invoice->discount;
-        $dis = (explode('-',$disc));
-        if(count($dis) == 2){
-            $dvalue = $dis[1];
-        }else{
-            $dvalue = 0;
-        }
+        $dvalue = $invoice->discount;
         $tnc = DB::table('terms_condition_invoice')->where('user_id',Auth::user()->id)->first();
         $data = array(
                 'billing_address' => $invoice->billing_address,
@@ -434,11 +423,13 @@ class InvoiceController extends Controller
                 foreach($proposal_details as $prop) {
                     $invoice_details = new Invoice_details([
                         'invoice_id' => $id,
-                        'product_id' =>$prop->product_id,
-                        'qty' =>$prop->qty,
+                        'product_id' => $prop->product_id,
+                        'qty' => $prop->qty,
                         'rate' =>$prop->rate,
                         'tax' => $prop->tax,
-                        'amount' =>$prop->amount,
+                        'amount' => $prop->amount,
+                        'discount_rate' => $prop->discount_rate,
+                        'discount_amount' => $prop->discount_amount,
                     ]);
                     $invoice_details->save();
                 }
@@ -449,11 +440,12 @@ class InvoiceController extends Controller
     }
 
     public function createInvoice($request) {
+        // dd($request->all());
         $pro = $request->get('products');
         if (!empty($pro) && array_search("Select Products",$pro['name'])) {
             return false;
         }
-        $discount = $request->get('discount') ? $request->get('discount').'-'.$request->get('dis_val') : '';
+        $discount = $request->get('dis_val');
         $add_invoice = new Invoice([
             'operator_id' => Auth::user()->operator_id ? Auth::user()->operator_id : '',
             'user_id' => Auth::user()->id,
@@ -473,15 +465,17 @@ class InvoiceController extends Controller
         $all_products = $request->get('products');
         $products = $all_products['name'];
         foreach($products as $i => $product) {
-            $proposal_details = new Invoice_details([
+            $invoice_details = new Invoice_details([
                 'invoice_id' => $id,
                 'product_id' => $product,
                 'qty' => $all_products['quantity'][$i] ?? 0,
                 'rate' => $all_products['rate'][$i] ?? 0,
                 'tax' => $all_products['tax'][$i] ?? 0.00,
                 'amount' => $all_products['amount'][$i] ?? 0,
+                'discount_rate' => $all_products['product_discount'][$i] ?? 0,
+                'discount_amount' => $all_products['discount_amount'][$i] ?? 0,
             ]);
-            $proposal_details->save();
+            $invoice_details->save();
         }
         return true;
     }
