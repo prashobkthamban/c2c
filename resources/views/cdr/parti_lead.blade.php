@@ -1283,7 +1283,7 @@
                 var dsamnt = Number($(this).closest("tr").find("input.discount_amount").val());
                 if(total_tax > 0){
                 var amount_tax = parseFloat(((ammount - dsamnt)*total_tax)/100).toFixed(2);
-                console.log(amount_tax);
+                // console.log(amount_tax);
                     $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
                     // var ttl_am = Number(ammount) + Number(amount_tax);
                     $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
@@ -1313,7 +1313,7 @@
             var dsamnt = Number($(this).closest("tr").find("input.discount_amount").val());
             if(total_tax > 0){
                 var amount_tax = parseFloat(((ammount - dsamnt)*total_tax)/100).toFixed(2);
-                console.log(amount_tax);
+                // console.log(amount_tax);
                 $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
                 // var ttl_am = Number(ammount) + Number(amount_tax);
                 $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
@@ -1328,7 +1328,7 @@
             var rate = $(this).closest("tr").find("input.rate").val();
             var tax = $(this).val();
             $(this).closest("tr").find("input.htax").val(tax);
-            console.log(tax);
+            // console.log(tax);
             var ammount = rate*quantity;
             var total_tax = 0.0;
             var disct = $(this).closest("tr").find("input.product_discount").val();
@@ -1344,7 +1344,7 @@
             var dsamnt = Number($(this).closest("tr").find("input.discount_amount").val());
             if(total_tax > 0){
                 var amount_tax = parseFloat(((ammount - dsamnt)*total_tax)/100).toFixed(2);
-                console.log(amount_tax);
+                // console.log(amount_tax);
                 $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
                 // var ttl_am = Number(ammount) + Number(amount_tax);
                 $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
@@ -1373,7 +1373,7 @@
             var dsamnt = Number($(this).closest("tr").find("input.discount_amount").val());
             if(total_tax > 0){
                 var amount_tax = parseFloat(((ammount - dsamnt)*total_tax)/100).toFixed(2);
-                console.log(amount_tax);
+                // console.log(amount_tax);
                 $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
                 // var ttl_am = Number(ammount) + Number(amount_tax);
                 $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
@@ -1402,8 +1402,8 @@
             var dsamnt = Number($(this).closest("tr").find("input.discount_amount").val());
             if(total_tax > 0){
                 var amount_tax = parseFloat(((ammount - dsamnt)*total_tax)/100).toFixed(2);
-                console.log(amount_tax);
-                console.log(dsamnt,disct,amount_tax);
+                // console.log(amount_tax);
+                // console.log(dsamnt,disct,amount_tax);
                 $(this).closest("tr").find("input.tax_amount").val(parseFloat(amount_tax).toFixed(2));
                 // var ttl_am = Number(ammount) + Number(amount_tax);
                 $(this).closest("tr").find("input.amount").val(parseFloat(ammount).toFixed(2));
@@ -1436,7 +1436,7 @@
             // var discount_value = parseFloat((tamt*disc_rate)/100).toFixed(2);
             // $('#dis_val').val(parseFloat(discount_value,2).toFixed(2));
             gttl = (tamt - tdis) + ttax;
-            console.log(tamt,tdis,ttax,gttl);
+            // console.log(tamt,tdis,ttax,gttl);
             $('#grand_total').val(parseFloat(gttl,2).toFixed(2)).change();
         }
       });
