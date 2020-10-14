@@ -1,6 +1,10 @@
 @extends('layouts.master')
 @section('page-css')
-
+<style>
+.datepicker {
+      z-index: 1600 !important; /* has to be larger than 1050 */
+    }
+</style>
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">
 @endsection
 

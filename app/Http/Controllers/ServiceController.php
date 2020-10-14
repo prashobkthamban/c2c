@@ -217,6 +217,41 @@ class ServiceController extends Controller
         return view('service.gateway', compact('result'));
     }
 
+    public function addGateway(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'Gprovider' => 'required',
+            'Gchannel' => 'required',
+        ]);
+        if($validator->fails()) {
+            $data['error'] = $validator->messages();
+        } else {
+            $gateway_data = [
+                'Gprovider' => $request->get('Gprovider'),
+                'Gchannel' => $request->get('Gchannel'),
+                'billingdate'=> $request->get('billingdate'),
+                'used_units'=> $request->get('used_units'),
+                'pluse_rate' => $request->get('pluse_rate'),
+            ];
+    
+            if(empty($request->get('id'))) {
+                DB::table('prigateway')->insert($gateway_data);
+                $data['success'] = 'Pri Gateway added successfully.';
+            } else {
+                DB::table('prigateway')
+                    ->where('id', $request->get('id'))
+                    ->update($gateway_data);
+                $data['success'] = 'Pri Gateway updated successfully.';
+            }
+        }
+        return $data;
+    }
+
+    public function getPriGateway($id) {
+        $data=  DB::table('prigateway')->where('prigateway.id', $id)->get();
+	    return $data;
+    }  
+
     public function prilog($id) {
         return $result = DB::table('pri_gateway_log')
             ->where('pri_id', $id)

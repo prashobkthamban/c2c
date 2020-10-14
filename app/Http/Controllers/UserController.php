@@ -561,8 +561,8 @@ public function updatesettings($id, Request $request) {
 
     public function getOprAccount($id) {
         $data=  DB::table('operatoraccount')->select('operatoraccount.id', 'lead_access', 'crm_access', 'phonenumber', 'opername', 'oper_status', 'livetrasferid', 'shift_id', 'app_use', 'edit', 'download', 'play','working_days', 'account.username', 'account.password', 'account.user_pwd', 'operator_shifts.shift_name')->leftJoin('account', 'operatoraccount.id', '=', 'account.operator_id')->leftJoin('operator_shifts', 'operatoraccount.shift_id', '=', 'operator_shifts.id')->where('operatoraccount.id', $id)->get();
-	return $data;
- }
+	    return $data;
+    }
 
     public function destroyOperator($id)
     {

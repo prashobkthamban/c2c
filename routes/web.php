@@ -63,6 +63,8 @@ Route::post('edit_billing', 'ServiceController@editBilling')->name('editBilling'
 Route::get('access_logs', 'ServiceController@accessLogs')->name('AccessLogs');
 Route::get('live_calls', 'ServiceController@liveCalls')->name('LiveCalls');
 Route::get('gate_way', 'ServiceController@gateway')->name('GateWay');
+Route::post('add_gateway', 'ServiceController@addGateway')->name('AddGateway');
+Route::get('get_pri_gateway/{id}', 'ServiceController@getPriGateway')->name('GetPriGateway');
 Route::get('pri_log/{id}', 'ServiceController@prilog')->name('priLog');
 
 /* pbx extension */
