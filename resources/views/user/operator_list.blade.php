@@ -32,12 +32,12 @@
                         <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Live Transfer ID</th>
                                     <th>Operator</th>
                                     <th>Phone</th>
                                     <th>LoginId</th>
                                     <th>Password</th>
-                                    <th>Exten</th>
+                                    <th>Lead Access</th>
                                     <th>Stickey Agent</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -46,7 +46,7 @@
                             <tbody>
                                 @foreach($operators as $operator)
                                 <tr id="row_{{ $operator->id }}">
-                                    <td>{{ $operator->id }}</td>
+                                    <td>{{ $operator->livetrasferid }}</td>
                                     <td>{{$operator->opername}}</td>
                                     <td>{{$operator->phonenumber}}</td>
                                     <td>{{($operator->accounts != null) ? $operator->accounts->username : ''}}</td>
@@ -66,12 +66,12 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>Live Transfer ID</th>
                                     <th>Operator</th>
                                     <th>Phone</th>
                                     <th>LoginId</th>
                                     <th>Password</th>
-                                    <th>Exten</th>
+                                    <th>Lead Access</th>
                                     <th>Stickey Agent</th>
                                     <th>Status</th>
                                     <th>Action</th>
