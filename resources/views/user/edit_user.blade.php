@@ -122,10 +122,9 @@
                                          {!! Form::text('operator_no_logins', null, ['class' => 'form-control']) !!}
                                          <p class="text-danger ">{!! !empty($messages) ? $messages->first('operator_no_logins', ':message') : '' !!}</p>
                                     </div>
-
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Number of Channels</label>
-                                        {!! Form::select('no_channels', array('0' => '0', '1' => '1'), null,array('class' => 'form-control')) !!}          
+                                        {!! Form::select('no_channels', array(0 => 0, 1 => 1,2=>2,3=>3,4=>4,5=>5,6=>6,7=>7,8=>8,9=>9,10 =>10),$user_edit->no_channels ,array('class' => 'form-control')) !!}          
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">

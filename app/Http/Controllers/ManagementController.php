@@ -372,7 +372,6 @@ class ManagementController extends Controller
                 if(!file_exists($file)) {
                     File::makeDirectory($file);
                 }
-
                 foreach($lang as $listOne) {
                     $files = $request->file($listOne);
                     $fileName = date('m-d-Y_hia').$files->getClientOriginalName();
