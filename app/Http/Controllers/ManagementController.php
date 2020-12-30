@@ -374,7 +374,7 @@ class ManagementController extends Controller
                 foreach($lang as $listOne) {
 			//dd($listOne);die;
                     $files = $request->file($listOne);
-                    $fileName = $listOne.'_'.$request->get('filename').''.substr($files->getClientOriginalName(),-4);
+                    $fileName = $listOne.'_'.$request->get('filename').'.'.$request->file($listOne)->getClientOriginalExtension();
                     $files->move($filepath, $fileName);
                 } 
             }
