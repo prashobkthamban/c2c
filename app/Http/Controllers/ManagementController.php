@@ -351,13 +351,12 @@ class ManagementController extends Controller
     }
 
     public function addGeneralFile(Request $request) {
-        
         $lang = explode (",", $request->get('file_lang'));
         $validator = Validator::make($request->all(), [
             'file_type' => 'required',
             'filename' => 'required|alpha_dash',
         ]);    
-
+	
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
@@ -367,15 +366,16 @@ class ManagementController extends Controller
 
             $general_file_id = DB::table('voicefilesnames')->insertGetId($generalFile);
             if (!empty($request->get('file_lang')) && file_exists(config('constants.general_file'))) {
-                $file = config('constants.general_file').'/'.$request->get('filename');
+                $filepath = config('constants.general_file');
 
-                if(!file_exists($file)) {
+               /* if(!file_exists($file)) {
                     File::makeDirectory($file);
-                }
+                }*/
                 foreach($lang as $listOne) {
+			//dd($listOne);die;
                     $files = $request->file($listOne);
-                    $fileName = date('m-d-Y_hia').$files->getClientOriginalName();
-                    $files->move($file, $fileName);
+                    $fileName = $listOne.'_'.$request->get('filename').''.substr($files->getClientOriginalName(),-4);
+                    $files->move($filepath, $fileName);
                 } 
             }
             $data['success'] = 'Menu added successfully.';

@@ -98,7 +98,7 @@
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">File to play in {{$lang->Language}} *</label>
                                         <span id="lang_id_{{$lang->id}}"></span> 
-                                        {!! Form::file($lang->id, null, ['class' => 'form-control file_play', 'id' => '$lang->id', 'enctype' => 'multipart/form-data', 'multiple' => true]) !!}
+                                        {!! Form::file($lang->shortcode, null, ['class' => 'form-control file_play', 'id' => '$lang->id', 'enctype' => 'multipart/form-data', 'multiple' => true]) !!}
                                     </div>
                                 </div> 
                                 @endforeach 
