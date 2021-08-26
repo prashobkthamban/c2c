@@ -47,7 +47,7 @@ class UserController extends Controller
         $users = DB::table('accountgroup')
             ->leftJoin('resellergroup', 'accountgroup.resellerid', '=', 'resellergroup.id')
             ->leftJoin('dids', 'accountgroup.did', '=', 'dids.id')
-            ->select('accountgroup.*', 'resellergroup.resellername', 'dids.did')
+            ->select('accountgroup.*', 'resellergroup.resellername', 'resellergroup.id', 'dids.did')
             ->get();
         return view('user.user_list', compact('users'));
     }
@@ -71,7 +71,7 @@ class UserController extends Controller
         $sms_gateway = $account_group->sms_api_gateway();
         $sms_gateway = $sms_gateway->prepend('Select gateway', '0');
         $did_list = $this->did->get_did();
-        $did_list = $did_list->prepend('Select Did', '');
+        $did_list = $did_list->prepend('Select Dids', '');
 
         return view('user.add_user', compact('lang', 'coperate', 'default', 'did_list', 'sms_gateway', 'c2capi', 'cdr_api_key'));
     }
@@ -172,7 +172,6 @@ class UserController extends Controller
         $account_group = new Accountgroup();
         $did = new Dids();
         $user_edit = $account_group->findOrFail($id);
-        //dd($user_edit);
         $lang = $account_group->get_language();
         $lang = $lang->prepend('Select language', '0');
         $coperate = $account_group->get_coperate();
@@ -180,9 +179,6 @@ class UserController extends Controller
         $sms_gateway = $account_group->sms_api_gateway();
         $sms_gateway = $sms_gateway->prepend('Select gateway', '0');
         $did_list = $did->get_did($id);
-        $did_listextra = $did->get_did();
-	$did_list = $did_list->merge($did_listextra);
-        //$did_list = $did_list->prepend('Select Did', '');
         return view('user.edit_user', compact('user_edit','lang', 'coperate', 'did_list', 'sms_gateway'));
     }
 
@@ -190,13 +186,10 @@ class UserController extends Controller
     {
         $account_group = new Accountgroup();
         $user_edit = $account_group->findOrFail($id);
-        //dd($user_edit);
         return view('user.edit_user_settings',compact('user_edit'));
     }
 
-public function updatesettings($id, Request $request) {
-
-        //print_r($request->all());exit();
+ public function updatesettings($id, Request $request) {
         $account_group = new Accountgroup();
        	$user_edit = $account_group->findOrFail($id);
         $rules = [
@@ -235,12 +228,10 @@ public function updatesettings($id, Request $request) {
             toastr()->success('User update successfully.');
             return redirect()->route('UserList');
         }
-}
+    }
 
 
     public function update($id, Request $request) {
-        //print_r($request->all());exit;
-        //dd($id);
         $account_group = new Accountgroup();
         $did = new Dids();
         $lang = $account_group->get_language();
@@ -319,7 +310,6 @@ public function updatesettings($id, Request $request) {
                 'crm_users'=>$request->get('crm_users'),
                 'leads_access'=>$request->get('leads_access'),
             ];
-            /*dd($account_group);exit;*/
             $user_edit->fill($account_group)->save();
             $this->did::where('id', $request->get('did'))->update(array('assignedto' => $id));
             toastr()->success('User update successfully.');
@@ -349,7 +339,6 @@ public function updatesettings($id, Request $request) {
         $coperate = $coperate->prepend('Select coperate', null);
         $customer = getAccountgroups();
         $customer = $customer->prepend('Select customer', '');
-        //dd($customer);
 
         $query = DB::table('account')
              // ->leftJoin('accountgroup', 'account.groupid', '=', 'accountgroup.id')
@@ -367,7 +356,6 @@ public function updatesettings($id, Request $request) {
         }
         $query->select('account.*', 'resellergroup.resellername');
         $accounts = $query->orderBy('id', 'desc')->paginate(10);
-        //dd($accounts);
         return view('user.account_list', compact('accounts', 'coperate', 'customer'));
     }
 
@@ -630,7 +618,6 @@ public function updatesettings($id, Request $request) {
     public function operatorgrp() {
         $acc_grp = DB::table('accountgroup')->where('id', Auth::user()->groupid)->select('operator_dpt', 'c2c')->get();
         $opCount =  DB::table('operatoraccount')->where('groupid', Auth::user()->groupid)->count();
-        //dd($opCount);
         if($acc_grp[0]->operator_dpt == 'Yes')
         {
            $operatordept = DB::table('operatordepartment')->where('groupid', Auth::user()->groupid)->where('DT', '1')->where('C2C', '0')->get();
@@ -684,7 +671,6 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         }
         $query = DB::select($sql);
         $data['operators'] =  DB::table('operatoraccount')->where('groupid', Auth::user()->groupid)->select('id', 'opername')->get();
-        //dd($query);
         $data['account_det'] = $query;
         return $data;
     }

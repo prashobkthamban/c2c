@@ -17,7 +17,7 @@ class Dids extends Model
 
     public function get_did($id = null) {
     	if(!empty($id)) {
-    		return DB::table('dids')->where('assignedto', $id)->pluck('did', 'id');
+    		return DB::table('dids')->whereIn('assignedto', [$id,0])->pluck('did', 'id');
     	} else {
     		return DB::table('dids')->where('assignedto', 0)->pluck('did', 'id');
     	}

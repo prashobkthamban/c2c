@@ -21,10 +21,19 @@
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
                                         <tr>
+					    @if(Auth::user()->usertype == 'admin')
+					    <th>ID</th>
+					    @endif
                                             <th>Customer name</th>
                                             <th>Coperate name</th>
                                             <th>Start Date</th>
                                             <th>End date</th>
+					    @if(Auth::user()->usertype == 'admin')
+					    <th>Channels</th>
+					    <th>SMS</th>
+					    <th>DT</th>
+					    <th>Multi-Lang</th>
+					    @endif
                                             <th>Did</th>
                                             <th>Created At</th>
                                             <th>Status</th>
@@ -39,6 +48,12 @@
                                             <td>{{$user->resellername}}</td>
                                             <td>{{ date('d-m-Y', strtotime($user->startdate)) }}</td>
                                             <td>{{ date('d-m-Y', strtotime($user->enddate)) }}</td>
+					    @if(Auth::user()->usertype == 'admin')
+					    <td>{{$user->c2c_channels}}</td>
+					    <td>{{$user->sms_support}}</td>
+					    <td>{{$user->operator_dpt}}</td>
+					    <td>{{$user->multi_lang}}</td>
+					    @endif
                                             <td>{{$user->did}}</td>
                                             <td>{{ date('d-m-Y', strtotime($user->created_at)) }}</td>
                                             <td>{{$user->status}}</td>
@@ -57,10 +72,19 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
+					    @if(Auth::user()->usertype == 'admin')
+					    <th>ID</th>
+					    @endif
                                             <th>Customer name</th>
                                             <th>Coperate name</th>
                                             <th>Start Date</th>
                                             <th>End date</th>
+					    @if(Auth::user()->usertype == 'admin')
+					    <th>Channels</th>
+					    <th>SMS</th>
+					    <th>DT</th>
+					    <th>Multi-Lang</th>
+					    @endif
                                             <th>Did</th>
                                             <th>created At</th>
                                             <th>Status</th>

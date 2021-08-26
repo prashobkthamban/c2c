@@ -27,6 +27,7 @@
                                             <th>Customer</th>
                                             <th>Welcome</th>
                                             <th>Multi Language file</th>
+					    <th>DID</th>
                                             <th>MOH</th>
                                             <th>Action</th>
                                         </tr>
@@ -38,6 +39,7 @@
                                             <td>{{$listOne->name}}</td>
                                             <td>{{$listOne->welcomemsg}}</td>
                                             <td>{{$listOne->flanguagesection}}</td>
+					    <td>{{$listOne->did_number}}</td>
                                             <td>{{$listOne->MOH}}</td>
                                             <td><a href="#" data-toggle="modal" data-target="#add_voice_file" class="text-success mr-2 edit_voicefile" id="{{$listOne->id}}">
                                                     <i class="nav-icon i-Pen-2 font-weight-bold"></i>
@@ -51,6 +53,7 @@
                                             <th>Customer</th>
                                             <th>Welcome</th>
                                             <th>Multi Language file</th>
+					    <th>DID</th>
                                             <th>MOH</th>
                                             <th>Action</th>
                                         </tr>
@@ -93,6 +96,7 @@
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Did *</label> 
                                          {!! Form::select('did', ['' => 'Select Did'], null,array('class' => 'form-control', 'id' => 'did')) !!}
+					 {!! Form::hidden('did_number', '', array('id' =>'did_number')) !!}
                                     </div>
                                 </div>  
                                 <div class="row">
@@ -307,6 +311,11 @@
                 return false;
             }
         });
+ 	
+	$('#did').change(function(){ 
+   	  var did_number = $( "#did option:selected" ).text();
+	  $("#did_number").val(did_number);	  
+	});
         
         $( '.add_voicefile_form' ).on( 'submit', function(e) {
             e.preventDefault();
@@ -356,7 +365,7 @@
                 console.log(res);
                 $("#groupid").val(res.groupid);
                 didList(res.groupid, res.did);
-                //$("#did").val(res.did);
+                $("#did_number").val(res.did_number);
                 $("#voicefile_id").val(res.id);
                 $("#mainmenupress0").val(res.mainmenupress0);
                 $("#thank4caling").val(res.thank4caling);

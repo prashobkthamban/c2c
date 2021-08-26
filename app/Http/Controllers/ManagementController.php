@@ -258,6 +258,7 @@ class ManagementController extends Controller
             $voicefile = [
                      'groupid' => $request->get('groupid'),
                      'did'=> $request->get('did'),
+		     'did_number'=> $request->get('did_number'),
                      'wfile'=> $request->get('wfile'), 
                      'languagesection' => $request->get('languagesection'),
                      'mainmenupress0' => $request->get('mainmenupress0'),
@@ -282,7 +283,7 @@ class ManagementController extends Controller
                     $old_welcomefile = $request->get('old_welcomemsg');
                     $old_langfile = $request->get('old_flanguagesection');
                     $groupid = $request->get('groupid');
-                    
+              //dd($voicefile);    
             if(empty($request->get('id'))) {
                 $voice_file_id = DB::table('did_voicefilesettings')->insertGetId($voicefile);
                 $this->saveVoicefile($welcomefile, $langfile, $old_welcomefile, $old_langfile, $voice_file_id, $groupid);

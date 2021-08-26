@@ -83,8 +83,8 @@ class CdrReport extends Model
             $data->where('cdr.groupid',Auth::user()->groupid );
         }
         
-        $result = $data->orderBy('datetime','DESC')->get();
-       //dd($result->operatorAccount);
+        $result = $data->orderBy('cdr.datetime','ASC')->get();
+       //dd($result);
        return $result;
     }
 

@@ -407,7 +407,6 @@ audio {
                             <tbody>
                             @if(!empty($result))
                                 @foreach($result as $row )
-                               <?php //dd($row->cdrid); ?>
                             <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable" id="row_{{ $row->cdrid }}">
                             @if(Auth::user()->usertype == 'groupadmin')
                             <td><input type="checkbox" name="cdr_checkbox" id="{{$row->cdrid}}" value="{{$row->cdrid}}" class="allselect"></td>

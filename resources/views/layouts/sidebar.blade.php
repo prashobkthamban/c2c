@@ -89,13 +89,13 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-                        <li class="nav-item" data-item="pbx">
+                        <!--<li class="nav-item" data-item="pbx">
                             <a class="nav-item-hold" href="#">
                                 <i class="nav-icon i-Clock-4"></i>
                                 <span class="nav-text">Voice Out</span>
                             </a>
                             <div class="triangle"></div>
-                        </li>
+                        </li>-->
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('CoperateGroup')}}">
                                 <i class="nav-icon i-Administrator"></i>
@@ -164,12 +164,12 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-                        <li class="nav-item" data-item="">
+                        <!--<li class="nav-item" data-item="">
                             <a href="{{url('cdrreportout')}}" class="nav-item-hold">
                                 <i class="nav-icon i-Clock-4"></i>
                                 <span class="item-name">Voice Out</span>
                             </a>
-                        </li>
+                        </li>-->
                         <!-- <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('OperatorShifts')}}">
                                 <i class="nav-icon i-Over-Time"></i>
