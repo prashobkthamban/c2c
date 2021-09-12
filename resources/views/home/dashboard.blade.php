@@ -584,7 +584,7 @@
 
                                             </td>
                                             <td>
-                                                <a href="{{ route('ListLeads') }}" class="text-success mr-2">
+                                                <a href="#" class="text-success mr-2">
                                             <i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                         </a>
                                             </td>
@@ -939,7 +939,7 @@
 
                                             </td>
                                             <td>
-                                                <a href="{{ route('ListLeads') }}" class="text-success mr-2">
+                                                <a href="#" class="text-success mr-2">
                                             <i class="nav-icon i-Pen-2 font-weight-bold"></i>
                                         </a>
                                             </td>
@@ -1475,7 +1475,7 @@
 
                     $.each(obj['users_list'], function( index, value ) {
 
-					  html += '<tr><td>'+i+'</td><td>'+value.opername+'</td><td>'+value.phonenumber+'</td><td>'+obj['lead_count'][value.id]+'</td><td><a href="{{ route('ListLeads') }}" class="text-success mr-2"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a></td></tr>';
+					  html += '<tr><td>'+i+'</td><td>'+value.opername+'</td><td>'+value.phonenumber+'</td><td>'+obj['lead_count'][value.id]+'</td><td><a href="#" class="text-success mr-2"><i class="nav-icon i-Pen-2 font-weight-bold"></i></a></td></tr>';
 					  i++;
 					});
 

@@ -202,14 +202,6 @@ $group_admin = [];
             ->whereDate('datetime', '=', date("Y-m-d"))
             ->count();
 
-        $level_1 = DB::table('lead_stages')->where('levels', '=', '1')->get()->count();
-        $level_2 = DB::table('lead_stages')->where('levels', '=', '2')->get()->count();
-        $level_3 = DB::table('lead_stages')->where('levels', '=', '3')->get()->count();
-        $level_4 = DB::table('lead_stages')->where('levels', '=', '4')->get()->count();
-        $level_5 = DB::table('lead_stages')->where('levels', '=', '5')->get()->count();
-        $level_6 = DB::table('lead_stages')->where('levels', '=', '6')->get()->count();
-        $level_7 = DB::table('lead_stages')->where('levels', '=', '7')->get()->count();
-
         $todo_lists = DB::table('todotask')
             ->select('*')
             ->where('status','!=','Done')
@@ -230,10 +222,6 @@ $group_admin = [];
                         ->where('operatorid','=',$value->id)
                         ->get()->count();
             }
-
-        $remainders = DB::table('lead_reminders')
-            ->where('user_id','=',Auth::user()->id)
-            ->get();
 
         if (Auth::user()->usertype == 'groupadmin') {
 
@@ -301,18 +289,6 @@ $group_admin = [];
                 }
 
             }
-
-            $remainders = DB::table('lead_reminders')
-                ->where('user_id','=',Auth::user()->id)
-                ->get();
-
-            $level_1 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '1')->get()->count();
-            $level_2 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '2')->get()->count();
-            $level_3 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '3')->get()->count();
-            $level_4 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '4')->get()->count();
-            $level_5 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '5')->get()->count();
-            $level_7 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '6')->get()->count();
-            $level_6 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '7')->get()->count();
 
         }
 
@@ -394,29 +370,10 @@ $group_admin = [];
 
             }
 
-            $remainders = DB::table('lead_reminders')
-                ->where('user_id','=',Auth::user()->id)
-                ->get();
-
-            /*echo "<pre>";
-            print_r($users_list);exit();*/
-
         }
         else if (Auth::user()->usertype == 'operator')
         {
-            $level_1 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '1')->get()->count();
-            $level_2 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '2')->get()->count();
-            $level_3 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '3')->get()->count();
-            $level_4 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '4')->get()->count();
-            $level_5 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '5')->get()->count();
-            $level_6 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '6')->get()->count();
-            $level_7 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '7')->get()->count();
-
             $users_list = '';
-
-            $remainders = DB::table('lead_reminders')
-                ->where('user_id','=',Auth::user()->id)
-                ->get();
 
             $lead_count = '';
         }

@@ -437,11 +437,6 @@
                             <span class="nav-text">Sms Api</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{route('emailConfig')}}">
-                            <span class="nav-text">Email Config</span>
-                        </a>
-                    </li>
                 </ul>
                 <ul class="childNav" data-parent="insight">
                     <li class="nav-item">
@@ -695,51 +690,7 @@
             <div class="sidebar-overlay"></div>
         </div>
         <!--=============== Left side End ================-->
-        <?php
-        use Illuminate\Support\Facades\DB;
-        date_default_timezone_set('Asia/Kolkata');
 
-        $list_remainder = DB::table('lead_reminders')
-                    ->where('lead_reminders.user_id','=',Auth::user()->id)
-                    ->whereDate('lead_reminders.date', '>=', date('Y-m-d'))
-                    ->leftJoin('cdrreport_lead', 'cdrreport_lead.id', '=', 'lead_reminders.cdrreport_lead_id')
-                    ->select('lead_reminders.*','cdrreport_lead.email')
-                    ->get();
-
-        //print_r($list_remainder);
-
-        $time = date('H:i', strtotime("+30 minutes"));
-        $date = date('Y-m-d');
-       // echo $date."::".$time;
-        $i = 0;
-        foreach ($list_remainder as $key => $value) {
-
-            if ($value->date == $date) {
-
-                //print_r($value);
-                //echo "<br>";
-                $cleantime=substr($value->time,0,5);
-                //echo $cleantime;
-
-                if ($cleantime == $time) { ?>
-
-                    <div class="alert alert-danger mine" id="myDIV<?php echo $i;?>">
-                        <h3>Remainder</h3>
-                        <h4>Title is: <?php echo $value->title;?></h4>
-                        <p>
-                            Your Remainder is after 1/2 Hour
-                        </p>
-                        <p>
-                            Description : <?php echo $value->task;?>
-                        </p>
-                        <hr class="message-inner-separator">
-                        <button class="caption-helper btn btn-round" onclick="myFunctions('myDIV<?php echo $i;?>')">Get It</button>
-                    </div>
-                <?php }
-            } $i++;
-        }
-
-        ?>
 <script type="text/javascript">
     function myFunctions(id) {
       var x = document.getElementById(id);

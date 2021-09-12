@@ -47,7 +47,7 @@ class UserController extends Controller
         $users = DB::table('accountgroup')
             ->leftJoin('resellergroup', 'accountgroup.resellerid', '=', 'resellergroup.id')
             ->leftJoin('dids', 'accountgroup.did', '=', 'dids.id')
-            ->select('accountgroup.*', 'resellergroup.resellername', 'resellergroup.id', 'dids.did')
+            ->select('accountgroup.*', 'resellergroup.resellername', 'dids.did')
             ->get();
         return view('user.user_list', compact('users'));
     }

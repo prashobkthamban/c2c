@@ -45,11 +45,6 @@ class ServiceController extends Controller
         $query->select('billing.*', 'accountgroup.name', 'resellergroup.resellername', 'dids.rdins', 'dids.rdnid')->orderBy('id', 'desc');
         $result = $query->paginate(10);
 
-        $lead_count = DB::table('cdrreport_lead')
-                        ->select('cdrreport_lead.operatorid')
-                        ->where('user_id','=',Auth::user()->id)
-                        ->count();
-
         if (Auth::user()->usertype == 'operator') {
             $lead_allowed = DB::table('operatoraccount')->where('opername',Auth::user()->username)->select('lead_access')->first();
             $total_access_leads = $lead_allowed->lead_access;
@@ -72,7 +67,7 @@ class ServiceController extends Controller
         $response = curl_exec($ch);
         curl_close($ch);
     
-        return view('service.billing_list', compact('result','lead_count','total_access_leads','response'));
+        return view('service.billing_list', compact('result','total_access_leads','response'));
     }
 
     public function billDetails($groupid) {

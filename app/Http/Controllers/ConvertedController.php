@@ -121,7 +121,7 @@ class ConvertedController extends Controller
     public function edit(Request $request)
     {
         //print_r($request->get('myid'));
-        $user = DB::table('converted')->where('converted.id', $request->get('myid'))->Leftjoin('cdrreport_lead','cdrreport_lead.id','=','converted.cdrreport_lead_id')->select('cdrreport_lead.first_name as cdr_firstname','cdrreport_lead.last_name as cdr_lastname','cdrreport_lead.email as cdr_email','cdrreport_lead.company_name as cdr_companyname','cdrreport_lead.phoneno as cdr_phn','converted.*')->first();
+        $user = DB::table('converted')->where('converted.id', $request->get('myid'))->select('cdrreport_lead.first_name as cdr_firstname','cdrreport_lead.last_name as cdr_lastname','cdrreport_lead.email as cdr_email','cdrreport_lead.company_name as cdr_companyname','cdrreport_lead.phoneno as cdr_phn','converted.*')->first();
         //print_r($user);exit;
         echo json_encode($user);
         //exit;

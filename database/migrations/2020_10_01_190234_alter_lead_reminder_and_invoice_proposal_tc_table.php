@@ -13,9 +13,6 @@ class AlterLeadReminderAndInvoiceProposalTcTable extends Migration
      */
     public function up()
     {
-        Schema::table('lead_reminders', function($table) {
-            $table->boolean('is_read')->default(0);
-        });
 
         Schema::table('terms_condition_invoice', function($table) {
             $table->string('name',2000)->change();
