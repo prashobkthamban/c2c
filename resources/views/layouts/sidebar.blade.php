@@ -141,15 +141,6 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-                        @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
-                        <li class="nav-item" data-item="settings">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">CRM</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        @endif
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('reminder')}}">
                                 <i class="nav-icon i-Bell"></i>
@@ -244,13 +235,6 @@
                                 <span class="item-name">Live Calls</span>
                             </a>
                         </li>
-                        <li class="nav-item" data-item="settings">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">CRM</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
                         <li class="nav-item">
                             <a class="nav-item-hold" href="{{route('associatedGroups')}}">
                                 <i class="nav-icon i-Administrator"></i>
@@ -267,15 +251,6 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-                        @if(Auth::user()->load('accountdetails')->accountdetails->crm == 1)
-                        <li class="nav-item" data-item="settings">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">CRM</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        @endif
 						<li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('reminder')}}">
                                 <i class="nav-icon i-Bell"></i>
@@ -476,44 +451,6 @@
                         </a>
                     </li>
                 </ul>
-                <ul class="childNav" data-parent="insightcrm">
-                    <li class="nav-item">
-                        <a href="{{url('/crm/category-list')}}">
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">Categories</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{url('/crm/sub-category-list')}}">
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">Sub Categories</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{url('/crm/status-list')}}">
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">Status</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{route('LeadList')}}">
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">Leads</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a>
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">Email & SMS Settings</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a>
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">Email & Templates</span>
-                        </a>
-                    </li>
-                </ul>
                 <ul class="childNav" data-parent="user_dept">
                     <li class="nav-item">
                         <a href="{{url('optdept_list')}}">
@@ -572,119 +509,6 @@
                     </li>
 
                 </ul>
-
-                <?php
-                if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') { ?>
-                    <ul class="childNav" data-parent="settings">
-                        <li class="nav-item">
-                            <a href="{{url('settings/category')}}">
-                                <span class="item-name">Category</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('product')}}">
-                                <span class="item-name">Products</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('cdrreport_lists')}}">
-                                <span class="item-name">List Lead</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('cdrreport/converted')}}">
-                                <span class="item-name">Customer</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('proposal/list')}}">
-                                <span class="item-name">Proposal</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('invoice/list')}}">
-                                <span class="item-name">Invoice</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('email_template/list')}}">
-                                <span class="item-name">Email Template</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('sms_template/list')}}">
-                                <span class="item-name">SMS Template</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('sms_api/list')}}">
-                                <span class="item-name">SMS/Email Api</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('terms_condition/add')}}">
-                                <span class="item-name">Terms And Condition</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('transfer_leads/index')}}">
-                                <span class="item-name">Transfer Leads</span>
-                            </a>
-                        </li>
-
-
-                    </ul>
-                <?php }else{ ?>
-                    <ul class="childNav" data-parent="settings">
-                        <li class="nav-item">
-                            <a href="{{url('cdrreport_lists')}}">
-                                <span class="item-name">List Lead</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('cdrreport/converted')}}">
-                                <span class="item-name">Customer</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('proposal/list')}}">
-                                <span class="item-name">Proposal</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('invoice/list')}}">
-                                <span class="item-name">Invoice</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('email_template/list')}}">
-                                <span class="item-name">Email Template</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('sms_template/list')}}">
-                                <span class="item-name">SMS Template</span>
-                            </a>
-                        </li>
-
-                    </ul>
-                <?php }?>
-
 
             </div>
             <div class="sidebar-overlay"></div>

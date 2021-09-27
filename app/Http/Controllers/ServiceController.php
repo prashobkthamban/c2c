@@ -188,7 +188,6 @@ class ServiceController extends Controller
             ->leftJoin('operatordepartment', 'cur_channel_used.departmentid', '=', 'operatordepartment.id');
 
         if(Auth::user()->usertype == 'reseller') {
-            $query->where('cur_channel_used.resellerid', Auth::user()->resellerid);
             $query->where('cur_channel_used.calltype', 'ivr');
         } elseif(Auth::user()->usertype == 'groupadmin') {
             $query->where('cur_channel_used.groupid', Auth::user()->groupid);
