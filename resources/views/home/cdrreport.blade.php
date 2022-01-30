@@ -23,12 +23,11 @@
         width: 100% !important;
     }
 
-    .lead_modal {
-        border-radius: 0px !important;
-    }
-
     audio {
         margin-left: 82px;
+    }
+    .datepicker {
+      z-index: 1600 !important; /* has to be larger than 1050 */
     }
 </style>
 @endsection
@@ -38,220 +37,41 @@
     <h1>CDR Report</h1>
 </div>
 
-<div class="modal fade" id="AddLead" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
-    <div class="col-md-12">
-        <div class="card mb-4 lead_modal">
-            <div class="card-body">
-                <div class="card-title mb-3">Add Lead<a href="" class="btn btn-primary" style="float: right;">Back</a></div>
-                {!! Form::open(['action' => 'ReportController@addLead', 'method' => 'post','enctype' => 'multipart/form-data']) !!}
-                <form method="post">
-                    {{ csrf_field() }}
-                    <div class="row">
-                        <input type="hidden" name="cdrreport_id" id="cdrreport_id">
-                        <div class="col-md-12 form-group mb-3">
-                            <label for="first_name">First Name*</label>
-                            <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter your First Name" required="" />
-                        </div>
-
-                        <div class="col-md-12 form-group mb-3">
-                            <label for="last_name">Last Name*</label>
-                            <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Enter your Last Name" required="" />
-                        </div>
-
-                        <div class="col-md-12 form-group mb-3">
-                            <label for="company_name">Company Name</label>
-                            <input type="text" name="company_name" id="company_name" class="form-control" placeholder="Enter Company Name" />
-                        </div>
-
-                        <div class="col-md-12 form-group mb-3">
-                            <label for="email">Email</label>
-                            <input type="email" name="email" id="email" class="form-control" placeholder="Enter Email Address" />
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <label for="phoneno">Phone No*</label>
-                            <input type="text" name="phoneno" id="phoneno" class="form-control" placeholder="Enter Phone No" required="" />
-                        </div>
-
-                        <div class="col-md-6 form-group mb-3">
-                            <label for="alt_phoneno">Another Phone No</label>
-                            <input type="text" name="alt_phoneno" id="alt_phoneno" class="form-control" placeholder="Enter Another Phone No" />
-                        </div>
-
-                        <div class="col-md-12">
-                            <label for="products">Products</label>
-                            <div class="row">
-                                <section class="container col-xs-12">
-                                    <div class="table table-responsive">
-                                        <!-- <h4>Select Details</h4> -->
-                                        <table id="ppsale" class="table table-striped table-bordered" border="0">
-
-                                            <tbody id="TextBoxContainer">
-                                                <td style="width: 50%;">
-                                                    <select name="products[]" id="products" class="form-control js-example-basic-single products">
-                                                        <option>Select Products</option>
-                                                        @if(!empty($products))
-                                                        @foreach($products as $prod )
-                                                        <option value="{{$prod->id}}">{{$prod->name}}
-                                                        </option>
-                                                        @endforeach
-                                                        @endif
-                                                    </select>
-                                                    <input type="hidden" name="pro_amount[]" id="pro_amount" class="form-control pro_amount">
-                                                </td>
-                                                <td>
-                                                    <input type="number" name="quantity[]" id="quantity" class="form-control quantity" placeholder="Enter Quantity" min="1" />
-                                                </td>
-                                                <td>
-                                                    <input type="text" name="sub_amount[]" id="sub_amount" class="form-control sub_amount" placeholder="Sub Amount" readonly="" />
-                                                </td>
-                                                </tr>
-                                            </tbody>
-                                            <tfoot>
-                                                <tr>
-                                                    <th>
-                                                        <label for="total_amount">Total Amount:</label>
-                                                        <input type="text" name="total_amount" id="total_amount" style="border: none;">
-                                                    </th>
-                                                    <th colspan="5">
-                                                        <button id="btnAdd" type="button" class="btn btn-success" data-toggle="tooltip" data-original-title="Add more" style="float: right;">+</button>
-                                                    </th>
-                                                </tr>
-                                            </tfoot>
-                                        </table>
-                                    </div>
-                                </section>
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 form-group mb-3">
-                            <label for="owner_name">Owner Name</label>
-                            <select id="owner_name" name="owner_name" class="form-control">
-                                <option value="<?php echo Auth::user()->id; ?>"><?php echo Auth::user()->username; ?></option>
-                                @foreach($users_lists as $users_list)
-                                <option value="{{$users_list->id}}">{{$users_list->opername}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div class="col-md-12 form-group mb-3">
-                            <label for="lead_stage">Lead Stage</label>
-                            <select class="js-example-basic-single" name="lead_stage" id="lead_stage">
-                                <option value="New">New</option>
-                                <option value="Contacted">Contacted</option>
-                                <option value="Interested">Interested</option>
-                                <option value="Under review">Under review</option>
-                                <option value="Demo">Demo</option>
-                                <option value="Unqualified">Unqualified</option>
-                            </select>
-                        </div>
-
-                        <div class="col-md-12">
-                            <button class="btn btn-primary">Submit</button>
-                        </div>
-                    </div>
-                    {!! Form::close() !!}
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="ViewLead" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true" style="width: 50%;right:0!important;margin-left: auto;">
-    <div class="col-md-12">
-        <div class="card mb-4 lead_modal">
-            <div class="card-body">
-                <div class="card-title mb-3">View Lead<a href="" class="btn btn-primary" style="float: right;">Back</a></div>
-                <div class="row">
-                    <div class="col-md-12 form-group mb-3">
-                        <label for="first_name">First Name</label>
-                        <input type="text" id="view_lead_first_name" class="form-control" />
-                    </div>
-
-                    <div class="col-md-12 form-group mb-3">
-                        <label for="last_name">Last Name</label>
-                        <input type="text" id="view_lead_last_name" class="form-control" />
-                    </div>
-
-                    <div class="col-md-12 form-group mb-3">
-                        <label for="company_name">Company Name</label>
-                        <input type="text" id="view_lead_company_name" class="form-control" />
-                    </div>
-
-                    <div class="col-md-12 form-group mb-3">
-                        <label for="email">Email</label>
-                        <input type="email" id="view_lead_email" class="form-control" />
-                    </div>
-
-                    <div class="col-md-6 form-group mb-3">
-                        <label for="phoneno">Phone No</label>
-                        <input type="text" id="view_lead_phoneno" class="form-control" />
-                    </div>
-
-                    <div class="col-md-6 form-group mb-3">
-                        <label for="alt_phoneno">Another Phone No</label>
-                        <input type="text" id="view_lead_alt_phoneno" class="form-control" />
-                    </div>
-
-                    <div class="col-md-12">
-                        <label for="products">Products</label>
-                        <div class="row">
-                            <section class="container col-xs-12">
-                                <div class="table table-responsive">
-                                    <table class="table table-striped table-bordered" border="0">
-                                        <tbody>
-
-                                        </tbody>
-                                        <tfoot>
-                                            <tr>
-                                                <th>
-                                                    <label for="total_amount">Total Amount:</label>
-                                                    <input type="text" id="view_lead_total_amount" class="form-control" />
-                                                </th>
-                                            </tr>
-                                        </tfoot>
-                                    </table>
-                                </div>
-                            </section>
-                        </div>
-                    </div>
-
-                    <div class="col-md-12 form-group mb-3">
-                        <label for="owner_name">Owner Name</label>
-                        <input type="text" id="view_lead_owner_name" class="form-control" />
-                    </div>
-
-                    <div class="col-md-12 form-group mb-3">
-                        <label for="lead_stage">Lead Stage</label>
-                        <input type="text" id="view_lead_lead_stage" class="form-control" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="separator-breadcrumb border-top"></div>
-@if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype=='operator')
+@if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator' || Auth::user()->usertype == 'admin')
 <div class="row">
     <div class="col-lg-12 col-md-12">
         <div class="card mb-2">
             <div class="card-body">
-                <div id="filter-panel" class="filter-panel collapse">
+                <div id="filter-panel" class="filter-panel collapse {{count($requests) > 0 ? 'show' : ''}}">
                     <h5 class="ml-3">Search Panel</h5></br>
                     <form class="form" role="form" id="cdr_filter_form">
                         <div class="row" style="margin-right: 24px;margin-left: 24px;">
-                            @if( Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
+                            @if(Auth::user()->usertype == 'admin')
+                            <div class="col-md-4">
+                                <label class="filter-col" for="pref-perpage">Customers</label>
+                                <select name="customer" class="form-control">
+                                    <option value="">All</option>
+                                    @if(!empty($customers))
+                                    @foreach($customers as $customer )
+                                    <option value="{{$customer->id}}" @if(isset($requests['customer']) && $customer->id == $requests['customer']) selected @endif>{{$customer->name}}
+                                    </option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            @endif
+                            @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Departments</label>
                                 <select name="department" class="form-control">
                                     <option value="">All</option>
                                     @if(!empty($departments))
                                     @foreach($departments as $dept )
-                                    <option value="{{$dept->dept_name}}">{{$dept->dept_name}}
+                                    <option value="{{$dept->dept_name}}" @if(isset($requests['department']) && $dept->dept_name == $requests['department']) selected @endif>{{$dept->dept_name}}
                                     </option>
                                     @endforeach
                                     @endif
-
                                 </select>
                             </div>
                             @endif
@@ -262,7 +82,7 @@
                                     <option value="">All</option>
                                     @if(!empty($operators))
                                     @foreach($operators as $opr )
-                                    <option value="{{$opr->id}}">{{$opr->opername}}
+                                    <option value="{{$opr->id}}" @if(isset($requests['operator']) && $opr->id == $requests['operator']) selected @endif>{{$opr->opername}}
                                     </option>
                                     @endforeach
                                     @endif
@@ -270,34 +90,33 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Cdr Tag</label>
-                                {!! Form::select('tag', $tags->prepend('Select Tag', ''), null,array('class' => 'form-control', 'id' => 'tag')) !!}
+                                {!! Form::select('tag', $tags->prepend('Select Tag', ''), isset($requests['tag']) ? $requests['tag'] : '' ,array('class' => 'form-control', 'id' => 'tag')) !!}
                             </div>
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Status</label>
-                                {!! Form::select('status', array('' => 'All', 'MISSED' => 'Missed', 'ANSWERED' => 'Answered', 'DIALING' => 'Dialing', 'LIVECALL' => 'Live call', 'AFTEROFFICE' => 'After Office'), null,array('class' => 'form-control')) !!}
+                                {!! Form::select('status', array('' => 'All', 'MISSED' => 'Missed', 'ANSWERED' => 'Answered', 'DIALING' => 'Dialing', 'LIVECALL' => 'Live call', 'AFTEROFFICE' => 'After Office'), isset($requests['status']) ? $requests['status'] : '',array('class' => 'form-control')) !!}
                             </div>
-                            @endif
-                            @if( Auth::user()->usertype == 'groupadmin')
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Assigned To</label>
                                 <select class="form-control" name="assigned_to">
                                     <option value="">All</option>
                                     @if(!empty($operators))
                                     @foreach($operators as $opr )
-                                    <option value="{{$opr->id}}">{{$opr->opername}}
+                                    <option value="{{$opr->id}}" @if(isset($requests['assigned_to']) && $opr->id == $requests['assigned_to']) selected @endif>{{$opr->opername}}
                                     </option>
                                     @endforeach
                                     @endif
                                 </select>
                             </div>
                             @endif
+                            @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Dnid Name</label>
                                 <select class="form-control" name="did_no">
                                     <option value="">All</option>
                                     @if(!empty($dnidnames))
                                     @foreach($dnidnames as $dnid )
-                                    <option value="{{$dnid->did_no}}">{{$dnid->did_no}}
+                                    <option value="{{$dnid->did_no}}" @if(isset($requests['did_no']) && $dnid->did_no == $requests['did_no']) selected @endif>{{$dnid->did_no}}
                                     </option>
                                     @endforeach
                                     @endif
@@ -305,30 +124,41 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-search">By Caller Number</label>
-                                <input type="text" class="form-control input-sm" name="caller_number">
+                                <input type="text" class="form-control input-sm" name="caller_number" value="@if(isset($requests['caller_number'])) {{$requests['caller_number']}} @endif">
                             </div>
+                            @endif
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Date</label>
                                 <select class="form-control" name="date" id="date_select">
-                                    <option value="">All</option>
-                                    <option value="today">Today</option>
-                                    <option value="yesterday">Yesterday</option>
-                                    <option value="week">1 Week</option>
-                                    <option value="month">1 Month</option>
-                                    <option value="custom">Custom</option>
+                                    @foreach($dateOptions as $key => $val )
+                                    <option value="{{$key}}" @if(isset($requests['date']) && $key == $requests['date']) selected @endif>{{$val}}
+                                    </option>
+                                    @endforeach
                                 </select>
                             </div>
-                            <!-- </div> -->
-                            <!-- <div class="row mt-4" style="display: none;" id="custom_date_div">
-                        <div class="col-md-3 form-group ml-5">
-                        <label class="filter-col"  for="pref-search">Stardate </label>
-                        <input type="text" name="startdate" class="form-control input-sm datepicker" >
-                        </div>
-                        <div class="col-md-3 form-group mb-3">
-                        <label class="filter-col"  for="pref-search">Enddate</label>
-                        <input type="text" class="form-control input-sm datepicker" name="enddate">
-                        </div>
-                    </div> -->
+                            <div class="col-md-2 custom_date_div" @if((isset($requests['date']) && $requests['date'] != 'custom') || !isset($requests['date'])) style="display: none;" @endif>
+                                <label for="billingdate">Start Date</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control datepicker" placeholder="dd-mm-yyyy" value="@if(isset($requests['start_date'])) {{$requests['start_date']}} @endif" name="start_date" id="start_date">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary"  type="button">
+                                            <i class="icon-regular i-Calendar-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 custom_date_div" @if((isset($requests['date']) && $requests['date'] != 'custom') || !isset($requests['date'])) style="display: none;" @endif>
+                                <label for="billingdate">End Date</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control datepicker" placeholder="dd-mm-yyyy" value="@if(isset($requests['end_date'])) {{$requests['end_date']}} @endif" name="end_date" id="end_date">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary"  type="button">
+                                            <i class="icon-regular i-Calendar-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
                             <div class="col-md-6" style="margin-top: 24px;">
                                 <button id="btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
                                 <a href="{{url('cdrreport')}}" class="btn btn-outline-secondary" name="btn">Clear</a>
@@ -414,7 +244,7 @@
                                 @if(Auth::user()->usertype == 'groupadmin')
                                 <td><input type="checkbox" name="cdr_checkbox" id="{{$row->cdrid}}" value="{{$row->cdrid}}" class="allselect"></td>
                                 @elseif(Auth::user()->usertype == 'admin')
-                                <th>{{$row->name}}</th>
+                                <td>{{$row->name}}</td>
                                 @endif
                                 @if(Auth::user()->usertype == 'reseller')
                                 <td>{{ $row->accountGroup ? $row->accountGroup->name : '' }}</td>
@@ -438,13 +268,18 @@
                                 <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
                                 <td>
                                     @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
-                                    <a class="btn bg-gray-100" title="More Details" onClick="moreOption({{$row->cdrid}},'{{$row->did_no ? $row->did_no : 0}}','{{$row->firstleg."(".$row->secondleg.")"}}','{{$row->creditused ? $row->creditused : 0}}','{{$row->operatorAssigned ? $row->operatorAssigned->opername : 0}}','{{$row->tag ? $row->tag : 0}}');return false;"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
+                                    <a class="btn bg-gray-100 more-details" title="More Details" data-tag="{{$row->tag}}" onClick="moreOption({{$row->cdrid}},'{{$row->did_no ? $row->did_no : 0}}','{{$row->firstleg."(".$row->secondleg.")"}}','{{$row->creditused ? $row->creditused : 0}}','{{$row->operatorAssigned ? $row->operatorAssigned->opername : ""}}');return false;"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
                                     @endif
                                     @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator' || Auth::user()->usertype=='reseller')
                                     @if(!empty($row->recordedfilename))
-                                    <a href="#" class="btn bg-gray-100 play_audio" title="Play Audio" data-toggle="modal" data-target="#play_modal" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
-                                    <a href="{{ url('download_file/' .$row->recordedfilename) }}" class="btn bg-gray-100" title="Download File">
-                                        <i class="i-Download1"></i></a>
+                                        @if(empty($operatorAccount) || (!empty($operatorAccount) && $operatorAccount->play == '1'))
+                                        <a href="#" class="btn bg-gray-100 play_audio" title="Play Audio" data-toggle="modal" data-target="#play_modal" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
+                                        @endif
+                                        @if(empty($operatorAccount) || (!empty($operatorAccount) && $operatorAccount->download == '1'))
+                                            <a href="{{ url('download_file/' .$row->recordedfilename) }}" class="btn bg-gray-100" title="Download File">
+                                                <i class="i-Download1"></i>
+                                            </a>
+                                        @endif
                                     @endif
                                     @endif
                                     @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator' || Auth::user()->usertype=='reseller')
@@ -491,24 +326,6 @@
                                         <button class="btn bg-gray-100" type="button" id="action_{{$row->cdrid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="nav-icon i-Gear-2"></i>
                                         </button>
-                                        @endif
-                                        @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
-                                        <?php
-                                        if (sizeof($all_leads[$row->cdrid]) != '0') {
-                                            $add_cl = 'btn-primary';
-                                            $lead_view_type = 'view_lead';
-                                            $lead_target = '#ViewLead';
-                                            $title = 'View Lead';
-                                        } else {
-                                            $add_cl = 'btn-success';
-                                            $lead_view_type = 'add_lead';
-                                            $lead_target = '#AddLead';
-                                            $title = 'Add Lead';
-                                        }
-                                        ?>
-                                        @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
-                                        <a href="?" class="btn {{$add_cl}} {{$lead_view_type}}" title="{{$title}}" id="{{$lead_view_type}}" data-toggle="modal" data-number="{{$row->number}}" data-id="{{$row->cdrid}}" data-target="{{$lead_target}}"><i class="i-Notepad"></i></a>
-                                        @endif
                                         @endif
                                         <div class="dropdown-menu" aria-labelledby="action_{{$row->cdrid}}">
                                             <a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" id="contact_{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-phone="{{$row->number}}">{{isset($row->contacts->fname) ? 'Update Contact': 'Add Contact'}}</a>
@@ -758,7 +575,7 @@
 
                     <div class="col-md-8 form-group mb-3">
                         <label for="firstName1">Tag</label>
-                        {!! Form::select('tag', $tags->prepend('Select Tag', ''), null,array('class' => 'form-control', 'id' => 'tag')) !!}
+                        {!! Form::select('tag', $tags->prepend('Select Tag', ''), null,array('class' => 'form-control', 'id' => 'cdr_tag')) !!}
                     </div>
                 </div>
             </div>
@@ -1009,21 +826,23 @@
     </div>
 </div>
 @endif
-<div class="customizer" title="Search" style="top: 239px;">
+@endif
+<div class="customizer" title="Search" style="{{(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype=='operator') ?  ( (!empty($operatorAccount) && $operatorAccount->edit == '0') ? 'top:198px' : 'top:239px' ) : 'top:114px'}}">
     <a href="#" data-toggle="collapse" data-target="#filter-panel">
         <div class="handle collapsed">
             <i class="i-Search-People"></i>
         </div>
     </a>
 </div>
-@endif
-<div class="customizer" title="Export Data" style="{{(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype=='operator') ?  'top:198px' : 'top:73px'}}">>
+@if(empty($operatorAccount) || (!empty($operatorAccount) && $operatorAccount->edit == '1'))
+<div class="customizer" title="Export Data" style="{{(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype=='operator') ? 'top:198px' : 'top:73px'}}">>
     <a href="{{ url('cdrexport') }}">
         <div class="handle">
             <i class="i-Download1"></i>
         </div>
     </a>
 </div>
+@endif
 
 @endsection
 
@@ -1046,6 +865,7 @@
     // } );
     $('#cdr_table').DataTable({
         dom: 'Bfrtip',
+        order: [[2, "desc" ]],
         buttons: [{
             extend: 'csv',
             exportOptions: {
@@ -1065,16 +885,14 @@
     //     ]
     // } );
     $('#timepicker1').timepicker();
-    $('#AddLead .js-example-basic-single').select2({
-        dropdownParent: $("#AddLead")
-    });
 </script>
 <script type="text/javascript">
-    function moreOption(id, did_no, firstLeg, creditUsed, operName, tag) {
+    function moreOption(id, did_no, firstLeg, creditUsed, operName) {
         var className = $("#second_row").attr('class');
         if (className == 'show') {
             $("#second_row").remove();
         } else {
+            var tag = $('#row_' + id + ' .more-details').data('tag');
             $('#row_' + id).after('<tr id="second_row" class="show"><td></td><td colspan="7"><span style="margin-right:100px;"><b>DNID :</b>' + did_no + '</span><span style="margin-right:100px;"><b>Duration :</b>' + firstLeg + '</span><span style="margin-right:100px;"><b>Coin :</b>' + creditUsed + '</span><span style="margin-right:100px;"><b>Assigned To :</b> <span id="assigned_' + id + '">' + operName + '</span></span><span style="margin-right:100px;"><b>Tag :</b> <span id="cdrTag_' + id + '">' + tag + '</span></span></td></tr>');
         }
     }
@@ -1353,12 +1171,14 @@
             var id = $(this).attr("id");
             var tag = $(this).attr("data-tag");
             var cdrid = id.replace("tag_", "");
+            console.log('tag : '+tag);
             $("#cdrid").val(cdrid);
             if (tag != '') {
                 $("#tag_title").text("Update Tag");
-                $("#tag").val(tag);
+                $("#cdr_tag").val(tag);
             } else {
                 $("#tag_title").text("Add Tag");
+                $("#cdr_tag").val('');
             }
         });
 
@@ -1470,12 +1290,9 @@
 
     $(document).on("change", "#date_select", function() {
         var date_val = $(this).val();
-        $("#custom_date_div").hide();
+        $(".custom_date_div").hide();
         if (date_val == 'custom') {
-            $("#custom_date_div").show();
-            $('.datepicker').pickadate({
-                format: 'yyyy-mm-dd'
-            });
+            $(".custom_date_div").show();
         }
     });
 
@@ -1507,32 +1324,7 @@
 </script>
 
 <script type="text/javascript">
-    $('.add_lead').click(function() {
-        var number = $(this).data('number');
-        var id = $(this).data('id');
-        $("#AddLead").animate({
-            width: 'toggle'
-        }, "slow");
-        $("#AddLead #phoneno").val(number);
-        $("#AddLead #cdrreport_id").val(id);
-    });
-</script>
-
-<script type="text/javascript">
     $(document).ready(function() {
-        $('.js-example-basic-single').select2({
-            dropdownParent: $("#AddLead")
-        });
-
-        $("#btnAdd").bind("click", function() {
-            var div = $("<tr />");
-            div.html(GetDynamicTextBox(""));
-            $("#TextBoxContainer").append(div);
-            $('.js-example-basic-single').select2({
-                dropdownParent: $("#AddLead")
-            });
-
-        });
         $("body").on("click", ".remove", function() {
 
             var sub = $(this).closest("tr").find("input.amount").val();
@@ -1553,62 +1345,6 @@
             //alert(quantity*am);
             $(this).closest("tr").find("input.sub_amount").val(parseFloat(sub_amount).toFixed(2));
             total_amount();
-        });
-
-        $("body").on("click", ".view_lead", function() {
-            var number = $(this).data('number');
-            var id = $(this).data('id');
-            $("#view_lead_first_name").val('');
-            $("#view_lead_last_name").val('');
-            $("#view_lead_company_name").val('');
-            $("#view_lead_email").val('');
-            $("#view_lead_phoneno").val('');
-            $("#view_lead_alt_phoneno").val('');
-            $("#view_lead_total_amount").val('');
-            $("#view_lead_owner_name").val('');
-            $("#view_lead_lead_stage").val('');
-            $("#ViewLead").animate({
-                width: 'toggle'
-            }, "slow");
-            jQuery.ajax({
-                type: "GET",
-                url: "/cdrreport/lead/view/" + id,
-                dataType: 'text',
-                success: function(res) {
-                    var obj = jQuery.parseJSON(res);
-                    $("#view_lead_first_name").val(obj.lead.first_name);
-                    $("#view_lead_last_name").val(obj.lead.last_name);
-                    $("#view_lead_company_name").val(obj.lead.company_name);
-                    $("#view_lead_email").val(obj.lead.email);
-                    $("#view_lead_phoneno").val(obj.lead.phoneno);
-                    $("#view_lead_alt_phoneno").val(obj.lead.alt_phoneno);
-                    $("#view_lead_total_amount").val(obj.lead.total_amount);
-                    $("#view_lead_owner_name").val(obj.lead.owner_name);
-                    $("#view_lead_lead_stage").val(obj.lead.lead_stage);
-
-                    var html_code = '';
-                    if (obj.products.length > 0) {
-                        obj.products.forEach(pro => {
-                            if (pro.name) {
-                                html_code += '<td><input type="text" class="form-control" value="' + pro.name + '"/></td>';
-                            } else {
-                                html_code += '<td><input type="text" class="form-control" value=""/></td>';
-                            }
-                            if (pro.quantity) {
-                                html_code += '<td><input type="text" class="form-control" value="' + pro.quantity + '"/></td>';
-                            } else {
-                                html_code += '<td><input type="text" class="form-control" value=""/></td>';
-                            }
-                            if (pro.subtotal_amount) {
-                                html_code += '<td><input type="text" class="form-control" value="' + pro.subtotal_amount + '"/></td>';
-                            } else {
-                                html_code += '<td><input type="text" class="form-control" value=""/></td>';
-                            }
-                        });
-                        $("#ViewLead table tbody").html(html_code);
-                    }
-                }
-            });
         });
     });
 

@@ -157,7 +157,6 @@
                                     <tr>
                                         <th scope="col">#</th>
                                         <th scope="col">Calls</th>
-                                        <th scope="col">Forms</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -166,7 +165,6 @@
                                     <tr>
                                         <td>{{$row->status}}</td>
                                         <td>{{$row->count}}</td>
-                                        <td>{{$row->leadCdr->count()}}</td>
                                     </tr>
                                     @endforeach
                                     @else

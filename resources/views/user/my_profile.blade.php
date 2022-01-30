@@ -59,7 +59,7 @@
                                  <div class="col-md-4 col-6">
                                     <div class="mb-4">
                                         <p class="text-primary mb-1"><i class="i-Telephone text-16 mr-1"></i> Account Name</p>
-                                        <span id="phone_info">{{ Auth::user()->name }}</span>
+                                        <span id="phone_info">{{ $acGrp[0]->name }}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-6">

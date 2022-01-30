@@ -188,6 +188,7 @@ $(document).ready(function(){
                     });
                     toastr.error(errors);
                 } else {
+                    $('#row_' + cdrid + ' .more-details').data('tag', res.tag);
                     $("#cdrTag_"+cdrid).text(res.tag);
                     $("#tag_"+cdrid).text('Update Tag');
                     $("#tag_modal").modal('hide');

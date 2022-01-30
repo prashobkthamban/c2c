@@ -158,7 +158,7 @@
                     } else {
                         $("#holiday_modal").modal('hide');
                         toastr.success(res.success); 
-                        setTimeout(function(){ location.reload() }, 300);               
+                        setTimeout(function(){ location.reload() }, 300);
                     }
                    
                 },

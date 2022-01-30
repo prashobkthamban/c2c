@@ -158,25 +158,25 @@ class ServiceController extends Controller
     }
 
     public function accessLogs() {
-        //echo 'bfvgh';die;
-        $query = DB::table('ast_login_log')
-            ->leftJoin('accountgroup', 'ast_login_log.groupid', '=', 'accountgroup.id');
+        $query = DB::table('ast_login_log');
 
         if(Auth::user()->usertype == 'reseller') {
             $query->where('account.resellerid', Auth::user()->resellerid);
-        } elseif(Auth::user()->usertype != 'groupadmin') {
+        } elseif(Auth::user()->usertype == 'groupadmin') {
+            $query->leftJoin('accountgroup', 'ast_login_log.groupid', '=', 'accountgroup.id');
             $query->where('ast_login_log.groupid', Auth::user()->groupid);
             $query->where('ast_login_log.usertype', 'groupadmin');
-        } elseif(Auth::user()->usertype != 'admin') {
-
+            $query->select('ast_login_log.*', 'accountgroup.name');
+        } elseif(Auth::user()->usertype == 'operator') {
+            $query->leftJoin('accountgroup', 'ast_login_log.groupid', '=', 'accountgroup.id');
+            $query->where('ast_login_log.groupid', Auth::user()->groupid);
+            $query->where('ast_login_log.usertype', 'operator');
+            $query->select('ast_login_log.*', 'accountgroup.name');
         } else {
-           $query->where('ast_login_log.groupid', Auth::user()->groupid); 
         }
 
-            
-        $query->select('ast_login_log.*', 'accountgroup.name')->orderBy('id', 'desc');
+        $query->orderBy('id', 'desc');
         $result = $query->paginate(10);
-        //dd($result);
         return view('service.access_logs', compact('result'));
     }
 
@@ -223,9 +223,10 @@ class ServiceController extends Controller
             $gateway_data = [
                 'Gprovider' => $request->get('Gprovider'),
                 'Gchannel' => $request->get('Gchannel'),
-                'billingdate'=> $request->get('billingdate'),
+                'billingdate'=> date('Y-m-d', strtotime($request->get('billingdate'))),
                 'used_units'=> $request->get('used_units'),
                 'pluse_rate' => $request->get('pluse_rate'),
+                'dial_prefix' => $request->get('dial_prefix'),
             ];
     
             if(empty($request->get('id'))) {
@@ -243,6 +244,7 @@ class ServiceController extends Controller
 
     public function getPriGateway($id) {
         $data=  DB::table('prigateway')->where('prigateway.id', $id)->get();
+        $data[0]->billingdate = date('d-m-Y', strtotime($data[0]->billingdate));
 	    return $data;
     }  
 

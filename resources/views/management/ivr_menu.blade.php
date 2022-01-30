@@ -22,6 +22,7 @@
                                     <th>Customer</th>
                                     <th>CoperateAcc</th>
                                     <th>IVR Level Name</th>
+                                    <th>IVR Level</th>
                                     <th>IVR Options</th>
                                     <th>OperatorDept.</th>
                                     <th>Add Date</th>
@@ -35,6 +36,7 @@
                                     <td>{{$listOne->resellername}}</td>
                                     <td>{{$listOne->ivr_level_name}}</td>
                                     <td>{{$listOne->ivr_level}}</td>
+                                    <td>{{$listOne->ivroption}}</td>
                                     <td>{{$listOne->operator_dept}}</td>
                                     <td>{{$listOne->adddate}}</td> 
                                     <td>
@@ -53,6 +55,7 @@
                                     <th>Customer</th>
                                     <th>CoperateAcc</th>
                                     <th>IVR Level Name</th>
+                                    <th>IVR Level</th>
                                     <th>IVR Options</th>
                                     <th>OperatorDept.</th>
                                     <th>Add Date</th>

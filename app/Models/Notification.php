@@ -13,31 +13,31 @@ class Notification extends Model
     public static function getReport( )
     {
         //dd(Auth::user()->id);
-        $data = Notification::select( 'notifications.*', 'account.username' );
+        $data = Notification::select( 'notifications.*');
 
         if ( Auth::user()->usertype == 'groupadmin' )
         { 
             $data->where('notifications.send_from_id', Auth::user()->id );
             $data->orWhere('notifications.send_to_id', Auth::user()->id);
-            $data->leftJoin('account', 'notifications.send_from_id', '=', 'account.groupid');
+            // $data->leftJoin('account', 'notifications.send_from_id', '=', 'account.groupid');
         }
         if ( Auth::user()->usertype == 'admin' )
         {
             $data->where('notifications.send_from_id', Auth::user()->id);
             $data->orWhere('notifications.send_to_id', Auth::user()->id);
-            $data->leftJoin('account', 'notifications.send_from_id', '=', 'account.groupid');
+            // $data->leftJoin('account', 'notifications.send_from_id', '=', 'account.groupid');
         }
         if ( Auth::user()->usertype == 'operator' )
         {
             $data->where( 'notifications.send_from_id', Auth::user()->id );
             $data->orWhere('notifications.send_to_id', Auth::user()->id);
-            $data->leftJoin('account', 'notifications.send_from_id', '=', 'account.id');
+            // $data->leftJoin('account', 'notifications.send_from_id', '=', 'account.id');
         }
         if ( Auth::user()->usertype == 'reseller' )
         {
             $data->where( 'notifications.send_from_id', Auth::user()->id );
             $data->orWhere('notifications.send_to_id', Auth::user()->id);
-            $data->leftJoin('account', 'notifications.send_from_id', '=', 'account.id');
+            // $data->leftJoin('account', 'notifications.send_from_id', '=', 'account.id');
         }
         $result = $data->orderBy( 'datetime', 'DESC' )->paginate(10);
         return $result;

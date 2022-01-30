@@ -25,7 +25,7 @@ class Reminder extends Model
     }
 
     public static function getReport($params){
-        $data = Reminder::select('name','opername','phonenumber','reminders.*')
+        $data = Reminder::select('accountgroup.name','operatoraccount.opername','operatoraccount.phonenumber','reminders.*')
             ->leftJoin('accountgroup', 'accountgroup.id', '=', 'reminders.groupid')
             ->leftJoin('resellergroup', 'resellergroup.id', '=', 'reminders.resellerid')
             ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'reminders.operatorid')
@@ -65,20 +65,20 @@ class Reminder extends Model
                 if($params['date_to'] != '')
                     $params['date_to'] = date('Y-m-d',strtotime($params['date_to']));
             }
-            $query->whereBetween('followupdate',[$params['date_from'].'%',$params['date_to'].'%']);
+            $data->whereBetween('followupdate',[$params['date_from'].'%',$params['date_to'].'%']);
         }
         if( Auth::user()->usertype == 'reseller'){
             $data->where('reminders.resellerid',Auth::user()->resellerid );
         }
         elseif( Auth::user()->usertype == 'operator'){
-            $data->where('reminders.operatorid',Auth::user()->resellerid );
+            $data->where('reminders.operatorid',Auth::user()->id );
         }
-        else{
-            //$data->where('cdrpbx.groupid',Auth::user()->groupid );
+        else if( Auth::user()->usertype == 'groupadmin') {
+            $data->where('reminders.groupid',Auth::user()->groupid );
         }
         $result = $data->orderBy('followupdate','DESC')->groupBy('reminders.id')
             ->paginate(10);
-        //dd($result);
+        // dd($result);
         return $result;
     }
 

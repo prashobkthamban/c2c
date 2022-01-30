@@ -100,7 +100,7 @@ class ManagementController extends Controller
                     if($date_to != '')
                         $date_to = date('Y-m-d',strtotime($date_to));
                 }
-                $query->whereBetween('datetime',[$date_from.'%',$date_to.'%']);
+                $query->whereBetween('datetime',[$date_from.' 00:00:00',$date_to.' 23:59:59']);
             }
 
         $voicemails = $query->get();

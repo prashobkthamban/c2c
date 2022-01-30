@@ -200,6 +200,7 @@
           });
         });
 
+        var selectedGroupId = '';
         $("#resellerid, #usertype").on('change',function(){
             var resellerid = $("#resellerid").val();
             var usertype = $("#usertype").val();
@@ -213,13 +214,52 @@
                         value: i,
                         text : item 
                     }));
+                    console.log('1');
                 });
-                
-                
+                setTimeout(function() {
+                    if(selectedGroupId) {
+                        console.log('2');
+                        $("#groupid").val(selectedGroupId);
+                        console.log($("#groupid").val());
+                        console.log('3');
+                        selectedGroupId = '';
+                    }
+                }, 300);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }
           });
+        });
+
+        $("#usertype").on('change',function(){
+            if ($(this).val() == 'admin') {
+                $("#resellerid").prop('disabled', true);
+                $("#groupid").prop('disabled', true);
+                $("#resellerid").val(0);
+                $("#groupid").val('');
+            } else if ($(this).val() == 'reseller') {
+                $("#resellerid").prop('disabled', false);
+                $("#groupid").prop('disabled', true);
+                $("#resellerid").val(0);
+                $("#groupid").val('');
+            } else {
+                $("#resellerid").prop('disabled', false);
+                $("#groupid").prop('disabled', false);
+                $("#resellerid").val(0).trigger('change');
+            }
+        });
+
+        $("#groupid").on('change',function(){
+            var groupid = $(this).val();
+            selectedGroupId = groupid;
+            $.ajax({
+                url: '/get_customer_reseller_id/'+groupid, // This is the url we gave in the route
+                success: function(res){ // What to do if we succeed
+                    $("#resellerid").val(res.resellerid).trigger('change');
+                },
+                error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                }
+            });
         });
 
         $('.edit_login').click(function() {  
@@ -229,7 +269,12 @@
                 if(res) {
                     $("input[name=email]").val(res.email);
                     $("input[name=phone_number]").val(res.phone_number);
-                    $("#groupid").val(res.groupid);
+                    if(res.groupid) {
+                        selectedGroupId = res.groupid;
+                        $("#groupid").val(res.groupid).trigger('change');
+                    } else {
+                        $("#groupid").val(res.groupid);
+                    }
                     $("#resellerid").val(res.resellerid);
                     $("#account_id").val(res.id);
                     $("#usertype").val(res.usertype);
@@ -237,6 +282,17 @@
                     $("input[name=username]").val(res.username);
                     $("#login_title").text('Edit Login');
                     $("#login_manager").modal('show');
+
+                    if (res.usertype == 'admin') {
+                        $("#resellerid").prop('disabled', true);
+                        $("#groupid").prop('disabled', true);
+                    } else if (res.usertype == 'reseller') {
+                        $("#resellerid").prop('disabled', false);
+                        $("#groupid").prop('disabled', true);
+                    } else {
+                        $("#resellerid").prop('disabled', false);
+                        $("#groupid").prop('disabled', false);
+                    }
                 }
                 
             },

@@ -22,9 +22,6 @@
                             <a title="Add Operator" href="javascript:void(0)" data-toggle="modal" data-target="<?php echo $target; ?>" class="btn btn-primary add_account">Add Operator</a>
                         </div>
                         <div class="col-md-6 float-right">
-                            @if($access_count)
-                                <div class="float-right text-danger">*CRM Access Limit is over.</div>
-                            @endif
                         </div>
                     </div>
 
@@ -37,7 +34,6 @@
                                     <th>Phone</th>
                                     <th>LoginId</th>
                                     <th>Password</th>
-                                    <th>Lead Access</th>
                                     <th>Stickey Agent</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -51,7 +47,6 @@
                                     <td>{{$operator->phonenumber}}</td>
                                     <td>{{($operator->accounts != null) ? $operator->accounts->username : ''}}</td>
                                     <td>{{($operator->accounts != null) ? $operator->accounts->user_pwd : ''}}</td>
-                                    <td>{{$operator->lead_access}}</td>
                                     <td><a href="#" data-toggle="modal" class="stickey_list" id="{{$operator->id}}" data-opername="{{$operator->opername}}" data-target="#stickey_modal"><i class="i-Administrator"></i></a></td>
                                     <td>{{$operator->oper_status}}</td>
                                     <td><a href="#" data-toggle="modal" data-target="#operator_account" class="text-success mr-2 edit_account" id="{{$operator->id}}">
@@ -71,7 +66,6 @@
                                     <th>Phone</th>
                                     <th>LoginId</th>
                                     <th>Password</th>
-                                    <th>Lead Access</th>
                                     <th>Stickey Agent</th>
                                     <th>Status</th>
                                     <th>Action</th>
@@ -156,7 +150,7 @@
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Password *</label>
-                                    <input type="password" class="form-control" placeholder="Password" name="password" id="password">
+                                    <input type="text" class="form-control" placeholder="Password" name="password" id="password">
                             </div>
                         </div>
                         <div class="row">
@@ -228,30 +222,6 @@
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Rec Play</label>
                                 {!! Form::select('play', array('1' => 'Yes', '0' => 'No'), 0,array('class' => 'form-control', 'id' => 'play')) !!}
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-2 form-group mb-3">
-                            </div>
-                            <div class="col-md-8 form-group mb-3">
-                                <label for="crm_access">CRM Access</label>
-                                @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
-                                    {!! Form::select('crm_access', array('yes' => 'Yes', 'no' => 'No'), 0,array('class' => 'form-control', 'id' => 'crm_access')) !!}
-                                @else
-                                    <input type="text" value="no" class="form-control" name="crm_access" id="crm_access" readonly>
-                                @endif
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-2 form-group mb-3">
-                            </div>
-                            <div class="col-md-8 form-group mb-3">
-                                <label for="lead_access">No of Lead Access</label>
-                                @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
-                                    <input type="number" class="form-control" placeholder="No of Leads" name="lead_access" id="lead_access">
-                                @else
-                                    <input type="number" readonly value="0" class="form-control" placeholder="No of Leads" name="lead_access" id="lead_access">
-                                @endif
                             </div>
                         </div>
                 </div>
@@ -345,8 +315,6 @@
                 $("#edit").val(res.edit);
                 $("#download").val(res.download);
                 $("#play").val(res.play);
-                $("#crm_access").val(res.crm_access);
-                $('#lead_access').val(res.lead_access);
                 var obj = JSON.parse(res.working_days);
                 days = obj;
                 $("#working_days").val(obj);

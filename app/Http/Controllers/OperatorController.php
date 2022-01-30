@@ -255,6 +255,7 @@ class OperatorController extends Controller
                      'sms_to'=> $request->get('sms_to'), 
                      'addtional_alert' => $request->get('addtional_alert'),
                      'content' => $request->get('content'),
+                     'smstmpid' => $request->get('smstmpid'),
                     ];
             if(empty($request->get('id'))) {
                 DB::table('sms_content')->insert($smsData);

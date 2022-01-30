@@ -35,8 +35,8 @@
                                     <tr>
                                         <td>{{ $row->username }}</td>
                                         <td>{{ $row->password }}</td>
-                                        <td>{{ ($row->usertype == 'reseller') ? 'Coperate Admin' : ($row->usertype =='admin') ? 'Super Admin' : $row->usertype }}</td>
-                                        <td>{{ $row->name }}</td>
+                                        <td>{{ ($row->usertype == 'reseller') ? 'Coperate Admin' : (($row->usertype =='admin') ? 'Super Admin' : (!empty($row->usertype) ? $row->usertype : "")) }}</td>
+                                        <td>{{ ($row->usertype == 'reseller') ? 'Coperate Admin' : (($row->usertype =='admin') ? 'Super Admin' : (!empty($row->usertype) ? $row->name : "")) }}</td>
                                         <td>{{ $row->ipaddress }}</td>
                                         <td>{{ $row->status }}</td>
                                         <td>{{ $row->login_time }}</td>

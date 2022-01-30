@@ -115,6 +115,15 @@
                     </div>
 
                     <div class="col-md-8 form-group mb-3">
+                        <label for="firstName1">SMS Template ID</label> 
+                        {!! Form::text('smstmpid', null, ['class' => 'form-control', 'id' => 'smstmpid']) !!}
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-md-2 form-group mb-3"> 
+                    </div>
+
+                    <div class="col-md-8 form-group mb-3">
                         <!-- <label for="firstName1">Sms Content</label>  -->
                         <select id="param" name="param" multiple="multiple" onchange="copyval('param', 'content')" size="6">
                             <option value="{CUSTOMERNAME}">CUSTOMERNAME </option>
@@ -211,6 +220,7 @@
                 $("#sms_to").val(result.sms_to);
                 $("#addtional_alert").val(result.addtional_alert);
                 $("#sms_id").val(result.id);
+                $("#smstmpid").val(result.smstmpid);
                 
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail

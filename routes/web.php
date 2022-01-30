@@ -48,7 +48,7 @@ Route::post('add_reminder', 'ReportController@addReminder')->name('addReminder')
 Route::get('get_reminder/{id}', 'ReportController@getReminder')->name('getReminder');
 //Route::get('delete_reminder/{id}', 'ReportController@deleteReminder')->name('deleteReminder');
 Route::delete('delete_comment/{id}', 'ReportController@deleteComment')->name('deleteComment');
-Route::get('download_file/{file}/{id}', 'ReportController@downloadFile')->name('downloadFile');
+Route::get('download_file/{id}/{file}', 'ReportController@downloadFile')->name('downloadFile');
 Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('cdrreportarchive');
 Route::get('cdrreportout', 'ReportController@cdrreportout')->name('cdrreportout');
 Route::get('reminder', 'ReminderController@index')->name('Reminder');
@@ -123,6 +123,7 @@ Route::get('account', 'UserController@loginAccounts')->name('loginAccounts');
 Route::post('add_account', 'UserController@addAccount')->name('addAccount');
 Route::get('edit_account/{id}', 'UserController@editAccount')->name('editAccount');
 Route::get('get_customer/{usertype}/{resellerid}', 'UserController@getCustomer')->name('getCustomer');
+Route::get('get_customer_reseller_id/{groupid}', 'UserController@getCustomerResellerId')->name('getCustomerResellerId');
 Route::get('get_did/{groupid}', 'UserController@getDid')->name('getDid');
 Route::post('edit_profile', 'UserController@editProfile')->name('editProfile');
 Route::post('crm_settings', 'UserController@crmSettings')->name('crmSettings');

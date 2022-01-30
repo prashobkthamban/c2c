@@ -33,16 +33,6 @@ class CdrReport extends Model
     {
         return $this->hasMany('App\Models\CdrNote', 'uniqueid', 'uniqueid');
     }
-
-    public function leadOperator()
-    {
-        return $this->hasMany('App\Models\CdrReport_Lead', 'operatorid', 'operatorid');
-    }
-
-    public function leadCdr()
-    {
-        return $this->hasMany('App\Models\CdrReport_Lead', 'id', 'cdrreport_id');
-    }
     
     public function operatorAccount() {
         return $this->hasOne('App\Models\OperatorAccount', 'id', 'operatorid');
@@ -66,7 +56,7 @@ class CdrReport extends Model
         return $this->hasOne('App\Models\Reminder', 'uniqueid', 'uniqueid');
     }
 
-    public static function getReport(){
+    public static function getReport($customer = '', $department = '', $operator = '', $tag = '', $status = '', $assigned_to = '', $did_no = '', $caller_number = '', $date = '', $start_date = '', $end_date = ''){
        $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder', 'operatorAccount', 'operatorAssigned', 'accountGroup']);
         if( Auth::user()->usertype == 'reseller' && !empty(Auth::user()->reseller->associated_groups) ){
             $data->whereIn('cdr.groupid', json_decode(Auth::user()->reseller->associated_groups));
@@ -82,8 +72,51 @@ class CdrReport extends Model
             //dd(Auth::user()->usertype);
             $data->where('cdr.groupid',Auth::user()->groupid );
         }
+        if(!empty($customer)) {
+            $data->where('cdr.groupid',$customer);
+        }
+        if(!empty($department)) {
+            $data->where('cdr.deptname',$department);
+        }
+        if(!empty($operator)) {
+            $data->where('cdr.operatorid',$operator);
+        }
+        if(!empty($tag)) {
+            $data->where('cdr.tag',$tag);
+        }
+        if(!empty($status)) {
+            $data->where('cdr.status',$status);
+        }
+        if(!empty($assigned_to)) {
+            $data->where('cdr.assignedto',$assigned_to);
+        }
+        if(!empty($did_no)) {
+            $data->where('cdr.did_no',$did_no);
+        }
+        if(!empty($caller_number)) {
+            $data->where('cdr.number',$caller_number);
+        }
+        if(!empty($date)) {
+            $fromDate = date('Y-m-d') . ' 00:00:00';
+            $toDate = date('Y-m-d') . ' 23:59:59';
+            if($date == 'yesterday') {
+                $yesterday = date('Y-m-d',strtotime("-1 days"));
+                $fromDate = $yesterday . ' 00:00:00';
+                $toDate = $yesterday . ' 23:59:59';
+            } else if($date == 'week') {
+                $fromDate =date('Y-m-d',strtotime("-1 days")) . ' 00:00:00';
+            } else if($date == 'week') {
+                $fromDate =date('Y-m-d',strtotime("-1 week")) . ' 00:00:00';
+            } else if($date == 'month') {
+                $fromDate =date('Y-m-d',strtotime("-1 month")) . ' 00:00:00';
+            } else if($date == 'custom') {
+                $fromDate = date('Y-m-d',strtotime($start_date)) . ' 00:00:00';
+                $toDate = date('Y-m-d',strtotime($end_date)) . ' 23:59:59';
+            }
+            $data->whereBetween('cdr.datetime',[$fromDate, $toDate]);
+        }
         
-        $result = $data->orderBy('cdr.datetime','ASC')->get();
+        $result = $data->orderBy('cdr.datetime','DESC')->get();
        //dd($result);
        return $result;
     }

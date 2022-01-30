@@ -79,6 +79,9 @@
                                 <th>Duration</th>
                                 <th>Status</th>
                                 <th>Department</th>
+                                @if(Auth::user()->usertype=='admin')
+                                    <th>Customer</th>
+                                @endif
                                 <th>Operator</th>
                                 <th>Assigned to</th>
                                 <th>Action</th>
@@ -103,7 +106,10 @@
                                 <td>{{$row->secondleg}}</td>
                                 <td>{{$row->appoint_status}}</td>
                                 <td><a>{{$row->deptname}}</a></td>
-                                <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
+                                @if(Auth::user()->usertype=='admin')
+                                    <td>{{$row->name}}</td>
+                                @endif
+                                <td>{{$row->opername}}</td>
                                 <td>{{$row->assignedname}}</td>
                                 <td>
                                 @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')

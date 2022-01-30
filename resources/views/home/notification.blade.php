@@ -18,11 +18,9 @@
                    <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#add_notification" class="btn btn-primary"> Add New </a>
                    <input type="hidden" name="login_user" id="login_user" value={{Auth::user()->username}} />
                    <div class="table-responsive">
-                        <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                        <table id="notification_table" class="display table table-striped table-bordered" style="width:100%">
                             <thead>
                             <tr>
-                            <!-- <?php //if(Auth::user()->usertype == 'admin' || Auth::user()->usertype =='reseller'){ ?>
-                                <th>IVR User</th> <?php //} ?> -->
                                 <th>Username</th>
                                 <th>Title</th>
                                 <th>Description</th>
@@ -35,8 +33,6 @@
                             @if(!empty($result))
                                 @foreach($result as $row )
                             <tr>
-                            <!-- <?php //if(Auth::user()->usertype == 'admin' || Auth::user()->usertype =='reseller'){ ?>
-                                <td>{{$row->name}}</td> <?php //} ?> -->
                                 <td>{{$row->fromusername}}</td>
                                 <td>{{$row->title}}</td>
                                 <td>{{$row->description}}</td>
@@ -65,8 +61,6 @@
                             </tbody>
                             <tfoot>
                             <tr>
-                            <!-- <?php //if(Auth::user()->usertype == 'admin' || Auth::user()->usertype =='reseller'){ ?>
-                                <th>IVR User </th> <?php // } ?> -->
                                 <th>Username</th>
                                 <th>Title</th>
                                 <th>Description</th>
@@ -106,7 +100,13 @@
                                 <?php if(Auth::user()->usertype == 'groupadmin') {
                                     $oprList = getOperatorList(); ?>
                                  <select name="send_to_id" class="form-control">
-                                    <option value="631,admin">Admin</option>
+                                    <?php $adminList = getAdminList(); ?>
+                                    @if(!empty($adminList))
+                                        @foreach($adminList as $admin )
+                                            <option value="{{$admin->id}},admin">{{$admin->username}}
+                                            </option>
+                                        @endforeach
+                                    @endif
                                     @if(!empty($oprList))
                                         @foreach($oprList as $opr )
                                             <option value="{{$opr->id}},{{$opr->usertype}}">{{$opr->opername}}
@@ -120,7 +120,13 @@
                                 <select name="send_to_id" class="form-control">
                                     <option value="">Select Customer</option>
                                     @if(Auth::user()->usertype == 'operator')
-                                    <option value="631,admin">Admin</option>
+                                        <?php $adminList = getAdminList(); ?>
+                                        @if(!empty($adminList))
+                                            @foreach($adminList as $admin )
+                                                <option value="{{$admin->id}},admin">{{$admin->username}}
+                                                </option>
+                                            @endforeach
+                                        @endif
                                     @endif
                                     @if(!empty($grpList))
                                         @foreach($grpList as $grp )
@@ -220,6 +226,9 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
+    $('#notification_table').DataTable({
+        order: [[3, "desc" ]]
+    });
     function replyModal(notifyid) {
         $("#not_id").val(notifyid);
         $(".chat-content").html("");
@@ -244,9 +253,9 @@
                 $.each(res, function (i, item) {
                     //console.log('reee', item);
                     if(item.name == login_user) {
-                        chatHtml += '<div class="d-flex mb-4 user"><img src="http://127.0.0.1:8181/assets/images/faces/1.jpg" alt="" class="avatar-sm rounded-circle mr-3"><div class="message flex-grow-1"><div class="d-flex"><p class="mb-1 text-title text-16 flex-grow-1">'+ item.name +'</p></div><p class="m-0">'+ item.desc +'</p></div></div>';
+                        chatHtml += '<div class="d-flex mb-4 user"><img src="{{asset('assets/images/faces/1.jpg')}}" alt="" class="avatar-sm rounded-circle mr-3"><div class="message flex-grow-1"><div class="d-flex"><p class="mb-1 text-title text-16 flex-grow-1">'+ item.name +'</p></div><p class="m-0">'+ item.desc +'</p></div></div>';
                     } else {
-                        chatHtml += '<div class="d-flex mb-4"><div class="message flex-grow-1"><div class="d-flex"><p class="mb-1 text-title text-16 flex-grow-1">'+ item.name +'</p></div><p class="m-0">'+ item.desc +'</p></div><img src="http://127.0.0.1:8181/assets/images/faces/13.jpg" alt="" class="avatar-sm rounded-circle ml-3"></div>';
+                        chatHtml += '<div class="d-flex mb-4"><div class="message flex-grow-1"><div class="d-flex"><p class="mb-1 text-title text-16 flex-grow-1">'+ item.name +'</p></div><p class="m-0">'+ item.desc +'</p></div><img src="{{asset('assets/images/faces/13.jpg')}}" alt="" class="avatar-sm rounded-circle ml-3"></div>';
                     }
                 });
                 $('.chat-content').append(chatHtml);
@@ -277,7 +286,7 @@
                 } else {
                     $("#add_notification").modal('hide');
                     toastr.success(res.success);
-                    setTimeout(function(){ location.reload() }, 400);
+                    // setTimeout(function(){ location.reload() }, 400);
                 }
 
             },

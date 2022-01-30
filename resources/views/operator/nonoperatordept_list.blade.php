@@ -109,7 +109,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Customer *</label> 
-                                         {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'customerId', 'onChange' => 'setDepartment()')) !!}
+                                         {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'groupid', 'onChange' => 'setDepartment()')) !!}
                                     </div>
                                 </div>  
                                 <div class="row">
@@ -464,6 +464,10 @@
             $(".non_operator_form").trigger("reset");
             $("#exampleModalCenterTitle-2").text('Add NonOperator Department');
         });
+    });
+
+    $('#resellerid').on('change',function(e) {
+        $('#departmentid').val([])
     });
 </script>
 

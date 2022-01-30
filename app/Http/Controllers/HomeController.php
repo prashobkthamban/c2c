@@ -89,7 +89,7 @@ class HomeController extends Controller
                 ->whereDate('cdr.datetime', '=', $today)
                 ->count();
 
-            $incoming_calls = CdrReport::select(DB::raw('count(*) as count, status'))->with('leadCdr')
+            $incoming_calls = CdrReport::select(DB::raw('count(*) as count, status'))
                 ->whereIn('status', ['ANSWERED', 'MISSED', 'AFTEROFFICE'])
                 ->whereDate('cdr.datetime', '>=', $qsdate)
                 ->whereDate('cdr.datetime', '<=', $qedate)
@@ -181,11 +181,6 @@ class HomeController extends Controller
             $de = json_decode($groupid->associated_groups);
         }
 
-        /*        echo "<pre>";
-        print_r(Auth::user());exit;*/
-
-        $nousers = '';
-        $inusers = '';
         $announcements = DB::table('dashbord_annuounce')->orderBy('id', 'desc')->get();
         return view('home.dashboard', compact('incoming_calls', 'insight_ivr', 'insightData', 'announcements', 'activeoperator', 'g_callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'sdate', 'edate', 'nousers', 'inusers', 'level_1', 'level_2', 'level_3', 'level_4', 'level_5', 'level_6', 'level_7', 'todo_lists', 'remainders', 'group_admin'));
     }
@@ -592,7 +587,8 @@ class HomeController extends Controller
                 'type' => $request->get('type'),
                 'apitype' => $request->get('apitype'),
                 'api' => $request->get('api'),
-                'postvalues' => $request->get('postvalues')
+                'postvalues' => $request->get('postvalues'),
+                'token_bearer' => $request->get('token_bearer')
             ];
 
             if (!empty($request->get('id'))) {

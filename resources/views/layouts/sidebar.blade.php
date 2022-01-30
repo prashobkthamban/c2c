@@ -330,11 +330,11 @@
                             <span class="item-name">Operator Shifts</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a href="{{route('Voicemail')}}">
                             <span class="item-name">Voicemails</span>
                         </a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a href="{{url('contacts')}}">
                             <span class="item-name">Contacts</span>
@@ -356,11 +356,11 @@
                             </span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a href="{{url('conference')}}">
                             <span class="item-name">Dial Out Conference</span>
                         </a>
-                        </li>
+                    </li> -->
                     @endif
                     @if(Auth::user()->usertype == 'operator')
                     <li class="nav-item" data-item="">

@@ -40,12 +40,34 @@ class ReportController extends Controller
         $this->cdr = new CdrReport();
     }
 
-    public function index(){
+    public function index(Request $request){
         $users_lists = DB::table('operatoraccount')
                         ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
                         ->get();
+        $customers = DB::table('accountgroup')->select('id', 'name')->get();
         
-        return view('home.cdrreport', ['result' => CdrReport::getReport(),'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup(),'users_lists' => $users_lists]);
+        $customer = $request->get('customer');
+        $department = $request->get('department');
+        $operator = $request->get('operator');
+        $tag = $request->get('tag');
+        $status = $request->get('status');
+        $assigned_to = $request->get('assigned_to');
+        $did_no = $request->get('did_no');
+        $caller_number = $request->get('caller_number');
+        $date = $request->get('date');
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+        $dateOptions = [
+            '' => 'All',
+            'today' => 'Today',
+            'yesterday' => 'Yesterday',
+            'week' => '1 Week',
+            'month' => '1 Month',
+            'custom' => 'Custom'
+        ];
+        $operatorAccount = OperatorAccount::find(Auth::user()->operator_id);
+        $result = CdrReport::getReport($customer, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date);
+        return view('home.cdrreport', ['customers' => $customers, 'result' => $result,'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup(),'users_lists' => $users_lists,'dateOptions' => $dateOptions,'requests' => $request->all(), 'operatorAccount' => $operatorAccount]);
     }
 
     public function graphReport(Request $request) {
@@ -170,11 +192,12 @@ class ReportController extends Controller
     public function notes($id) {
         return $notes = DB::table('cdr_notes')
             ->where('uniqueid', $id)
+            ->orderBy('id', 'DESC')
             ->get();
     }
 
     public function callHistory($number) {
-        return CdrReport::where('number', $number)->get();
+        return CdrReport::where('number', $number)->orderBy('datetime','DESC')->get();
     }
 
     public function addReminder(Request $request)
@@ -338,13 +361,34 @@ class ReportController extends Controller
     }
 
     public function downloadFile($id, $file) {
-        //dd($file);
         $myFile = '/var/spool/asterisk/monitorDONE/MP3/'.$id.'/'.$file;
         return response()->download($myFile);
     }
 
-    public function cdrreportarchive(){
-        return view('home.cdrreportarchive', ['result' => CdrArchive::getReport()]);
+    public function cdrreportarchive(Request $request){
+        $customers = DB::table('accountgroup')->select('id', 'name')->get();
+        
+        $customer = $request->get('customer');
+        $department = $request->get('department');
+        $operator = $request->get('operator');
+        $tag = $request->get('tag');
+        $status = $request->get('status');
+        $assigned_to = $request->get('assigned_to');
+        $did_no = $request->get('did_no');
+        $caller_number = $request->get('caller_number');
+        $date = $request->get('date');
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+        $dateOptions = [
+            '' => 'All',
+            'today' => 'Today',
+            'yesterday' => 'Yesterday',
+            'week' => '1 Week',
+            'month' => '1 Month',
+            'custom' => 'Custom'
+        ];
+        $result = CdrArchive::getReport($customer, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date);
+        return view('home.cdrreportarchive', ['customers' => $customers, 'result' => $result,'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup(),'dateOptions' => $dateOptions,'requests' => $request->all()]);
     }
     public function cdrreportout(){
         //department - deptname from cdrpbx
@@ -435,7 +479,55 @@ class ReportController extends Controller
     // }
     public function cdrexport()
     {
-        return Excel::download(new PostExport(), "Report.csv");
+        $data = $this->getExportData();
+        return Excel::create('Report', function($excel) use ($data) {
+            $excel->sheet('mySheet', function($sheet) use ($data)
+            {
+                $sheet->fromArray($data);
+            });
+        })->download('csv');
+        // return Excel::download(new PostExport(), "Report.csv");
+    }
+
+    public function getExportData()
+    {
+        $data = CdrReport::getReport();
+        if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller')
+        {
+            $columns = 'DiD_num,Customer, Caller, Date,Totaltime,Talktime, Status, Credit, Department, Operator,OperatorNumber';
+        }
+        elseif(Auth::user()->usertype ==  'groupadmin')
+        {
+            $columns = 'DID_no,Caller , Date ,Totaltime ,Talktime , Status , Credit, Department,Call_tag, Operator,Assignedto';
+        }
+        elseif(Auth::user()->usertype ==  'operator')
+        {
+            $columns = 'DID_no,Caller , Date, Totaltime ,Talktime, Status ,Credit, Department,Call_tag,Assignedto ';
+        }
+
+        $result_array = array( explode(',',$columns));
+        if(!empty($data))
+        {
+            foreach($data as $k=>$cdrr) {
+                $array = array();
+                if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller')
+                {
+                    $array = array($cdrr->did_no,$cdrr->name,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->opername ,$cdrr->phonenumber);
+                }
+                elseif(Auth::user()->usertype ==  'groupadmin')
+                {
+                    $array = array($cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg, $cdrr->status,($cdrr->creditused != '') ? $cdrr->creditused :"a" ,($cdrr->deptname != '') ? $cdrr->deptname : "s",($cdrr->tag != '' ) ? $cdrr->tag : "d",($cdrr->opername != '' ) ? $cdrr->opername : "f",($cdrr->assignedto != '') ? $cdrr->assignedto : "g");
+                }
+                elseif(Auth::user()->usertype ==  'operator')
+                {
+                    $array = array($cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag,$cdrr->opername);
+                    
+                }
+                //dd($array);
+                $result_array[] = $array;
+            }
+        }
+        return $result_array;
     }
 
     public function cdroutexport()

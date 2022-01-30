@@ -10,6 +10,22 @@
             </div>
 
             <div style="margin: auto"></div>
+                @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
+                    <!-- Reminder -->
+                    <div class="dropdown">
+                        <a href="{{ route('Reminder') }}">
+                        <!-- data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" -->
+                            <div class="badge-top-container" role="button" id="dropdownNotification">
+                                <?php $reminderCount = getReminderCount();
+                                //dd($notifyList); ?>
+                                <span class="badge badge-primary notification_count"><?php echo $reminderCount; ?></span>
+                                <i class="i-Bell text-muted header-icon"></i>
+                            </div>
+                        </a>
+                        <!-- Reminder dropdown -->
+                    </div>
+                    <!-- Reminder End -->
+                @endif
 
             <div class="header-part-right">
                 <!-- Full screen toggle -->

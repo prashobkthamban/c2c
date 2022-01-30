@@ -15,6 +15,14 @@ function getAccountgroups($usertype=null, $reseller= null) {
     return $cust;
 }
 
+function getCustomerResellerId($groupid) {
+    $accountGroup =  DB::table('accountgroup')->where('id', $groupid)->first();
+    if(!empty($accountGroup)) {
+        return ['resellerid' => $accountGroup->resellerid];
+    }
+    return ['resellerid' => '0'];
+}
+
 function getOperator() {
     $opAcc =  DB::table('operatoraccount')->where('groupid', Auth::user()->groupid)->pluck('opername','id');
     return $opAcc;
@@ -24,6 +32,13 @@ function getOperatorList() {
     $opAcc =  DB::table('operatoraccount')->select('account.usertype', 'account.id', 'operatoraccount.opername', 'operatoraccount.groupid')->where('operatoraccount.groupid', Auth::user()->groupid)->leftJoin('account', 'operatoraccount.id', '=', 'account.operator_id')->get();
     //dd($opAcc);
     return $opAcc;
+}
+
+function getAdminList() {
+    $adminAcc =  DB::table('account')->select('account.username', 'account.id')
+    ->where('account.usertype', 'admin')
+    ->get();
+    return $adminAcc;
 }
 
 function getGroupList() {
@@ -261,4 +276,12 @@ function callConfig($params) {
         $data['status'] = 1;
         return $data;
         //return $wrets;
+}
+
+function getReminderCount(){
+    $data = DB::table('reminders')->select('id');
+    $data->where('reminders.operatorid',Auth::user()->id );
+    $data->whereBetween('followupdate',[date('Y-m-d') . ' 00:00:00',date('Y-m-d') . ' 23:59:59']);
+    $result = $data->count();
+    return $result;
 }

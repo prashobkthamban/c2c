@@ -222,10 +222,12 @@
     <script type="text/javascript" src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
     @yield('bottom-js')
     <script>
-        $('#zero_configuration_table').dataTable( {
-            paging: false
-
-        } );
+        if($('#zero_configuration_table').length) {
+            $('#zero_configuration_table').dataTable( {
+                paging: false,
+                order: []
+            } );
+        }
 
         $( function() {
             $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });     

@@ -336,7 +336,7 @@ class UserController extends Controller
     public function loginAccounts() {
         $account_group = new Accountgroup();
         $coperate = $account_group->get_coperate();
-        $coperate = $coperate->prepend('Select coperate', null);
+        $coperate = $coperate->prepend('Select coperate', '0');
         $customer = getAccountgroups();
         $customer = $customer->prepend('Select customer', '');
 
@@ -366,6 +366,10 @@ class UserController extends Controller
 
     public function getCustomer($usertype, $resellerid) {
         return getAccountgroups($usertype, $resellerid);
+    }
+
+    public function getCustomerResellerId($groupid) {
+        return getCustomerResellerId($groupid);
     }
 
     public function getDid($groupid) {
@@ -490,8 +494,7 @@ class UserController extends Controller
             'password' => 'required',
             'livetrasferid' => 'required',
             'shift_id' => 'required',
-            'working_days' => 'required',
-            'lead_access' => 'required'
+            'working_days' => 'required'
         ]);
         if($validator->fails()) {
             $data['error'] = $validator->messages();
@@ -510,7 +513,6 @@ class UserController extends Controller
                 'download'=> $request->get('download'),
                 'play'=> $request->get('play'),
                 'working_days' => json_encode($workingDays),
-                'lead_access' => $request->get('lead_access'),
             ];
             if($request->get('crm_access') == 'yes' && count($crm_users) < Auth::user()->load('accountdetails')->accountdetails['crm_users'])
             {
@@ -941,7 +943,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         $acGrp = $this->ac_group->where('id', Auth::user()->groupid)->get();
         // my profile is mainly for groupadmin  and operator
         if(Auth::user()->usertype == 'groupadmin' ||  Auth::user()->usertype == 'operator'){
-            $days = Auth::user()->accountdetails->working_days;
+            $days = json_decode(Auth::user()->accountdetails->working_days);
             $did = Auth::user()->load('extradid')->extradid;
             //dd($did);
 
