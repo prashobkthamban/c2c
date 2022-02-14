@@ -559,8 +559,12 @@ class HomeController extends Controller
 
     public function pushApi()
     {
-        $result = DB::table('pushapi')->select('pushapi.*', 'accountgroup.name')
-            ->leftJoin('accountgroup', 'accountgroup.id', '=', 'pushapi.groupid')->orderBy('id', 'desc')
+        $query = DB::table('pushapi')->select('pushapi.*', 'accountgroup.name')
+            ->leftJoin('accountgroup', 'accountgroup.id', '=', 'pushapi.groupid');
+            if (Auth::user()->usertype == 'groupadmin') {
+                $query->where('groupid', Auth::user()->groupid);
+            }
+            $result = $query->orderBy('id', 'desc')
             ->paginate(10);
         return view('home.push_api', compact('result'));
     }

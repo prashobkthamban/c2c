@@ -75,6 +75,8 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
+                    @endif
+                    @if(Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin')
                         <li class="nav-item" data-item="ivrmgmt">
                             <a class="nav-item-hold" href="#">
                                 <i class="nav-icon i-Library"></i>
@@ -82,6 +84,8 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
+                    @endif
+                    @if(Auth::user()->usertype == 'admin')
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('loginAccounts')}}">
                                 <i class="nav-icon i-Administrator"></i>
@@ -372,6 +376,7 @@
                     @endif
                 </ul>
                 <ul class="childNav" data-parent="ivrmgmt">
+                @if(Auth::user()->usertype == 'admin')
                     <li class="nav-item">
                         <a href="{{route('DidList')}}">
                             <span class="item-name">Dids</span>
@@ -402,16 +407,19 @@
                             <span class="item-name">MOH Files</span>
                         </a>
                     </li>
+                @endif
                     <li class="nav-item">
                         <a href="{{route('pushApi')}}">
                             <span class="item-name">Push Notification</span>
                         </a>
                     </li>
+                @if(Auth::user()->usertype == 'admin')
                     <li class="nav-item">
                         <a href="{{route('smsApi')}}">
                             <span class="nav-text">Sms Api</span>
                         </a>
                     </li>
+                @endif
                 </ul>
                 <ul class="childNav" data-parent="insight">
                     <li class="nav-item">

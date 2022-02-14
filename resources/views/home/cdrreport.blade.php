@@ -268,7 +268,7 @@
                                 <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
                                 <td>
                                     @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
-                                    <a class="btn bg-gray-100 more-details" title="More Details" data-tag="{{$row->tag}}" onClick="moreOption({{$row->cdrid}},'{{$row->did_no ? $row->did_no : 0}}','{{$row->firstleg."(".$row->secondleg.")"}}','{{$row->creditused ? $row->creditused : 0}}','{{$row->operatorAssigned ? $row->operatorAssigned->opername : ""}}');return false;"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
+                                    <a class="btn bg-gray-100 more-details" title="More Details" data-tag="{{$row->tag}}" data-operatorname="{{$row->operatorAssigned ? $row->operatorAssigned->opername : ''}}" onClick="moreOption({{$row->cdrid}},'{{$row->did_no ? $row->did_no : 0}}','{{$row->firstleg."(".$row->secondleg.")"}}','{{$row->creditused ? $row->creditused : 0}}');return false;"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
                                     @endif
                                     @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator' || Auth::user()->usertype=='reseller')
                                     @if(!empty($row->recordedfilename))
@@ -308,7 +308,7 @@
                                                 @endif
                                                 @if($account_service['emailservice_assign_cdr'] =='Yes')
                                                 <li>
-                                                    <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
+                                                    <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},'{{$operator->opername}}','E');">Notify By Email</a>
                                                 </li>
                                                 @endif
                                                 @if( $account_service['smsservice_assign_cdr'] =='Yes' || $account_service['emailservice_assign_cdr'] =='Yes')
@@ -812,7 +812,7 @@
                     @endif
                     @if($account_service['emailservice_assign_cdr'] =='Yes')
                     <li>
-                        <a href="javascript:assignoper(0,{{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
+                        <a href="javascript:assignoper(0,{{$operator->id}},'{{$operator->opername}}','E');">Notify By Email</a>
                     </li>
                     @endif
                     @if( $account_service['smsservice_assign_cdr'] =='Yes' || $account_service['emailservice_assign_cdr'] =='Yes')
@@ -887,12 +887,13 @@
     $('#timepicker1').timepicker();
 </script>
 <script type="text/javascript">
-    function moreOption(id, did_no, firstLeg, creditUsed, operName) {
+    function moreOption(id, did_no, firstLeg, creditUsed) {
         var className = $("#second_row").attr('class');
         if (className == 'show') {
             $("#second_row").remove();
         } else {
             var tag = $('#row_' + id + ' .more-details').data('tag');
+            var operName = $('#row_' + id + ' .more-details').data('operatorname');
             $('#row_' + id).after('<tr id="second_row" class="show"><td></td><td colspan="7"><span style="margin-right:100px;"><b>DNID :</b>' + did_no + '</span><span style="margin-right:100px;"><b>Duration :</b>' + firstLeg + '</span><span style="margin-right:100px;"><b>Coin :</b>' + creditUsed + '</span><span style="margin-right:100px;"><b>Assigned To :</b> <span id="assigned_' + id + '">' + operName + '</span></span><span style="margin-right:100px;"><b>Tag :</b> <span id="cdrTag_' + id + '">' + tag + '</span></span></td></tr>');
         }
     }
@@ -1359,6 +1360,38 @@
             sum += Number($(this).val());
         });
         $('#total_amount').val(parseFloat(sum).toFixed(2));
+    }
+
+    function assignoper(cdr_id, operator_id, opername,type) {
+        var cdrIds = [];
+        if(cdr_id == '0') {
+            $(".allselect:checked").each(function() {
+                cdrIds.push($(this).attr('id'));
+            })
+        } else {
+            cdrIds.push(cdr_id);
+        }
+        $.ajax({
+            type: 'POST',
+            url: "{{ url('assign_cdr') }}",
+            data: {
+                'cdr_id': cdrIds,
+                'opr_id': operator_id,
+                'type': type,
+            },
+            success: function(data) {
+                if (data.status) {
+                    cdrIds.forEach(function (cdrId) {
+                        $('#row_' + cdrId + ' .more-details').data('operatorname', opername);
+                        $("#assigned_"+cdrId).text(opername);
+                    });
+                    toastr.success(data.message);   
+                } else {
+                    toastr.error('Some errors are occured');
+                }
+            }
+
+        });
     }
 </script>
 

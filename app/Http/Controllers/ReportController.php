@@ -322,7 +322,7 @@ class ReportController extends Controller
                                 'operatorid' => $_POST['opr_id'],
                                 'status' => 0,
                                 'deviceid' => $oprAccount[0]->deviceid,
-                                'cdrid' => $_POST['cdr_id']
+                                'cdrid' => $cdrid
                             ];
                     DB::table('assigncdr_app_notify')->insert($assigncdr);
                 }
@@ -349,8 +349,7 @@ class ReportController extends Controller
             }
 
         }
-        $data['success'] = 'Cdr Assign successfully.';
-        return $data;
+        return ['status' => true, 'message' => 'Cdr assigned successfully.'];
     }
 
     public function deleteComment($id) {
