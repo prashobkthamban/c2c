@@ -213,7 +213,7 @@
         });
     </script>
      
-    <script src="{{asset('assets/js/ajaxfunctions.js')}}"></script>
+    <script src="{{asset('assets/js/ajaxfunctions.js?v=1.0.1')}}"></script>
     {{-- laravel js --}}
     {{-- <script src="{{mix('assets/js/laravel/app.js')}}"></script> --}}
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -230,14 +230,16 @@
         }
 
         $( function() {
-            $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });     
-            //$(function () {
-              $('.datetimepicker5').datetimepicker({
-                  //use24hours: true,
-                  format: 'HH:mm'
-              });
-            //});   
-             //$('.datetimepicker5').datetimepicker();
+            if($('.datepicker').length) {
+                $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });     
+                //$(function () {
+                $('.datetimepicker5').datetimepicker({
+                    //use24hours: true,
+                    format: 'HH:mm'
+                });
+                //});   
+                //$('.datetimepicker5').datetimepicker();
+            }
         });
     </script>
     <div class="modal fade" id="ModalContent" tabindex="-1" role="dialog" aria-labelledby="ModalContent" style="display: none;" aria-hidden="true">
@@ -245,6 +247,26 @@
 
         </div>
     </div>
+
+<!-- small modal -->
+<div class="modal fade" id="smallModal" tabindex="-1" role="dialog" aria-labelledby="smallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="smallModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end of small modal -->
 
 </body>
 @toastr_js

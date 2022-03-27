@@ -15,7 +15,7 @@
                     <div class="dropdown">
                         <a href="{{ route('Reminder') }}">
                         <!-- data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" -->
-                            <div class="badge-top-container" role="button" id="dropdownNotification">
+                            <div class="badge-top-container notify-header" role="button" id="dropdownNotification">
                                 <?php $reminderCount = getReminderCount();
                                 //dd($notifyList); ?>
                                 <span class="badge badge-primary notification_count"><?php echo $reminderCount; ?></span>
@@ -48,7 +48,7 @@
                 <div class="dropdown">
                 <a href="{{ route('notification') }}">
                 <!-- data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" -->
-                    <div class="badge-top-container" role="button" id="dropdownNotification">
+                    <div class="badge-top-container notify-header" role="button" id="dropdownNotification">
                         <?php $notifyList = unreadNotification();
                         //dd($notifyList); ?>
                         <span class="badge badge-primary notification_count"><?php echo $notifyList['not_count']; ?></span>

@@ -116,13 +116,6 @@
                             <div class="triangle"></div>
                         </li>
                         <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{url('acc_call_summary')}}">
-                                <i class="nav-icon i-File-TXT"></i>
-                                <span class="nav-text">Account Call Summary</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('dashboard_note')}}">
                                 <i class="nav-icon i-File-TXT"></i>
                                 <span class="nav-text">Dashboard Announcement</span>
@@ -254,6 +247,12 @@
                                 <span class="nav-text">Calls & Reports</span>
                             </a>
                             <div class="triangle"></div>
+                        </li>
+						<li class="nav-item">
+                            <a class="nav-item-hold" href="{{route('LiveCalls')}}">
+                                <i class="nav-icon i-Clock-3"></i>
+                                <span class="item-name">Live Calls</span>
+                            </a>
                         </li>
 						<li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('reminder')}}">

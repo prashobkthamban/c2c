@@ -158,20 +158,18 @@ class ServiceController extends Controller
     }
 
     public function accessLogs() {
-        $query = DB::table('ast_login_log');
+        $query = DB::table('ast_login_log')
+            ->select('ast_login_log.*', 'accountgroup.name')
+            ->leftJoin('accountgroup', 'ast_login_log.groupid', '=', 'accountgroup.id');
 
         if(Auth::user()->usertype == 'reseller') {
             $query->where('account.resellerid', Auth::user()->resellerid);
         } elseif(Auth::user()->usertype == 'groupadmin') {
-            $query->leftJoin('accountgroup', 'ast_login_log.groupid', '=', 'accountgroup.id');
             $query->where('ast_login_log.groupid', Auth::user()->groupid);
             $query->where('ast_login_log.usertype', 'groupadmin');
-            $query->select('ast_login_log.*', 'accountgroup.name');
         } elseif(Auth::user()->usertype == 'operator') {
-            $query->leftJoin('accountgroup', 'ast_login_log.groupid', '=', 'accountgroup.id');
             $query->where('ast_login_log.groupid', Auth::user()->groupid);
             $query->where('ast_login_log.usertype', 'operator');
-            $query->select('ast_login_log.*', 'accountgroup.name');
         } else {
         }
 
@@ -185,20 +183,19 @@ class ServiceController extends Controller
         $query = DB::table('cur_channel_used')
             ->leftJoin('accountgroup', 'cur_channel_used.groupid', '=', 'accountgroup.id')
             ->leftJoin('operatoraccount', 'cur_channel_used.operatorid', '=', 'operatoraccount.id')
-            ->leftJoin('operatordepartment', 'cur_channel_used.departmentid', '=', 'operatordepartment.id');
+            ->leftJoin('operatordepartment', 'cur_channel_used.departmentid', '=', 'operatordepartment.id')
+            ->where('cur_channel_used.calltype', 'ivr');
 
-        if(Auth::user()->usertype == 'reseller') {
-            $query->where('cur_channel_used.calltype', 'ivr');
-        } elseif(Auth::user()->usertype == 'groupadmin') {
-            $query->where('cur_channel_used.groupid', Auth::user()->groupid);
-            $query->where('cur_channel_used.calltype', 'ivr');
-        } elseif(Auth::user()->usertype != 'admin') {
-
-        } else {
-           $query->where('cur_channel_used.operatorid', Auth::user()->id);
-           $query->where('cur_channel_used.calltype', 'ivr'); 
+        if (Auth::user()->usertype == 'groupadmin') {
+            $groupAdminIds = [Auth::user()->groupid];
+        } else if (Auth::user()->usertype == 'reseller') {
+            $groupAdminIds =  DB::table('accountgroup')->where('resellerid', Auth::user()->resellerid)->pluck('id');
         }
-
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $query->whereIn('cur_channel_used.groupid', $groupAdminIds);
+        } else if (Auth::user()->usertype == 'operator') {
+            $query->where('cur_channel_used.operatorid', Auth::user()->operator_id);
+        }
             
         $query->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name')->orderBy('id', 'desc');
         $result = $query->paginate(10);

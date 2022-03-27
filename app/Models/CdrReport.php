@@ -56,7 +56,7 @@ class CdrReport extends Model
         return $this->hasOne('App\Models\Reminder', 'uniqueid', 'uniqueid');
     }
 
-    public static function getReport($customer = '', $department = '', $operator = '', $tag = '', $status = '', $assigned_to = '', $did_no = '', $caller_number = '', $date = '', $start_date = '', $end_date = ''){
+    public static function getReport($groupId = '', $department = '', $operator = '', $tag = '', $status = '', $assigned_to = '', $did_no = '', $caller_number = '', $date = '', $start_date = '', $end_date = ''){
        $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder', 'operatorAccount', 'operatorAssigned', 'accountGroup']);
         if( Auth::user()->usertype == 'reseller' && !empty(Auth::user()->reseller->associated_groups) ){
             $data->whereIn('cdr.groupid', json_decode(Auth::user()->reseller->associated_groups));
@@ -72,8 +72,8 @@ class CdrReport extends Model
             //dd(Auth::user()->usertype);
             $data->where('cdr.groupid',Auth::user()->groupid );
         }
-        if(!empty($customer)) {
-            $data->where('cdr.groupid',$customer);
+        if(!empty($groupId)) {
+            $data->where('cdr.groupid',$groupId);
         }
         if(!empty($department)) {
             $data->where('cdr.deptname',$department);
@@ -94,7 +94,7 @@ class CdrReport extends Model
             $data->where('cdr.did_no',$did_no);
         }
         if(!empty($caller_number)) {
-            $data->where('cdr.number',$caller_number);
+            $data->where('cdr.number', 'like', '%' . trim($caller_number) . '%');
         }
         if(!empty($date)) {
             $fromDate = date('Y-m-d') . ' 00:00:00';
@@ -244,22 +244,22 @@ class CdrReport extends Model
         return $result;
     }
 
-    public static function getstatus( ){
+    public static function getstatus($groupId) {
         $data = CdrReport::select( 'status' ) ;
         if( Auth::user()->usertype == 'reseller'){
             $data->where('cdr.resellerid',Auth::user()->resellerid );
         }    
-        $data->where('cdr.groupid',Auth::user()->groupid);
-         return $data->distinct()->get( );
+        $data->where('cdr.groupid', $groupId);
+        return $data->distinct()->get( );
     }
 //
-    public static function getdids( ){
+    public static function getdids($groupId) {
         $data = CdrReport::select( 'did_no' ) ;
         if( Auth::user()->usertype == 'reseller'){
             $data->where('cdr.resellerid',Auth::user()->resellerid );
         }    
-        $data->where('cdr.groupid',Auth::user()->groupid);
-         return $data->distinct()->get( );
+        $data->where('cdr.groupid', $groupId);
+        return $data->distinct()->get( );
     }
 
     public static function cdrExport()

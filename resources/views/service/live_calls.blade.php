@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section('page-css')
-<meta http-equiv="refresh" content="30">
+<meta http-equiv="refresh" content="5">
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">
 @endsection
 

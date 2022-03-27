@@ -40,17 +40,17 @@
 <div class="separator-breadcrumb border-top"></div>
 @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator' || Auth::user()->usertype == 'admin')
 <div class="row">
-    <div class="col-lg-12 col-md-12">
+    <div id="filter-panel" class="col-lg-12 col-md-12 filter-panel collapse {{count($requests) > 0 ? 'show' : ''}}">
         <div class="card mb-2">
             <div class="card-body">
-                <div id="filter-panel" class="filter-panel collapse {{count($requests) > 0 ? 'show' : ''}}">
+                <div>
                     <h5 class="ml-3">Search Panel</h5></br>
                     <form class="form" role="form" id="cdr_filter_form">
                         <div class="row" style="margin-right: 24px;margin-left: 24px;">
                             @if(Auth::user()->usertype == 'admin')
-                            <div class="col-md-4">
+                            <div class="col-md-4" id="customer_div">
                                 <label class="filter-col" for="pref-perpage">Customers</label>
-                                <select name="customer" class="form-control">
+                                <select name="customer" class="form-control" id="customer_id">
                                     <option value="">All</option>
                                     @if(!empty($customers))
                                     @foreach($customers as $customer )
@@ -60,11 +60,12 @@
                                     @endif
                                 </select>
                             </div>
+                            @else
+                                <input type="hidden" name="customer" id="customer_id" value="{{Auth::user()->groupid}}" />
                             @endif
-                            @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Departments</label>
-                                <select name="department" class="form-control">
+                                <select name="department" class="form-control" id="department_id">
                                     <option value="">All</option>
                                     @if(!empty($departments))
                                     @foreach($departments as $dept )
@@ -74,11 +75,10 @@
                                     @endif
                                 </select>
                             </div>
-                            @endif
-                            @if( Auth::user()->usertype == 'groupadmin' )
+                            @if(Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin')
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Operators</label>
-                                <select name="operator" class="form-control">
+                                <select name="operator" class="form-control" id="operator_id">
                                     <option value="">All</option>
                                     @if(!empty($operators))
                                     @foreach($operators as $opr )
@@ -88,17 +88,18 @@
                                     @endif
                                 </select>
                             </div>
+                            @endif
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Cdr Tag</label>
                                 {!! Form::select('tag', $tags->prepend('Select Tag', ''), isset($requests['tag']) ? $requests['tag'] : '' ,array('class' => 'form-control', 'id' => 'tag')) !!}
                             </div>
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Status</label>
-                                {!! Form::select('status', array('' => 'All', 'MISSED' => 'Missed', 'ANSWERED' => 'Answered', 'DIALING' => 'Dialing', 'LIVECALL' => 'Live call', 'AFTEROFFICE' => 'After Office'), isset($requests['status']) ? $requests['status'] : '',array('class' => 'form-control')) !!}
+                                {!! Form::select('status', array('' => 'All', 'MISSED' => 'Missed', 'ANSWERED' => 'Answered', 'DIALING' => 'Dialing', 'LIVECALL' => 'Live call', 'AFTEROFFICE' => 'After Office'), isset($requests['status']) ? $requests['status'] : '',array('class' => 'form-control', 'id' => 'status_id')) !!}
                             </div>
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Assigned To</label>
-                                <select class="form-control" name="assigned_to">
+                                <select class="form-control" name="assigned_to" id="assigned_to_id">
                                     <option value="">All</option>
                                     @if(!empty($operators))
                                     @foreach($operators as $opr )
@@ -108,11 +109,9 @@
                                     @endif
                                 </select>
                             </div>
-                            @endif
-                            @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Dnid Name</label>
-                                <select class="form-control" name="did_no">
+                                <select class="form-control" name="did_no" id="did_no">
                                     <option value="">All</option>
                                     @if(!empty($dnidnames))
                                     @foreach($dnidnames as $dnid )
@@ -124,9 +123,8 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-search">By Caller Number</label>
-                                <input type="text" class="form-control input-sm" name="caller_number" value="@if(isset($requests['caller_number'])) {{$requests['caller_number']}} @endif">
+                                <input type="text" class="form-control input-sm" id="caller_number" name="caller_number" value="@if(isset($requests['caller_number'])) {{$requests['caller_number']}} @endif">
                             </div>
-                            @endif
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Date</label>
                                 <select class="form-control" name="date" id="date_select">
@@ -240,7 +238,7 @@
                         <tbody>
                             @if(!empty($result))
                             @foreach($result as $row )
-                            <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable" id="row_{{ $row->cdrid }}">
+                            <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable" id="row_{{ $row->cdrid }}" data-cdr-id="{{$row->cdrid}}">
                                 @if(Auth::user()->usertype == 'groupadmin')
                                 <td><input type="checkbox" name="cdr_checkbox" id="{{$row->cdrid}}" value="{{$row->cdrid}}" class="allselect"></td>
                                 @elseif(Auth::user()->usertype == 'admin')
@@ -263,7 +261,7 @@
                                 <td>{{$row->firstleg."(".$row->secondleg.")"}}</td>
                                 <td>{{$row->creditused}}</td>
                                 @endif
-                                <td>{{$row->status}}</td>
+                                <td class="show-cdr-sub"><a href="javascript:void(0)" data-toggle="modal" data-target="#call_details_modal">{{$row->status}}</a></td>
                                 <td>{{$row->deptname}}</td>
                                 <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
                                 <td>
@@ -769,6 +767,26 @@
 </div>
 <!-- end of add contact -->
 
+<!-- call details modal -->
+<div class="modal fade" id="call_details_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Call Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end of dial modal -->
+
 <!-- customize sidebar -->
 @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype=='operator')
 <div class="customizer" style="top: 73px;">
@@ -836,7 +854,7 @@
 </div>
 @if(empty($operatorAccount) || (!empty($operatorAccount) && $operatorAccount->edit == '1'))
 <div class="customizer" title="Export Data" style="{{(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype=='operator') ? 'top:198px' : 'top:73px'}}">>
-    <a href="{{ url('cdrexport') }}">
+    <a href="#" onclick="exportCdr()">
         <div class="handle">
             <i class="i-Download1"></i>
         </div>
@@ -866,12 +884,7 @@
     $('#cdr_table').DataTable({
         dom: 'Bfrtip',
         order: [[2, "desc" ]],
-        buttons: [{
-            extend: 'csv',
-            exportOptions: {
-                columns: "thead th:not(.noExport)"
-            }
-        }]
+        buttons: []
     });
     // var table = $('#cdr_table').DataTable();
 
@@ -1393,6 +1406,133 @@
 
         });
     }
+    $(".show-cdr-sub").on("click", function() {
+        var data = {'cdrId': $(this).parent('tr').data('cdr-id')};
+        var url = "{{ url('cdrreport/call_details') }}";
+        ajaxCall(url, data)
+        .then(function(result) {
+            if(result.status) {
+                $('#call_details_modal .modal-body').html(result.content);
+            } else {
+                toastr.error(result.message);
+            }
+        });
+    });
+    
+    if ($("#customer_div").length) {
+        if ($("#customer_id").val() == "") {
+            resetData();
+        }
+    }
+    $("#customer_id").on("change", function() {
+        if ($("#customer_id").val() == "") {
+            resetData();
+        } else {
+            fetchDepartments();
+            fetchOperators();
+            fetchTags();
+            fetchDidNumbers();
+        }
+    })
+
+    function resetData() {
+        $("#department_id").find('option').not(':first').remove();
+        $("#department_id").val("");
+        $("#operator_id").find('option').not(':first').remove();
+        $("#operator_id").val("");
+        $("#tag").find('option').not(':first').remove();
+        $("#tag").val("");
+        $("#assigned_to_id").find('option').not(':first').remove();
+        $("#assigned_to_id").val("");
+        $("#did_no").find('option').not(':first').remove();
+        $("#did_no").val("");
+    }
+
+    function fetchDepartments() {
+        var data = {'groupId': $("#customer_id").val()};
+        var url = "{{ url('fetch_departments') }}";
+        ajaxCall(url, data)
+        .then(function(result) {
+            if(result.status) {
+                var html = '<option value="">All</option>';
+                result.data.forEach(function(data) {
+                    html += '<option value="'+data.dept_name+'" >'+data.dept_name+'</option>';
+                });
+                $("#department_id").html(html);
+            } else {
+                toastr.error(result.message);
+            }
+        });
+    }
+
+    function fetchOperators() {
+        var data = {'groupId': $("#customer_id").val()};
+        var url = "{{ url('fetch_operators') }}";
+        ajaxCall(url, data)
+        .then(function(result) {
+            if(result.status) {
+                var html = '<option value="">All</option>';
+                result.data.forEach(function(data) {
+                    html += '<option value="'+data.id+'" >'+data.opername+'</option>';
+                });
+                $("#operator_id").html(html);
+                $("#assigned_to_id").html(html);
+            } else {
+                toastr.error(result.message);
+            }
+        });
+    }
+
+    function fetchTags() {
+        var data = {'groupId': $("#customer_id").val()};
+        var url = "{{ url('fetch_tags') }}";
+        ajaxCall(url, data)
+        .then(function(result) {
+            if(result.status) {
+                var html = '<option value="">All</option>';
+                $.each(result.data, function(key, value) {
+                    html += '<option value="'+key+'" >'+value+'</option>';
+                });
+                $("#tag").html(html);
+            } else {
+                toastr.error(result.message);
+            }
+        });
+    }
+
+    function fetchDidNumbers() {
+        var data = {'groupId': $("#customer_id").val()};
+        var url = "{{ url('fetch_did_numbers') }}";
+        ajaxCall(url, data)
+        .then(function(result) {
+            if(result.status) {
+                var html = '<option value="">All</option>';
+                result.data.forEach(function(data) {
+                    html += '<option value="'+data.did_no+'" >'+data.did_no+'</option>';
+                });
+                $("#did_no").html(html);
+            } else {
+                toastr.error(result.message);
+            }
+        });
+    }
+
+function exportCdr() {
+    var url = "{{ url('cdrexport') }}";
+    url += "?customer=" + $("#customer_id").val();
+    url += "&department=" + $("#department_id").val();
+    url += "&operator=" + $("#operator_id").val();
+    url += "&tag=" + $("#tag").val();
+    url += "&status=" + $("#status_id").val();
+    url += "&assigned_to=" + $("#assigned_to_id").val();
+    url += "&did_no=" + $("#did_no").val();
+    url += "&caller_number=" + $("#caller_number").val();
+    url += "&date=" + $("#date_select").val();
+    url += "&start_date=" + $("#start_date").val();
+    url += "&end_date=" + $("#end_date").val();
+    console.log(url);
+    window.location = url;
+}
 </script>
 
 @endsection

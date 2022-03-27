@@ -14,9 +14,10 @@ Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
+Route::get('chart_todays_calls', 'HomeController@chartTodaysCalls');
+Route::get('graph_todays_calls', 'HomeController@graphTodaysCalls');
 Route::get('/test', 'ServiceController@test')->name('test');
 Route::get('home', 'HomeController@index')->name('home');
-Route::get('acc_call_summary', 'HomeController@callSummary')->name('callSummary');
 Route::get('dashboard_note', 'HomeController@dashboardNote')->name('dashboardNote');
 Route::post('add_announcement', 'HomeController@addAnnouncement')->name('addAnnouncement');
 Route::get('delete_announcement/{id}', 'HomeController@deleteAnnouncement')->name('deleteAnnouncement');
@@ -53,6 +54,12 @@ Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('cdrre
 Route::get('cdrreportout', 'ReportController@cdrreportout')->name('cdrreportout');
 Route::get('reminder', 'ReminderController@index')->name('Reminder');
 Route::post('cdrreport/store','ReportController@addLead')->name('store');
+Route::post('cdrreport/call_details','ReportController@cdrCallDetails');
+Route::post('fetch_departments','ReportController@fetchDepartments');
+Route::post('fetch_operators','ReportController@fetchOperators');
+Route::post('fetch_tags','ReportController@fetchTags');
+Route::post('fetch_status','ReportController@fetchStatus');
+Route::post('fetch_did_numbers','ReportController@fetchDidNumbers');
 
 /* ----------Recharge && Billing----------- */
 Route::get('billing', 'ServiceController@billing')->name('Billing');

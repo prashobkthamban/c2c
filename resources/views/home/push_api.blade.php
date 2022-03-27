@@ -81,10 +81,14 @@
                                 {!! Form::hidden('id', null, ['class' => 'form-control', 'id' => 'push_api_id']) !!}
                             </div>
 
+                            @if(in_array(Auth::user()->usertype, ["admin","reseller"]))
                             <div class="col-md-8 form-group mb-3">
                                 <label for="firstName1">Customer</label> 
                                 {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'customerId')) !!}
                             </div>
+                            @else
+                                <input type="hidden" id="customerId" name="groupid" value="{{Auth::user()->groupid}}" />
+                            @endif
                         </div>
                         <div class="row">
                             <div class="col-md-2 form-group mb-3"> 

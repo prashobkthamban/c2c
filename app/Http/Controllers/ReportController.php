@@ -3,34 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use App\Models\CdrReport;
 use App\Models\CdrArchive;
 use App\Models\CdrPbx;
 use App\Models\OperatorAccount;
-use App\Models\Contact;
 use App\Models\VoiceEmail;
 use App\Models\Blacklist;
 use App\Models\Holiday;
 use App\Models\Conference;
 use App\Models\CdrTag;
-use App\Models\CurChannelUsed;
 use App\Models\OperatorDepartment;
 use App\Models\Accountgroup;
-use App\Models\Dids;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\PostExport;
-use App\Models\Product;
+use Illuminate\Http\JsonResponse;
+use Illuminate\View\View;
 
 date_default_timezone_set('Asia/Kolkata');
 
 class ReportController extends Controller
 {
+    private $departmentObj;
     public function __construct()
     {
         $this->middleware('auth');
@@ -40,13 +36,13 @@ class ReportController extends Controller
         $this->cdr = new CdrReport();
     }
 
-    public function index(Request $request){
-        $users_lists = DB::table('operatoraccount')
-                        ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
-                        ->get();
-        $customers = DB::table('accountgroup')->select('id', 'name')->get();
-        
-        $customer = $request->get('customer');
+    public function index(Request $request) {
+        $requests = $request->all();
+        if(Auth::user()->usertype ==  'admin') {
+            $groupId = $request->get('customer');
+        } else {
+            $groupId = Auth::user()->groupid;
+        }
         $department = $request->get('department');
         $operator = $request->get('operator');
         $tag = $request->get('tag');
@@ -65,9 +61,10 @@ class ReportController extends Controller
             'month' => '1 Month',
             'custom' => 'Custom'
         ];
+        $customers = DB::table('accountgroup')->select('id', 'name')->get();
         $operatorAccount = OperatorAccount::find(Auth::user()->operator_id);
-        $result = CdrReport::getReport($customer, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date);
-        return view('home.cdrreport', ['customers' => $customers, 'result' => $result,'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup(),'users_lists' => $users_lists,'dateOptions' => $dateOptions,'requests' => $request->all(), 'operatorAccount' => $operatorAccount]);
+        $result = CdrReport::getReport($groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date);
+        return view('home.cdrreport', ['customers' => $customers, 'result' => $result, 'departments'=> OperatorDepartment::getDepartmentbygroup($groupId),'operators'=>OperatorAccount::getOperatorbygroup($groupId),'statuses'=> CdrReport::getstatus($groupId),'dnidnames'=>CdrReport::getdids($groupId),'tags'=>CdrTag::getTag($groupId), 'account_service'=> Accountgroup::getservicebygroup(), 'dateOptions' => $dateOptions,'requests' => $requests, 'operatorAccount' => $operatorAccount]);
     }
 
     public function graphReport(Request $request) {
@@ -387,16 +384,16 @@ class ReportController extends Controller
             'custom' => 'Custom'
         ];
         $result = CdrArchive::getReport($customer, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date);
-        return view('home.cdrreportarchive', ['customers' => $customers, 'result' => $result,'departments'=> OperatorDepartment::getDepartmentbygroup(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrReport::getstatus(),'dnidnames'=>CdrReport::getdids(),'tags'=>CdrTag::getTag(), 'account_service'=> Accountgroup::getservicebygroup(),'dateOptions' => $dateOptions,'requests' => $request->all()]);
+        return view('home.cdrreportarchive', ['customers' => $customers, 'result' => $result,'departments'=> OperatorDepartment::getDepartmentbygroup(Auth::user()->groupid),'operators'=>OperatorAccount::getOperatorbygroup(Auth::user()->groupid),'statuses'=> CdrReport::getstatus(Auth::user()->groupid),'dnidnames'=>CdrReport::getdids(Auth::user()->groupid),'tags'=>CdrTag::getTag(Auth::user()->groupid), 'account_service'=> Accountgroup::getservicebygroup(),'dateOptions' => $dateOptions,'requests' => $request->all()]);
     }
     public function cdrreportout(){
         //department - deptname from cdrpbx
 
         return view('home.cdrreportout', ['result' => CdrPbx::getReport(),
-        'departments'=> CdrPbx::get_dept_by_group(),'operators'=>OperatorAccount::getOperatorbygroup(),'statuses'=> CdrPbx::getstatus(),'dnidnames'=>CdrPbx::getdids(),'tags'=>CdrTag::getTag()]);
+        'departments'=> CdrPbx::get_dept_by_group(),'operators'=>OperatorAccount::getOperatorbygroup(Auth::user()->groupid),'statuses'=> CdrPbx::getstatus(),'dnidnames'=>CdrPbx::getdids(),'tags'=>CdrTag::getTag(Auth::user()->groupid)]);
     }
     public function operator(){
-        return view('home.operator', ['result' => OperatorAccount::getReport(),'operators'=>OperatorAccount::getOperatorbygroup()]);
+        return view('home.operator', ['result' => OperatorAccount::getReport(),'operators'=>OperatorAccount::getOperatorbygroup(Auth::user()->groupid)]);
     }
     // public function contacts(){
     //     return view('home.contacts', ['result' => Contact::getReport()]);
@@ -476,9 +473,25 @@ class ReportController extends Controller
     // public function livecalls(){
     //     return view('home.livecalls', ['result' => CdrTag::getReport()]);
     // }
-    public function cdrexport()
-    {
-        $data = $this->getExportData();
+    public function cdrexport(Request $request) {
+        
+        if(Auth::user()->usertype ==  'admin') {
+            $groupId = $request->get('customer');
+        } else {
+            $groupId = Auth::user()->groupid;
+        }
+        $department = $request->get('department');
+        $operator = $request->get('operator');
+        $tag = $request->get('tag');
+        $status = $request->get('status');
+        $assigned_to = $request->get('assigned_to');
+        $did_no = $request->get('did_no');
+        $caller_number = $request->get('caller_number');
+        $date = $request->get('date');
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+
+        $data = $this->getExportData($groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date);
         return Excel::create('Report', function($excel) use ($data) {
             $excel->sheet('mySheet', function($sheet) use ($data)
             {
@@ -488,44 +501,51 @@ class ReportController extends Controller
         // return Excel::download(new PostExport(), "Report.csv");
     }
 
-    public function getExportData()
+    public function getExportData($groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date)
     {
-        $data = CdrReport::getReport();
-        if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller')
-        {
-            $columns = 'DiD_num,Customer, Caller, Date,Totaltime,Talktime, Status, Credit, Department, Operator,OperatorNumber';
-        }
-        elseif(Auth::user()->usertype ==  'groupadmin')
-        {
-            $columns = 'DID_no,Caller , Date ,Totaltime ,Talktime , Status , Credit, Department,Call_tag, Operator,Assignedto';
-        }
-        elseif(Auth::user()->usertype ==  'operator')
-        {
-            $columns = 'DID_no,Caller , Date, Totaltime ,Talktime, Status ,Credit, Department,Call_tag,Assignedto ';
+        $data = CdrReport::getReport($groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date);
+        if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller') {
+            $columns = ['DID_no', 'Customer', 'Caller', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Operator', 'Agent', 'Operator Number'];
+        } elseif(Auth::user()->usertype ==  'groupadmin') {
+            $columns = ['DID_no', 'Caller', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Operator', 'Agent', 'Assigned To'];
+        } elseif(Auth::user()->usertype ==  'operator') {
+            $columns = ['DID_no', 'Caller', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assignedto'];
         }
 
-        $result_array = array( explode(',',$columns));
+        $result_array = [];
+        $notesCount = 0;
         if(!empty($data))
         {
             foreach($data as $k=>$cdrr) {
                 $array = array();
                 if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller')
                 {
-                    $array = array($cdrr->did_no,$cdrr->name,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->opername ,$cdrr->phonenumber);
+                    $array = array($cdrr->did_no,$cdrr->name,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->opername, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), $cdrr->phonenumber);
                 }
                 elseif(Auth::user()->usertype ==  'groupadmin')
                 {
-                    $array = array($cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg, $cdrr->status,($cdrr->creditused != '') ? $cdrr->creditused :"a" ,($cdrr->deptname != '') ? $cdrr->deptname : "s",($cdrr->tag != '' ) ? $cdrr->tag : "d",($cdrr->opername != '' ) ? $cdrr->opername : "f",($cdrr->assignedto != '') ? $cdrr->assignedto : "g");
+                    $array = array($cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg, $cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag,$cdrr->opername, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
                 }
                 elseif(Auth::user()->usertype ==  'operator')
                 {
-                    $array = array($cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag,$cdrr->opername);
+                    $array = array($cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
                     
+                }
+                $notes = $this->notes($cdrr->uniqueid);
+                $notesCount = count($notes) > $notesCount ? count($notes) : $notesCount;
+                if (!empty($notes)) {
+                    foreach ($notes as $index => $note) {
+                        $array[] = "Comments: " . $note->note . " Date: " . $note->datetime . " Operator: " . $note->operator;
+                    }
                 }
                 //dd($array);
                 $result_array[] = $array;
             }
         }
+        for ($i = 0 ; $i < $notesCount ; $i++) {
+            $columns[] = 'notes_' . ($i+1);
+        }
+        array_unshift($result_array, $columns);
         return $result_array;
     }
 
@@ -584,5 +604,45 @@ class ReportController extends Controller
         $c2c = ($account_group->c2c == 'Yes') ? 1 : 0;
         $result =  OperatorDepartment::getReport($oper_dept,$c2c);
         return view('home.operator_dept', ['result' => $result]);
+    }
+
+    public function cdrCallDetails(Request $request) {
+        $cdrId = $request->request->get('cdrId');
+        $data = DB::table('cdr_sub')
+                ->leftJoin('operatoraccount', 'cdr_sub.operator', 'operatoraccount.id')
+                ->select('cdr_sub.date_time', 'operatoraccount.opername', 'cdr_sub.status')
+                ->where('cdr_sub.cdr_id', $cdrId)
+                ->get();
+        $content = View('home.cdr_call_details', ['data' => $data])->render();
+
+        return new JsonResponse(['status' => true, 'content' => $content]);
+    }
+
+    public function fetchDepartments(Request $request) {
+        $groupId = $request->request->get('groupId');
+        $data = OperatorDepartment::getDepartmentbygroup($groupId);
+
+        return new JsonResponse(['status' => true, 'data' => $data]);
+    }
+
+    public function fetchOperators(Request $request) {
+        $groupId = $request->request->get('groupId');
+        $data = OperatorAccount::getOperatorbygroup($groupId);
+
+        return new JsonResponse(['status' => true, 'data' => $data]);
+    }
+
+    public function fetchTags(Request $request) {
+        $groupId = $request->request->get('groupId');
+        $data = CdrTag::getTag($groupId);
+
+        return new JsonResponse(['status' => true, 'data' => $data]);
+    }
+
+    public function fetchDidNumbers(Request $request) {
+        $groupId = $request->request->get('groupId');
+        $data = CdrReport::getdids($groupId);
+
+        return new JsonResponse(['status' => true, 'data' => $data]);
     }
 }

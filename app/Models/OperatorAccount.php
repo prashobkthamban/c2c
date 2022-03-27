@@ -57,13 +57,13 @@ class OperatorAccount extends Model
         return $result;
     }
 
-    public static function getOperatorbygroup( ){
+    public static function getOperatorbygroup($groupId) {
         
         $data = OperatorAccount::select('id','opername');          
          if( Auth::user()->usertype == 'reseller'){
             $data->where('operatoraccount.resellerid',Auth::user()->resellerid );
         } 
-        $result = $data->where('groupid',Auth::user()->groupid )->get();
+        $result = $data->where('groupid', $groupId)->get();
         return $result;
     }
 }

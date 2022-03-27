@@ -262,7 +262,28 @@ $(document).ready(function(){
         }
         });
     });
-
      
 });
 
+function loadModal(modalId, title, content) {
+    if ($('#'+modalId+'Modal').length) {
+        $('#'+modalId+'Modal .modal-title').text(title);
+        $('#'+modalId+'Modal .modal-body').html(content);
+        $('#'+modalId+'Modal').modal('show');
+    } else {
+        console.error(modalId+'Modal element not found!')
+    }
+}
+
+function ajaxCall(url, data) {
+    return $.ajax({
+        type: 'POST',
+        url: url,
+        data: data,
+        success: function(result) {},
+        error: function(error) {
+            //some toast message
+            toastr.error('Sorry! We are facing some technical difficulties. Please try after sometime.');
+        }
+    });
+}

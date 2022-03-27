@@ -7,8 +7,8 @@ function getResellers() {
 
 function getAccountgroups($usertype=null, $reseller= null) {
     //dd($reseller);
-	if($usertype != 'reseller' && $reseller != null && $reseller != 0) {
-        $cust =  DB::table('accountgroup')->where('resellerid', $reseller)->pluck('name', 'id');
+	if(Auth::user()->usertype == 'reseller') {
+        $cust =  DB::table('accountgroup')->where('resellerid', Auth::user()->resellerid)->pluck('name', 'id');
     } else {
         $cust =  DB::table('accountgroup')->pluck('name', 'id');
     }

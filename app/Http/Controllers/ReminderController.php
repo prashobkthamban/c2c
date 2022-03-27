@@ -30,7 +30,7 @@ class ReminderController extends Controller
         $data['date_from'] = $request->get('date_from');
         $data['date'] = $request->get('date');
         $dept = Reminder::select('deptname')->where('deptname', '!=', '')->groupBy('deptname')->pluck('deptname', 'deptname');
-        return view('home.reminder', ['result' => Reminder::getReport($data),'tags'=>CdrTag::getTag(), 'depts' => $dept, 'params' => $data]);
+        return view('home.reminder', ['result' => Reminder::getReport($data),'tags'=>CdrTag::getTag(Auth::user()->groupid), 'depts' => $dept, 'params' => $data]);
     }
 
     public function pbxextension() {

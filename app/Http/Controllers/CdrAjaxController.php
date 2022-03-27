@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Reminder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Models\CdrReport;
 use App\Models\Contact;
@@ -38,7 +39,7 @@ class CdrAjaxController extends Controller
 
             $array[ 'id' ] = $data[ 'id' ];
             if($data[ 'viewfile' ] == 'cdr.tag'){
-                $array['tags'] =   CdrTag::getTag();
+                $array['tags'] =   CdrTag::getTag(Auth::user()->groupid);
             }
 
             if($data[ 'viewfile' ] == 'cdr.callhistory'){
@@ -124,8 +125,7 @@ class CdrAjaxController extends Controller
         if ( $request->ajax() ) {
             $data = $request->all();
             
-            $array = array('result' => CdrReport::getReport_search($data), 'operators' => OperatorAccount::getOperatorbygroup(), 'account_service'=> Accountgroup::getservicebygroup());
-            //$operators = OperatorAccount::getOperatorbygroup();
+            $array = array('result' => CdrReport::getReport_search($data), 'operators' => OperatorAccount::getOperatorbygroup(Auth::user()->groupid), 'account_service'=> Accountgroup::getservicebygroup());
             $html               = view( 'home.cdrreport_ajax', $array);
             $arr[ 'view' ]      = $html->__toString();
         }

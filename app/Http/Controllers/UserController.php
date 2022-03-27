@@ -458,7 +458,7 @@ class UserController extends Controller
         $operators = OperatorAccount::with(['accounts'])
         ->where('groupid', Auth::user()->groupid)
         ->orderBy('adddate','DESC')->paginate(10);
-        $crm_users = DB::table('operatoraccount')->where('groupid',Auth::user()->groupid)->where('crm_access','yes')->get();
+        $crm_users = DB::table('operatoraccount')->where('groupid',Auth::user()->groupid)->get();
         if(count($crm_users) >= Auth::user()->load('accountdetails')->accountdetails['crm_users']){
             $access_count = true;
         }else{
@@ -499,7 +499,6 @@ class UserController extends Controller
         if($validator->fails()) {
             $data['error'] = $validator->messages();
         } else {
-            $crm_users = DB::table('operatoraccount')->where('groupid',Auth::user()->groupid)->where('crm_access','yes')->get();
             $workingDays = explode(',', $request->working_days);
             $operator_data = [
                 'phonenumber' => $request->get('phonenumber'),
@@ -514,12 +513,6 @@ class UserController extends Controller
                 'play'=> $request->get('play'),
                 'working_days' => json_encode($workingDays),
             ];
-            if($request->get('crm_access') == 'yes' && count($crm_users) < Auth::user()->load('accountdetails')->accountdetails['crm_users'])
-            {
-                $operator_data['crm_access'] = 'yes';
-            }else{
-                $operator_data['crm_access'] = 'no';
-            }
 
             $account_data = [
                 'username'=> $request->get('username'),
@@ -552,7 +545,7 @@ class UserController extends Controller
     }
 
     public function getOprAccount($id) {
-        $data=  DB::table('operatoraccount')->select('operatoraccount.id', 'lead_access', 'crm_access', 'phonenumber', 'opername', 'oper_status', 'livetrasferid', 'shift_id', 'app_use', 'edit', 'download', 'play','working_days', 'account.username', 'account.password', 'account.user_pwd', 'operator_shifts.shift_name')->leftJoin('account', 'operatoraccount.id', '=', 'account.operator_id')->leftJoin('operator_shifts', 'operatoraccount.shift_id', '=', 'operator_shifts.id')->where('operatoraccount.id', $id)->get();
+        $data=  DB::table('operatoraccount')->select('operatoraccount.id', 'phonenumber', 'opername', 'oper_status', 'livetrasferid', 'shift_id', 'app_use', 'edit', 'download', 'play','working_days', 'account.username', 'account.password', 'account.user_pwd', 'operator_shifts.shift_name')->leftJoin('account', 'operatoraccount.id', '=', 'account.operator_id')->leftJoin('operator_shifts', 'operatoraccount.shift_id', '=', 'operator_shifts.id')->where('operatoraccount.id', $id)->get();
 	    return $data;
     }
 
