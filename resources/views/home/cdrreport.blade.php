@@ -38,7 +38,6 @@
 </div>
 
 <div class="separator-breadcrumb border-top"></div>
-@if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator' || Auth::user()->usertype == 'admin')
 <div class="row">
     <div id="filter-panel" class="col-lg-12 col-md-12 filter-panel collapse {{count($requests) > 0 ? 'show' : ''}}">
         <div class="card mb-2">
@@ -47,7 +46,7 @@
                     <h5 class="ml-3">Search Panel</h5></br>
                     <form class="form" role="form" id="cdr_filter_form">
                         <div class="row" style="margin-right: 24px;margin-left: 24px;">
-                            @if(Auth::user()->usertype == 'admin')
+                            @if(Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'reseller')
                             <div class="col-md-4" id="customer_div">
                                 <label class="filter-col" for="pref-perpage">Customers</label>
                                 <select name="customer" class="form-control" id="customer_id">
@@ -75,7 +74,7 @@
                                     @endif
                                 </select>
                             </div>
-                            @if(Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin')
+                            @if(Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'reseller')
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Operators</label>
                                 <select name="operator" class="form-control" id="operator_id">
@@ -88,6 +87,8 @@
                                     @endif
                                 </select>
                             </div>
+                            @elseif(Auth::user()->usertype == 'operator')
+                                <input type="hidden" name="operator" id="operator_id" value="{{Auth::user()->operator_id}}" />
                             @endif
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Cdr Tag</label>
@@ -135,24 +136,24 @@
                                 </select>
                             </div>
                             <div class="col-md-2 custom_date_div" @if((isset($requests['date']) && $requests['date'] != 'custom') || !isset($requests['date'])) style="display: none;" @endif>
-                                <label for="billingdate">Start Date</label>
+                                <label>Start Date</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control datepicker" placeholder="dd-mm-yyyy" value="@if(isset($requests['start_date'])) {{$requests['start_date']}} @endif" name="start_date" id="start_date">
                                     <div class="input-group-append">
-                                        <button class="btn btn-secondary"  type="button">
+                                        <label class="btn btn-secondary" for="start_date">
                                             <i class="icon-regular i-Calendar-4"></i>
-                                        </button>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-2 custom_date_div" @if((isset($requests['date']) && $requests['date'] != 'custom') || !isset($requests['date'])) style="display: none;" @endif>
-                                <label for="billingdate">End Date</label>
+                                <label>End Date</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control datepicker" placeholder="dd-mm-yyyy" value="@if(isset($requests['end_date'])) {{$requests['end_date']}} @endif" name="end_date" id="end_date">
                                     <div class="input-group-append">
-                                        <button class="btn btn-secondary"  type="button">
+                                        <label class="btn btn-secondary" for="end_date">
                                             <i class="icon-regular i-Calendar-4"></i>
-                                        </button>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -163,46 +164,11 @@
                             </div>
                     </form>
                 </div>
-                <div class="col-md-2 mt-3 mt-md-0">
-                </div>
-                <!-- <a class="btn btn-secondary m-1" id="btn_download" href="{{ url('cdrexport') }}">Download</a>  -->
-                <div class="btn-group" id="assign" name="assign">
-                    <!-- <a href="#" class="btn btn-primary m-1 dropdown-toggle" data-toggle="dropdown"><i class="i-Add-User"> </i></a> -->
-                    <!-- <ul class="dropdown-menu" role="menu">
-                            @foreach($operators as $operator)
-                            @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
-                            <li>
-                                <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}});">{{$operator->opername}}</a><ul>
-                            @else
-                            <li>
-                                <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}});">{{$operator->opername}}</a>
-                            @endif
-                            @if($account_service['smsservice_assign_cdr'] =='Yes')
-                            <li>
-                                <a href="javascript:assignoper({{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
-                            </li>
-                            @endif
-                            @if($account_service['emailservice_assign_cdr'] =='Yes')
-                            <li>
-                                <a href="javascript:assignoper({{$operator->id}},{{$operator->opername}},'E');">Notify By Email</a>
-                            </li>
-                            @endif
-                            @if( $account_service['smsservice_assign_cdr'] =='Yes' ||  $account_service['emailservice_assign_cdr'] =='Yes')
-                            </ul>
-                            @else
-                            </li>
-                            @endif
-                            @endforeach
-                            <?php echo '<li><a href="javascript:assignoper(0);">Unassign</a></li>'; ?>
-                        </ul>  -->
-                </div>
             </div>
-
         </div>
     </div>
 </div>
 </div>
-@endif
 @if(Auth::user()->usertype == 'groupadmin')
 <!--
         -->

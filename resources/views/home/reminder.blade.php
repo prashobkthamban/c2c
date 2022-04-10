@@ -94,11 +94,11 @@
                             <tr data-toggle="collapse" data-target="#accordion_{{$row->id}}" class="clickable" id="row_{{ $row->id }}">
                                 <td>
                                     @if(Auth::user()->usertype=='groupadmin')
-                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->number }}" onClick="moreOption({{$row->id}},{{ $row->contacts && $row->contacts->fname ? true : false}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->number }}" class="tag_btn_{{$row->cdrId}}" data-tag="{{$row->tag}}" data-unique-id="{{$row->uniqueid}}" data-show-notes="@if(sizeof($row['cdrNotes']) > 0) inline @else none @endif" data-contact-id="{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-phone="{{$row->number}}" onClick="moreOption({{$row->cdrId}}, {{$row->id}}, {{ $row->contacts && $row->contacts->id ? true : false}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
                                         @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
                                         {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
                                         @else
-                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->number }}" onClick="moreOption({{$row->id}},{{$row->contacts && $row->contacts->fname ? true : false}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->number }}" class="tag_btn_{{$row->cdrId}}" data-tag="{{$row->tag}}" data-unique-id="{{$row->uniqueid}}" data-show-notes="@if(sizeof($row['cdrNotes']) > 0) inline @else none @endif" data-contact-id="{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-phone="{{$row->number}}" onClick="moreOption({{$row->cdrId}}, {{$row->id}}, {{$row->contacts && $row->contacts->id ? true : false}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
                                     @endif
 
                                 </td>
@@ -110,10 +110,15 @@
                                     <td>{{$row->name}}</td>
                                 @endif
                                 <td>{{$row->opername}}</td>
-                                <td>{{$row->assignedname}}</td>
+                                <td>{{$row->assignedtoname}}</td>
                                 <td>
                                 @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
                                         <a href="#" class="btn play_audio" <?php echo (!empty($row->recordedfilename)) ? "style=''" : "style='visibility:hidden'"; ?> title="Play Audio" data-toggle="modal" data-target="#play_modal" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
+                                @endif
+                                @if($row->reminder_seen == '0')
+                                    <a href="javascript:void(0)" class="text-warning mr-2 reminder-seen" title="Mark as seen" data-id="{{$row->id}}">
+                                            <i class="nav-icon i-Flag-2 font-weight-bold"></i>
+                                    </a>
                                 @endif
                                     <a href="#" data-toggle="modal" data-target="#edit_reminder" class="text-success mr-2 edit_reminder" id="{{$row->id}}">
                                             <i class="nav-icon i-Pen-2 font-weight-bold"></i>
@@ -208,7 +213,146 @@
             </div>
         </div>
 
+<!-- tag modal -->
+<div class="modal fade" id="tag_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="tag_title">Add Tag</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {!! Form::open(['class' => 'tag_form', 'method' => 'post']) !!}
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-2 form-group mb-3">
+                        {!! Form::hidden('cdrid', null, ['class' => 'form-control', 'id' => 'cdrid']) !!}
+                    </div>
 
+                    <div class="col-md-8 form-group mb-3">
+                        <label for="firstName1">Tag</label>
+                        {!! Form::select('tag', $tags->prepend('Select Tag', ''), null,array('class' => 'form-control', 'id' => 'cdr_tag')) !!}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+            {!! Form::close() !!}
+        </div>
+    </div>
+</div>
+<!--end of tag modal -->
+
+<!-- notes modal -->
+<div class="modal fade" id="notes_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Notes</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table id="notes_list_table" class="display table table-striped table-bordered" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Operator</th>
+                            <th>Date</th>
+                            <th>Comments</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end of notes modal -->
+
+<!-- add note modal -->
+<div class="modal fade" id="add_note_modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Note</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {!! Form::open(['class' => 'notes_form', 'method' => 'post']) !!}
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <input type="hidden" name="uniqueid" id="uniqueid" />
+                        <textarea class="form-control" rows="5" name="note" placeholder="Comment"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+            {!! Form::close() !!}
+        </div>
+    </div>
+</div>
+<!-- end of add note modal -->
+
+<!-- add contact -->
+<div class="modal fade" id="contact_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contact_title">Add Contact</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            {!! Form::open(['class' => 'contact_form', 'method' => 'post']) !!}
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-2 form-group mb-3"></div>
+
+                    <div class="col-md-8 form-group mb-3">
+                        <label for="firstName1">First Name</label>
+                        <input type="hidden" name="contact_id" id="contact_id">
+                        <input type="hidden" name="phone" id="phone">
+                        <input type="text" class="form-control" name="fname" id="fname" placeholder="First Name">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 form-group mb-3"> </div>
+
+                    <div class="col-md-8 form-group mb-3">
+                        <label for="firstName1">Last Name</label>
+                        <input type="text" name="lname" id="lname" class="form-control" placeholder="Last Name">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 form-group mb-3"> </div>
+
+                    <div class="col-md-8 form-group mb-3">
+                        <label for="firstName1">Email</label>
+                        <input type="email" name="email" id="emailaddress" class="form-control" placeholder="Email">
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+            {!! Form::close() !!}
+        </div>
+    </div>
+</div>
+<!-- end of add contact -->
 
 @endsection
 
@@ -222,34 +366,34 @@
     $('#timepicker1').timepicker();
     //$('.more_option').hide();
     $('#reminder_table').DataTable();
-    function xajax_show(id) {
-        $(".cdr_form").addClass('d-none');
-        $("#"+id).removeClass('d-none');
-    }
 
-    function xajax_hide() {
-        $(".cdr_form").addClass('d-none');
-    }
-
-
-    function moreOption(id, name) {
+    function moreOption(cdrId, id, isContactAdded) {
         console.log(id);
         console.log(name);
-        var btn;
-        var btnFn = 'contact_form_'+id;
-        var noteFn = 'add_tag_'+id;
-        var tagFn = 'notes_'+id;
+        var elem = $("#callerid_"+id);
         var className = $("#second_row").attr('class');
+        var tag = elem.data('tag');
+        var uniqueId = elem.data('unique-id');
+        var showNotes = elem.data('show-notes');
+        var contactId = elem.data('contact-id');
+        var email = elem.data('email');
+        var firstName = elem.data('fname');
+        var lastName = elem.data('lname');
+        var phoneNumber = elem.data('phone');
         if(className == 'show') {
             $("#second_row").remove();
         } else {
-            if(name) {
-                btn = '<button type="button" id="view_contact" class="btn btn-info m-1 clickable" >View Contact</button>';
-            } else {
-                btn = '<button type="button" id="add_contact" class="btn btn-info m-1 clickable" >Add Contact</button>';
+            let contactText = 'Add Contact';
+            if(isContactAdded) {
+                contactText = 'Edit Contact';
             }
 
-            $('#row_'+id).after('<tr id="second_row" class="show"><td colspan="8"><div>'+btn+'<button type="button" id="notes" onClick="xajax_show('+noteFn+')" class="btn btn-info m-1">Notes</button><button type="button" id="tag" onClick="xajax_show('+tagFn+')" class="btn btn-info m-1">Tag</button></div></td></tr>');
+            $('#row_'+id).after('<tr id="second_row" class="show"><td colspan="8"><div>'+
+            '<button type="button" id="edit_contact_'+contactId+'" data-toggle="modal" data-target="#contact_modal" class="btn btn-info m-1 clickable edit_contact" data-contact-id="'+contactId+'" data-email="'+email+'" data-fname="'+firstName+'" data-lname="'+lastName+'" data-phone="'+phoneNumber+'">'+contactText+'</button>'+
+            '<button type="button" id="notes" data-cdr-id="'+cdrId+'" data-toggle="modal" data-target="#notes_modal" data-unique-id="'+uniqueId+'" class="btn btn-info m-1 notes_list" style="display:'+showNotes+'">Notes</button>'+
+            '<button type="button" id="add_notes" data-cdr-id="'+cdrId+'" data-toggle="modal" data-target="#add_note_modal" data-unique-id="'+uniqueId+'" class="btn btn-info m-1 add_note">Add Notes</button>'+
+            '<button type="button" id="tag" data-cdr-id="'+cdrId+'" data-tag="'+tag+'" data-toggle="modal" data-target="#tag_modal" class="btn btn-info m-1 edit_tag tag_btn_'+cdrId+'">Tag</button>'+
+            '</div></td></tr>');
         }
     }
 
@@ -310,6 +454,89 @@
                 toastr.error('Some errors are occured');
             }
           });
+        });
+
+        $(".reminder-seen").on("click", function() {
+            let elem = $(this);
+            var data = {'id': elem.data('id')};
+            var url = "{{ url('reminder_seen') }}";
+            ajaxCall(url, data)
+            .then(function(result) {
+                if(result.status) {
+                    toastr.success(result.message);
+                    elem.remove();
+                    setTimeout(function(){ location.reload() }, 3000);
+                } else {
+                    toastr.error(result.message);
+                }
+            });
+        })
+
+        $(document).on('click', '.edit_tag', function(e) {
+            var cdrId = $(this).attr("data-cdr-id");
+            var tag = $(this).attr("data-tag");
+            console.log('cdrId : '+cdrId);
+            console.log('tag : '+tag);
+            $("#cdrid").val(cdrId);
+            if (tag != '') {
+                $("#tag_title").text("Update Tag");
+                $("#cdr_tag").val(tag);
+            } else {
+                $("#tag_title").text("Add Tag");
+                $("#cdr_tag").val('');
+            }
+        });
+
+        $(document).on('click', '.notes_list', function(e) {
+            var uniqueid = $(this).attr("data-unique-id");
+            $.ajax({
+                url: '/notes/' + uniqueid, // This is the url we gave in the route
+                success: function(res) { // What to do if we succeed
+                    var response = JSON.stringify(res);
+                    var noteHTML = "";
+                    if (res.length > 0) {
+                        $.each(res, function(idx, obj) {
+                            noteHTML += "<tr class='cmnt_row_" + obj.id + "'>";
+                            noteHTML += "<td>" + obj.operator + "</td>";
+                            noteHTML += "<td>" + obj.datetime + "</td>";
+                            noteHTML += "<td>" + obj.note + "</td>";
+                            noteHTML += "<td><a href='#' class='text-danger mr-2 delete_comment' id='" + obj.id + "'><i class='nav-icon i-Close-Window font-weight-bold'></td>";
+                            noteHTML += "</tr>";
+
+                        });
+                    } else {
+                        noteHTML += "<tr><td colspan='4'><center>No Data Found</center></td></tr>";
+                    }
+                    $("#notes_list_table tbody").html(noteHTML);
+                },
+                error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                }
+            });
+
+        });
+
+        $(document).on('click', '.add_note', function(e) {
+            var uniqueid = $(this).attr("data-unique-id");
+            $("#uniqueid").val(uniqueid);
+        });
+
+        $(document).on('click', '.edit_contact', function(e) {
+            var contactid = $(this).attr("data-contact-id");
+            var email = $(this).attr("data-email");
+            var fname = $(this).attr("data-fname");
+            var lname = $(this).attr("data-lname");
+            var phone = $(this).attr("data-phone");
+            $("#contact_id").val(contactid);
+            $("#emailaddress").val(email);
+            $("#fname").val(fname);
+            $("#lname").val(lname);
+            $("#phone").val(phone);
+            if (contactid != '') {
+                $("#contact_title").text("Update Contact");
+            } else {
+                $("#contact_title").text("Add Contact");
+            }
+
         });
     });
  </script>

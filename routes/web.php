@@ -53,6 +53,7 @@ Route::get('download_file/{id}/{file}', 'ReportController@downloadFile')->name('
 Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('cdrreportarchive');
 Route::get('cdrreportout', 'ReportController@cdrreportout')->name('cdrreportout');
 Route::get('reminder', 'ReminderController@index')->name('Reminder');
+Route::post('reminder_seen', 'ReminderController@reminderSeen')->name('reminderSeen');
 Route::post('cdrreport/store','ReportController@addLead')->name('store');
 Route::post('cdrreport/call_details','ReportController@cdrCallDetails');
 Route::post('fetch_departments','ReportController@fetchDepartments');
@@ -93,10 +94,10 @@ Route::get('delete_pbx_did/{id}', 'ReminderController@deletePbxdid')->name('dele
 Route::get('get_pbx_did/{id}', 'ReminderController@getPbxdid')->name('getPbxdid');
 
 Route::get('operator', 'ReportController@operator')->name('operator');
-Route::get('contacts', 'ReportController@contacts')->name('contacts');
+// Route::get('contacts', 'ReportController@contacts')->name('contacts');
 //Route::get('voicemail', 'ReportController@voicemail')->name('voicemail');
 Route::get('blacklist', 'ReportController@blacklist')->name('blacklist');
-Route::get('holiday', 'ReportController@holiday')->name('holiday');
+//Route::get('holiday', 'ReportController@holiday')->name('holiday');
 Route::get('conference', 'ReportController@conference')->name('conference');
 Route::post('add_conference', 'ReportController@addConference')->name('AddConference');
 Route::post('edit_comment', 'ReportController@editComment')->name('EditComment');

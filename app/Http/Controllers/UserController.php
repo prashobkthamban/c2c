@@ -390,6 +390,15 @@ class UserController extends Controller
         if($validator->fails()) {
             $data['error'] = $validator->messages();
         } else {
+            $data = DB::table('account')
+                ->where('username', $request->get('username'));
+            if(!empty($request->get('id'))) {
+                $data->where('id', '!=', $request->get('id'));
+            }
+            $data = $data->first();
+            if (!empty($data)) {
+                return ['error' => ['error' => ['Username already in use. Please choose a different Username']]];
+            }
             $account = ['username' => $request->get('username'),
                      'password'=> Hash::make($request->get('password')),
                      'user_pwd'=> $request->get('password'),
@@ -456,15 +465,15 @@ class UserController extends Controller
 
     public function operators() {
         $operators = OperatorAccount::with(['accounts'])
-        ->where('groupid', Auth::user()->groupid)
-        ->orderBy('adddate','DESC')->paginate(10);
-        $crm_users = DB::table('operatoraccount')->where('groupid',Auth::user()->groupid)->get();
-        if(count($crm_users) >= Auth::user()->load('accountdetails')->accountdetails['crm_users']){
-            $access_count = true;
-        }else{
-            $access_count = false;
-        }
-        return view('user.operator_list', compact('operators','access_count'));
+                ->where('groupid', Auth::user()->groupid)
+                ->orderBy('adddate','DESC')
+                ->paginate(10);
+        $data = DB::table('operatoraccount')
+                ->where('groupid', Auth::user()->groupid)
+                ->orderByRaw('CONVERT(livetrasferid, SIGNED) desc')
+                ->first();
+        $nextLiveTransferId = !empty($data) ? $data->livetrasferid+1 : 1;
+        return view('user.operator_list', compact('operators', 'nextLiveTransferId'));
     }
 
     public function operatorCount() {
@@ -499,6 +508,25 @@ class UserController extends Controller
         if($validator->fails()) {
             $data['error'] = $validator->messages();
         } else {
+            $data = DB::table('operatoraccount')
+                ->where('groupid', Auth::user()->groupid)
+                ->where('livetrasferid', $request->get('livetrasferid'));
+            if(!empty($request->get('id'))) {
+                $data->where('id', '!=', $request->get('id'));
+            }
+            $data = $data->first();
+            if (!empty($data)) {
+                return ['error' => ['error' => ['Live Transfer ID already in use. Please choose a different id.']]];
+            }
+            $data = DB::table('account')
+                ->where('username', $request->get('username'));
+            if(!empty($request->get('id'))) {
+                $data->where('operator_id', '!=', $request->get('id'));
+            }
+            $data = $data->first();
+            if (!empty($data)) {
+                return ['error' => ['error' => ['Username already in use. Please choose a different Username']]];
+            }
             $workingDays = explode(',', $request->working_days);
             $operator_data = [
                 'phonenumber' => $request->get('phonenumber'),
@@ -526,8 +554,7 @@ class UserController extends Controller
                 DB::table('account')
                 ->where('operator_id', $request->get('id'))
                 ->update($account_data);
-                $data['success'] = 'Operator update successfully.';
-                // $data['crm_access_error'] = '1';
+                $data['success'] = 'Operator updated successfully.';
             } else {
                 $operator_data = new OperatorAccount($operator_data);
                 $operator_data->save();
@@ -667,6 +694,11 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         $query = DB::select($sql);
         $data['operators'] =  DB::table('operatoraccount')->where('groupid', Auth::user()->groupid)->select('id', 'opername')->get();
         $data['account_det'] = $query;
+        $res = DB::table('operator_dept_assgin')
+                ->where('departmentid', $id)
+                ->orderByRaw('CONVERT(priority, SIGNED) desc')
+                ->first();
+        $data['nextPriority'] = !empty($res) ? $res->priority+1 : 1;
         return $data;
     }
 
@@ -679,6 +711,13 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         if($validator->fails()) {
             $data['error'] = $validator->messages();
         } else {
+            $data = DB::table('operator_dept_assgin')
+                ->where('departmentid', $request->get('departmentid'))
+                ->where('priority', $request->get('priority'));
+            $data = $data->first();
+            if (!empty($data)) {
+                return ['error' => ['error' => ['Priority Number already in use. Please choose a different Number']]];
+            }
             $dept = ['operatorid' => $request->get('operatorid'),
                      'departmentid' => $request->get('departmentid'),
                      'priority'=> $request->get('priority')
@@ -702,7 +741,13 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         if($validator->fails()) {
             $data['error'] = $validator->messages();
         } else {
-
+            $data = DB::table('operator_dept_assgin')
+                ->where('departmentid', $request->get('departmentid'))
+                ->where('priority', $request->get('priority'));
+            $data = $data->first();
+            if (!empty($data)) {
+                return ['error' => ['error' => ['Priority Number already in use. Please choose a different Number']]];
+            }
             $dept = ['groupid' => Auth::user()->groupid,
                      'oper_status' => 'online',
                      'phonenumber'=> $request->get('phonenumber'),

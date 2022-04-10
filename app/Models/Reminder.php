@@ -25,10 +25,12 @@ class Reminder extends Model
     }
 
     public static function getReport($params){
-        $data = Reminder::select('accountgroup.name','operatoraccount.opername','operatoraccount.phonenumber','reminders.*')
+        $data = Reminder::select('cdr.cdrid as cdrId', 'cdr.tag', 'accountgroup.name','opr.opername','opr.phonenumber', 'assigned.opername as assignedtoname','reminders.*')
+            ->leftJoin('cdr', 'cdr.uniqueid', '=', 'reminders.uniqueid')
             ->leftJoin('accountgroup', 'accountgroup.id', '=', 'reminders.groupid')
             ->leftJoin('resellergroup', 'resellergroup.id', '=', 'reminders.resellerid')
-            ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'reminders.operatorid')
+            ->leftJoin('operatoraccount as opr', 'opr.id', '=', 'reminders.operatorid')
+            ->leftJoin('operatoraccount as assigned', 'assigned.id', '=', 'reminders.assignedto')
             ->with(['cdrNotes', 'contacts', 'operatorAccount']);
         if(isset($params['caller']) && $params['caller'] != '')
         {
@@ -44,7 +46,7 @@ class Reminder extends Model
         }
         if(isset($params['operator']) && $params['operator'] != '')
         {
-            $data->where('operatoraccount.opername','LIKE','%' .$params['operator'].'%'  );
+            $data->where('opr.opername','LIKE','%' .$params['operator'].'%'  );
         }
         if(!empty($params['date'])) {
             if($params['date'] == 'today')
@@ -85,7 +87,8 @@ class Reminder extends Model
     public static function insertReminder($data,$newdate){
 
         return Reminder::insertGetId(
-            ['number' => $data->number,
+            [
+                'number' => $data->number,
                 'groupid' => Auth::user()->groupid,
                 'operatorid' => Auth::user()->id,
                 'followupdate' => $newdate,
@@ -97,7 +100,8 @@ class Reminder extends Model
                 'uniqueid' => $data->uniqueid,
                 'resellerid' => $data->resellerid,
                 'secondleg' => $data->secondleg,
-                'assignedto' => $data->assignedto
+                'assignedto' => $data->assignedto,
+                'reminder_seen' => '0'
             ]
         );
     }

@@ -203,6 +203,31 @@ class ServiceController extends Controller
         return view('service.live_calls', compact('result'));
     }
 
+    public function fetchLiveCalls() {
+        //dd(Auth::user());
+        $query = DB::table('cur_channel_used')
+            ->leftJoin('accountgroup', 'cur_channel_used.groupid', '=', 'accountgroup.id')
+            ->leftJoin('operatoraccount', 'cur_channel_used.operatorid', '=', 'operatoraccount.id')
+            ->leftJoin('operatordepartment', 'cur_channel_used.departmentid', '=', 'operatordepartment.id')
+            ->where('cur_channel_used.calltype', 'ivr');
+
+        if (Auth::user()->usertype == 'groupadmin') {
+            $groupAdminIds = [Auth::user()->groupid];
+        } else if (Auth::user()->usertype == 'reseller') {
+            $groupAdminIds =  DB::table('accountgroup')->where('resellerid', Auth::user()->resellerid)->pluck('id');
+        }
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $query->whereIn('cur_channel_used.groupid', $groupAdminIds);
+        } else if (Auth::user()->usertype == 'operator') {
+            $query->where('cur_channel_used.operatorid', Auth::user()->operator_id);
+        }
+            
+        $query->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name')->orderBy('id', 'desc');
+        $result = $query->paginate(10);
+        //dd($result);
+        return view('service.live_calls', compact('result'));
+    }
+
     public function gateway() {
         $result = DB::table('prigateway')->where('delete_status', '0')->orderBy('id', 'desc')->paginate(10);
         return view('service.gateway', compact('result'));

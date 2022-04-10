@@ -38,7 +38,7 @@ class ReportController extends Controller
 
     public function index(Request $request) {
         $requests = $request->all();
-        if(Auth::user()->usertype ==  'admin') {
+        if (in_array(Auth::user()->usertype, ["admin","reseller"])) {
             $groupId = $request->get('customer');
         } else {
             $groupId = Auth::user()->groupid;
@@ -61,7 +61,13 @@ class ReportController extends Controller
             'month' => '1 Month',
             'custom' => 'Custom'
         ];
-        $customers = DB::table('accountgroup')->select('id', 'name')->get();
+        $query = DB::table('accountgroup')->select('id', 'name');
+        if (Auth::user()->usertype == 'reseller' && !empty(Auth::user()->reseller->associated_groups)) {
+            $query = $query->whereIn('id', json_decode(Auth::user()->reseller->associated_groups));
+        } else if (Auth::user()->usertype == 'reseller') {
+            $query = $query->where('resellerid', Auth::user()->resellerid);
+        }
+        $customers = $query->get();
         $operatorAccount = OperatorAccount::find(Auth::user()->operator_id);
         $result = CdrReport::getReport($groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date);
         return view('home.cdrreport', ['customers' => $customers, 'result' => $result, 'departments'=> OperatorDepartment::getDepartmentbygroup($groupId),'operators'=>OperatorAccount::getOperatorbygroup($groupId),'statuses'=> CdrReport::getstatus($groupId),'dnidnames'=>CdrReport::getdids($groupId),'tags'=>CdrTag::getTag($groupId), 'account_service'=> Accountgroup::getservicebygroup(), 'dateOptions' => $dateOptions,'requests' => $requests, 'operatorAccount' => $operatorAccount]);
@@ -212,9 +218,11 @@ class ReportController extends Controller
         } else {
             $date = Carbon::parse($request->get('startdate'))->format('Y-m-d')." ".$request->get('starttime').":00";
             if(!empty($request->get('id'))) {
+                $reminderSeen = $request->get('appoint_status') == 'close' ? '1' : '0';
                 $reminder = [
                      'followupdate'=> $date,
                      'appoint_status'=> $request->get('appoint_status'),
+                     'reminder_seen' => $reminderSeen
                     ];
                 DB::table('reminders')
                     ->where('id', $request->get('id'))
@@ -235,6 +243,7 @@ class ReportController extends Controller
                      'uniqueid'=> $cdr_query[0]->uniqueid,
                      'secondleg'=> $cdr_query[0]->secondleg,
                      'assignedto'=> $cdr_query[0]->assignedto,
+                     'reminder_seen' => '0'
                     ];
                 DB::table('reminders')->insert($reminder);
                 $data['success'] = 'Reminder added successfully.';
@@ -505,11 +514,11 @@ class ReportController extends Controller
     {
         $data = CdrReport::getReport($groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date);
         if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller') {
-            $columns = ['DID_no', 'Customer', 'Caller', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Operator', 'Agent', 'Operator Number'];
+            $columns = ['DID_no', 'Customer', 'Caller', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Agent'];
         } elseif(Auth::user()->usertype ==  'groupadmin') {
-            $columns = ['DID_no', 'Caller', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Operator', 'Agent', 'Assigned To'];
+            $columns = ['DID_no', 'Caller', 'Email', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assigned To'];
         } elseif(Auth::user()->usertype ==  'operator') {
-            $columns = ['DID_no', 'Caller', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assignedto'];
+            $columns = ['DID_no', 'Caller', 'Email', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assignedto'];
         }
 
         $result_array = [];
@@ -518,18 +527,14 @@ class ReportController extends Controller
         {
             foreach($data as $k=>$cdrr) {
                 $array = array();
-                if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller')
-                {
-                    $array = array($cdrr->did_no,$cdrr->name,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->opername, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), $cdrr->phonenumber);
-                }
-                elseif(Auth::user()->usertype ==  'groupadmin')
-                {
-                    $array = array($cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg, $cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag,$cdrr->opername, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
-                }
-                elseif(Auth::user()->usertype ==  'operator')
-                {
-                    $array = array($cdrr->did_no,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
-                    
+                if(Auth::user()->usertype ==  'admin') {
+                    $array = array($cdrr->did_no,$cdrr->name,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''));
+                } elseif(Auth::user()->usertype == 'reseller') {
+                    $array = array($cdrr->did_no, ($cdrr->accountGroup ? $cdrr->accountGroup->name : ''),$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''));
+                } elseif(Auth::user()->usertype ==  'groupadmin') {
+                    $array = array($cdrr->did_no, ($cdrr->contacts ? $cdrr->contacts->fname . ' ' . $cdrr->contacts->lname : $cdrr->number), ($cdrr->contacts ? $cdrr->contacts->email : ''), $cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg, $cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
+                } elseif(Auth::user()->usertype ==  'operator') {
+                    $array = array($cdrr->did_no, ($cdrr->contacts ? $cdrr->contacts->fname . ' ' . $cdrr->contacts->lname : $cdrr->number), ($cdrr->contacts ? $cdrr->contacts->email : ''), $cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
                 }
                 $notes = $this->notes($cdrr->uniqueid);
                 $notesCount = count($notes) > $notesCount ? count($notes) : $notesCount;

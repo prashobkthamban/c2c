@@ -280,7 +280,9 @@ function callConfig($params) {
 
 function getReminderCount(){
     $data = DB::table('reminders')->select('id');
-    $data->where('reminders.operatorid',Auth::user()->id );
+    $data->where('reminders.operatorid', Auth::user()->id);
+    $data->where('reminders.appoint_status', 'live');
+    $data->where('reminders.reminder_seen', '0');
     $data->whereBetween('followupdate',[date('Y-m-d') . ' 00:00:00',date('Y-m-d') . ' 23:59:59']);
     $result = $data->count();
     return $result;

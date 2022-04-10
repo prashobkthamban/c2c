@@ -60,36 +60,43 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                    {!! Form::open(['class' => 'holiday_form', 'method' => 'post']) !!} 
+                    {!! Form::open(['class' => 'holiday_form', 'method' => 'post', 'enctype' => 'multipart/form-data']) !!} 
                 <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-2 form-group mb-3"> 
-                            </div>
-
-                            <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Select Format *</label>
-                                    {!! Form::select('format', ['' => 'Select Format', 'day' => 'Day Format', 'date' => 'Date Format' ], null,array('class' => 'form-control', 'id' => 'format', 'onChange' => 'setFormat()')) !!} 
-                            </div>
-                        </div>
+                      
                         <div class="row">
                             <div class="col-md-2 form-group mb-3"> 
                             </div>
                             <div class="col-md-8 form-group mb-3">
-                                <div id="date_wise">
-                                <label for="firstName1">Date *</label>
+                               <label for="date_input">Date *</label>
                                 <input class="form-control datepicker" placeholder="dd-mm-yyyy" name="date" id="date_input" autocomplete="off">
-                                </div>
-                                <div id="day_wise">
-                                    <label for="firstName1">Day *</label> 
-                                        {!! Form::select('day', ['' => 'Select Day', 'monday' => 'Monday', 'tuesday' => 'Tuesday', 'wednesday' => 'Wednesday', 'thursday' => 'Thursday', 'friday' => 'Friday', 'saturday' => 'Saturday','sunday' => 'Sunday'], null,array('class' => 'form-control', 'id' => 'day_input')) !!}
-                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-2 form-group mb-3"> 
                             </div>
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Reason</label> 
+                                <label for="audio_file">Holiday Message File</label>
+                                <input type="file" class="form-control" name="holiday_msg_file" id="holiday_msg_file">
+                            </div>
+                        </div>
+                        <!-- show message and validate .gsm, .wav, 8kHz  -->
+                        <!-- /var/lib/asterisk/sounds/IVRMANGER -->
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> 
+                            </div>
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="audio_file">Call Transfer To</label>
+                                <select class="form-control" name="call_transfer_to" id="call_transfer_to">
+                                    <option value="voicemail">Voicemail</option>
+                                    <option value="message">Message</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> 
+                            </div>
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">Reason*</label> 
                                 <textarea rows="8" cols="20" class="form-control" placeholder="Reason" name="reason"></textarea>
                                 <p class="text-danger">{!! !empty($messages) ? $messages->first('reason', ':message') : '' !!}</p>
                             </div>
@@ -113,37 +120,29 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
-    function setFormat() {
-        hideFormat();
-        var format = $("#format").val();
-        if(format == 'day') {
-            $("#day_wise").show();
-            $('#day_input').attr('type', 'text');
-        } else if(format == 'date'){
-            $("#date_wise").show();
-            $('#date_input').attr('type', 'text');
-        } else {
-            hideFormat();
-        }
-    }
-
-    function hideFormat() {
-        $("#day_wise").hide();
-        $("#date_wise").hide();
-        $('#date_input').attr('type', 'hidden');
-        $('#day_input').attr('type', 'hidden');
-    }
-
+    
     $(document).ready(function() {
-        hideFormat();
         $( '.holiday_form' ).on( 'submit', function(e) {
             e.preventDefault();
             var errors = ''; 
-             if($("#format").val() != '') {
-              $.ajax({
+            var formData = new FormData();
+
+            var files = $('#holiday_msg_file')[0].files;
+            // Check file selected or not
+            if(files.length > 0 ){
+                formData.append('holiday_msg_file',files[0]);
+            }
+            formData.append('_token', $('.holiday_form input[name="_token"]').val());
+            formData.append('date', $('.holiday_form #date_input').val());
+            formData.append('call_transfer_to', $('.holiday_form #call_transfer_to').val());
+            formData.append('reason', $('.holiday_form textarea[name="reason"]').val());
+            console.log(formData);
+             $.ajax({
                 type: "POST",
                 url: '{{ URL::route("holidayStore") }}',
-                data: $('.holiday_form').serialize(),
+                data: formData,
+                contentType: false,
+                processData: false,
                 success: function(res){ // What to do if we succeed
                     if(res.error) {
                         $.each(res.error, function(index, value)
@@ -166,9 +165,6 @@
                     toastr.error('Some errors are occured');
                 }
               });
-            } else {
-                toastr.error('Select the format.');
-            }
         });
     });
 </script>

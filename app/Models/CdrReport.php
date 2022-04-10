@@ -57,23 +57,28 @@ class CdrReport extends Model
     }
 
     public static function getReport($groupId = '', $department = '', $operator = '', $tag = '', $status = '', $assigned_to = '', $did_no = '', $caller_number = '', $date = '', $start_date = '', $end_date = ''){
-       $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder', 'operatorAccount', 'operatorAssigned', 'accountGroup']);
-        if( Auth::user()->usertype == 'reseller' && !empty(Auth::user()->reseller->associated_groups) ){
-            $data->whereIn('cdr.groupid', json_decode(Auth::user()->reseller->associated_groups));
-        } 
-        else if( Auth::user()->usertype == 'reseller' ) {
-            $data->where('cdr.resellerid',Auth::user()->resellerid );
+        $groupIdArray = [];
+        if(!empty($groupId)) {
+            $groupIdArray = [$groupId];
         }
-        else if( Auth::user()->usertype == 'operator' ){
+        $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder', 'operatorAccount', 'operatorAssigned', 'accountGroup']);
+        if( Auth::user()->usertype == 'reseller' && !empty(Auth::user()->reseller->associated_groups)) {
+            if(empty($groupId)) {
+                $groupIdArray = json_decode(Auth::user()->reseller->associated_groups);
+            }
+        } else if( Auth::user()->usertype == 'reseller' ) {
+            $data->where('cdr.resellerid',Auth::user()->resellerid );
+        } else if( Auth::user()->usertype == 'operator' ){
             $data->where('cdr.operatorid',Auth::user()->operator_id );
         } else if(Auth::user()->usertype == 'admin') {
             $data->select('cdr.*', 'accountgroup.name')->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr.groupid');
         } else if(Auth::user()->usertype == 'groupadmin') {
-            //dd(Auth::user()->usertype);
-            $data->where('cdr.groupid',Auth::user()->groupid );
+            if(empty($groupId)) {
+                $groupIdArray = [Auth::user()->groupid];
+            }
         }
-        if(!empty($groupId)) {
-            $data->where('cdr.groupid',$groupId);
+        if(!empty($groupIdArray)) {
+            $data->whereIn('cdr.groupid', $groupIdArray);
         }
         if(!empty($department)) {
             $data->where('cdr.deptname',$department);

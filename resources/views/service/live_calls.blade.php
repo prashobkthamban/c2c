@@ -18,7 +18,7 @@
 
                         <div class="card-body">
                            <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                                <table id="live_calls_table" class="display table table-striped table-bordered" style="width:100%">
                                     <thead>
                                     <tr>
                                         @if(Auth::user()->usertype == 'admin')
@@ -148,4 +148,9 @@
 @section('page-js')
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
+<script>
+    // $('#live_calls_table').DataTable( {
+    //     ajax: '/api/myData'
+    // });
+</script>
 @endsection

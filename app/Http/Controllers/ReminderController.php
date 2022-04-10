@@ -9,6 +9,7 @@ use App\Models\Reminder;
 use App\Models\CdrTag;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
 
 class ReminderController extends Controller
 {
@@ -207,6 +208,17 @@ class ReminderController extends Controller
 
     public function getPbxdid($id) {
         return DB::table('pbx_incoming')->where('id', $id)->get();
+    }
+
+    public function reminderSeen(Request $request) {
+        DB::table('reminders')
+            ->where('id', $request->get('id'))
+            ->update([
+                'appoint_status'=> 'close',
+                'reminder_seen' => '1'
+            ]);
+
+        return new JsonResponse(['status' => true, 'message' => 'Success']);
     }
     
 }

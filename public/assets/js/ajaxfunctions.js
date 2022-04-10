@@ -92,6 +92,7 @@ $(document).ready(function(){
 
     //add note
     $( '.notes_form' ).on( 'submit', function(e) {
+        let uniqueId = $(this).find('#uniqueid').val();
         e.preventDefault();
         var noteHTML = "";
         var errors = ''; 
@@ -188,7 +189,9 @@ $(document).ready(function(){
                     });
                     toastr.error(errors);
                 } else {
-                    $('#row_' + cdrid + ' .more-details').data('tag', res.tag);
+                    $('#row_' + cdrid + ' .more-details').attr('data-tag', res.tag);
+                    $('#row_' + cdrid + ' .edit_tag').attr('data-tag', res.tag);
+                    $('.tag_btn_' + cdrid).attr('data-tag', res.tag);
                     $("#cdrTag_"+cdrid).text(res.tag);
                     $("#tag_"+cdrid).text('Update Tag');
                     $("#tag_modal").modal('hide');

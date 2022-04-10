@@ -166,7 +166,7 @@
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="picker1">Live Transfer no *</label>
-                                    <input type="number" class="form-control" placeholder="Live Transfer no" name="livetrasferid" id="livetrasferid">
+                                    <input type="number" class="form-control" placeholder="Live Transfer no" name="livetrasferid" id="livetrasferid" value="{{$nextLiveTransferId}}">
                             </div>
                         </div>
                         <div class="row">
