@@ -21,6 +21,7 @@
                                 <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
                                         <tr>
+                                            <th>ID</th>
                                             <th>Coperate Name</th>
                                             <th>CDR API Key</th>
                                             <th>Add Date</th>
@@ -31,6 +32,7 @@
                                        
                                         @foreach($resellers as $reseller)
                                         <tr id="row_{{ $reseller->id }}">
+                                            <td>{{$reseller->id}}</td>
                                             <td>{{$reseller->resellername}}</td>
                                             <td>{{$reseller->cdr_apikey}}</td>
                                             <td>{{ date('d-m-Y', strtotime($reseller->adddate)) }}</td>
@@ -47,6 +49,7 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
+                                            <th>ID</th>
                                             <th>Coporate Name</th>
                                             <th>CDR API Key</th>
                                             <th>Add Date</th>

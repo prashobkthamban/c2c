@@ -39,7 +39,7 @@ class Notification extends Model
             $data->orWhere('notifications.send_to_id', Auth::user()->id);
             // $data->leftJoin('account', 'notifications.send_from_id', '=', 'account.id');
         }
-        $result = $data->orderBy( 'datetime', 'DESC' )->paginate(10);
+        $result = $data->orderBy( 'datetime', 'DESC' )->get();
         return $result;
     }
 }

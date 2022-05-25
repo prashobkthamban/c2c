@@ -69,7 +69,7 @@
                             </tr>
                             </tfoot>
                         </table>
-                        <div class="pull-right">{{ $result->links() }}</div>
+                        <div class="pull-right"></div>
                     </div>
                 </div>
             </div>
@@ -96,21 +96,19 @@
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Customer *</label>
+                                <label for="firstName1">User *</label>
                                 <?php if(Auth::user()->usertype == 'groupadmin') {
                                     $oprList = getOperatorList(); ?>
                                  <select name="send_to_id" class="form-control">
                                     <?php $adminList = getAdminList(); ?>
                                     @if(!empty($adminList))
                                         @foreach($adminList as $admin )
-                                            <option value="{{$admin->id}},admin">{{$admin->username}}
-                                            </option>
+                                            <option value="{{$admin->id}},admin">{{$admin->username}} (Admin)</option>
                                         @endforeach
                                     @endif
                                     @if(!empty($oprList))
                                         @foreach($oprList as $opr )
-                                            <option value="{{$opr->id}},{{$opr->usertype}}">{{$opr->opername}}
-                                            </option>
+                                            <option value="{{$opr->id}},{{$opr->usertype}}">{{$opr->opername}} (Operator)</option>
                                         @endforeach
                                     @endif
                                 </select>
@@ -118,20 +116,10 @@
                                 <?php if(Auth::user()->usertype == 'operator' || Auth::user()->usertype == 'admin') {
                                     $grpList = getGroupList(); ?>
                                 <select name="send_to_id" class="form-control">
-                                    <option value="">Select Customer</option>
-                                    @if(Auth::user()->usertype == 'operator')
-                                        <?php $adminList = getAdminList(); ?>
-                                        @if(!empty($adminList))
-                                            @foreach($adminList as $admin )
-                                                <option value="{{$admin->id}},admin">{{$admin->username}}
-                                                </option>
-                                            @endforeach
-                                        @endif
-                                    @endif
+                                    <option value="">Select</option>
                                     @if(!empty($grpList))
                                         @foreach($grpList as $grp )
-                                            <option value="{{$grp->id}},groupadmin">{{$grp->name}}
-                                            </option>
+                                            <option value="{{$grp->id}},groupadmin">{{$grp->name}} (Group Admin)</option>
                                         @endforeach
                                     @endif
                                 </select>

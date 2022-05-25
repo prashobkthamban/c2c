@@ -10,6 +10,61 @@
 
 </div>
 <div class="separator-breadcrumb border-top"></div>
+<div class="row">
+    <div id="filter-panel" class="col-lg-12 col-md-12 filter-panel collapse {{count($requests) > 0 ? 'show' : ''}}">
+        <div class="card mb-2">
+            <div class="card-body">
+                <div>
+                    <h5 class="ml-3">Search Panel</h5></br>
+                    <form class="form" role="form" id="cdr_filter_form">
+                        <div class="row" style="margin-right: 24px;margin-left: 24px;">
+                            <div class="col-md-4" id="customer_div">
+                                <label class="filter-col" for="pref-perpage">Customers</label>
+                                <select name="customer" class="form-control" id="customer_id">
+                                    <option value="">All</option>
+                                    @if(!empty($customers))
+                                    @foreach($customers as $customer )
+                                    <option value="{{$customer->id}}" @if(isset($requests['customer']) && $customer->id == $requests['customer']) selected @endif>{{$customer->name}}
+                                    </option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="filter-col" for="pref-perpage">SMS</label>
+                                {!! Form::select('sms_support', array('' => 'All', 'Yes' => 'Yes', 'No' => 'No'), isset($requests['sms_support']) ? $requests['sms_support'] : '',array('class' => 'form-control', 'id' => 'sms_support')) !!}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="filter-col" for="pref-perpage">DT</label>
+                                {!! Form::select('operator_dpt', array('' => 'All', 'Yes' => 'Yes', 'No' => 'No'), isset($requests['operator_dpt']) ? $requests['operator_dpt'] : '',array('class' => 'form-control', 'id' => 'operator_dpt')) !!}
+                            </div>
+                            <div class="col-md-4">
+                                <label class="filter-col" for="pref-perpage">Dnid Name</label>
+                                <select class="form-control" name="did_no" id="did_no">
+                                    <option value="">All</option>
+                                    @if(!empty($dnidnames))
+                                    @foreach($dnidnames as $dnid )
+                                    <option value="{{$dnid->did_no}}" @if(isset($requests['did_no']) && $dnid->did_no == $requests['did_no']) selected @endif>{{$dnid->did_no}}
+                                    </option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="filter-col" for="pref-perpage">Status</label>
+                                {!! Form::select('status', array('' => 'All', 'ACTIVE' => 'ACTIVE', 'INACTIVE' => 'INACTIVE'), isset($requests['status']) ? $requests['status'] : '',array('class' => 'form-control', 'id' => 'status')) !!}
+                            </div>
+                            <div class="col-md-6" style="margin-top: 24px;">
+                                <button type="submit" id="search_btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
+                                <button type="button" id="reload_page_btn" class="btn btn-outline-secondary" name="clear_btn">Clear</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <div class="row mb-4">
@@ -18,7 +73,7 @@
             <div class="card-body">
                 <a title="Compact Sidebar" href="{{route('addUser')}}" class="btn btn-primary"> Add User </a>
                 <div class="table-responsive">
-                    <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                    <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
                         <thead>
                             <tr>
                                 @if(Auth::user()->usertype == 'admin')
@@ -103,7 +158,13 @@
     </div>
 </div>
 
-
+<div class="customizer" title="Search" style="top:75px">
+    <a href="#" data-toggle="collapse" data-target="#filter-panel">
+        <div class="handle collapsed">
+            <i class="i-Search-People"></i>
+        </div>
+    </a>
+</div>
 
 @endsection
 
@@ -111,5 +172,37 @@
 
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
+<script>
+
+$("#customer_id").on("change", function() {
+    if ($("#customer_id").val() == "") {
+        resetData();
+    } else {
+        fetchDidNumbers();
+    }
+})
+
+function resetData() {
+    $("#did_no").find('option').not(':first').remove();
+    $("#did_no").val("");
+}
+
+function fetchDidNumbers() {
+    var data = {'groupId': $("#customer_id").val()};
+    var url = "{{ url('fetch_did_numbers') }}";
+    ajaxCall(url, data)
+    .then(function(result) {
+        if(result.status) {
+            var html = '<option value="">All</option>';
+            result.data.forEach(function(data) {
+                html += '<option value="'+data.did_no+'" >'+data.did_no+'</option>';
+            });
+            $("#did_no").html(html);
+        } else {
+            toastr.error(result.message);
+        }
+    });
+}
+</script>
 
 @endsection

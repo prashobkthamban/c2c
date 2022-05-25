@@ -38,6 +38,10 @@ class HomeController extends Controller
     {
 
         $this->graphTodaysCalls();
+        $announcements = DB::table('dashbord_annuounce')
+                    ->where('customer_id', Auth::user()->groupid)
+                    ->orWhere('customer_id', null)
+                    ->orderBy('id', 'desc')->get();
         if (Auth::user()->usertype == 'admin') {
             $today = date("Y-m-d");
             //dd($today);
@@ -51,7 +55,6 @@ class HomeController extends Controller
             $opcallList = [];
             $insight_ivr = [];
             $insightData = [];
-            $announcements = [];
             $activeoperator = [];
             $g_callstoday = [];
             $g_activecalls = [];
@@ -185,7 +188,6 @@ class HomeController extends Controller
                 $de = json_decode($groupid->associated_groups);
             }
 
-            $announcements = DB::table('dashbord_annuounce')->orderBy('id', 'desc')->get();
             return view('home.dashboard', compact('incoming_calls', 'insight_ivr', 'insightData', 'announcements', 'activeoperator', 'g_callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'sdate', 'edate', 'nousers', 'inusers', 'level_1', 'level_2', 'level_3', 'level_4', 'level_5', 'level_6', 'level_7', 'todo_lists', 'remainders', 'group_admin'));
         } else {
             $startDate = ($request->get('from_date') ? date('Y-m-d', strtotime($request->get('from_date'))) : date('Y-m-d', strtotime("-1 month"))) . ' 00:00:00';
@@ -206,13 +208,13 @@ class HomeController extends Controller
             $startDate = date('d-M-Y', strtotime($startDate));
             $endDate = date('d-M-Y', strtotime($endDate));
 
-            return view('home.dashboard_new', compact('todaysData', 'startDate', 'endDate', 'incomingCallData', 'operatorCallData', 'departmentData', 'customerCallData'));
+            return view('home.dashboard_new', compact('todaysData', 'startDate', 'endDate', 'incomingCallData', 'operatorCallData', 'departmentData', 'customerCallData', 'announcements'));
         }
     }
 
     private function getTodaysData() {
-        $startDate = date('Y-m-d') . ' 00:00:00';
-        $endDate = date('Y-m-d') . ' 23:59:59';
+         $startDate = date('Y-m-d') . ' 00:00:00';
+         $endDate = date('Y-m-d') . ' 23:59:59';
         if (Auth::user()->usertype == 'groupadmin') {
             $groupAdminIds = [Auth::user()->groupid];
         } else if (Auth::user()->usertype == 'reseller') {
@@ -252,12 +254,25 @@ class HomeController extends Controller
         $answeredCalls = (count($cdrData) > 0) ? $cdrData[0]->answeredCalls : '0';
         $missedCalls = (count($cdrData) > 0) ? $cdrData[0]->missedCalls : '0';
         $afterOfficeCalls = (count($cdrData) > 0) ? $cdrData[0]->afterOfficeCalls : '0';
+        $afterOfficeText = "After Office";
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $afterOfficeText = "After Office/Voicemail";
+            $vmQuery = DB::table('voicemails');
+            if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+                $vmQuery->whereIn('groupid', $groupAdminIds);
+            }
+            $vmCount = $vmQuery->whereDate('datetime', '>=', $startDate)
+                ->whereDate('datetime', '<=', $endDate)
+                ->count();
+            $totalCalls += $vmCount;
+            $afterOfficeCalls += $vmCount;
+        }
         $data = [
             ["title" => "Today's Total Call", "count" => $totalCalls],
             ["title" => "Live Call", "count" => $liveCalls],
             ["title" => "Answered Call", "count" => $answeredCalls],
             ["title" => "Missed Call", "count" => $missedCalls],
-            ["title" => "After Office/Voicemail", "count" => $afterOfficeCalls]
+            ["title" => $afterOfficeText, "count" => $afterOfficeCalls]
         ];
         if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
             array_unshift($data, ["title" => "Active Operators", "count" => $activeOperators]);
@@ -422,6 +437,18 @@ class HomeController extends Controller
         $answeredCalls = (count($cdrData) > 0) ? $cdrData[0]->answeredCalls : '0';
         $missedCalls = (count($cdrData) > 0) ? $cdrData[0]->missedCalls : '0';
         $afterOfficeCalls = (count($cdrData) > 0) ? $cdrData[0]->afterOfficeCalls : '0';
+        $afterOfficeText = "After Office";
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $afterOfficeText = "After Office/Voicemail";
+            $vmQuery = DB::table('voicemails');
+            if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+                $vmQuery->whereIn('groupid', $groupAdminIds);
+            }
+            $vmCount = $vmQuery->whereDate('datetime', '>=', $startDate)
+                ->whereDate('datetime', '<=', $endDate)
+                ->count();
+            $afterOfficeCalls += $vmCount;
+        }
 
         $data = [
             "datasets" => [[
@@ -443,7 +470,7 @@ class HomeController extends Controller
             "labels" => [
                 'Answered',
                 'Missed',
-                'After Office/Voicemail',
+                $afterOfficeText,
                 'Live',
             ]
         ];
@@ -490,6 +517,32 @@ class HomeController extends Controller
             }
         }
 
+        $afterOfficeText = "After Office";
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $afterOfficeText = "After Office/Voicemail";
+            $vmQuery = DB::table('voicemails');
+            if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+                $vmQuery->whereIn('groupid', $groupAdminIds);
+            }
+            $vmData = $vmQuery->select(
+                    DB::raw('HOUR(datetime) hr'),
+                    DB::raw('count(*) as totalVmCalls')
+                )
+                ->whereDate('datetime', '>=', $startDate)
+                ->whereDate('datetime', '<=', $endDate)
+                ->groupBy('hr')
+                ->get();
+            if(!empty($vmData)) {
+                foreach($vmData as $vm) {
+                    $hr = $vm->hr;
+                    if (isset($data[$hr])) {
+                        $data[$hr]["totalCalls"] += $vm->totalVmCalls;
+                        $data[$hr]["afterOfficeCalls"] += $vm->totalVmCalls;
+                    }
+                }
+            }
+        }
+
         $marketingOverviewData = [
             "labels" => array_column($data, "time"),
             "datasets" => [
@@ -521,7 +574,7 @@ class HomeController extends Controller
                     "borderWidth" => 0,
                     "fill" => true, // 3: no fill
                 ],[
-                    "label" => "After Office/Voicemail",
+                    "label" => $afterOfficeText,
                     "data" => array_column($data, "afterOfficeCalls"),
                     "backgroundColor" => "#d8b655",
                     "borderColor" => [
@@ -722,9 +775,11 @@ class HomeController extends Controller
     public function dashboardNote()
     {
         $result = DB::table('dashbord_annuounce')
-            ->orderBy('id', 'desc')->paginate(10);
-        //dd($result);
-        return view('home.dashboard_note', compact('result'));
+            ->select('dashbord_annuounce.*', 'accountgroup.name as customerName')
+            ->leftJoin('accountgroup', 'accountgroup.id', '=', 'dashbord_annuounce.customer_id')
+            ->orderBy('dashbord_annuounce.id', 'desc')->paginate(10);
+        $customers = getCustomers();
+        return view('home.dashboard_note', compact('result', 'customers'));
     }
 
     public function addAnnouncement(Request $request)
@@ -739,6 +794,7 @@ class HomeController extends Controller
             $data['error'] = $validator->messages();
         } else {
             $msg = [
+                'customer_id' => $request->get('customer') ? $request->get('customer') : NULL,
                 'user' => Auth::user()->username,
                 'msg' => $request->get('msg'),
                 'date' => NOW()

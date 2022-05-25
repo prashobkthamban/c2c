@@ -79,10 +79,9 @@
                                 <th>Duration</th>
                                 <th>Status</th>
                                 <th>Department</th>
-                                @if(Auth::user()->usertype=='admin')
-                                    <th>Customer</th>
+                                @if(Auth::user()->usertype=='groupadmin')
+                                <th>Follower</th>
                                 @endif
-                                <th>Operator</th>
                                 <th>Assigned to</th>
                                 <th>Action</th>
                             </tr>
@@ -93,23 +92,15 @@
                                 @foreach($result as $row )
                             <tr data-toggle="collapse" data-target="#accordion_{{$row->id}}" class="clickable" id="row_{{ $row->id }}">
                                 <td>
-                                    @if(Auth::user()->usertype=='groupadmin')
-                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->number }}" class="tag_btn_{{$row->cdrId}}" data-tag="{{$row->tag}}" data-unique-id="{{$row->uniqueid}}" data-show-notes="@if(sizeof($row['cdrNotes']) > 0) inline @else none @endif" data-contact-id="{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-phone="{{$row->number}}" onClick="moreOption({{$row->cdrId}}, {{$row->id}}, {{ $row->contacts && $row->contacts->id ? true : false}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
-                                        @elseif(Auth::user()->usertype=='admin' or Auth::user()->usertype=='reseller')
-                                        {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
-                                        @else
-                                        <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->number }}" class="tag_btn_{{$row->cdrId}}" data-tag="{{$row->tag}}" data-unique-id="{{$row->uniqueid}}" data-show-notes="@if(sizeof($row['cdrNotes']) > 0) inline @else none @endif" data-contact-id="{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-phone="{{$row->number}}" onClick="moreOption({{$row->cdrId}}, {{$row->id}}, {{$row->contacts && $row->contacts->id ? true : false}});return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
-                                    @endif
-
+                                    <a href="?" id="callerid_{{$row->id}}" data-toggle="modal" data-target="#formDiv" title="{{ $row->number }}" class="tag_btn_{{$row->cdrId}}" data-tag="{{$row->tag}}" data-unique-id="{{$row->uniqueid}}" data-show-notes="@if(sizeof($row['cdrNotes']) > 0) inline @else none @endif" data-contact-id="{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-phone="{{$row->number}}" onClick="moreOption('{{$row->cdrId}}', '{{$row->id}}', '{{ $row->contacts && $row->contacts->id ? true : false}}');return false;"><i class="fa fa-phone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
                                 </td>
                                 <td>{{$row->followupdate}}</td>
                                 <td>{{$row->secondleg}}</td>
                                 <td>{{$row->appoint_status}}</td>
                                 <td><a>{{$row->deptname}}</a></td>
-                                @if(Auth::user()->usertype=='admin')
-                                    <td>{{$row->name}}</td>
+                                @if(Auth::user()->usertype=='groupadmin')
+                                    <td>{{$row->follower}}</td>
                                 @endif
-                                <td>{{$row->opername}}</td>
                                 <td>{{$row->assignedtoname}}</td>
                                 <td>
                                 @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
@@ -138,7 +129,6 @@
                         </table>
                     </div>
                 </div>
-                <!-- <div class="pull-right">{{ $result->links() }}</div> -->
             </div>
         </div>
         <!-- end of col -->

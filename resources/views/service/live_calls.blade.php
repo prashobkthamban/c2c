@@ -40,12 +40,13 @@
                                     <tbody>
                                     @if(!empty($result))
                                         @foreach($result as $row )
-                                        <?php $contactName = getConatctName($row->callerid);
-                                        date_default_timezone_set('Asia/Kolkata');
-                                        $datetime1 = new DateTime();
-                                        $datetime2 = new DateTime($row->status_change_time);
-                                        $interval = $datetime1->diff($datetime2);
-                                        $fname = count($contactName) == null ? $row->callerid :  contactName[0]->fname; 
+                                        <?php 
+                                            $contactName = getConatctName($row->callerid);
+                                            date_default_timezone_set('Asia/Kolkata');
+                                            $datetime1 = new DateTime();
+                                            $datetime2 = new DateTime($row->status_change_time);
+                                            $interval = $datetime1->diff($datetime2);
+                                            $fname = count($contactName) == null ? $row->callerid :  $contactName[0]->fname; 
                                         ?>
                                     <tr>
                                         @if(Auth::user()->usertype == 'admin')
@@ -81,7 +82,7 @@
                                         <th>Priority</th>
                                         <th>Duration</th>
                                         @if(Auth::user()->usertype == 'groupadmin')
-                                        <td>Listen</td>
+                                        <th>Listen</th>
                                         @endif
                                     </tr>
 

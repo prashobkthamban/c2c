@@ -39,6 +39,7 @@ Route::post('add_config', 'HomeController@addConfig')->name('addConfig');
 
 /* ----------Cdr Report----------- */
 Route::get('cdrreport', 'ReportController@index')->name('cdrreport');
+Route::post('ajaxload/cdrreport', 'ReportController@cdrDataAjaxLoad')->name('cdrDataAjaxLoad');
 Route::post('graph_report', 'ReportController@graphReport')->name('graphReport');
 Route::post('add_cdr_contact', 'ReportController@addContact')->name('addContact');
 Route::post('add_tag', 'ReportController@addCdrTag')->name('addCdrTag');

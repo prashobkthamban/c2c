@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Contact;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\CdrArchive;
 
 
 class CdrReport extends Model
@@ -56,23 +57,29 @@ class CdrReport extends Model
         return $this->hasOne('App\Models\Reminder', 'uniqueid', 'uniqueid');
     }
 
-    public static function getReport($groupId = '', $department = '', $operator = '', $tag = '', $status = '', $assigned_to = '', $did_no = '', $caller_number = '', $date = '', $start_date = '', $end_date = ''){
+    public static function getReport($groupId = '', $department = '', $operator = '', $tag = '', $status = '', $assigned_to = '', $did_no = '', $caller_number = '', $date = '', $start_date = '', $end_date = '', $searchText = '', $sortOrderArray = [], $limit = 0, $skip = 0, $draw = 1) {
         $groupIdArray = [];
         if(!empty($groupId)) {
             $groupIdArray = [$groupId];
         }
-        $data = CdrReport::with(['cdrNotes', 'contacts', 'reminder', 'operatorAccount', 'operatorAssigned', 'accountGroup']);
-        if( Auth::user()->usertype == 'reseller' && !empty(Auth::user()->reseller->associated_groups)) {
+        $userType = Auth::user()->usertype;
+        $data = CdrReport::with(['cdrNotes', 'reminder', 'operatorAssigned'])
+                ->select('cdr.*', 'accountgroup.name as customerName', 'operatoraccount.opername as operatorName',
+                'contacts.fname', 'contacts.lname', 'contacts.email')
+                ->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr.groupid')
+                ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'cdr.operatorid')
+                ->leftJoin('contacts', 'contacts.phone', '=', 'cdr.number');
+        if( $userType == 'reseller' && !empty(Auth::user()->reseller->associated_groups)) {
             if(empty($groupId)) {
                 $groupIdArray = json_decode(Auth::user()->reseller->associated_groups);
             }
-        } else if( Auth::user()->usertype == 'reseller' ) {
+        } else if( $userType == 'reseller' ) {
             $data->where('cdr.resellerid',Auth::user()->resellerid );
-        } else if( Auth::user()->usertype == 'operator' ){
+        } else if( $userType == 'operator' ){
             $data->where('cdr.operatorid',Auth::user()->operator_id );
-        } else if(Auth::user()->usertype == 'admin') {
-            $data->select('cdr.*', 'accountgroup.name')->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr.groupid');
-        } else if(Auth::user()->usertype == 'groupadmin') {
+        } else if($userType == 'admin') {
+
+        } else if($userType == 'groupadmin') {
             if(empty($groupId)) {
                 $groupIdArray = [Auth::user()->groupid];
             }
@@ -120,10 +127,86 @@ class CdrReport extends Model
             }
             $data->whereBetween('cdr.datetime',[$fromDate, $toDate]);
         }
-        
-        $result = $data->orderBy('cdr.datetime','DESC')->get();
-       //dd($result);
-       return $result;
+        $recordsTotal = $data->count();
+        // if(!empty($searchText)) {
+        //     $searchText = strtolower(trim($searchText));
+        //     $data->where('cdr.number', 'like', '%' . trim($searchText) . '%')
+        //     ->orWhere(DB::raw('lower(contacts.fname)'), 'like', '%' . $searchText . '%')
+        //     ->orWhere(DB::raw('lower(contacts.lname)'), 'like', '%' . $searchText . '%')
+        //     ->orWhere('cdr.datetime', 'like', '%' . trim($searchText) . '%')
+        //     ->orWhere(DB::raw('lower(cdr.status)'), 'like', '%' . $searchText . '%')
+        //     ->orWhere(DB::raw('lower(cdr.deptname)'), 'like', '%' . $searchText . '%')
+        //     ->orWhere(DB::raw('lower(operatoraccount.opername)'), 'like', '%' . $searchText . '%')
+        //     ;
+        // }
+        $recordsFiltered = $data->count();
+
+        if (count($sortOrderArray) > 0) {
+            foreach ($sortOrderArray as $field => $order) {
+                $data->orderBy($field, $order);
+            }
+        }
+
+        if ($limit > 0) {
+            $data->skip($skip)
+                ->take($limit);
+        }
+        $results = $data->get();
+        // dd($results);
+
+        $data = [
+            "draw" => $draw,
+            "recordsTotal" => $recordsTotal,
+            "recordsFiltered" => $recordsFiltered,
+            "data" => $results
+        ];
+        return $data;
+    }
+
+    public static function getReportAjax($groupId = '', $department = '', $operator = '', $tag = '', $status = '', $assigned_to = '', $did_no = '', $caller_number = '', $date = '', $start_date = '', $end_date = '', $fetchArchive = false, $searchText = '', $sortOrderArray = [], $limit = 0, $skip = 0, $draw = 1) {
+
+        if ($fetchArchive) {
+            $data = CdrArchive::getReport($groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date, $searchText, $sortOrderArray, $limit, $skip, $draw);
+        } else {
+            $data = CdrReport::getReport($groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date, $searchText, $sortOrderArray, $limit, $skip, $draw);
+        }
+        $dataArray = [];
+        if(count($data['data']) > 0) {
+            foreach($data['data'] as $result) {
+                $cdrSubCount = DB::table('cdr_sub')
+                                ->where('cdr_sub.cdr_id', $result->cdrid)
+                                ->count();
+                $dataArray[] = [
+                    'userType' => Auth::user()->usertype,
+                    'cdrId' => $result->cdrid,
+                    'uniqueId' => $result->uniqueid,
+                    'groupId' => $result->groupid,
+                    'customerName' => $result->customerName,
+                    'callerId' => $result->contacts ? $result->contacts->fname . ' ' . $result->contacts->lname : $result->number,
+                    'number' => $result->number,
+                    'dateTime' => $result->datetime,
+                    'duration' => $result->firstleg. '(' .$result->secondleg. ')',
+                    'creditUsed' => $result->creditused,
+                    'status' => $result->status,
+                    'cdrSubCount' => $cdrSubCount,
+                    'departmentName' => $result->deptname,
+                    'operatorName' => $result->operatorName,
+                    'tag' => $result->tag,
+                    'assignedOperatorName' => $result->operatorAssigned ? $result->operatorAssigned->opername : '',
+                    'didNumber' => $result->did_no,
+                    'recordedFileName' => $result->recordedfilename,
+                    'cdrNotesCount' => count($result->cdrNotes),
+                    'isContactSet' => !empty($result->contacts) ? true : false,
+                    'contactId' => $result->contacts ? $result->contacts->id : '',
+                    'email' => $result->contacts ? $result->contacts->email : '',
+                    'firstName' => $result->contacts ? $result->contacts->fname : '',
+                    'lastName' => $result->contacts ? $result->contacts->lname : '',
+                    'isReminderSet' => !empty($result->reminder) ? true : false
+                ];
+            }
+        }
+        $data["data"] = $dataArray;
+        return $data;
     }
 
     public static function getGraphReport($params){

@@ -62,45 +62,42 @@
                             @else
                                 <input type="hidden" name="customer" id="customer_id" value="{{Auth::user()->groupid}}" />
                             @endif
-                            @if(in_array(Auth::user()->usertype, ["groupadmin", "operator", "reseller"]))
-                                <div class="col-md-4">
-                                    <label class="filter-col" for="pref-perpage">Departments</label>
-                                    <select name="department" class="form-control" id="department_id">
-                                        <option value="">All</option>
-                                        @if(!empty($departments))
-                                        @foreach($departments as $dept )
-                                        <option value="{{$dept->dept_name}}" @if(isset($requests['department']) && $dept->dept_name == $requests['department']) selected @endif>{{$dept->dept_name}}
-                                        </option>
-                                        @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-                                @if(in_array(Auth::user()->usertype, ["groupadmin", "reseller"]))
-                                <div class="col-md-4">
-                                    <label class="filter-col" for="pref-perpage">Operators</label>
-                                    <select name="operator" class="form-control" id="operator_id">
-                                        <option value="">All</option>
-                                        @if(!empty($operators))
-                                        @foreach($operators as $opr )
-                                        <option value="{{$opr->id}}" @if(isset($requests['operator']) && $opr->id == $requests['operator']) selected @endif>{{$opr->opername}}
-                                        </option>
-                                        @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-                                @elseif(Auth::user()->usertype == 'operator')
-                                    <input type="hidden" name="operator" id="operator_id" value="{{Auth::user()->operator_id}}" />
-                                @endif
-                                <div class="col-md-4">
-                                    <label class="filter-col" for="pref-perpage">Cdr Tag</label>
-                                    {!! Form::select('tag', $tags->prepend('Select Tag', ''), isset($requests['tag']) ? $requests['tag'] : '' ,array('class' => 'form-control', 'id' => 'tag')) !!}
-                                </div>
+                            <div class="col-md-4">
+                                <label class="filter-col" for="pref-perpage">Departments</label>
+                                <select name="department" class="form-control" id="department_id">
+                                    <option value="">All</option>
+                                    @if(!empty($departments))
+                                    @foreach($departments as $dept )
+                                    <option value="{{$dept->dept_name}}" @if(isset($requests['department']) && $dept->dept_name == $requests['department']) selected @endif>{{$dept->dept_name}}
+                                    </option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            @if(Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'reseller')
+                            <div class="col-md-4">
+                                <label class="filter-col" for="pref-perpage">Operators</label>
+                                <select name="operator" class="form-control" id="operator_id">
+                                    <option value="">All</option>
+                                    @if(!empty($operators))
+                                    @foreach($operators as $opr )
+                                    <option value="{{$opr->id}}" @if(isset($requests['operator']) && $opr->id == $requests['operator']) selected @endif>{{$opr->opername}}
+                                    </option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                            @elseif(Auth::user()->usertype == 'operator')
+                                <input type="hidden" name="operator" id="operator_id" value="{{Auth::user()->operator_id}}" />
                             @endif
+                            <div class="col-md-4">
+                                <label class="filter-col" for="pref-perpage">Cdr Tag</label>
+                                {!! Form::select('tag', $tags->prepend('Select Tag', ''), isset($requests['tag']) ? $requests['tag'] : '' ,array('class' => 'form-control', 'id' => 'tag')) !!}
+                            </div>
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Status</label>
                                 {!! Form::select('status', array('' => 'All', 'MISSED' => 'Missed', 'ANSWERED' => 'Answered', 'DIALING' => 'Dialing', 'LIVECALL' => 'Live call', 'AFTEROFFICE' => 'After Office'), isset($requests['status']) ? $requests['status'] : '',array('class' => 'form-control', 'id' => 'status_id')) !!}
                             </div>
-                            @if(in_array(Auth::user()->usertype, ["groupadmin", "operator", "reseller"]))
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Assigned To</label>
                                 <select class="form-control" name="assigned_to" id="assigned_to_id">
@@ -113,7 +110,6 @@
                                     @endif
                                 </select>
                             </div>
-                            @endif
                             <div class="col-md-4">
                                 <label class="filter-col" for="pref-perpage">Dnid Name</label>
                                 <select class="form-control" name="did_no" id="did_no">
@@ -163,14 +159,15 @@
                             </div>
                             </div>
                             <div class="col-md-6" style="margin-top: 24px;">
-                                <button type="button" id="search_btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
-                                <button type="button" id="clear_btn" class="btn btn-outline-secondary" name="clear_btn">Clear</button>
+                                <button id="btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
+                                <a href="{{url('cdrreport')}}" class="btn btn-outline-secondary" name="btn">Clear</a>
                             </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 @if(Auth::user()->usertype == 'groupadmin')
 <!--
@@ -184,11 +181,20 @@
                     <table id="cdr_table" class="display table table-bordered table-striped" style="width:100%">
                         <thead>
                             <tr>
-                                <th></th>
+                                @if(Auth::user()->usertype == 'groupadmin')
+                                <th class="noExport"><input type="checkbox" name="allselect" id="allselect" value="yes" onclick="selectAll();"></th>
+                                @elseif(Auth::user()->usertype == 'admin')
+                                <th>Customer</th>
+                                @endif
+                                @if(Auth::user()->usertype == 'reseller')
+                                <th>Account Name</th>
+                                @endif
                                 <th>Caller Id</th>
                                 <th>Date & Time</th>
+                                @if(Auth::user()->usertype == 'admin')
                                 <th>Duration</th>
                                 <th>Coin</th>
+                                @endif
                                 <th>Status</th>
                                 <th>Department</th>
                                 <th>Agent</th>
@@ -196,6 +202,107 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @if(!empty($result))
+                            @foreach($result as $row )
+                            <tr data-toggle="collapse" data-target="#accordion_{{$row->cdrid}}" class="clickable" id="row_{{ $row->cdrid }}" data-cdr-id="{{$row->cdrid}}">
+                                @if(Auth::user()->usertype == 'groupadmin')
+                                <td><input type="checkbox" name="cdr_checkbox" id="{{$row->cdrid}}" value="{{$row->cdrid}}" class="allselect"></td>
+                                @elseif(Auth::user()->usertype == 'admin')
+                                <td>{{$row->name}}</td>
+                                @endif
+                                @if(Auth::user()->usertype == 'reseller')
+                                <td>{{ $row->accountGroup ? $row->accountGroup->name : '' }}</td>
+                                @endif
+                                <td id="caller_{{$row->cdrid}}">
+                                    @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
+                                    <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#dial_modal" title="{{ $row->number }}" onClick="cdrDial({{$row->number}});return false;"><i class="i-Telephone"></i>{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                    @elseif(Auth::user()->usertype=='admin' || Auth::user()->usertype=='reseller')
+                                    {{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : $row->number }}
+                                    @else
+                                    <a href="?" id="callerid_{{$row->cdrid}}" data-toggle="modal" data-target="#dial_modal" title="{{ $row->number }}" onClick="cdrDial({{$row->number}});return false;"><i class="i-Telephone"></i>{{ $row->contacts != null && $row->contacts->fname ? $row->contacts->fname : $row->number }}</a>
+                                    @endif
+                                </td>
+                                <td>{{$row->datetime}}</td>
+                                @if(Auth::user()->usertype == 'admin')
+                                <td>{{$row->firstleg."(".$row->secondleg.")"}}</td>
+                                <td>{{$row->creditused}}</td>
+                                @endif
+                                <td class="show-cdr-sub"><a href="javascript:void(0)" data-toggle="modal" data-target="#call_details_modal">{{$row->status}}</a></td>
+                                <td>{{$row->deptname}}</td>
+                                <td>{{ $row->operatorAccount ? $row->operatorAccount->opername : '' }}</td>
+                                <td>
+                                    @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
+                                    <a class="btn bg-gray-100 more-details" title="More Details" data-tag="{{$row->tag}}" data-operatorname="{{$row->operatorAssigned ? $row->operatorAssigned->opername : ''}}" onClick="moreOption({{$row->cdrid}},'{{$row->did_no ? $row->did_no : 0}}','{{$row->firstleg."(".$row->secondleg.")"}}','{{$row->creditused ? $row->creditused : 0}}');return false;"><i class="i-Arrow-Down-2" aria-hidden="true"></i></a>
+                                    @endif
+                                    @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator' || Auth::user()->usertype=='reseller')
+                                    @if(!empty($row->recordedfilename))
+                                        @if(empty($operatorAccount) || (!empty($operatorAccount) && $operatorAccount->play == '1'))
+                                        <a href="#" class="btn bg-gray-100 play_audio" title="Play Audio" data-toggle="modal" data-target="#play_modal" data-file="{{$row->recordedfilename}}" id="play_{{$row->groupid}}"><i class="i-Play-Music"></i></a>
+                                        @endif
+                                        @if(empty($operatorAccount) || (!empty($operatorAccount) && $operatorAccount->download == '1'))
+                                            <a href="{{ url('download_file/' .$row->recordedfilename) }}" class="btn bg-gray-100" title="Download File">
+                                                <i class="i-Download1"></i>
+                                            </a>
+                                        @endif
+                                    @endif
+                                    @endif
+                                    @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator' || Auth::user()->usertype=='reseller')
+                                    @if(sizeof($row['cdrNotes']) > 0)
+                                    <a href="#" class="btn bg-gray-100 notes_list" title="Notes" data-toggle="modal" data-target="#notes_modal" id="notes_{{$row->uniqueid}}"><i class="i-Notepad"></i></a>
+                                    @endif
+                                    @if(Auth::user()->usertype=='groupadmin')
+                                    <a href="" class="btn bg-gray-100" title="Assign To" data-toggle="dropdown" id="history_{{$row->number}}"><i class="  i-Add-User"></i></a>
+                                    @endif
+                                    @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
+                                    <a href="" class="btn bg-gray-100 history_list" title="Call History" data-toggle="modal" data-target="#history_modal" id="history_{{$row->number}}"><i class="i-Notepad-2"></i></a>
+                                    <ul class="dropdown-menu" role="menu">
+                                        @foreach($operators as $operator)
+                                        <li>
+                                            <label>{{$operator->opername}}</label>
+                                            @if( $account_service['smsservice_assign_cdr'] =='Yes' || $account_service['emailservice_assign_cdr'] =='Yes')
+                                                <ul>
+                                                    @if($account_service['smsservice_assign_cdr'] =='Yes')
+                                                    <li>
+                                                        <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
+                                                    </li>
+                                                    @endif
+                                                    @if($account_service['emailservice_assign_cdr'] =='Yes')
+                                                    <li>
+                                                        <a href="javascript:assignoper({{$row->cdrid}},{{$operator->id}},'{{$operator->opername}}','E');">Notify By Email</a>
+                                                    </li>
+                                                    @endif
+                                                </ul>
+                                            @endif
+                                        </li>
+                                        @endforeach
+                                        <?php echo '<li><a href="javascript:assignoper(' . $row->cdrid . ',0);">Unassign</a></li>'; ?>
+                                    </ul>
+                                    @endif
+
+                                    <span>
+                                        @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
+                                        <button class="btn bg-gray-100" type="button" id="action_{{$row->cdrid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="nav-icon i-Gear-2"></i>
+                                        </button>
+                                        @endif
+                                        <div class="dropdown-menu" aria-labelledby="action_{{$row->cdrid}}">
+                                            <a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" id="contact_{{ $row->contacts && $row->contacts->id ? $row->contacts->id : ''}}" data-email="{{ $row->contacts && $row->contacts->email ? $row->contacts->email : ''}}" data-fname="{{ $row->contacts && $row->contacts->fname ? $row->contacts->fname : ''}}" data-lname="{{ $row->contacts && $row->contacts->lname ? $row->contacts->lname : ''}}" data-phone="{{$row->number}}">{{isset($row->contacts->fname) ? 'Update Contact': 'Add Contact'}}</a>
+                                            <a class="dropdown-item edit_tag" href="#" data-toggle="modal" data-target="#tag_modal" id="tag_{{$row->cdrid}}" data-tag="{{$row->tag}}">{{$row->tag ? 'Update Tag': 'Add Tag'}}</a>
+                                            <a class="dropdown-item add_note" href="#" data-toggle="modal" data-target="#add_note_modal" id="add_note_{{$row->uniqueid}}">Add Notes</a>
+                                            @if(!isset($row->reminder->id))
+                                            <a class="dropdown-item edit_reminder" href="#" data-toggle="modal" data-target="#add_reminder_modal" id="add_reminder_{{$row->cdrid}}">Add Reminder</a>
+                                            @endif
+                                        </div>
+                                    </span>
+                                @elseif(Auth::user()->usertype=='admin')
+                                <a href="javascript:void(0)" onClick="deleteItem({{$row->cdrid}}, 'cdr')" class="text-danger mr-2">
+                                    <i class="nav-icon i-Close-Window font-weight-bold"></i>
+                                </a>
+                                @endif
+                                </td>
+                            </tr>
+                            @endforeach
+                            @endif
                         </tbody>
                     </table>
 
@@ -668,15 +775,11 @@
         </a>
         <ul class="dropdown-menu" role="menu">
             @foreach($operators as $operator)
-            @if( $account_service['smsservice_assign_cdr'] =='Yes' || $account_service['emailservice_assign_cdr'] =='Yes')
             <li>
-                <a href="#">{{$operator->opername}}</a>
+                <label>{{$operator->opername}}</label>
+                @if( $account_service['smsservice_assign_cdr'] =='Yes' || $account_service['emailservice_assign_cdr'] =='Yes')
                 <ul>
-                    @else
-                    <li>
-                        <a href="#">{{$operator->opername}}</a>
-                        @endif
-                        @if($account_service['smsservice_assign_cdr'] =='Yes')
+                    @if($account_service['smsservice_assign_cdr'] =='Yes')
                     <li>
                         <a href="javascript:assignoper(0,{{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
                     </li>
@@ -686,11 +789,9 @@
                         <a href="javascript:assignoper(0,{{$operator->id}},'{{$operator->opername}}','E');">Notify By Email</a>
                     </li>
                     @endif
-                    @if( $account_service['smsservice_assign_cdr'] =='Yes' || $account_service['emailservice_assign_cdr'] =='Yes')
                 </ul>
-                @else
+                @endif
             </li>
-            @endif
             @endforeach
             <?php echo '<li><a href="javascript:assignoper(0);">Unassign</a></li>'; ?>
         </ul>
@@ -730,204 +831,14 @@
 <script src="{{asset('assets/js/vendor/pickadate/picker.time.js')}}"></script>
 <script src="{{asset('assets/js/jquery.table2excel.min.js')}}"></script>
 <script src="{{asset('assets/js/tooltip.script.js')}}"></script>
-<script type="text/javascript">        
-    const cdrTable = $('#cdr_table').DataTable({
-        "order": [[2, "desc" ]],
-        "searching": false,
-        "searchDelay": 1000,
-        "processing": true,
-        "serverSide": true,
-        "ajax": {
-            "url": '{{ URL::route("cdrDataAjaxLoad") }}',
-            "type": "POST",
-            "data" : function(data) {
-                data._token = "{{ csrf_token() }}";
-                data.customer = $("#customer_id").val();
-                data.department = $("#department_id").val();
-                data.operator = $("#operator_id").val();
-                data.tag = $("#tag").val();
-                data.status = $("#status_id").val();
-                data.assigned_to = $("#assigned_to_id").val();
-                data.did_no = $("#did_no").val();
-                data.caller_number = $("#caller_number").val();
-                data.date = $("#date_select").val();
-                data.start_date = $("#start_date").val();
-                data.end_date = $("#end_date").val();
-                data.fetchArchive = false;
-            }
-        },
-        "headerCallback": function( thead, data, start, end, display ) {
-            let title = '{{Auth::user()->usertype}}' == 'groupadmin' ? '<input type="checkbox" name="allselect" id="allselect" value="yes" onclick="selectAll();">' : ('{{Auth::user()->usertype}}' == 'admin' ? 'Customer' : 'Account Name');
-            $(thead).find('th').eq(0).html(title);
-            if('{{Auth::user()->usertype}}' == 'groupadmin') {
-                $(thead).find('th').eq(0).addClass('noExport');
-            }
-        },
-        "createdRow": function( row, data, dataIndex ) {
-            $(row).attr('data-toggle', 'collapse');
-            $(row).attr('data-target', '#accordion_' + data.cdrId);
-            $(row).addClass('clickable');
-            $(row).attr('id', 'row_' + data.cdrId);
-            $(row).attr('data-cdr-id', data.cdrId);
-            $(row).find('td [data-target="#dial_modal"]').parent('td').attr('id', 'caller_' + data.cdrId);
-            $(row).find('td [data-target="#call_details_modal"]').parent('td').addClass('show-cdr-sub');
-        },
-        "columnDefs": [
-            { targets: 0, visible: ['admin', 'groupadmin', 'reseller'].includes('{{Auth::user()->usertype}}') },
-            { targets: [3, 4], visible: '{{Auth::user()->usertype}}' == 'admin' ? true : false }
-        ],
-        "columns": [
-            {
-                data: null,
-                orderable: '{{Auth::user()->usertype}}' == 'groupadmin' ? false : true,
-                render: function(data, type) {
-                    if (data.userType == 'groupadmin') {
-                        return '<input type="checkbox" name="cdr_checkbox" id="' + data.cdrId + '" value="' + data.cdrId + '" class="allselect">';
-                    }
-                    return data.customerName;
-                }
-            },
-            {
-                data: null,
-                render: function(data, type) {
-                    if (['groupadmin', 'operator'].includes(data.userType)) {
-                        return '<a href="?" id="callerid_' + data.cdrId + '" data-toggle="modal" data-target="#dial_modal" title="' + data.number + '" onClick="cdrDial(' + data.number + ');return false;"><i class="i-Telephone"></i>'+data.callerId+'</a>';
-                    }
-                    return data.callerId;
-                }
-            },
-            { "data": "dateTime" },
-            { "data": "duration" },
-            { "data": "creditUsed" },
-            {
-                data: null,
-                render: function(data, type) {
-                    return '<a href="?" data-toggle="modal" data-target="#call_details_modal">' + data.status + '(' + data.cdrSubCount + ')' + '</a>';
-                }
-            },
-            { "data": "departmentName" },
-            { "data": "operatorName" },
-            {
-                data: null,
-                orderable: false,
-                render: function(data, type) {
-                    let htmlData = '';
-                    if (['groupadmin', 'operator'].includes(data.userType)) {
-                            let didNumber = data.didNumber ? data.didNumber : 0;
-                            let creditUsed = data.creditUsed ? data.creditUsed : 0;
-                            htmlData += '<a class="btn bg-gray-100 more-details" '; 
-                            htmlData += 'title="More Details" data-tag="' + data.tag + '" ';
-                            htmlData += 'data-operatorname="' + data.operatorName + '" ';
-                            htmlData += 'onClick="moreOption(' + data.cdrId + ',' + didNumber + ',' + "'" + data.duration + "'" + ',' + creditUsed + ');return false;">';
-                            htmlData += '<i class="i-Arrow-Down-2" aria-hidden="true"></i>';
-                            htmlData += '</a>';
-                    }
-                    if (['groupadmin', 'operator', 'reseller'].includes(data.userType)) {
-                        if (data.recordedFileName) {
-                            if ('{{$playRecording}}') {
-                                htmlData += '<a href="#" class="btn bg-gray-100 play_audio" title="Play Audio" ';
-                                htmlData += 'data-toggle="modal" data-target="#play_modal" ';
-                                htmlData += 'data-file="' + data.recordedFileName + '" id="play_' + data.groupId + '">';
-                                htmlData += '<i class="i-Play-Music"></i>';
-                                htmlData += '</a>';
-                            }
-                            if ('{{$downloadRecording}}') {
-                                htmlData += '<a href="download_file/' + data.recordedFileName + '" class="btn bg-gray-100" title="Download File">';
-                                htmlData += '<i class="i-Download1"></i>';
-                                htmlData += '</a>';
-                            }
-                        }
-                        if (data.cdrNotesCount > 0) {
-                            htmlData += '<a href="#" class="btn bg-gray-100 notes_list" title="Notes" ';
-                            htmlData += 'data-toggle="modal" data-target="#notes_modal" id="notes_' + data.uniqueId + '">';
-                            htmlData += '<i class="i-Notepad"></i>';
-                            htmlData += '</a>';
-                        }
-                        if (data.userType == 'groupadmin') {
-                            htmlData += '<a href="" class="btn bg-gray-100" title="Assign To" ';
-                            htmlData += 'data-toggle="dropdown" id="history_' + data.number + '">';
-                            htmlData += '<i class="i-Add-User"></i>';
-                            htmlData += '</a>';
-                        }
-                        if (['groupadmin', 'operator'].includes(data.userType)) {
-                            htmlData += '<a href="" class="btn bg-gray-100 history_list" title="Call History" ';
-                            htmlData += 'data-toggle="modal" data-target="#history_modal" id="history_' + data.number + '">';
-                            htmlData += '<i class="i-Notepad-2"></i>';
-                            htmlData += '</a>';
-
-                            htmlData += '<ul class="dropdown-menu" role="menu" aria-labelledby="history_' + data.number + '">';
-                            <?php foreach($operators as $operator) { ?>
-                                htmlData += '<li>';
-                                htmlData += '<label>{{$operator->opername}}</label>';
-                                    <?php if( $account_service['smsservice_assign_cdr'] =='Yes' || $account_service['emailservice_assign_cdr'] =='Yes') { ?>
-                                        htmlData += '<ul>';
-                                        <?php if($account_service['smsservice_assign_cdr'] =='Yes') { ?>
-                                            htmlData += '<li>';
-                                            htmlData += '<a href="javascript:assignoper(' + data.cdrId + ',{{$operator->id}},' + "'" + '{{$operator->opername}}' + "'" + ',' + "'" + 'S' + "'" + ');">Notify By SMS</a>';
-                                            htmlData += '</li>';
-                                        <?php } ?>
-                                        <?php if($account_service['emailservice_assign_cdr'] =='Yes') { ?>
-                                            htmlData += '<li>';
-                                            htmlData += '<a href="javascript:assignoper(' + data.cdrId + ',{{$operator->id}},' + "'" + '{{$operator->opername}}' + "'" + ',' + "'" + 'E' + "'" + ');">Notify By Email</a>';
-                                            htmlData += '</li>';
-                                        <?php } ?>
-                                        htmlData += '</ul>';
-                                    <?php } ?>
-                                htmlData += '</li>';
-                            <?php } ?>
-                            htmlData += '<li><a href="javascript:assignoper(' + data.cdrId + ', 0);">Unassign</a></li>';
-                            htmlData += '</ul>';
-                        }
-
-                        if (['groupadmin', 'operator'].includes(data.userType)) {
-                            htmlData += '<span>';
-
-                            htmlData += '<button class="btn bg-gray-100" type="button" id="action_' + data.cdrId + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-                            htmlData += '<i class="nav-icon i-Gear-2"></i>';
-                            htmlData += '</button>';
-
-                            let contactText = data.isContactSet ? 'Update Contact': 'Add Contact';
-                            htmlData += '<div class="dropdown-menu" aria-labelledby="action_' + data.cdrId + '">';
-                            htmlData += '<a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" ';
-                            htmlData += 'id="contact_' + data.contactId + '" data-email="' + data.email + '" data-fname="' + data.firstName + '" data-lname="' + data.lastName + '" data-phone="' + data.number + '">' + contactText;
-                            htmlData += '</a>';
-
-                            let tagText = data.tag ? 'Update Tag': 'Add Tag';
-                            htmlData += '<a class="dropdown-item edit_tag" href="#" data-toggle="modal" data-target="#tag_modal" ';
-                            htmlData += 'id="tag_' + data.cdrId + '" data-tag="' + data.tag + '">' + tagText;
-                            htmlData += '</a>';
-
-                            htmlData += '<a class="dropdown-item add_note" href="#" data-toggle="modal" data-target="#add_note_modal" ';
-                            htmlData += 'id="add_note_' + data.uniqueId + '">Add Notes';
-                            htmlData += '</a>';
-                            
-                            if (!data.isReminderSet) {
-                                htmlData += '<a class="dropdown-item edit_reminder" href="#" data-toggle="modal" data-target="#add_reminder_modal" ';
-                                htmlData += 'id="add_reminder_' + data.cdrId + '">Add Reminder';
-                                htmlData += '</a>';
-                            }
-
-                            htmlData += '</div>';
-                            htmlData += '</span>';
-                        }
-                    } else if (data.userType == 'admin') {
-                        htmlData += '<a href="javascript:void(0)" onClick="deleteItem(' + data.cdrId + ', ' + "'" + 'cdr' + "'" + ')" class="text-danger mr-2">';
-                        htmlData += '<i class="nav-icon i-Close-Window font-weight-bold"></i>';
-                        htmlData += '</a>';
-                    }
-                    return htmlData;
-                }
-            },
-        ]
-    });
-
-    $("#search_btn").on("click", function() {
-        cdrTable.draw();
-    })
-
-    $("#clear_btn").on("click", function() {
-        $("#cdr_filter_form")[0].reset();
-        cdrTable.draw();
+<script type="text/javascript">
+    // $('#zero_configuration_table').DataTable( {
+    //     "order": [[0, "desc" ]]
+    // } );
+    $('#cdr_table').DataTable({
+        dom: 'Bfrtip',
+        order: [[2, "desc" ]],
+        buttons: []
     });
     // var table = $('#cdr_table').DataTable();
 
@@ -948,8 +859,8 @@
         if (className == 'show') {
             $("#second_row").remove();
         } else {
-            var tag = $('#row_' + id + ' .more-details').attr('data-tag');
-            var operName = $('#row_' + id + ' .more-details').attr('data-operatorname');
+            var tag = $('#row_' + id + ' .more-details').data('tag');
+            var operName = $('#row_' + id + ' .more-details').data('operatorname');
             $('#row_' + id).after('<tr id="second_row" class="show"><td></td><td colspan="7"><span style="margin-right:100px;"><b>DNID :</b>' + did_no + '</span><span style="margin-right:100px;"><b>Duration :</b>' + firstLeg + '</span><span style="margin-right:100px;"><b>Coin :</b>' + creditUsed + '</span><span style="margin-right:100px;"><b>Assigned To :</b> <span id="assigned_' + id + '">' + operName + '</span></span><span style="margin-right:100px;"><b>Tag :</b> <span id="cdrTag_' + id + '">' + tag + '</span></span></td></tr>');
         }
     }
@@ -1224,7 +1135,7 @@
             $(".graph_report")[0].reset();
         });
 
-        $(document).on('click', '.edit_tag', function(e) {
+        $('.edit_tag').on('click', function(e) {
             var id = $(this).attr("id");
             var tag = $(this).attr("data-tag");
             var cdrid = id.replace("tag_", "");
@@ -1239,7 +1150,7 @@
             }
         });
 
-        $(document).on('click', '.edit_contact', function(e) {
+        $('.edit_contact').on('click', function(e) {
             var id = $(this).attr("id");
             var email = $(this).attr("data-email");
             var fname = $(this).attr("data-fname");
@@ -1259,7 +1170,7 @@
 
         });
 
-        $(document).on('click', '.play_audio', function(e) {
+        $('.play_audio').on('click', function(e) {
             var file = $(this).attr("data-file");
             file = 'voicefiles/' + file;
             $("#play_src").html('<audio controls id="audioSource"><source src="' + file + '" type="video/mp4"></source></audio>');
@@ -1269,19 +1180,19 @@
             $("#audioSource").remove();
         });
 
-        $(document).on('click', '.edit_reminder', function(e) {
+        $('.edit_reminder').on('click', function(e) {
             var id = $(this).attr("id");
             var cdrid = id.replace("add_reminder_", "");
             $("#cdr_id").val(cdrid);
         });
 
-        $(document).on('click', '.add_note', function(e) {
+        $('.add_note').on('click', function(e) {
             var id = $(this).attr("id");
             var uniqueid = id.replace("add_note_", "");
             $("#uniqueid").val(uniqueid);
         });
 
-        $(document).on('click', '.notes_list', function(e) {
+        $('.notes_list').on('click', function(e) {
             var id = $(this).attr("id");
             var uniqueid = id.replace("notes_", "");
             $.ajax({
@@ -1352,6 +1263,32 @@
             $(".custom_date_div").show();
         }
     });
+
+    $(document).on("click", "#report_search_button", function() {
+        get_report_search(1);
+    });
+
+    $(document).on("click", "#btn_refresh", function() {
+        $("#cdr_filter_form")[0].reset();
+        get_report_search(1);
+    });
+
+    function get_report_search(page) {
+        $.ajax({
+            type: 'POST',
+            url: "{{ url('getreportsearch') }}",
+            data: $("#cdr_filter_form").serialize() + '&page=' + page,
+            success: function(data) {
+                if (data.success == 1) {
+                    $("#div_table").replaceWith(data.view);
+                    $('#cdr_table').DataTable();
+                } else if (data.error == 1) {
+                    alert(data.errormsg);
+                }
+            }
+
+        });
+    }
 </script>
 
 <script type="text/javascript">
@@ -1423,7 +1360,7 @@
 
         });
     }
-    $(document).on("click", ".show-cdr-sub", function() {
+    $(".show-cdr-sub").on("click", function() {
         var data = {'cdrId': $(this).parent('tr').data('cdr-id')};
         var url = "{{ url('cdrreport/call_details') }}";
         ajaxCall(url, data)
@@ -1547,7 +1484,6 @@ function exportCdr() {
     url += "&date=" + $("#date_select").val();
     url += "&start_date=" + $("#start_date").val();
     url += "&end_date=" + $("#end_date").val();
-    url += "&search_text=" + $("#cdr_table_filter input[type='search']").val();
     console.log(url);
     window.location = url;
 }

@@ -19,6 +19,7 @@
                         <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
                             <thead>
                             <tr>
+                                <th>Customer</th>
                                 <th>Description</th>
                                 <th>Date</th>
                                 <th>Action</th>
@@ -28,6 +29,7 @@
                             @if(!empty($result))
                                 @foreach($result as $row )
                             <tr>
+                                <td>{{ $row->customerName ? $row->customerName : 'All' }}</td>
                                 <td>{{ $row->msg }}</td>
                                 <td>{{ $row->date }}</td>
                                 <td><a href="{{ route('deleteAnnouncement', $row->id) }}" onclick="return confirm('Are you sure want to delete this announcement ?')" class="text-danger mr-2">
@@ -67,6 +69,23 @@
                 </div>
                     {!! Form::open(['class' => 'announce_form', 'method' => 'post']) !!} 
                     <div class="modal-body">  
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> 
+                            </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label class="filter-col" for="pref-perpage">Customer</label>
+                                <select name="customer" class="form-control" id="customer_id">
+                                    <option value="">All</option>
+                                    @if(!empty($customers))
+                                    @foreach($customers as $customer )
+                                    <option value="{{$customer->id}}" @if(isset($requests['customer']) && $customer->id == $requests['customer']) selected @endif>{{$customer->name}}
+                                    </option>
+                                    @endforeach
+                                    @endif
+                                </select>
+                            </div>
+                        </div>               
                         <div class="row">
                             <div class="col-md-2 form-group mb-3"> 
                             </div>

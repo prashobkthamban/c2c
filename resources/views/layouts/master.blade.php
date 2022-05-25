@@ -22,6 +22,11 @@
  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
   @toastr_css
  <!-- <script src="{{asset('assets/js/toastr.script.js')}}"></script> -->
+<style>
+    .card-body a.btn.btn-primary {
+        margin-bottom: 15px;
+    }
+</style>
 
  {{-- page specific css --}}
  @yield('page-css')
@@ -241,6 +246,11 @@
                 //$('.datetimepicker5').datetimepicker();
             }
         });
+        $(document).ready(function() {
+            $("#reload_page_btn").on('click', function() {
+                window.location = window.location.href.split("?")[0];
+            })
+        })
     </script>
     <div class="modal fade" id="ModalContent" tabindex="-1" role="dialog" aria-labelledby="ModalContent" style="display: none;" aria-hidden="true">
         <div class="modal-dialog" id="model-wrapper" role="document">

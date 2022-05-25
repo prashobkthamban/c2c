@@ -29,8 +29,10 @@ class ServiceController extends Controller
         print_r($users);die;
     }
 
-    public function billing() {
+    public function billing(Request $request) {
     
+        $requests = $request->all();
+        $groupId = $request->get('customer');
         $query = DB::table('billing')
             ->leftJoin('accountgroup', 'billing.groupid', '=', 'accountgroup.id')
             ->leftJoin('resellergroup', 'billing.resellerid', '=', 'resellergroup.id')
@@ -41,9 +43,13 @@ class ServiceController extends Controller
         } elseif(Auth::user()->usertype != 'admin') {
             $query->where('billing.groupid', Auth::user()->groupid);
         }
+        
+        if (isset($groupId)) {
+            $query->where('billing.groupid', $groupId);
+        }
             
         $query->select('billing.*', 'accountgroup.name', 'resellergroup.resellername', 'dids.rdins', 'dids.rdnid')->orderBy('id', 'desc');
-        $result = $query->paginate(10);
+        $result = $query->get();
 
         if (Auth::user()->usertype == 'operator') {
             $lead_allowed = DB::table('operatoraccount')->where('opername',Auth::user()->username)->select('lead_access')->first();
@@ -67,7 +73,7 @@ class ServiceController extends Controller
         $response = curl_exec($ch);
         curl_close($ch);
     
-        return view('service.billing_list', compact('result','total_access_leads','response'));
+        return view('service.billing_list', compact('result','total_access_leads','response', 'requests'));
     }
 
     public function billDetails($groupid) {
@@ -174,7 +180,7 @@ class ServiceController extends Controller
         }
 
         $query->orderBy('id', 'desc');
-        $result = $query->paginate(10);
+        $result = $query->get();
         return view('service.access_logs', compact('result'));
     }
 

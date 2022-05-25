@@ -44,6 +44,7 @@ function getAdminList() {
 function getGroupList() {
     if(Auth::user()->usertype == 'operator') {
         $gpAcc =  DB::table('accountgroup')->select('accountgroup.name', 'account.id')
+        ->where('account.usertype', 'groupadmin')
         ->where('accountgroup.id', Auth::user()->groupid)
         ->leftJoin('account', 'accountgroup.id', '=', 'account.groupid')->get();
     } else {
@@ -283,7 +284,19 @@ function getReminderCount(){
     $data->where('reminders.operatorid', Auth::user()->id);
     $data->where('reminders.appoint_status', 'live');
     $data->where('reminders.reminder_seen', '0');
-    $data->whereBetween('followupdate',[date('Y-m-d') . ' 00:00:00',date('Y-m-d') . ' 23:59:59']);
+    $data->whereBetween('followupdate',[date('Y-m-d') . ' 00:00:00',date('Y-m-d H:i:s')]);
     $result = $data->count();
     return $result;
+}
+
+function getCustomers() {
+    $query = DB::table('accountgroup')->select('id', 'name');
+    if (Auth::user()->usertype == 'reseller' && !empty(Auth::user()->reseller->associated_groups)) {
+        $query = $query->whereIn('id', json_decode(Auth::user()->reseller->associated_groups));
+    } else if (Auth::user()->usertype == 'reseller') {
+        $query = $query->where('resellerid', Auth::user()->resellerid);
+    }
+    $customers = $query->get();
+
+    return $customers;
 }

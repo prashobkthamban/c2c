@@ -10,6 +10,9 @@
             </div>
             <div class="separator-breadcrumb border-top"></div>
 
+            <!-- search bar -->
+            @include('layouts.search_panel', ['request' => '{{request}}'])
+            <!-- search bar ends -->
 
             <div class="row mb-4">
                 <div class="col-md-12 mb-4">
@@ -17,7 +20,7 @@
 
                         <div class="card-body">
                            <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                                <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
                                     <thead>
                                     <tr>
                                         @if(Auth::user()->usertype == 'admin')
@@ -94,7 +97,6 @@
                             </div>
 
                         </div>
-                        <div class="pull-right">{{ $result->links() }}</div>
                     </div>
                 </div>
                 <!-- end of col -->

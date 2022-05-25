@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Users;
+use App\Models\CdrReport;
 use App\Models\Dids;
 use App\Models\Extra_dids;
 use App\Models\CrmLeads;
@@ -43,13 +44,36 @@ class UserController extends Controller
 
     }
 
-    public function index() {
-        $users = DB::table('accountgroup')
+    public function index(Request $request) {
+        $requests = $request->all();
+        $groupId = $request->get('customer');
+        $smsSupport = $request->get('sms_support');
+        $operatorDpt = $request->get('operator_dpt');
+        $didNo = $request->get('did_no');
+        $status = $request->get('status');
+        $customers = getCustomers();
+        $dnidnames = CdrReport::getdids($groupId);
+        $query = DB::table('accountgroup')
             ->leftJoin('resellergroup', 'accountgroup.resellerid', '=', 'resellergroup.id')
             ->leftJoin('dids', 'accountgroup.did', '=', 'dids.id')
-            ->select('accountgroup.*', 'resellergroup.resellername', 'dids.did')
-            ->get();
-        return view('user.user_list', compact('users'));
+            ->select('accountgroup.*', 'resellergroup.resellername', 'dids.did');
+        if (!empty($groupId)) {
+            $query->where('accountgroup.id', $groupId);
+        }
+        if (!empty($smsSupport)) {
+            $query->where('accountgroup.sms_support', $smsSupport);
+        }
+        if (!empty($operatorDpt)) {
+            $query->where('accountgroup.operator_dpt', $operatorDpt);
+        }
+        if (!empty($didNo)) {
+            $query->where('dids.did', $didNo);
+        }
+        if (!empty($status)) {
+            $query->where('accountgroup.status', $status);
+        }
+        $users = $query->get();
+        return view('user.user_list', compact('users', 'customers', 'dnidnames', 'requests'));
     }
 
     /**
@@ -333,7 +357,10 @@ class UserController extends Controller
     }
 
     /* ----------login account----------- */
-    public function loginAccounts() {
+    public function loginAccounts(Request $request) {
+    
+        $requests = $request->all();
+        $groupId = $request->get('customer');
         $account_group = new Accountgroup();
         $coperate = $account_group->get_coperate();
         $coperate = $coperate->prepend('Select coperate', '0');
@@ -341,7 +368,7 @@ class UserController extends Controller
         $customer = $customer->prepend('Select customer', '');
 
         $query = DB::table('account')
-             // ->leftJoin('accountgroup', 'account.groupid', '=', 'accountgroup.id')
+             ->leftJoin('accountgroup', 'account.groupid', '=', 'accountgroup.id')
              ->leftJoin('resellergroup', 'account.resellerid', '=', 'resellergroup.id');
         if(Auth::user()->usertype == 'admin') {
 		// dont want list operator
@@ -354,9 +381,14 @@ class UserController extends Controller
         } else {
             $query->where('groupid', Auth::user()->groupid);
         }
-        $query->select('account.*', 'resellergroup.resellername');
-        $accounts = $query->orderBy('id', 'desc')->paginate(10);
-        return view('user.account_list', compact('accounts', 'coperate', 'customer'));
+        
+        if (isset($groupId)) {
+            $query->where('account.groupid', $groupId);
+        }
+
+        $query->select('account.*', 'accountgroup.name as customerName', 'resellergroup.resellername');
+        $accounts = $query->orderBy('id', 'desc')->get();
+        return view('user.account_list', compact('accounts', 'coperate', 'customer', 'requests'));
     }
 
     public function editAccount($id = null) {

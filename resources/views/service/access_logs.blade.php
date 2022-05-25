@@ -17,7 +17,7 @@
 
                         <div class="card-body">
                            <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                                <table id="access_log_table" class="display table table-striped table-bordered" style="width:100%">
                                     <thead>
                                     <tr>
                                         <th>Username</th>
@@ -62,7 +62,7 @@
                             </div>
 
                         </div>
-                        <div class="pull-right">{{ $result->links() }}</div>
+                        <div class="pull-right"></div>
                     </div>
                 </div>
                 <!-- end of col -->
@@ -76,4 +76,7 @@
 @section('page-js')
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
+<script type="text/javascript">
+    $('#access_log_table').DataTable();
+</script>
 @endsection

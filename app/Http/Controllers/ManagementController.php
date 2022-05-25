@@ -99,7 +99,7 @@ class ManagementController extends Controller
             ->where('voicemails.groupid', Auth::user()->groupid)
             ->join('accountgroup', 'voicemails.groupid', '=', 'accountgroup.id');
             if(!empty($call_no)) {
-                $query->where('voicemails.callerid', $call_no);
+                $query->where('voicemails.callerid', 'LIKE', '%' . $call_no . '%');
             }
             if(!empty($department)) {
                 $query->where('voicemails.departmentname','like','%'.$department.'%');
@@ -168,16 +168,22 @@ class ManagementController extends Controller
         return $data;
     }
 
-    public function ivrMenu() {
-        $customers = DB::table('ivr_menu')
-            ->select('ivr_menu.*', 'accountgroup.name', 'resellergroup.resellername' )
+    public function ivrMenu(Request $request) {
+        $requests = $request->all();
+        $groupId = $request->get('customer');
+        $query = DB::table('ivr_menu')
+            ->select('ivr_menu.*', 'accountgroup.name', 'resellergroup.resellername', 'operatoraccount.opername as failOverOperatorName')
             ->where('ivr_menu.delete_status', '0')
             ->join('accountgroup', 'ivr_menu.groupid', '=', 'accountgroup.id')
             ->leftJoin('resellergroup', 'ivr_menu.resellerid', '=', 'resellergroup.id')
-            ->orderBy('id', 'desc')->paginate(10);
+            ->leftJoin('operatoraccount', 'operatoraccount.id', 'ivr_menu.failover_dest');
+        if (isset($groupId)) {
+            $query->where('ivr_menu.groupid', $groupId);
+        }
+        $customers = $query->orderBy('id', 'desc')->get();
         $languages = DB::table('languages')->get();
         //dd($customers);
-        return view('management.ivr_menu', compact('customers', 'languages'));
+        return view('management.ivr_menu', compact('customers', 'languages', 'requests'));
     }
 
     public function getIvrMenu($id) {
@@ -197,6 +203,7 @@ class ManagementController extends Controller
             'ivr_level_name' => 'required',
             'ivr_level' => 'required',
             'ivroption' => 'required',
+            'failover_operator_id' => 'required',
             'operator_dept' => 'required',
         ]);    
 
@@ -209,6 +216,7 @@ class ManagementController extends Controller
                 'ivr_level_name'=> $request->get('ivr_level_name'),
                 'ivr_level'=> $request->get('ivr_level'), 
                 'ivroption' => $request->get('ivroption'),
+                'failover_dest' => $request->get('failover_operator_id'),
                 'operator_dept' => $request->get('operator_dept'),
                 'voicefilename' => $vfilename
             ];

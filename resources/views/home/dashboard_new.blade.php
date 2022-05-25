@@ -20,9 +20,12 @@
         background-color: unset;
         min-width: 90px;
     }
-    .table td, .table th {
+
+    .table td,
+    .table th {
         padding: 8px;
     }
+
     .notify-header .badge {
         color: #fff;
         border: none;
@@ -30,12 +33,15 @@
         font-weight: 600;
         font-size: 10px;
     }
+
     #doughnut-chart-legend ul li {
         margin-right: 10px;
     }
+
     #doughnut-chart-legend ul li span {
         margin-right: 3px;
     }
+
     #marketing-overview-legend ul li {
         margin-right: 10px;
     }
@@ -49,6 +55,17 @@
 <div class="main-panel" style="width: 100%;margin-top: 48px;">
     <div class="content-wrapper">
         <div class="row">
+            @if(count($announcements))
+            <div class="col-md-12 grid-margin stretch-card">
+                <div class="card" style="border-radius: 5px;background: #ddf1ff;">
+                    <div class="card-body" style="padding: 10px;">
+                        @foreach($announcements as $listOne)
+                        <h6 class="text-muted">{{$listOne->msg}}</h6>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
             <div class="col-sm-12">
                 <div class="home-tab">
                     <div class="tab-content tab-content-basic">
@@ -80,59 +97,61 @@
                                                         </div>
                                                     </div>
                                                     <div class="d-sm-flex align-items-center mt-1 justify-content-between">
-                                                        <div class="col-lg-7 offset-lg-5"><div id="marketing-overview-legend"></div></div>
+                                                        <div class="col-lg-7 offset-lg-5">
+                                                            <div id="marketing-overview-legend"></div>
+                                                        </div>
                                                     </div>
                                                     <div class="chartjs-bar-wrapper mt-3">
                                                         <canvas id="marketingOverview"></canvas>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>  
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-lg-4 d-flex flex-column">
                                     <div class="row flex-grow">
                                         <div class="col-12 grid-margin stretch-card">
                                             <div class="card card-rounded">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <div class="d-flex justify-content-between align-items-center mb-3">
-                                                            <h4 class="card-title card-title-dash">Today's Calls</h4>
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                                <h4 class="card-title card-title-dash">Today's Calls</h4>
+                                                            </div>
+                                                            <canvas class="my-auto" id="doughnutChart" height="200"></canvas>
+                                                            <div id="doughnut-chart-legend" class="mt-5 text-center"></div>
                                                         </div>
-                                                        <canvas class="my-auto" id="doughnutChart" height="200"></canvas>
-                                                        <div id="doughnut-chart-legend" class="mt-5 text-center"></div>
                                                     </div>
                                                 </div>
-                                            </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             @if(in_array(Auth::user()->usertype, ["groupadmin","reseller","operator"]))
-                                <div class="row">
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <div class="input-group">
-                                                <div class="input-group-prepend">
-                                                    <span class="input-group-addon input-group-prepend border-right">
-                                                        <span class="icon-calendar input-group-text calendar-icon"></span>
-                                                    </span>
-                                                </div>
-                                                <input type="text" class="form-control" placeholder="dd-mm-yyyy" name="dashboard_date" id="dashboard_date">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-addon input-group-prepend border-right">
+                                                    <span class="icon-calendar input-group-text calendar-icon"></span>
+                                                </span>
                                             </div>
+                                            <input type="text" class="form-control" placeholder="dd-mm-yyyy" name="dashboard_date" id="dashboard_date">
                                         </div>
                                     </div>
                                 </div>
-                                @if(Auth::user()->usertype == 'reseller')
-                                    <div class="row">
-                                        <div class="col-lg-12 grid-margin stretch-card">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                <!-- <h4 class="card-title">Incoming Calls</h4> -->
-                                                <div class="table-responsive">
-                                                    <table class="table table-striped">
+                            </div>
+                            @if(Auth::user()->usertype == 'reseller')
+                            <div class="row">
+                                <div class="col-lg-12 grid-margin stretch-card">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <!-- <h4 class="card-title">Incoming Calls</h4> -->
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
                                                     <thead>
                                                         <tr>
                                                             <th>Users</th>
@@ -153,108 +172,108 @@
                                                         </tr>
                                                         @endforeach
                                                     </tbody>
-                                                    </table>
-                                                </div>
-                                                </div>
+                                                </table>
                                             </div>
                                         </div>
                                     </div>
-                                @endif
-                                @if(Auth::user()->usertype == 'groupadmin')
-                                    <div class="row">
-                                        <div class="col-lg-4 grid-margin stretch-card">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h4 class="card-title">Incoming Calls</h4>
-                                                    <!-- <p class="card-description">
+                                </div>
+                            </div>
+                            @endif
+                            @if(Auth::user()->usertype == 'groupadmin')
+                            <div class="row">
+                                <div class="col-lg-4 grid-margin stretch-card">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 class="card-title">Incoming Calls</h4>
+                                            <!-- <p class="card-description">
                                                         Add class <code>.table-hover</code>
                                                     </p> -->
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Status</th>
-                                                                    <th>Calls</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                @foreach($incomingCallData as $row)
-                                                                <tr>
-                                                                    <td><label class="badge {{$row['label_class']}}">{{$row['label']}}</label></td>
-                                                                    <td>{{$row['count']}}</td>
-                                                                </tr>
-                                                                @endforeach
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Status</th>
+                                                            <th>Calls</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($incomingCallData as $row)
+                                                        <tr>
+                                                            <td><label class="badge {{$row['label_class']}}">{{$row['label']}}</label></td>
+                                                            <td>{{$row['count']}}</td>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
-                                        @if(count($operatorCallData) > 0)
-                                        <div class="col-lg-8 grid-margin stretch-card">
-                                            <div class="card">
-                                                <div class="card-body">
-                                                    <h4 class="card-title">Operators Calls</h4>
-                                                    <!-- <p class="card-description">
-                                                        Add class <code>.table-hover</code>
-                                                    </p> -->
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>Operator</th>
-                                                                    <th>Answered</th>
-                                                                    <th>Missed</th>
-                                                                    <th>Total</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                @foreach($operatorCallData as $operator)
-                                                                <tr>
-                                                                    <td>{{$operator->opername}}</td>
-                                                                    <td>{{$operator->answeredCalls}}</td>
-                                                                    <td>{{$operator->missedCalls}}</td>
-                                                                    <td>{{$operator->totalCalls}}</td>
-                                                                </tr>
-                                                                @endforeach
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        @endif
                                     </div>
+                                </div>
+                                @if(count($operatorCallData) > 0)
+                                <div class="col-lg-8 grid-margin stretch-card">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h4 class="card-title">Operators Calls</h4>
+                                            <!-- <p class="card-description">
+                                                        Add class <code>.table-hover</code>
+                                                    </p> -->
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Operator</th>
+                                                            <th>Answered</th>
+                                                            <th>Missed</th>
+                                                            <th>Total</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($operatorCallData as $operator)
+                                                        <tr>
+                                                            <td>{{$operator->opername}}</td>
+                                                            <td>{{$operator->answeredCalls}}</td>
+                                                            <td>{{$operator->missedCalls}}</td>
+                                                            <td>{{$operator->totalCalls}}</td>
+                                                        </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 @endif
-                                @if(in_array(Auth::user()->usertype, ["groupadmin","operator"]))
-                                    @if(count($departmentData))
-                                    <div class="row">
-                                        <div class="col-lg-12 d-flex flex-column">
-                                            <div class="row flex-grow">
-                                                @foreach($departmentData as $name => $value)
-                                                <div class="col-md-3 col-lg-3 grid-margin stretch-card">
-                                                    <div class="card card-rounded">
-                                                        <div class="card-body">
-                                                            <h4 class="card-title card-title-dash text-center mb-4">{{$name}}</h4>
-                                                            <div class="row text-center">
-                                                                <div class="col-sm-6">
-                                                                    <p class="text-success"><b>Answered</b></p>
-                                                                    <span>{{$value['answeredCalls']}}</span>
-                                                                </div>
-                                                                <div class="col-sm-6">
-                                                                    <p class="text-danger"><b>Missed</b></p>
-                                                                    <span>{{$value['missedCalls']}}</span>
-                                                                </div>
-                                                            </div>
+                            </div>
+                            @endif
+                            @if(in_array(Auth::user()->usertype, ["groupadmin","operator"]))
+                            @if(count($departmentData))
+                            <div class="row">
+                                <div class="col-lg-12 d-flex flex-column">
+                                    <div class="row flex-grow">
+                                        @foreach($departmentData as $name => $value)
+                                        <div class="col-md-3 col-lg-3 grid-margin stretch-card">
+                                            <div class="card card-rounded">
+                                                <div class="card-body">
+                                                    <h4 class="card-title card-title-dash text-center mb-4">{{$name}}</h4>
+                                                    <div class="row text-center">
+                                                        <div class="col-sm-6">
+                                                            <p class="text-success"><b>Answered</b></p>
+                                                            <span>{{$value['answeredCalls']}}</span>
+                                                        </div>
+                                                        <div class="col-sm-6">
+                                                            <p class="text-danger"><b>Missed</b></p>
+                                                            <span>{{$value['missedCalls']}}</span>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @endforeach
                                             </div>
                                         </div>
+                                        @endforeach
                                     </div>
-                                    @endif
-                                @endif
+                                </div>
+                            </div>
+                            @endif
+                            @endif
                             @endif
                         </div>
                     </div>
@@ -290,19 +309,18 @@
 <!-- End custom js for this page-->
 
 <script>
+    $('#dashboard_date').daterangepicker({
+        startDate: "<?php echo $startDate; ?>",
+        endDate: "<?php echo $endDate; ?>",
+        locale: {
+            format: 'DD-MMM-YYYY'
+        }
+    }, function(start, end, label) {
 
-$('#dashboard_date').daterangepicker({
-    startDate: "<?php echo $startDate; ?>",
-    endDate: "<?php echo $endDate; ?>",
-    locale: {
-        format: 'DD-MMM-YYYY'
-    }
-}, function(start, end, label) {
-
-    $('#from_date').val(start.format('YYYY-MM-DD'));
-    $('#to_date').val(end.format('YYYY-MM-DD'));
-    $('#search_data').submit();
-});
+        $('#from_date').val(start.format('YYYY-MM-DD'));
+        $('#to_date').val(end.format('YYYY-MM-DD'));
+        $('#search_data').submit();
+    });
 </script>
 
 @endsection

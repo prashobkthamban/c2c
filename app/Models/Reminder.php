@@ -24,13 +24,13 @@ class Reminder extends Model
         return $this->hasOne('App\Models\OperatorAccount', 'id', 'operatorid');
     }
 
-    public static function getReport($params){
+    public static function getReport($params) {
         $data = Reminder::select('cdr.cdrid as cdrId', 'cdr.tag', 'accountgroup.name','opr.opername','opr.phonenumber', 'assigned.opername as assignedtoname','reminders.*')
             ->leftJoin('cdr', 'cdr.uniqueid', '=', 'reminders.uniqueid')
             ->leftJoin('accountgroup', 'accountgroup.id', '=', 'reminders.groupid')
             ->leftJoin('resellergroup', 'resellergroup.id', '=', 'reminders.resellerid')
-            ->leftJoin('operatoraccount as opr', 'opr.id', '=', 'reminders.operatorid')
-            ->leftJoin('operatoraccount as assigned', 'assigned.id', '=', 'reminders.assignedto')
+            ->leftJoin('operatoraccount as opr', 'opr.id', '=', 'cdr.operatorid')
+            ->leftJoin('operatoraccount as assigned', 'assigned.id', '=', 'cdr.assignedto')
             ->with(['cdrNotes', 'contacts', 'operatorAccount']);
         if(isset($params['caller']) && $params['caller'] != '')
         {
@@ -69,17 +69,13 @@ class Reminder extends Model
             }
             $data->whereBetween('followupdate',[$params['date_from'].'%',$params['date_to'].'%']);
         }
-        if( Auth::user()->usertype == 'reseller'){
-            $data->where('reminders.resellerid',Auth::user()->resellerid );
-        }
-        elseif( Auth::user()->usertype == 'operator'){
+        if( Auth::user()->usertype == 'operator') {
             $data->where('reminders.operatorid',Auth::user()->id );
-        }
-        else if( Auth::user()->usertype == 'groupadmin') {
+        } else if( Auth::user()->usertype == 'groupadmin') {
             $data->where('reminders.groupid',Auth::user()->groupid );
         }
         $result = $data->orderBy('followupdate','DESC')->groupBy('reminders.id')
-            ->paginate(10);
+            ->get();
         // dd($result);
         return $result;
     }

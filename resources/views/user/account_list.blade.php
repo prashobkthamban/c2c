@@ -11,19 +11,23 @@
 
   <div class="separator-breadcrumb border-top"></div>
 
+    <!-- search bar -->
+    @include('layouts.search_panel', ['request' => '{{request}}'])
+    <!-- search bar ends -->
 
     <div class="row mb-4">
         <div class="col-md-12 mb-4">
             <div class="card text-left">
                 <div class="card-body">
-                    <a title="Add New Login" data-toggle="modal" data-target="#login_manager" href="#" class="btn btn-primary login_manager"> Add New Login </a>
+                    <a title="Add New Login" data-toggle="modal" data-target="#login_manager" href="#" class="btn btn-primary login_manager" style="margin: 0px 0px 15px 15px;"> Add New Login </a>
                     <div class="table-responsive">
-                        <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                        <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
                            <thead>
                                 <tr>
                                     <th>User Name</th>
                                     <th>Password</th>
                                     <th>User Type</th>
+                                    <th>Customer</th>
                                     <th>Corporate</th>
                                     <th>Phone Number</th>
                                     <th>Add Date</th>
@@ -37,6 +41,7 @@
                                     <td>{{$account->username}}</td>
                                     <td>{{$account->user_pwd}}</td>
                                     <td>{{$account->usertype}}</td>
+                                    <td>{{$account->customerName}}</td>
                                     <td>{{$account->resellername}}</td>
                                     <td>{{$account->phone_number}}</td>
                                     <td>{{ date('d-m-Y', strtotime($account->adddate)) }}</td>
@@ -52,17 +57,16 @@
                             <tfoot>
                                 <tr>
                                     <th>User Name</th>
-                                    <!-- <th>Password</th> -->
+                                    <th>Password</th>
                                     <th>User Type</th>
-                                    <th>Corporate</th>
                                     <th>Customer</th>
+                                    <th>Corporate</th>
                                     <th>Phone Number</th>
                                     <th>Add Date</th>
                                     <th>Action</th>
                                 </tr>
                             </tfoot>
                         </table>
-                         {{ $accounts->links() }}
                     </div>
 
                 </div>

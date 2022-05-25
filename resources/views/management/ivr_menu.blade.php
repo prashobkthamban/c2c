@@ -10,13 +10,17 @@
     </div>
     <div class="separator-breadcrumb border-top"></div>
 
+    <!-- search bar -->
+    @include('layouts.search_panel', ['request' => '{{request}}'])
+    <!-- search bar ends -->
+
     <div class="row mb-4">
         <div class="col-md-12 mb-4">
             <div class="card text-left">
                 <div class="card-body">
                     <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#ivr_modal" id="add_ivr" class="btn btn-primary"> Add Ivr Menu </a>
                     <div class="table-responsive">
-                        <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                        <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>Customer</th>
@@ -26,6 +30,7 @@
                                     <th>IVR Options</th>
                                     <th>OperatorDept.</th>
                                     <th>Add Date</th>
+                                    <th>Failover Operator</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -39,6 +44,7 @@
                                     <td>{{$listOne->ivroption}}</td>
                                     <td>{{$listOne->operator_dept}}</td>
                                     <td>{{$listOne->adddate}}</td> 
+                                    <td>{{$listOne->failOverOperatorName}}</td> 
                                     <td>
                                         <a href="#" class="text-success mr-2 edit_ivr" data-toggle="modal" data-target="#ivr_modal" id="{{$listOne->id}}">
                                         <i class="nav-icon i-Pen-2 font-weight-bold"></i>
@@ -59,11 +65,11 @@
                                     <th>IVR Options</th>
                                     <th>OperatorDept.</th>
                                     <th>Add Date</th>
+                                    <th>Failover Operator</th>
                                     <th>Action</th>
                                 </tr>
                             </tfoot>
                         </table>
-                        {{ $customers->links() }}
                     </div>
                 </div>
             </div>
@@ -135,6 +141,17 @@
                         </div>
 
                         <div class="col-md-8 form-group mb-3">
+                            <label for="firstName1">Failover Operator *</label> 
+                            <select name="failover_operator_id" class="form-control" id="failover_operator_id">
+                                <option value="">--select--</option>
+                            </select>
+                        </div>
+                    </div> 
+                    <div class="row">
+                        <div class="col-md-2 form-group mb-3"> 
+                        </div>
+
+                        <div class="col-md-8 form-group mb-3">
                         <label for="firstName1">Operator department *</label> 
                             <label class="radio-inline"> {{ Form::radio('operator_dept', 'Yes', '', array('id' => 'operator_yes')) }} Yes</label>
                                 <label class="radio-inline">{{ Form::radio('operator_dept', 'No', true, array('id' => 'operator_no')) }} No</label>   
@@ -161,7 +178,6 @@
         </div>
 
     </div>
-
 
 @endsection
 @section('page-js')
@@ -257,6 +273,7 @@
                 $("#ivr_level_name").val(result.ivr_level_name);
                 $("#ivr_level").val(result.ivr_level);
                 $("#ivroption").val(result.ivroption);
+                fetchOperators(result.failover_dest);
                 if(result.operator_dept == 'Yes') {
                     $("#operator_yes").prop("checked", true);
                 } else {
@@ -277,6 +294,30 @@
             $(".ivr_menu_form").trigger("reset");
         });
      });
+
+     $(document).on('change', '#groupid', function() {
+         fetchOperators();
+     });
+
+     function fetchOperators(failover_dest = '') {
+        var data = {'groupId': $("#groupid").val()};
+        var url = "{{ url('fetch_operators') }}";
+        ajaxCall(url, data)
+        .then(function(result) {
+            if(result.status) {
+                var html = '<option value="">--select--</option>';
+                result.data.forEach(function(data) {
+                    html += '<option value="'+data.id+'" >'+data.opername+'</option>';
+                });
+                $("#failover_operator_id").html(html);
+                if (failover_dest) {
+                    $("#failover_operator_id").val(failover_dest);
+                }
+            } else {
+                toastr.error(result.message);
+            }
+        });
+     }
  </script>
 
 @endsection
