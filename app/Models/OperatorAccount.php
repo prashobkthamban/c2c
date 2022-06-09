@@ -9,7 +9,7 @@ class OperatorAccount extends Model
 {
     protected $table = 'operatoraccount';
     protected $fillable = [
-        'phonenumber', 'groupid', 'opername', 'oper_status', 'livetrasferid', 'start_work', 'end_work', 'app_use', 'edit', 'download', 'play', 'shift_id', 'working_days','crm_access','lead_access'
+        'phonenumber', 'groupid', 'opername', 'oper_status', 'livetrasferid', 'start_work', 'end_work', 'app_use', 'edit', 'download', 'play', 'shift_id', 'working_days'
         ];
     public $timestamps = false;
     public function accounts()
@@ -57,13 +57,13 @@ class OperatorAccount extends Model
         return $result;
     }
 
-    public static function getOperatorbygroup( ){
+    public static function getOperatorbygroup($groupId) {
         
         $data = OperatorAccount::select('id','opername');          
          if( Auth::user()->usertype == 'reseller'){
             $data->where('operatoraccount.resellerid',Auth::user()->resellerid );
         } 
-        $result = $data->where('groupid',Auth::user()->groupid )->get();
+        $result = $data->where('groupid', $groupId)->get();
         return $result;
     }
 }

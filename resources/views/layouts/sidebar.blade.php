@@ -32,53 +32,24 @@
                         </a>
                     </li>
                     <li class="nav-item" data-item="">
-                        <a class="nav-item-hold" href="{{url('notification')}}">
-                            <i class="nav-icon i-Bell"></i>
-                            <span class="nav-text">Help</span>
+                        <a class="nav-item-hold" href="{{route('LiveCalls')}}">
+                            <i class="nav-icon i-Telephone"></i>
+                            <span class="nav-text">Live Calls</span>
                         </a>
                         <div class="triangle"></div>
                     </li>
-
+                    <li class="nav-item" data-item="calldetails">
+                        <a class="nav-item-hold" href="#">
+                            <i class="nav-icon i-Library"></i>
+                            <span class="nav-text">Calls & Reports</span>
+                        </a>
+                        <div class="triangle"></div>
+                    </li>
                     @if(Auth::user()->usertype == 'admin')
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('LiveCalls')}}">
-                                <i class="nav-icon i-Telephone"></i>
-                                <span class="nav-text">Live Calls</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="calldetails">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">Calls & Reports</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
                         <li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{route('UserList')}}">
                                 <i class="nav-icon i-Administrator"></i>
                                 <span class="nav-text">IVR Users</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('Billing')}}">
-                                <i class="nav-icon i-Credit-Card"></i>
-                                <span class="nav-text">Recharge & Billing</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="insightivr">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Arrow-From"></i>
-                                <span class="nav-text">Insight Ivr</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="ivrmgmt">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">Ivr Management</span>
                             </a>
                             <div class="triangle"></div>
                         </li>
@@ -89,74 +60,23 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-                        <!--<li class="nav-item" data-item="pbx">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Clock-4"></i>
-                                <span class="nav-text">Voice Out</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>-->
                         <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('CoperateGroup')}}">
-                                <i class="nav-icon i-Administrator"></i>
-                                <span class="nav-text">Add Coperate</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <!-- Calls & Reports -->
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('AccessLogs')}}">
-                                <i class="nav-icon i-Security-Check"></i>
-                                <span class="nav-text">Access Logs</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{url('acc_call_summary')}}">
-                                <i class="nav-icon i-File-TXT"></i>
-                                <span class="nav-text">Account Call Summary</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{url('dashboard_note')}}">
-                                <i class="nav-icon i-File-TXT"></i>
-                                <span class="nav-text">Dashboard Announcement</span>
+                            <a class="nav-item-hold" href="{{route('Billing')}}">
+                                <i class="nav-icon i-Credit-Card"></i>
+                                <span class="nav-text">Recharge & Billing</span>
                             </a>
                             <div class="triangle"></div>
                         </li>
                     @endif
-
                     @if(Auth::user()->usertype == 'groupadmin')
-                        <li class="nav-item ">
-                            <a class="nav-item-hold" href="{{route('LiveCalls')}}">
-                                <i class="nav-icon i-Clock-3"></i>
-                                <span class="item-name">Live Calls</span>
-                            </a>
-                        </li>
-                        <li class="nav-item" data-item="calldetails">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">Calls & Reports</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        @if(Auth::user()->load('accountdetails')->accountdetails != null && Auth::user()->load('accountdetails')->accountdetails->crm == 1)
-                        <li class="nav-item" data-item="settings">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">CRM</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        @endif
                         <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{url('reminder')}}">
-                                <i class="nav-icon i-Bell"></i>
-                                <span class="nav-text">Reminders</span>
+                            <a class="nav-item-hold" href="{{route('OperatorList')}}">
+                                <i class="nav-icon i-Administrator"></i>
+                                <span class="nav-text">Operator Account</span>
                             </a>
-                            <div class="triangle"></div>
                         </li>
+                    @endif
+                    @if(in_array(Auth::user()->usertype, ["admin", "groupadmin", "operator"]))
                         <li class="nav-item" data-item="insightivr">
                             <a class="nav-item-hold" href="#">
                                 <i class="nav-icon i-Arrow-From"></i>
@@ -164,118 +84,17 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-                        <!--<li class="nav-item" data-item="">
-                            <a href="{{url('cdrreportout')}}" class="nav-item-hold">
-                                <i class="nav-icon i-Clock-4"></i>
-                                <span class="item-name">Voice Out</span>
-                            </a>
-                        </li>-->
-                        <!-- <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('OperatorShifts')}}">
-                                <i class="nav-icon i-Over-Time"></i>
-                                <span class="nav-text">Operator Shifts</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li> -->
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('OperatorList')}}">
-                                <i class="nav-icon i-Administrator"></i>
-                                <span class="nav-text">Operator Account</span>
-                            </a>
-                        </li>
-                        <!-- <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('OperatorGroup')}}">
-                                <i class="nav-icon i-Folder-Organizing"></i>
-                                <span class="nav-text">Operator Departments</span>
-                            </a>
-                        </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{url('contacts')}}">
-                                <i class="nav-icon i-Administrator"></i>
-                                <span class="nav-text">Contacts</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li> -->
-                        <!-- <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('Voicemail')}}">
-                                <i class="nav-icon i-Mail-2"></i>
-                                <span class="nav-text">Voicemails</span>
-                            </a>
-                        </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{route('BlackList')}}">
-                                <i class="nav-icon i-Security-Block"></i>
-                                <span class="nav-text">Blacklist</span>
-                            </a>
-                        </li>-->
-                        <!-- <li class="nav-item">
-                            <a href="{{url('holiday')}}" class="nav-item-hold">
-                                <i class="nav-icon i-Clock-4"></i>
-                                <span class="nav-text">Holiday</span>
-                            </a>
-                        </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{url('conference')}}">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">Dial Out Conference</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item" data-item="">
-                            <a class="nav-item-hold" href="{{url('cdr_tags')}}">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">Cdr Tags
-                                </span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li> -->
                     @endif
-					@if(Auth::user()->usertype == 'reseller')
-						<li class="nav-item" data-item="calldetails">
+                    @if(in_array(Auth::user()->usertype, ["admin"]))
+                        <li class="nav-item" data-item="ivrmgmt">
                             <a class="nav-item-hold" href="#">
                                 <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">Calls & Reports</span>
+                                <span class="nav-text">Ivr Management</span>
                             </a>
                             <div class="triangle"></div>
                         </li>
-						<li class="nav-item">
-                            <a class="nav-item-hold" href="{{route('LiveCalls')}}">
-                                <i class="nav-icon i-Clock-3"></i>
-                                <span class="item-name">Live Calls</span>
-                            </a>
-                        </li>
-                        <li class="nav-item" data-item="settings">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">CRM</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-item-hold" href="{{route('associatedGroups')}}">
-                                <i class="nav-icon i-Administrator"></i>
-                                <span class="nav-text">Accounts</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-						@endif
-                    @if(Auth::user()->usertype == 'operator')
-						<li class="nav-item" data-item="calldetails">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">Calls & Reports</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        @if(Auth::user()->load('accountdetails')->accountdetails->crm == 1)
-                        <li class="nav-item" data-item="settings">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Library"></i>
-                                <span class="nav-text">CRM</span>
-                            </a>
-                            <div class="triangle"></div>
-                        </li>
-                        @endif
+                    @endif
+                    @if(in_array(Auth::user()->usertype, ["groupadmin", "operator"]))
 						<li class="nav-item" data-item="">
                             <a class="nav-item-hold" href="{{url('reminder')}}">
                                 <i class="nav-icon i-Bell"></i>
@@ -283,10 +102,55 @@
                             </a>
                             <div class="triangle"></div>
                         </li>
-                        <li class="nav-item" data-item="insightivr">
-                            <a class="nav-item-hold" href="#">
-                                <i class="nav-icon i-Arrow-From"></i>
-                                <span class="nav-text">Insight Ivr</span>
+                    @endif
+					@if(Auth::user()->usertype == 'reseller')
+                        <li class="nav-item">
+                            <a class="nav-item-hold" href="{{route('associatedGroups')}}">
+                                <i class="nav-icon i-Administrator"></i>
+                                <span class="nav-text">Accounts</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                    @endif
+                    @if(Auth::user()->usertype == 'admin')
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('CoperateGroup')}}">
+                                <i class="nav-icon i-Administrator"></i>
+                                <span class="nav-text">Add Coperate</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{route('AccessLogs')}}">
+                                <i class="nav-icon i-Security-Check"></i>
+                                <span class="nav-text">Access Logs</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                    @endif
+                    @if(Auth::user()->usertype == 'admin')
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('blacklist')}}">
+                                <i class="nav-icon i-Security-Block"></i>
+                                <span class="nav-text">Blacklist</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                    @endif
+                    @if(in_array(Auth::user()->usertype, ["admin", "groupadmin", "operator"]))
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('notification')}}">
+                                <i class="nav-icon i-Bell"></i>
+                                <span class="nav-text">Help</span>
+                            </a>
+                            <div class="triangle"></div>
+                        </li>
+                    @endif
+                    @if(Auth::user()->usertype == 'admin')
+                        <li class="nav-item" data-item="">
+                            <a class="nav-item-hold" href="{{url('dashboard_note')}}">
+                                <i class="nav-icon i-File-TXT"></i>
+                                <span class="nav-text">Dashboard Announcement</span>
                             </a>
                             <div class="triangle"></div>
                         </li>
@@ -342,7 +206,7 @@
                     @if(Auth::user()->usertype == 'groupadmin')
                     <li class="nav-item">
                         <a href="{{route('dashboard')}}">
-                            <span class="item-name">Dashboard</span>
+                            <span class="item-name">Call Chart</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -355,11 +219,11 @@
                             <span class="item-name">Operator Shifts</span>
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a href="{{route('Voicemail')}}">
                             <span class="item-name">Voicemails</span>
                         </a>
-                    </li>
+                    </li> -->
                     <li class="nav-item">
                         <a href="{{url('contacts')}}">
                             <span class="item-name">Contacts</span>
@@ -375,19 +239,26 @@
                             <span class="item-name">Blacklist</span>
                         </a>
                     </li>
-                    <li class="nav-item" data-item="">
+                    <!-- <li class="nav-item" data-item="">
                         <a href="{{url('cdr_tags')}}">
                             <span class="item-name">Cdr Tags
                             </span>
                         </a>
-                    </li>
-                    <li class="nav-item">
+                    </li> -->
+                    <!-- <li class="nav-item">
                         <a href="{{url('conference')}}">
                             <span class="item-name">Dial Out Conference</span>
                         </a>
-                        </li>
+                    </li> -->
                     @endif
-                    @if(Auth::user()->usertype == 'operator')
+                    @if(in_array(Auth::user()->usertype, ["admin", "groupadmin"]))
+                    <li class="nav-item">
+                        <a href="{{route('pushApi')}}">
+                            <span class="item-name">Push Notification</span>
+                        </a>
+                    </li>
+                    @endif
+                    @if(in_array(Auth::user()->usertype, ["groupadmin", "operator"]))
                     <li class="nav-item" data-item="">
                         <a href="{{url('cdr_tags')}}">
                             <span class="item-name">Cdr Tags
@@ -397,6 +268,7 @@
                     @endif
                 </ul>
                 <ul class="childNav" data-parent="ivrmgmt">
+                @if(Auth::user()->usertype == 'admin')
                     <li class="nav-item">
                         <a href="{{route('DidList')}}">
                             <span class="item-name">Dids</span>
@@ -428,20 +300,11 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{route('pushApi')}}">
-                            <span class="item-name">Push Notification</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a href="{{route('smsApi')}}">
                             <span class="nav-text">Sms Api</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="{{route('emailConfig')}}">
-                            <span class="nav-text">Email Config</span>
-                        </a>
-                    </li>
+                @endif
                 </ul>
                 <ul class="childNav" data-parent="insight">
                     <li class="nav-item">
@@ -478,44 +341,6 @@
                         <a class="{{ Route::currentRouteName()=='cdrreportarchive' ? 'open' : '' }}" href="#" >
                             <i class="nav-icon i-Over-Time"></i>
                             <span class="item-name">Set Office Hours</span>
-                        </a>
-                    </li>
-                </ul>
-                <ul class="childNav" data-parent="insightcrm">
-                    <li class="nav-item">
-                        <a href="{{url('/crm/category-list')}}">
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">Categories</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{url('/crm/sub-category-list')}}">
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">Sub Categories</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{url('/crm/status-list')}}">
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">Status</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{route('LeadList')}}">
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">Leads</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a>
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">Email & SMS Settings</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a>
-                            <i class="nav-icon i-Over-Time"></i>
-                            <span class="item-name">Email & Templates</span>
                         </a>
                     </li>
                 </ul>
@@ -578,168 +403,11 @@
 
                 </ul>
 
-                <?php
-                if (Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'admin') { ?>
-                    <ul class="childNav" data-parent="settings">
-                        <li class="nav-item">
-                            <a href="{{url('settings/category')}}">
-                                <span class="item-name">Category</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('product')}}">
-                                <span class="item-name">Products</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('cdrreport_lists')}}">
-                                <span class="item-name">List Lead</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('cdrreport/converted')}}">
-                                <span class="item-name">Customer</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('proposal/list')}}">
-                                <span class="item-name">Proposal</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('invoice/list')}}">
-                                <span class="item-name">Invoice</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('email_template/list')}}">
-                                <span class="item-name">Email Template</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('sms_template/list')}}">
-                                <span class="item-name">SMS Template</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('sms_api/list')}}">
-                                <span class="item-name">SMS/Email Api</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('terms_condition/add')}}">
-                                <span class="item-name">Terms And Condition</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('transfer_leads/index')}}">
-                                <span class="item-name">Transfer Leads</span>
-                            </a>
-                        </li>
-
-
-                    </ul>
-                <?php }else{ ?>
-                    <ul class="childNav" data-parent="settings">
-                        <li class="nav-item">
-                            <a href="{{url('cdrreport_lists')}}">
-                                <span class="item-name">List Lead</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('cdrreport/converted')}}">
-                                <span class="item-name">Customer</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('proposal/list')}}">
-                                <span class="item-name">Proposal</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('invoice/list')}}">
-                                <span class="item-name">Invoice</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('email_template/list')}}">
-                                <span class="item-name">Email Template</span>
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a href="{{url('sms_template/list')}}">
-                                <span class="item-name">SMS Template</span>
-                            </a>
-                        </li>
-
-                    </ul>
-                <?php }?>
-
-
             </div>
             <div class="sidebar-overlay"></div>
         </div>
         <!--=============== Left side End ================-->
-        <?php
-        use Illuminate\Support\Facades\DB;
-        date_default_timezone_set('Asia/Kolkata');
 
-        $list_remainder = DB::table('lead_reminders')
-                    ->where('lead_reminders.user_id','=',Auth::user()->id)
-                    ->whereDate('lead_reminders.date', '>=', date('Y-m-d'))
-                    ->leftJoin('cdrreport_lead', 'cdrreport_lead.id', '=', 'lead_reminders.cdrreport_lead_id')
-                    ->select('lead_reminders.*','cdrreport_lead.email')
-                    ->get();
-
-        //print_r($list_remainder);
-
-        $time = date('H:i', strtotime("+30 minutes"));
-        $date = date('Y-m-d');
-       // echo $date."::".$time;
-        $i = 0;
-        foreach ($list_remainder as $key => $value) {
-
-            if ($value->date == $date) {
-
-                //print_r($value);
-                //echo "<br>";
-                $cleantime=substr($value->time,0,5);
-                //echo $cleantime;
-
-                if ($cleantime == $time) { ?>
-
-                    <div class="alert alert-danger mine" id="myDIV<?php echo $i;?>">
-                        <h3>Remainder</h3>
-                        <h4>Title is: <?php echo $value->title;?></h4>
-                        <p>
-                            Your Remainder is after 1/2 Hour
-                        </p>
-                        <p>
-                            Description : <?php echo $value->task;?>
-                        </p>
-                        <hr class="message-inner-separator">
-                        <button class="caption-helper btn btn-round" onclick="myFunctions('myDIV<?php echo $i;?>')">Get It</button>
-                    </div>
-                <?php }
-            } $i++;
-        }
-
-        ?>
 <script type="text/javascript">
     function myFunctions(id) {
       var x = document.getElementById(id);

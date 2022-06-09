@@ -11,19 +11,23 @@
 
   <div class="separator-breadcrumb border-top"></div>
 
+    <!-- search bar -->
+    @include('layouts.search_panel', ['request' => '{{request}}'])
+    <!-- search bar ends -->
 
     <div class="row mb-4">
         <div class="col-md-12 mb-4">
             <div class="card text-left">
                 <div class="card-body">
-                    <a title="Add New Login" data-toggle="modal" data-target="#login_manager" href="#" class="btn btn-primary login_manager"> Add New Login </a>
+                    <a title="Add New Login" data-toggle="modal" data-target="#login_manager" href="#" class="btn btn-primary login_manager" style="margin: 0px 0px 15px 15px;"> Add New Login </a>
                     <div class="table-responsive">
-                        <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                        <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
                            <thead>
                                 <tr>
                                     <th>User Name</th>
                                     <th>Password</th>
                                     <th>User Type</th>
+                                    <th>Customer</th>
                                     <th>Corporate</th>
                                     <th>Phone Number</th>
                                     <th>Add Date</th>
@@ -37,6 +41,7 @@
                                     <td>{{$account->username}}</td>
                                     <td>{{$account->user_pwd}}</td>
                                     <td>{{$account->usertype}}</td>
+                                    <td>{{$account->customerName}}</td>
                                     <td>{{$account->resellername}}</td>
                                     <td>{{$account->phone_number}}</td>
                                     <td>{{ date('d-m-Y', strtotime($account->adddate)) }}</td>
@@ -52,17 +57,16 @@
                             <tfoot>
                                 <tr>
                                     <th>User Name</th>
-                                    <!-- <th>Password</th> -->
+                                    <th>Password</th>
                                     <th>User Type</th>
-                                    <th>Corporate</th>
                                     <th>Customer</th>
+                                    <th>Corporate</th>
                                     <th>Phone Number</th>
                                     <th>Add Date</th>
                                     <th>Action</th>
                                 </tr>
                             </tfoot>
                         </table>
-                         {{ $accounts->links() }}
                     </div>
 
                 </div>
@@ -200,6 +204,7 @@
           });
         });
 
+        var selectedGroupId = '';
         $("#resellerid, #usertype").on('change',function(){
             var resellerid = $("#resellerid").val();
             var usertype = $("#usertype").val();
@@ -213,13 +218,52 @@
                         value: i,
                         text : item 
                     }));
+                    console.log('1');
                 });
-                
-                
+                setTimeout(function() {
+                    if(selectedGroupId) {
+                        console.log('2');
+                        $("#groupid").val(selectedGroupId);
+                        console.log($("#groupid").val());
+                        console.log('3');
+                        selectedGroupId = '';
+                    }
+                }, 300);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }
           });
+        });
+
+        $("#usertype").on('change',function(){
+            if ($(this).val() == 'admin') {
+                $("#resellerid").prop('disabled', true);
+                $("#groupid").prop('disabled', true);
+                $("#resellerid").val(0);
+                $("#groupid").val('');
+            } else if ($(this).val() == 'reseller') {
+                $("#resellerid").prop('disabled', false);
+                $("#groupid").prop('disabled', true);
+                $("#resellerid").val(0);
+                $("#groupid").val('');
+            } else {
+                $("#resellerid").prop('disabled', false);
+                $("#groupid").prop('disabled', false);
+                $("#resellerid").val(0).trigger('change');
+            }
+        });
+
+        $("#groupid").on('change',function(){
+            var groupid = $(this).val();
+            selectedGroupId = groupid;
+            $.ajax({
+                url: '/get_customer_reseller_id/'+groupid, // This is the url we gave in the route
+                success: function(res){ // What to do if we succeed
+                    $("#resellerid").val(res.resellerid).trigger('change');
+                },
+                error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                }
+            });
         });
 
         $('.edit_login').click(function() {  
@@ -229,7 +273,12 @@
                 if(res) {
                     $("input[name=email]").val(res.email);
                     $("input[name=phone_number]").val(res.phone_number);
-                    $("#groupid").val(res.groupid);
+                    if(res.groupid) {
+                        selectedGroupId = res.groupid;
+                        $("#groupid").val(res.groupid).trigger('change');
+                    } else {
+                        $("#groupid").val(res.groupid);
+                    }
                     $("#resellerid").val(res.resellerid);
                     $("#account_id").val(res.id);
                     $("#usertype").val(res.usertype);
@@ -237,6 +286,17 @@
                     $("input[name=username]").val(res.username);
                     $("#login_title").text('Edit Login');
                     $("#login_manager").modal('show');
+
+                    if (res.usertype == 'admin') {
+                        $("#resellerid").prop('disabled', true);
+                        $("#groupid").prop('disabled', true);
+                    } else if (res.usertype == 'reseller') {
+                        $("#resellerid").prop('disabled', false);
+                        $("#groupid").prop('disabled', true);
+                    } else {
+                        $("#resellerid").prop('disabled', false);
+                        $("#groupid").prop('disabled', false);
+                    }
                 }
                 
             },

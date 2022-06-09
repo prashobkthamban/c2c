@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Hash;
+use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
@@ -56,22 +57,44 @@ class LoginController extends Controller
         );
         $validator = Validator::make( $request->all(), $rules );
         if ( $validator->fails() ) {
-            //dd('validator fails');
+            $log = [
+                'login_time' => date('Y-m-d H:i:s'),
+                'username' => $credentials['username'],
+                'password' => $credentials['password'],
+                'groupid' => null,
+                'ipaddress' => $request->ip(),
+                'usertype' => null,
+                'status' => 'FAILED'
+            ];
+            DB::table('ast_login_log')->insert($log);
             return Redirect::to( 'login' )->withErrors( $validator )->withInput();
         } else {
             $credentials = $request->only( 'username', 'password' );
-            //$user = Account::first();
-            
 
             if (  Auth::attempt( $credentials ) ) {
-                //dd('Auth attempt');
-                //Auth::loginUsingId($user->id);
                 // Authentication passed...
+                $log = [
+                    'login_time' => date('Y-m-d H:i:s'),
+                    'username' => $credentials['username'],
+                    'password' => $credentials['password'],
+                    'groupid' => Auth::user()->groupid,
+                    'ipaddress' => $request->ip(),
+                    'usertype' => Auth::user()->usertype,
+                    'status' => 'SUCCESS'
+                ];
+                DB::table('ast_login_log')->insert($log);
                 return redirect()->intended( '/' );
             } else {
-                 //dd('Invalid credentials');
-                // dd(Auth::attempt( $credentials ));
-                // dd(Auth::check());die;
+                $log = [
+                    'login_time' => date('Y-m-d H:i:s'),
+                    'username' => $credentials['username'],
+                    'password' => $credentials['password'],
+                    'groupid' => null,
+                    'ipaddress' => $request->ip(),
+                    'usertype' => null,
+                    'status' => 'FAILED'
+                ];
+                DB::table('ast_login_log')->insert($log);
                 return Redirect::to( 'login' )->withErrors( array(
                     'username' => 'Invalid credentials'
                 ) )->withInput();

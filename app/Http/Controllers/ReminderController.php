@@ -9,6 +9,7 @@ use App\Models\Reminder;
 use App\Models\CdrTag;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
 
 class ReminderController extends Controller
 {
@@ -30,7 +31,7 @@ class ReminderController extends Controller
         $data['date_from'] = $request->get('date_from');
         $data['date'] = $request->get('date');
         $dept = Reminder::select('deptname')->where('deptname', '!=', '')->groupBy('deptname')->pluck('deptname', 'deptname');
-        return view('home.reminder', ['result' => Reminder::getReport($data),'tags'=>CdrTag::getTag(), 'depts' => $dept, 'params' => $data]);
+        return view('home.reminder', ['result' => Reminder::getReport($data),'tags'=>CdrTag::getTag(Auth::user()->groupid), 'depts' => $dept, 'params' => $data]);
     }
 
     public function pbxextension() {
@@ -207,6 +208,17 @@ class ReminderController extends Controller
 
     public function getPbxdid($id) {
         return DB::table('pbx_incoming')->where('id', $id)->get();
+    }
+
+    public function reminderSeen(Request $request) {
+        DB::table('reminders')
+            ->where('id', $request->get('id'))
+            ->update([
+                'appoint_status'=> 'close',
+                'reminder_seen' => '1'
+            ]);
+
+        return new JsonResponse(['status' => true, 'message' => 'Success']);
     }
     
 }

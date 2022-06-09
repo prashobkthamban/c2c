@@ -92,6 +92,7 @@ $(document).ready(function(){
 
     //add note
     $( '.notes_form' ).on( 'submit', function(e) {
+        let uniqueId = $(this).find('#uniqueid').val();
         e.preventDefault();
         var noteHTML = "";
         var errors = ''; 
@@ -188,6 +189,9 @@ $(document).ready(function(){
                     });
                     toastr.error(errors);
                 } else {
+                    $('#row_' + cdrid + ' .more-details').attr('data-tag', res.tag);
+                    $('#row_' + cdrid + ' .edit_tag').attr('data-tag', res.tag);
+                    $('.tag_btn_' + cdrid).attr('data-tag', res.tag);
                     $("#cdrTag_"+cdrid).text(res.tag);
                     $("#tag_"+cdrid).text('Update Tag');
                     $("#tag_modal").modal('hide');
@@ -261,7 +265,28 @@ $(document).ready(function(){
         }
         });
     });
-
      
 });
 
+function loadModal(modalId, title, content) {
+    if ($('#'+modalId+'Modal').length) {
+        $('#'+modalId+'Modal .modal-title').text(title);
+        $('#'+modalId+'Modal .modal-body').html(content);
+        $('#'+modalId+'Modal').modal('show');
+    } else {
+        console.error(modalId+'Modal element not found!')
+    }
+}
+
+function ajaxCall(url, data) {
+    return $.ajax({
+        type: 'POST',
+        url: url,
+        data: data,
+        success: function(result) {},
+        error: function(error) {
+            //some toast message
+            toastr.error('Sorry! We are facing some technical difficulties. Please try after sometime.');
+        }
+    });
+}

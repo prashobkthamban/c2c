@@ -30,9 +30,6 @@
                         <li class="nav-item">
                             <a class="nav-link" id="settings-tab" data-toggle="tab" href="#settings" role="tab" aria-controls="settings" aria-selected="false">Settings</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="crmsettings-tab" data-toggle="tab" href="#crmsettings" role="tab" aria-controls="crmsettings" aria-selected="false">CRM Settings</a>
-                        </li>
                     </ul>
 
                     <div class="tab-content" id="profileTabContent">
@@ -62,7 +59,7 @@
                                  <div class="col-md-4 col-6">
                                     <div class="mb-4">
                                         <p class="text-primary mb-1"><i class="i-Telephone text-16 mr-1"></i> Account Name</p>
-                                        <span id="phone_info">{{ Auth::user()->name }}</span>
+                                        <span id="phone_info">{{ $acGrp[0]->name }}</span>
                                     </div>
                                 </div>
                                 <div class="col-md-4 col-6">
@@ -215,57 +212,6 @@
                             </div>
                             <div class="border-top mb-5"></div>
                         </div>
-                     <div class="tab-pane fade" id="crmsettings" role="tabpanel" aria-labelledby="settings-tab">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h4>Billing info </h4>
-                                <div class="card mb-5">
-                                    <div class="card-body">
-                                        {!! Form::open(['id' => 'crm_settings']) !!}           
-                                            @if(Auth::user()->usertype == 'groupadmin')
-                                            <div class="form-group row">
-                                                <label for="inputEmail3" class="col-sm-3 col-form-label">Company Name</label>
-                                                <div class="col-sm-9">
-                                                    <input type="text" class="form-control" id="companyname" name="companyname" placeholder="Company Name" value="{{ isset($acGrp[0]) ? $acGrp[0]->companyname:'' }}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="inputEmail3" class="col-sm-3 col-form-label">GST Number</label>
-                                                <div class="col-sm-9">
-                                                    <input type="text" class="form-control" id="GST" name="GST" placeholder="GST" value="{{ isset($acGrp[0]) ? $acGrp[0]->GST:'' }}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="inputEmail3" class="col-sm-3 col-form-label">Billing Address</label>
-                                                <div class="col-sm-9">
-                                                    <input type="text" class="form-control" id="billing_address" name="billing_address" placeholder="Billing Address" value="{{ isset($acGrp[0]) ? $acGrp[0]->billing_address : '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="inputEmail3" class="col-sm-3 col-form-label">Shipping Address</label>
-                                                <div class="col-sm-9">
-                                                    <input type="text" class="form-control" id="shipping_address" name="shipping_address" placeholder="Shipping Address" value="{{ isset($acGrp[0]) ? $acGrp[0]->shipping_address : '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <label for="inputEmail3" class="col-sm-3 col-form-label">PAN</label>
-                                                <div class="col-sm-9">
-                                                <input type="text" class="form-control" id="PAN" name="PAN" placeholder="PAN" value="{{ isset($acGrp[0]) ? $acGrp[0]->PAN : '' }}">
-                                                </div>
-                                            </div>
-                                            <div class="form-group row">
-                                                <div class="col-sm-10">
-                                                    <button type="submit" class="btn btn-primary">Update</button>
-                                                </div>
-                                            </div>
-                                            @endif
-                                        {!! Form::close() !!}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="border-top mb-5"></div>
-                    </div>
                    
 				   </div>
                 </div>

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
 use App\Models\CdrTag;
 use App\Models\CdrReport;
 use App\Models\ToDoTask;
@@ -22,11 +23,10 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-         $this->middleware('auth');
-         if(!Auth::check()){
+        $this->middleware('auth');
+        if (!Auth::check()) {
             return redirect('login');
-         }
-
+        }
     }
 
     /**
@@ -34,416 +34,602 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $request)
     {
-        $today = date("Y-m-d");
-        //dd($today);
-        $onemonthdate= date("m/d/Y", strtotime("-1 month"));
-        $sdate = isset($_REQUEST['dfrom']) ? date('m/d/Y',strtotime($_REQUEST['dfrom'])) : $onemonthdate;
-        $edate = isset($_REQUEST['dto']) ? date('m/d/Y',strtotime($_REQUEST['dto'])) : date('m/d/Y');
-        $qedate = date("Y-m-d",strtotime($edate));
-        $qsdate = date("Y-m-d",strtotime($sdate));
 
-        $incoming_calls = [];
-$operator_leads = [];
-$opcallList = [];
-$insight_ivr = [];
-$insightData = [];
-$announcements = [];
-$activeoperator = [];
-$g_callstoday = [];
-$g_activecalls = [];
-$activecalls = [];
-$ivranswer = [];
-$ivrmissed = [];
-// $sdate = [];
-// $edate = [];
-$nousers = [];
-$inusers = [];
-$level_1 = [];
-$level_2 = [];
-$level_3 = [];
-$level_4 = [];
-$level_5 = [];
-$level_6 = [];
-$level_7 = [];
-$todo_lists = [];
-$users_list = [];
-$remainders = [];
-$lead_count = [];
-$operator_lead_stage = [];
-$predict_cost = [];
-$proposal = [];
-$invoice = [];
-$group_admin = [];
+        $this->graphTodaysCalls();
+        $announcements = DB::table('dashbord_annuounce')
+                    ->where('customer_id', Auth::user()->groupid)
+                    ->orWhere('customer_id', null)
+                    ->orderBy('id', 'desc')->get();
+        if (Auth::user()->usertype == 'admin') {
+            $today = date("Y-m-d");
+            //dd($today);
+            $onemonthdate = date("m/d/Y", strtotime("-1 month"));
+            $sdate = isset($_REQUEST['dfrom']) ? date('m/d/Y', strtotime($_REQUEST['dfrom'])) : $onemonthdate;
+            $edate = isset($_REQUEST['dto']) ? date('m/d/Y', strtotime($_REQUEST['dto'])) : date('m/d/Y');
+            $qedate = date("Y-m-d", strtotime($edate));
+            $qsdate = date("Y-m-d", strtotime($sdate));
 
-        if(Auth::user()->usertype == 'admin') {
-            $nousers = DB::table('accountgroup')->count();
-            $inusers = DB::table('accountgroup')
-            ->whereDate('enddate', '<', date("Y-m-d"))
-            ->where('status', 'Inactive')
-            ->count();
-        }
-
-        $g_callstoday = $g_activecalls = $activecalls = 0;
-
-        $activeoperator = DB::table('operatoraccount')
-            ->where('operatoraccount.groupid', Auth::user()->groupid)
-            ->where('operatoraccount.oper_status', 'Online')
-            ->count();
-        if(Auth::user()->usertype == 'groupadmin') {
-            $g_callstoday = DB::table('cdr')
-            ->where('groupid', Auth::user()->groupid)
-            ->whereDate('cdr.datetime', '=', $today)
-            ->count();
-
-            $incoming_calls = CdrReport::select(DB::raw('count(*) as count, status'))->with('leadCdr')
-            ->whereIn('status', ['ANSWERED', 'MISSED', 'AFTEROFFICE'])
-            ->whereDate('cdr.datetime', '>=', $qsdate)
-            ->whereDate('cdr.datetime', '<=', $qedate)
-            ->groupBy('status')
-            ->get();
-
-            $operator_leads = CdrReport::select(DB::raw('count(cdrreport_lead.cdrreport_id) as total'), 'cdrreport_lead.lead_stage')
-            ->where('cdr.groupid', Auth::user()->groupid)
-            ->where('cdr.operatorid', '!=', '0')
-            ->whereDate('cdr.datetime', '>=', $qsdate)
-            ->whereDate('cdr.datetime', '<=', $qedate)
-            ->join('cdrreport_lead', 'cdrreport_lead.cdrreport_id', '=', 'cdr.cdrid')
-            ->whereIn('cdrreport_lead.lead_stage', ['New', 'Demo', 'Under review', 'Converted', 'Contacted'])
-            ->groupBy('cdrreport_lead.lead_stage')
-            ->get();
-
-            $operator_calls = CdrReport::select(DB::raw('count(cdrreport_lead.cdrreport_id) as lead_count'), DB::raw('count(cdrreport_lead.lead_stage) as lead_status'), DB::raw('count(*) as user_count, cdr.status'), DB::raw('count(*) as total_count, cdr.operatorid'), 'account.username', 'cdr.cdrid', 'cdr.groupid', 'cdr.operatorid','cdr.status', 'cdrreport_lead.lead_stage')
-            ->where('cdr.groupid', Auth::user()->groupid)
-            ->where('cdr.operatorid', '!=', '0')
-            ->join('account', 'account.operator_id', '=', 'cdr.operatorid')
-            ->leftjoin('cdrreport_lead', 'cdrreport_lead.cdrreport_id', '=', 'cdr.cdrid')
-            ->whereIn('cdr.status', ['ANSWERED', 'MISSED', 'AFTEROFFICE', 'LIVECALL'])
-            //->whereDate('cdr.datetime', '>=', $qsdate)
-            //->whereDate('cdr.datetime', '<=', $qedate)
-            ->groupBy('cdr.operatorid', 'cdr.status')
-            ->get();
-
-            //dd($operator_calls);
+            $incoming_calls = [];
             $opcallList = [];
-            $lead_count = 0;
-            foreach($operator_calls as $listOne) {
-                $opcallList[$listOne->username][$listOne->status] = $listOne->user_count;
-                $lead_count = $lead_count + $listOne->lead_count;
-                $opcallList[$listOne->username]['lead_count'] = $lead_count;
-                $opcallList[$listOne->username]['completed'] = 0;
+            $insight_ivr = [];
+            $insightData = [];
+            $activeoperator = [];
+            $g_callstoday = [];
+            $g_activecalls = [];
+            $activecalls = [];
+            $ivranswer = [];
+            $ivrmissed = [];
+            // $sdate = [];
+            // $edate = [];
+            $nousers = [];
+            $inusers = [];
+            $level_1 = [];
+            $level_2 = [];
+            $level_3 = [];
+            $level_4 = [];
+            $level_5 = [];
+            $level_6 = [];
+            $level_7 = [];
+            $todo_lists = [];
+            $remainders = [];
+            $group_admin = [];
+
+            if (Auth::user()->usertype == 'admin') {
+                $nousers = DB::table('accountgroup')->count();
+                $inusers = DB::table('accountgroup')
+                    ->whereDate('enddate', '<', date("Y-m-d"))
+                    ->where('status', 'Inactive')
+                    ->count();
             }
-            //dd($opcallList);
-            $insight_ivr = DB::table('cdr')
-            ->select(DB::raw('count(*) as count, deptname as dept_name'))
-            ->where('deptname', '!=', '')
-            ->where('groupid', Auth::user()->groupid)
-            ->whereDate('cdr.datetime', '>=', $qsdate)
-            ->whereDate('cdr.datetime', '<=', $qedate)
-            ->groupBy('deptname')
-            ->get();
-            $departments = DB::table('operatordepartment')
-            ->select('dept_name')
-            ->where('groupid', Auth::user()->groupid)
-            ->get();
-            //dd($insight_ivr);
-            $insightData = array();
-            $deptNames = array();
-            foreach($departments as $key => $dept) {
-                if(count($insight_ivr) > 0) {
-                    for($i = 0; $i < count($insight_ivr); $i++) {
-                        if($insight_ivr[$i]->dept_name == $dept->dept_name) {
-                            $deptNames[] = $dept->dept_name;
-                            $insightData[$key]['deptname'] = $dept->dept_name;
-                            $insightData[$key]['count'] = $insight_ivr[$i]->count;
-                        } else {
-                            if ( !in_array($dept->dept_name, $deptNames) ) {
+
+            $g_callstoday = $g_activecalls = $activecalls = 0;
+
+            $activeoperator = DB::table('operatoraccount')
+                ->where('operatoraccount.groupid', Auth::user()->groupid)
+                ->where('operatoraccount.oper_status', 'Online')
+                ->count();
+            if (Auth::user()->usertype == 'groupadmin') {
+                $g_callstoday = DB::table('cdr')
+                    ->where('groupid', Auth::user()->groupid)
+                    ->whereDate('cdr.datetime', '=', $today)
+                    ->count();
+
+                $incoming_calls = CdrReport::select(DB::raw('count(*) as count, status'))
+                    ->whereIn('status', ['ANSWERED', 'MISSED', 'AFTEROFFICE'])
+                    ->whereDate('cdr.datetime', '>=', $qsdate)
+                    ->whereDate('cdr.datetime', '<=', $qedate)
+                    ->groupBy('status')
+                    ->get();
+
+                $insight_ivr = DB::table('cdr')
+                    ->select(DB::raw('count(*) as count, deptname as dept_name'))
+                    ->where('deptname', '!=', '')
+                    ->where('groupid', Auth::user()->groupid)
+                    ->whereDate('cdr.datetime', '>=', $qsdate)
+                    ->whereDate('cdr.datetime', '<=', $qedate)
+                    ->groupBy('deptname')
+                    ->get();
+                $departments = DB::table('operatordepartment')
+                    ->select('dept_name')
+                    ->where('groupid', Auth::user()->groupid)
+                    ->get();
+                //dd($insight_ivr);
+                $insightData = array();
+                $deptNames = array();
+                foreach ($departments as $key => $dept) {
+                    if (count($insight_ivr) > 0) {
+                        for ($i = 0; $i < count($insight_ivr); $i++) {
+                            if ($insight_ivr[$i]->dept_name == $dept->dept_name) {
                                 $deptNames[] = $dept->dept_name;
                                 $insightData[$key]['deptname'] = $dept->dept_name;
-                                $insightData[$key]['count'] = 0;
+                                $insightData[$key]['count'] = $insight_ivr[$i]->count;
+                            } else {
+                                if (!in_array($dept->dept_name, $deptNames)) {
+                                    $deptNames[] = $dept->dept_name;
+                                    $insightData[$key]['deptname'] = $dept->dept_name;
+                                    $insightData[$key]['count'] = 0;
+                                }
                             }
                         }
-
-                    }
-                } else {
-                    $insightData[$key]['deptname'] = $dept->dept_name;
-                    $insightData[$key]['count'] = 0;
-                }
-
-            }
-        } else if(Auth::user()->usertype == 'operator') {
-            $g_callstoday = DB::table('cdr')
-            ->where('operatorid', Auth::user()->operator_id)
-            ->whereDate('cdr.datetime', '=', $today)
-            ->count();
-        } else if(Auth::user()->usertype == 'admin'){
-            $g_callstoday = DB::table('cdr')
-            ->whereDate('cdr.datetime', '=', $today)
-            ->count();
-        }
-
-        if(Auth::user()->usertype == 'groupadmin') {
-            $g_activecalls = DB::table('cur_channel_used')
-            ->where('groupid', Auth::user()->groupid)
-            ->count();
-        } else if(Auth::user()->usertype == 'admin'){
-            $activecalls = DB::table('cur_channel_used')
-            ->count();
-        }
-        $ivranswer = DB::table('cdr')
-            ->where('groupid', Auth::user()->groupid)
-            ->where('status', 'ANSWERED')
-            ->whereDate('datetime', '=', date("Y-m-d"))
-            ->count();
-        $ivrmissed = DB::table('cdr')
-            ->where('groupid', Auth::user()->groupid)
-            ->where('status', 'MISSED')
-            ->whereDate('datetime', '=', date("Y-m-d"))
-            ->count();
-
-        $level_1 = DB::table('lead_stages')->where('levels', '=', '1')->get()->count();
-        $level_2 = DB::table('lead_stages')->where('levels', '=', '2')->get()->count();
-        $level_3 = DB::table('lead_stages')->where('levels', '=', '3')->get()->count();
-        $level_4 = DB::table('lead_stages')->where('levels', '=', '4')->get()->count();
-        $level_5 = DB::table('lead_stages')->where('levels', '=', '5')->get()->count();
-        $level_6 = DB::table('lead_stages')->where('levels', '=', '6')->get()->count();
-        $level_7 = DB::table('lead_stages')->where('levels', '=', '7')->get()->count();
-
-        $todo_lists = DB::table('todotask')
-            ->select('*')
-            ->where('status','!=','Done')
-            ->where('user_id','=',Auth::user()->id)
-            ->orderBy('id', 'desc')
-            ->paginate(10);
-
-            $users_list = DB::table('operatoraccount')
-                        ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
-                        ->get();
-
-            $lead_count = array();
-
-            foreach ($users_list as $key => $value) {
-
-                $lead_count[$value->id] = DB::table('cdrreport_lead')
-                        ->select('cdrreport_lead.operatorid')
-                        ->where('operatorid','=',$value->id)
-                        ->get()->count();
-            }
-
-        $remainders = DB::table('lead_reminders')
-            ->where('user_id','=',Auth::user()->id)
-            ->get();
-
-        if (Auth::user()->usertype == 'groupadmin') {
-
-            $group_admin = '';
-
-            $users_list = DB::table('operatoraccount')
-                        ->select('operatoraccount.*')->where('groupid', Auth::user()->groupid)
-                        ->get();
-
-            $lead_count = $operator_lead_stage = $predict_cost  = $proposal = $invoice = array();
-            foreach ($users_list as $key => $value) {
-
-                $lead_count[$value->id] = DB::table('cdrreport_lead')
-                        ->select('cdrreport_lead.operatorid')
-                        ->where('operatorid','=',$value->id)
-                        ->get()->count();
-
-                $operator_lead_stage[$value->opername] = DB::table('cdrreport_lead')
-                //,DB::raw('group_concat(cdrreport_lead.lead_stage) as stage')
-                        ->select(DB::raw('COUNT(lead_stage) as lead_count'),'lead_stage','operatoraccount.opername')
-                        ->where('operatorid','=',$value->id)
-                        ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                        ->groupBy('cdrreport_lead.lead_stage','operatoraccount.opername')
-                        //->groupBy('cdrreport_lead.lead_stage')
-                        ->get();
-
-                $predict_cost[$value->id] = DB::table('cdrreport_lead')
-                                ->select(DB::raw('SUM(total_amount) as pre_cost'),'operatoraccount.opername')
-                                ->where('operatorid','=',$value->id)
-                                ->whereNotIn('lead_stage', ['converted'])
-                                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                                ->get();
-
-                $proposal[$value->id] = DB::table('proposal')
-                                ->select(DB::raw('SUM(grand_total) as proposal_total'),'operatoraccount.opername')
-                                ->where('operator_id','=',$value->id)
-                                ->leftJoin('operatoraccount','operatoraccount.id','=','proposal.operator_id')
-                                ->get();
-
-                $invoice[$value->id] = DB::table('invoice')
-                                ->select(DB::raw('SUM(grand_total) as invoice_total'),'operatoraccount.opername')
-                                ->where('operator_id','=',$value->id)
-                                ->leftJoin('operatoraccount','operatoraccount.id','=','invoice.operator_id')
-                                ->get();
-
-                foreach ($predict_cost as $key => $pc) {
-                    if ($pc[0]->opername == '') {
-                        $pc[0]->pre_cost = 0;
-                        $pc[0]->opername = $value->opername;
+                    } else {
+                        $insightData[$key]['deptname'] = $dept->dept_name;
+                        $insightData[$key]['count'] = 0;
                     }
                 }
-
-                foreach ($proposal as $key => $pro) {
-                    if ($pro[0]->opername == '') {
-                        $pro[0]->proposal_total = 0;
-                        $pro[0]->opername = $value->opername;
-                    }
-                }
-
-                foreach ($invoice as $key => $pro) {
-                    if ($pro[0]->opername == '') {
-                        $pro[0]->invoice_total = 0;
-                        $pro[0]->opername = $value->opername;
-                    }
-                }
-
+            } else if (Auth::user()->usertype == 'operator') {
+                $g_callstoday = DB::table('cdr')
+                    ->where('operatorid', Auth::user()->operator_id)
+                    ->whereDate('cdr.datetime', '=', $today)
+                    ->count();
+            } else if (Auth::user()->usertype == 'admin') {
+                $g_callstoday = DB::table('cdr')
+                    ->whereDate('cdr.datetime', '=', $today)
+                    ->count();
             }
 
-            $remainders = DB::table('lead_reminders')
-                ->where('user_id','=',Auth::user()->id)
-                ->get();
+            if (Auth::user()->usertype == 'groupadmin') {
+                $g_activecalls = DB::table('cur_channel_used')
+                    ->where('groupid', Auth::user()->groupid)
+                    ->count();
+            } else if (Auth::user()->usertype == 'admin') {
+                $activecalls = DB::table('cur_channel_used')
+                    ->count();
+            }
+            $ivranswer = DB::table('cdr')
+                ->where('groupid', Auth::user()->groupid)
+                ->where('status', 'ANSWERED')
+                ->whereDate('datetime', '=', date("Y-m-d"))
+                ->count();
+            $ivrmissed = DB::table('cdr')
+                ->where('groupid', Auth::user()->groupid)
+                ->where('status', 'MISSED')
+                ->whereDate('datetime', '=', date("Y-m-d"))
+                ->count();
 
-            $level_1 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '1')->get()->count();
-            $level_2 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '2')->get()->count();
-            $level_3 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '3')->get()->count();
-            $level_4 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '4')->get()->count();
-            $level_5 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '5')->get()->count();
-            $level_7 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '6')->get()->count();
-            $level_6 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '7')->get()->count();
+            $todo_lists = DB::table('todotask')
+                ->select('*')
+                ->where('status', '!=', 'Done')
+                ->where('user_id', '=', Auth::user()->id)
+                ->orderBy('id', 'desc')
+                ->paginate(10);
 
-        }
+            if (Auth::user()->usertype == 'groupadmin') {
 
-        else if (Auth::user()->usertype == 'reseller') {
+                $group_admin = '';
+            } else if (Auth::user()->usertype == 'reseller') {
 
-            $group_admin = DB::table('accountgroup')->where('resellerid','=',Auth::user()->resellerid)->get();
+                $group_admin = DB::table('accountgroup')->where('resellerid', '=', Auth::user()->resellerid)->get();
 
-            $groupid = DB::table('resellergroup')->where('id',Auth::user()->resellerid)->first();
+                $groupid = DB::table('resellergroup')->where('id', Auth::user()->resellerid)->first();
 
 
-            $de = json_decode($groupid->associated_groups);
-
-            foreach ($de as $key => $de_gpid) {
-                $users_list[] = DB::table('operatoraccount')
-                        ->select('operatoraccount.*')->where('groupid',$de_gpid)
-                        ->get();
+                $de = json_decode($groupid->associated_groups);
             }
 
-            $lead_count = $operator_lead_stage = $predict_cost  = $proposal = $invoice = array();
+            return view('home.dashboard', compact('incoming_calls', 'insight_ivr', 'insightData', 'announcements', 'activeoperator', 'g_callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'sdate', 'edate', 'nousers', 'inusers', 'level_1', 'level_2', 'level_3', 'level_4', 'level_5', 'level_6', 'level_7', 'todo_lists', 'remainders', 'group_admin'));
+        } else {
+            $startDate = ($request->get('from_date') ? date('Y-m-d', strtotime($request->get('from_date'))) : date('Y-m-d', strtotime("-1 month"))) . ' 00:00:00';
+            $endDate = ($request->get('to_date') ? date('Y-m-d', strtotime($request->get('to_date'))) : date('Y-m-d')) . ' 23:59:59';
 
-            foreach ($users_list as $key => $value) {
-                foreach ($value as $key => $new_value) {
-
-
-                    $lead_count[$new_value->id] = DB::table('cdrreport_lead')
-                            ->select('cdrreport_lead.operatorid')
-                            ->where('operatorid','=',$new_value->id)
-                            ->get()->count();
-
-                    $operator_lead_stage[$new_value->opername] = DB::table('cdrreport_lead')
-                    //,DB::raw('group_concat(cdrreport_lead.lead_stage) as stage')
-                            ->select(DB::raw('COUNT(lead_stage) as lead_count'),'lead_stage','operatoraccount.opername')
-                            ->where('operatorid','=',$new_value->id)
-                            ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                            ->groupBy('cdrreport_lead.lead_stage','operatoraccount.opername')
-                            //->groupBy('cdrreport_lead.lead_stage')
-                            ->get();
-
-                    $predict_cost[$new_value->id] = DB::table('cdrreport_lead')
-                                    ->select(DB::raw('SUM(total_amount) as pre_cost'),'operatoraccount.opername')
-                                    ->where('operatorid','=',$new_value->id)
-                                    ->whereNotIn('lead_stage', ['converted'])
-                                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                                    ->get();
-
-                    $proposal[$new_value->id] = DB::table('proposal')
-                                    ->select(DB::raw('SUM(grand_total) as proposal_total'),'operatoraccount.opername')
-                                    ->where('operator_id','=',$new_value->id)
-                                    ->leftJoin('operatoraccount','operatoraccount.id','=','proposal.operator_id')
-                                    ->get();
-
-                    $invoice[$new_value->id] = DB::table('invoice')
-                                    ->select(DB::raw('SUM(grand_total) as invoice_total'),'operatoraccount.opername')
-                                    ->where('operator_id','=',$new_value->id)
-                                    ->leftJoin('operatoraccount','operatoraccount.id','=','invoice.operator_id')
-                                    ->get();
-
-                    foreach ($predict_cost as $key => $pc) {
-                        if ($pc[0]->opername == '') {
-                            $pc[0]->pre_cost = 0;
-                            $pc[0]->opername = $new_value->opername;
-                        }
-                    }
-
-                    foreach ($proposal as $key => $pro) {
-                        if ($pro[0]->opername == '') {
-                            $pro[0]->proposal_total = 0;
-                            $pro[0]->opername = $new_value->opername;
-                        }
-                    }
-
-                    foreach ($invoice as $key => $pro) {
-                        if ($pro[0]->opername == '') {
-                            $pro[0]->invoice_total = 0;
-                            $pro[0]->opername = $new_value->opername;
-                        }
-                    }
-                }
-
+            $incomingCallData = $operatorCallData = $departmentData = $customerCallData = [];
+            $todaysData = $this->getTodaysData();
+            if (Auth::user()->usertype == 'groupadmin') {
+                $incomingCallData = $this->getIncomingCallData($startDate, $endDate);
+                $operatorCallData = $this->getOperatorCallData($startDate, $endDate);
+                $departmentData = $this->getDepartmentData($startDate, $endDate);
+            } else if (Auth::user()->usertype == 'reseller') {
+                $customerCallData = $this->getCustomerCallData($startDate, $endDate);
+            } else if (Auth::user()->usertype == 'operator') {
+                $departmentData = $this->getDepartmentData($startDate, $endDate);
             }
 
-            $remainders = DB::table('lead_reminders')
-                ->where('user_id','=',Auth::user()->id)
-                ->get();
+            $startDate = date('d-M-Y', strtotime($startDate));
+            $endDate = date('d-M-Y', strtotime($endDate));
 
-            /*echo "<pre>";
-            print_r($users_list);exit();*/
-
+            return view('home.dashboard_new', compact('todaysData', 'startDate', 'endDate', 'incomingCallData', 'operatorCallData', 'departmentData', 'customerCallData', 'announcements'));
         }
-        else if (Auth::user()->usertype == 'operator')
-        {
-            $level_1 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '1')->get()->count();
-            $level_2 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '2')->get()->count();
-            $level_3 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '3')->get()->count();
-            $level_4 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '4')->get()->count();
-            $level_5 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '5')->get()->count();
-            $level_6 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '6')->get()->count();
-            $level_7 = DB::table('lead_stages')->where('user_id','=',Auth::user()->id)->where('levels', '=', '7')->get()->count();
-
-            $users_list = '';
-
-            $remainders = DB::table('lead_reminders')
-                ->where('user_id','=',Auth::user()->id)
-                ->get();
-
-            $lead_count = '';
-        }
-
-/*        echo "<pre>";
-        print_r(Auth::user());exit;*/
-
-        $nousers = '';
-        $inusers = '';
-        $announcements = DB::table('dashbord_annuounce')->orderBy('id', 'desc')->get();
-        return view('home.dashboard', compact('incoming_calls', 'operator_leads', 'opcallList', 'insight_ivr','insightData', 'announcements', 'activeoperator', 'g_callstoday', 'g_activecalls', 'activecalls', 'ivranswer', 'ivrmissed', 'sdate', 'edate', 'nousers', 'inusers','level_1','level_2','level_3','level_4','level_5','level_6','level_7','todo_lists','users_list','remainders','lead_count','operator_lead_stage','predict_cost','proposal','invoice','group_admin'));
     }
 
-    public function dashboard() {
-        $onemonthdate= date("m/d/Y", strtotime("-2 month"));
-        $sdate = isset($_REQUEST['dfrom']) ? date('m/d/Y',strtotime($_REQUEST['dfrom'])) : $onemonthdate;
-        $edate = isset($_REQUEST['dto']) ? date('m/d/Y',strtotime($_REQUEST['dto'])) : date('m/d/Y');
+    private function getTodaysData() {
+         $startDate = date('Y-m-d') . ' 00:00:00';
+         $endDate = date('Y-m-d') . ' 23:59:59';
+        if (Auth::user()->usertype == 'groupadmin') {
+            $groupAdminIds = [Auth::user()->groupid];
+        } else if (Auth::user()->usertype == 'reseller') {
+            $groupAdminIds =  DB::table('accountgroup')->where('resellerid', Auth::user()->resellerid)->pluck('id');
+        }
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $activeOperators = DB::table('operatoraccount')
+                ->whereIn('operatoraccount.groupid', $groupAdminIds)
+                ->where('operatoraccount.oper_status', 'Online')
+                ->count();
+        }
+        $qry = DB::table('cur_channel_used');
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $qry->whereIn('groupid', $groupAdminIds);
+        } else if (Auth::user()->usertype == 'operator') {
+            $qry->where('operatorid', Auth::user()->operator_id);
+        }
+        $liveCalls = $qry->count();
+        $query = DB::table('cdr')
+            ->select(
+                DB::raw('count(IF(status = "ANSWERED", 1, NULL)) as answeredCalls'),
+                DB::raw('count(IF(status = "MISSED", 1, NULL)) as missedCalls'),
+                DB::raw('count(IF(status = "AFTEROFFICE", 1, NULL)) as afterOfficeCalls'),
+                DB::raw('count(*) as totalCalls')
+            );
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $query->whereIn('cdr.groupid', $groupAdminIds);
+        } else if (Auth::user()->usertype == 'operator') {
+            $query->where('cdr.operatorid', Auth::user()->operator_id);
+        }
+        $cdrData = $query->where('cdr.deptname', '!=', '')
+            ->whereDate('cdr.datetime', '>=', $startDate)
+            ->whereDate('cdr.datetime', '<=', $endDate)
+            ->get();
+
+        $totalCalls = (count($cdrData) > 0) ? $cdrData[0]->totalCalls : '0';
+        $answeredCalls = (count($cdrData) > 0) ? $cdrData[0]->answeredCalls : '0';
+        $missedCalls = (count($cdrData) > 0) ? $cdrData[0]->missedCalls : '0';
+        $afterOfficeCalls = (count($cdrData) > 0) ? $cdrData[0]->afterOfficeCalls : '0';
+        $afterOfficeText = "After Office";
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $afterOfficeText = "After Office/Voicemail";
+            $vmQuery = DB::table('voicemails');
+            if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+                $vmQuery->whereIn('groupid', $groupAdminIds);
+            }
+            $vmCount = $vmQuery->whereDate('datetime', '>=', $startDate)
+                ->whereDate('datetime', '<=', $endDate)
+                ->count();
+            $totalCalls += $vmCount;
+            $afterOfficeCalls += $vmCount;
+        }
+        $data = [
+            ["title" => "Today's Total Call", "count" => $totalCalls],
+            ["title" => "Live Call", "count" => $liveCalls],
+            ["title" => "Answered Call", "count" => $answeredCalls],
+            ["title" => "Missed Call", "count" => $missedCalls],
+            ["title" => $afterOfficeText, "count" => $afterOfficeCalls]
+        ];
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            array_unshift($data, ["title" => "Active Operators", "count" => $activeOperators]);
+        }
+
+        return $data;
+    }
+
+    private function getIncomingCallData($startDate, $endDate) {
+        $cdrData = DB::table('cdr')
+            ->select(
+                DB::raw('count(IF(status = "ANSWERED", 1, NULL)) as answeredCalls'),
+                DB::raw('count(IF(status = "MISSED", 1, NULL)) as missedCalls'),
+                DB::raw('count(IF(status = "AFTEROFFICE", 1, NULL)) as afterOfficeCalls'),
+                DB::raw('count(*) as totalCalls')
+            )
+            ->where('cdr.deptname', '!=', '')
+            ->where('cdr.groupid', Auth::user()->groupid)
+            ->whereDate('cdr.datetime', '>=', $startDate)
+            ->whereDate('cdr.datetime', '<=', $endDate)
+            ->get();
+
+        $data = [];
+        if (count($cdrData) > 0) {
+            $data = [
+                ["label" => "Answered", "count" => $cdrData[0]->answeredCalls, "label_class" => "badge-success"],
+                ["label" => "Missed", "count" => $cdrData[0]->missedCalls, "label_class" => "badge-danger"],
+                ["label" => "After Office", "count" => $cdrData[0]->afterOfficeCalls, "label_class" => "badge-warning"],
+                ["label" => "Total", "count" => $cdrData[0]->totalCalls, "label_class" => "badge-info"]
+            ];
+        }
+
+        return $data;
+    }
+
+    private function getOperatorCallData($startDate, $endDate) {
+        $data = DB::table('cdr')
+            ->leftJoin('operatoraccount', 'operatoraccount.id', 'cdr.operatorid')
+            ->select(
+                'operatoraccount.opername',
+                DB::raw('count(IF(status = "ANSWERED", 1, NULL)) as answeredCalls'),
+                DB::raw('count(IF(status = "MISSED", 1, NULL)) as missedCalls'),
+                DB::raw('count(*) as totalCalls')
+            )
+            ->where('cdr.deptname', '!=', '')
+            ->where('cdr.groupid', Auth::user()->groupid)
+            ->whereDate('cdr.datetime', '>=', $startDate)
+            ->whereDate('cdr.datetime', '<=', $endDate)
+            ->groupBy('cdr.operatorid')
+            ->get();
+
+        return $data;
+    }
+
+    private function getDepartmentData($startDate, $endDate) {
+
+        if (Auth::user()->usertype == 'groupadmin') {
+            $groupAdminIds = [Auth::user()->groupid];
+        } else if (Auth::user()->usertype == 'reseller') {
+            $groupAdminIds =  DB::table('accountgroup')->where('resellerid', Auth::user()->resellerid)->pluck('id');
+        } else if (Auth::user()->usertype == 'operator') {
+            $departmentIds =  DB::table('operator_dept_assgin')->where('operatorid', Auth::user()->operator_id)->pluck('departmentid');
+        }
+        $query = DB::table('cdr')
+            ->select('deptname', DB::raw('count(IF(status = "ANSWERED", 1, NULL)) as answeredCalls'), DB::raw('count(IF(status = "MISSED", 1, NULL)) as missedCalls'))
+            ->where('cdr.deptname', '!=', '');
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $query->whereIn('cdr.groupid', $groupAdminIds);
+        } else if (Auth::user()->usertype == 'operator') {
+            $query->where('cdr.operatorid', Auth::user()->operator_id);
+        }
+        $cdrData = $query->where('cdr.groupid', Auth::user()->groupid)
+            ->whereDate('cdr.datetime', '>=', $startDate)
+            ->whereDate('cdr.datetime', '<=', $endDate)
+            ->groupBy('deptname')
+            ->get();
+        $qry = DB::table('operatordepartment')
+            ->select('dept_name');
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $qry->whereIn('groupid', $groupAdminIds);
+        } else if (Auth::user()->usertype == 'operator') {
+            $qry->whereIn('id', $departmentIds);
+        }
+        $departments = $qry->get();
+
+        $data = [];
+        if (count($cdrData) > 0) {
+            foreach ($cdrData as $cdr) {
+                $data[$cdr->deptname] = [
+                    "answeredCalls" => $cdr->answeredCalls,
+                    "missedCalls" => $cdr->missedCalls
+                ];
+            }
+        }
+        foreach ($departments as $key => $dept) {
+            if (!isset($data[$dept->dept_name])) {
+                $data[$dept->dept_name] = [
+                    "answeredCalls" => "0",
+                    "missedCalls" => "0"
+                ];
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get call data of all the groups under the logged in reseller
+     */
+    private function getCustomerCallData($startDate, $endDate) {
+        $data = DB::table('cdr')
+            ->leftJoin('accountgroup', 'accountgroup.id', 'cdr.groupid')
+            ->select(
+                'accountgroup.name as group_name',
+                DB::raw('count(IF(cdr.status = "ANSWERED", 1, NULL)) as answeredCalls'),
+                DB::raw('count(IF(cdr.status = "MISSED", 1, NULL)) as missedCalls'),
+                DB::raw('count(IF(cdr.status = "AFTEROFFICE", 1, NULL)) as afterOfficeCalls'),
+                DB::raw('count(*) as totalCalls')
+            )
+            ->where('cdr.deptname', '!=', '')
+            ->whereDate('cdr.datetime', '>=', $startDate)
+            ->whereDate('cdr.datetime', '<=', $endDate)
+            ->where('accountgroup.resellerid', Auth::user()->resellerid)
+            ->groupBy('cdr.groupid')
+            ->get();
+
+        return $data;
+    }
+
+    public function chartTodaysCalls() {
+        $startDate = date('Y-m-d') . ' 00:00:00';
+        // $startDate = date('Y-m-d', strtotime("-24 month")) . ' 00:00:00';
+        $endDate = date('Y-m-d') . ' 23:59:59';
+        if (Auth::user()->usertype == 'groupadmin') {
+            $groupAdminIds = [Auth::user()->groupid];
+        } else if (Auth::user()->usertype == 'reseller') {
+            $groupAdminIds =  DB::table('accountgroup')->where('resellerid', Auth::user()->resellerid)->pluck('id');
+        }
+        $qry = DB::table('cur_channel_used');
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $qry->whereIn('groupid', $groupAdminIds);
+        } else if (Auth::user()->usertype == 'operator') {
+            $qry->where('operatorid', Auth::user()->operator_id);
+        }
+        $liveCalls = $qry->count();
+        $query = DB::table('cdr')
+            ->select(
+                DB::raw('count(IF(status = "ANSWERED", 1, NULL)) as answeredCalls'),
+                DB::raw('count(IF(status = "MISSED", 1, NULL)) as missedCalls'),
+                DB::raw('count(IF(status = "AFTEROFFICE", 1, NULL)) as afterOfficeCalls')
+            );
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $query->whereIn('cdr.groupid', $groupAdminIds);
+        } else if (Auth::user()->usertype == 'operator') {
+            $query->where('cdr.operatorid', Auth::user()->operator_id);
+        }
+        $cdrData = $query->where('cdr.deptname', '!=', '')
+            ->whereDate('cdr.datetime', '>=', $startDate)
+            ->whereDate('cdr.datetime', '<=', $endDate)
+            ->get();
+
+        $answeredCalls = (count($cdrData) > 0) ? $cdrData[0]->answeredCalls : '0';
+        $missedCalls = (count($cdrData) > 0) ? $cdrData[0]->missedCalls : '0';
+        $afterOfficeCalls = (count($cdrData) > 0) ? $cdrData[0]->afterOfficeCalls : '0';
+        $afterOfficeText = "After Office";
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $afterOfficeText = "After Office/Voicemail";
+            $vmQuery = DB::table('voicemails');
+            if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+                $vmQuery->whereIn('groupid', $groupAdminIds);
+            }
+            $vmCount = $vmQuery->whereDate('datetime', '>=', $startDate)
+                ->whereDate('datetime', '<=', $endDate)
+                ->count();
+            $afterOfficeCalls += $vmCount;
+        }
+
+        $data = [
+            "datasets" => [[
+                "data" => [$answeredCalls, $missedCalls, $afterOfficeCalls, $liveCalls],
+                "backgroundColor" => [
+                    "#4198d7",
+                    "#e55759",
+                    "#d8b655",
+                    "#46d39a"
+                ],
+                "borderColor" => [
+                    "#4198d7",
+                    "#e55759",
+                    "#d8b655",
+                    "#46d39a"
+                ],
+            ]],
+            // These labels appear in the legend and in the tooltips when hovering different arcs
+            "labels" => [
+                'Answered',
+                'Missed',
+                $afterOfficeText,
+                'Live',
+            ]
+        ];
+        return new JsonResponse(['data' => $data]);
+    }
+
+    public function graphTodaysCalls() {
+        $startDate = date('Y-m-d') . ' 00:00:00';
+        // $startDate = date('Y-m-d', strtotime("-24 month")) . ' 00:00:00';
+        $endDate = date('Y-m-d') . ' 23:59:59';
+        if (Auth::user()->usertype == 'groupadmin') {
+            $groupAdminIds = [Auth::user()->groupid];
+        } else if (Auth::user()->usertype == 'reseller') {
+            $groupAdminIds =  DB::table('accountgroup')->where('resellerid', Auth::user()->resellerid)->pluck('id');
+        }
+        $query = DB::table('cdr')
+            ->select(
+                DB::raw('HOUR(datetime) hr'),
+                DB::raw('count(IF(status = "ANSWERED", 1, NULL)) as answeredCalls'),
+                DB::raw('count(IF(status = "MISSED", 1, NULL)) as missedCalls'),
+                DB::raw('count(IF(status = "AFTEROFFICE", 1, NULL)) as afterOfficeCalls'),
+                DB::raw('count(*) as totalCalls')
+            );
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $query->whereIn('cdr.groupid', $groupAdminIds);
+        } else if (Auth::user()->usertype == 'operator') {
+            $query->where('cdr.operatorid', Auth::user()->operator_id);
+        }
+        $cdrData = $query->where('cdr.deptname', '!=', '')
+            ->whereDate('cdr.datetime', '>=', $startDate)
+            ->whereDate('cdr.datetime', '<=', $endDate)
+            ->groupBy('hr')
+            ->get();
+        $data = $this->formGraphData(12);
+        if(!empty($cdrData)) {
+            foreach($cdrData as $cdr) {
+                $hr = $cdr->hr;
+                if (isset($data[$hr])) {
+                    $data[$hr]["totalCalls"] = $cdr->totalCalls;
+                    $data[$hr]["answeredCalls"] = $cdr->answeredCalls;
+                    $data[$hr]["missedCalls"] = $cdr->missedCalls;
+                    $data[$hr]["afterOfficeCalls"] = $cdr->afterOfficeCalls;
+                }
+            }
+        }
+
+        $afterOfficeText = "After Office";
+        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+            $afterOfficeText = "After Office/Voicemail";
+            $vmQuery = DB::table('voicemails');
+            if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+                $vmQuery->whereIn('groupid', $groupAdminIds);
+            }
+            $vmData = $vmQuery->select(
+                    DB::raw('HOUR(datetime) hr'),
+                    DB::raw('count(*) as totalVmCalls')
+                )
+                ->whereDate('datetime', '>=', $startDate)
+                ->whereDate('datetime', '<=', $endDate)
+                ->groupBy('hr')
+                ->get();
+            if(!empty($vmData)) {
+                foreach($vmData as $vm) {
+                    $hr = $vm->hr;
+                    if (isset($data[$hr])) {
+                        $data[$hr]["totalCalls"] += $vm->totalVmCalls;
+                        $data[$hr]["afterOfficeCalls"] += $vm->totalVmCalls;
+                    }
+                }
+            }
+        }
+
+        $marketingOverviewData = [
+            "labels" => array_column($data, "time"),
+            "datasets" => [
+                [
+                    "label" => "Total",
+                    "data" => array_column($data, "totalCalls"),
+                    "backgroundColor" => "#7a61ba",
+                    "borderColor" => [
+                        '#7a61ba'
+                    ],
+                    "borderWidth" => 0,
+                    "fill" => true, // 3: no fill
+                ],[
+                    "label" => "Answered",
+                    "data" => array_column($data, "answeredCalls"),
+                    "backgroundColor" => "#4198d7",
+                    "borderColor" => [
+                        '#4198d7'
+                    ],
+                    "borderWidth" => 0,
+                    "fill" => true, // 3: no fill
+                ],[
+                    "label" => "Missed",
+                    "data" => array_column($data, "missedCalls"),
+                    "backgroundColor" => "#e55759",
+                    "borderColor" => [
+                        '#e55759'
+                    ],
+                    "borderWidth" => 0,
+                    "fill" => true, // 3: no fill
+                ],[
+                    "label" => $afterOfficeText,
+                    "data" => array_column($data, "afterOfficeCalls"),
+                    "backgroundColor" => "#d8b655",
+                    "borderColor" => [
+                        '#d8b655'
+                    ],
+                    "borderWidth" => 0,
+                    "fill" => true, // 3: no fill
+                ]
+            ]
+        ];
+
+        return new JsonResponse(['marketingOverviewData' => $marketingOverviewData]);
+    }
+
+    public function formTimeString($hr) {
+        $hrA = $hr > 11 ? ":00 PM" : ":00 AM";
+        $hr = $hr > 12 ? $hr - 12 : $hr;
+        $hr = $hr == 0 ? "12" : $hr;
+        return $hr . $hrA;
+    }
+
+    private function formGraphData($noOfHours) {
+        $hr = date('H');
+        $data = [];
+        while($noOfHours > 0 && $hr >= 0) {
+            $nextHr = $hr + 1;
+            $timeString = $this->formTimeString($hr) . "-" . $this->formTimeString($nextHr);
+            $data[$hr] =  [
+                "time" => $timeString,
+                "totalCalls" => 0,
+                "answeredCalls" => 0,
+                "missedCalls" => 0,
+                "afterOfficeCalls" => 0,
+            ];
+            $hr--;
+            $noOfHours--;
+        }
+        return $data;
+    }
+
+    public function dashboard()
+    {
+        $onemonthdate = date("m/d/Y", strtotime("-2 month"));
+        $sdate = isset($_REQUEST['dfrom']) ? date('m/d/Y', strtotime($_REQUEST['dfrom'])) : $onemonthdate;
+        $edate = isset($_REQUEST['dto']) ? date('m/d/Y', strtotime($_REQUEST['dto'])) : date('m/d/Y');
         //dd($sdate);
-        $qedate = date("Y-m-d",strtotime($edate));
-        $qsdate = date("Y-m-d",strtotime($sdate));
+        $qedate = date("Y-m-d", strtotime($edate));
+        $qsdate = date("Y-m-d", strtotime($sdate));
 
         $piechart = DB::table('cdr')
             ->select('cdr.status', DB::raw('count(*) as totalresult'))
             ->leftJoin('accountgroup', 'cdr.groupid', '=', 'accountgroup.id')
             ->leftJoin('resellergroup', 'cdr.resellerid', '=', 'resellergroup.id')
             ->leftJoin('operatoraccount', 'cdr.operatorid', '=', 'operatoraccount.id')
-            ->whereIn('cdr.status', ['ANSWERED','MISSED','AFTEROFFICE'])
+            ->whereIn('cdr.status', ['ANSWERED', 'MISSED', 'AFTEROFFICE'])
             ->where('cdr.groupid', Auth::user()->groupid)
             ->whereDate('cdr.datetime', '>=', $qsdate)
             ->whereDate('cdr.datetime', '<=', $qedate)
@@ -452,7 +638,7 @@ $group_admin = [];
         $p_data = array();
         $total = 0;
 
-        if( ! empty($piechart) ){
+        if (!empty($piechart)) {
             foreach ($piechart as $key => $value) {
                 $ind = array();
                 $ind["name"] = $value->status;
@@ -467,33 +653,33 @@ $group_admin = [];
         ];
         //dd($total);
         $barchart = DB::table('cdr')
-        ->select('cdr.status', DB::raw('DATE(cdr.datetime) as newdate'), DB::raw('count(cdr.cdrid) as Count'))
+            ->select('cdr.status', DB::raw('DATE(cdr.datetime) as newdate'), DB::raw('count(cdr.cdrid) as Count'))
             ->leftJoin('accountgroup', 'cdr.groupid', '=', 'accountgroup.id')
             ->leftJoin('resellergroup', 'cdr.resellerid', '=', 'resellergroup.id')
             ->leftJoin('operatoraccount', 'cdr.operatorid', '=', 'operatoraccount.id')
-            ->whereIn('cdr.status', ['ANSWERED','MISSED'])
+            ->whereIn('cdr.status', ['ANSWERED', 'MISSED'])
             ->where('cdr.groupid', Auth::user()->groupid)
             ->whereDate('cdr.datetime', '>=', $qsdate)
             ->whereDate('cdr.datetime', '<=', $qedate)
             ->groupBy('newdate')
             ->groupBy('status')
             ->get();
-            //echo Auth::user()->groupid; 3
+        //echo Auth::user()->groupid; 3
         //dd($barchart);
         $b_data = array();
         $bar_data = array();
         $ind = array();
         $nd = array();
         $date = null;
-        if( !empty($barchart) ){
+        if (!empty($barchart)) {
             $i = 0;
             foreach ($barchart as $pkey => $bvalue) {
                 $b_data[] = $bvalue->newdate;
-                if(!empty($date) && $date == $bvalue->newdate) {
-                    $nd["answered"] = $bar_data[$i-1]['answered'];
+                if (!empty($date) && $date == $bvalue->newdate) {
+                    $nd["answered"] = $bar_data[$i - 1]['answered'];
                     $nd["missed"] = ($bvalue->status == 'MISSED') ? $bvalue->Count : 0;
                     $nd["date"] = $bvalue->newdate;
-                    $bar_data[$i-1] = $nd;
+                    $bar_data[$i - 1] = $nd;
                 } else {
                     $ind["answered"] = ($bvalue->status == 'ANSWERED') ? $bvalue->Count : 0;
                     $ind["missed"] = ($bvalue->status == 'MISSED') ? $bvalue->Count : 0;
@@ -508,7 +694,7 @@ $group_admin = [];
             $dates = array();
             $missed = array();
             $answered = array();
-            foreach($bar_data as $val) {
+            foreach ($bar_data as $val) {
                 array_push($dates, $val['date']);
                 array_push($missed, $val['missed']);
                 array_push($answered, $val['answered']);
@@ -516,11 +702,11 @@ $group_admin = [];
         }
         //dd(array_unique($b_data));
         $barstacked = DB::table('cdr')
-            ->select('cdr.status', DB::raw('HOUR(cdr.datetime) as time') ,DB::raw('count(*) as totalresult'))
+            ->select('cdr.status', DB::raw('HOUR(cdr.datetime) as time'), DB::raw('count(*) as totalresult'))
             ->leftJoin('accountgroup', 'cdr.groupid', '=', 'accountgroup.id')
             ->leftJoin('resellergroup', 'cdr.resellerid', '=', 'resellergroup.id')
             ->leftJoin('operatoraccount', 'cdr.operatorid', '=', 'operatoraccount.id')
-            ->whereIn('cdr.status', ['ANSWERED','MISSED'])
+            ->whereIn('cdr.status', ['ANSWERED', 'MISSED'])
             ->where('cdr.groupid', Auth::user()->groupid)
             ->whereDate('cdr.datetime', '>=', $qsdate)
             ->whereDate('cdr.datetime', '<=', $qedate)
@@ -532,26 +718,19 @@ $group_admin = [];
 
         $answered_bar = array();
         $missed_bar = array();
-        foreach ($barstacked as $key => $value)
-        {
-            if ($value->status == 'ANSWERED')
-            {
+        foreach ($barstacked as $key => $value) {
+            if ($value->status == 'ANSWERED') {
                 $answered_bar[$value->time] = $value->totalresult;
-            }
-            else
-            {
+            } else {
                 $missed_bar[$value->time] = $value->totalresult;
             }
         }
 
-        for ($i=1; $i <= 24; $i++)
-        {
-            if (!array_key_exists($i,$answered_bar))
-            {
+        for ($i = 1; $i <= 24; $i++) {
+            if (!array_key_exists($i, $answered_bar)) {
                 $answered_bar[$i] = 0;
             }
-            if (!array_key_exists($i,$missed_bar))
-            {
+            if (!array_key_exists($i, $missed_bar)) {
                 $missed_bar[$i] = 0;
             }
         }
@@ -561,30 +740,20 @@ $group_admin = [];
         $new_ans = array();
         $new_miss = array();
 
-        foreach($answered_bar as $x => $x_value)
-        {
+        foreach ($answered_bar as $x => $x_value) {
             $new_ans[$x] = $x_value;
         }
 
-        foreach ($missed_bar as $m => $m_value)
-        {
+        foreach ($missed_bar as $m => $m_value) {
             $new_miss[$m] = $m_value;
         }
 
-        $crm_total_leads = DB::table('cdrreport_lead')
-            ->select('lead_stage',DB::raw('count(*) as totalresult'))
-            ->where('group_id', Auth::user()->groupid)
-            ->whereDate('inserted_date', '>=', $qsdate)
-            ->whereDate('inserted_date', '<=', $qedate)
-            ->groupBy('lead_stage')
-            ->get();
-
-        //dd($crm_total_leads);
+        $crm_total_leads = [];
 
         $crm_data = array();
         $total_crm = 0;
 
-        if( ! empty($crm_total_leads) ){
+        if (!empty($crm_total_leads)) {
             foreach ($crm_total_leads as $key => $value) {
                 $ind_crm = array();
                 $ind_crm["name"] = $value->lead_stage;
@@ -600,131 +769,17 @@ $group_admin = [];
 
         //dd($crm_data);
 
-        return view('home.dashboard_1', compact('p_data', 'sdate', 'edate', 'dates', 'missed', 'answered','new_ans','new_miss','crm_data'));
+        return view('home.dashboard_1', compact('p_data', 'sdate', 'edate', 'dates', 'missed', 'answered', 'new_ans', 'new_miss', 'crm_data'));
     }
 
-    public function CRMData(Request $request) {
-
-        //print_r($request->all());exit;
-
-        $users_list = DB::table('operatoraccount')
-                        ->select('operatoraccount.*')->where('groupid', $request->groupadmin_id)
-                        ->get();
-
-        $lead_count = array();
-        $operator_lead_stage = array();
-        $predict_cost = array();
-        $proposal = array();
-        $invoice = array();
-
-        foreach ($users_list as $key => $value) {
-
-            $lead_count[$value->id] = DB::table('cdrreport_lead')
-                ->select('cdrreport_lead.operatorid')
-                ->where('operatorid','=',$value->id)
-                ->get()->count();
-
-            $operator_lead_stage[$value->id] = DB::table('cdrreport_lead')
-                ->select(DB::raw('COUNT(lead_stage) as lead_count'),'lead_stage','operatoraccount.opername')
-                ->where('operatorid','=',$value->id)
-                ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                ->groupBy('cdrreport_lead.lead_stage','operatoraccount.opername')
-                ->get();
-
-            if ($request->date_from != '' && $request->date_to != '') {
-
-                $predict_cost[$value->id] = DB::table('cdrreport_lead')
-                    ->select(DB::raw('SUM(total_amount) as pre_cost'),'operatoraccount.opername')
-                    ->where('operatorid','=',$value->id)
-                    ->where('cdrreport_lead.inserted_date','>=',$request->date_from)
-                    ->where('cdrreport_lead.inserted_date','<=',$request->date_to)
-                    ->whereNotIn('lead_stage', ['converted'])
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->get();
-
-                $proposal[$value->id] = DB::table('proposal')
-                    ->select(DB::raw('SUM(grand_total) as proposal_total'),'operatoraccount.opername')
-                    ->where('operator_id','=',$value->id)
-                    ->where('proposal.inserted_date','>=',$request->date_from)
-                    ->where('proposal.inserted_date','<=',$request->date_to)
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','proposal.operator_id')
-                    ->get();
-
-                $invoice[$value->id] = DB::table('invoice')
-                    ->select(DB::raw('SUM(grand_total) as invoice_total'),'operatoraccount.opername')
-                    ->where('operator_id','=',$value->id)
-                    ->where('invoice.inserted_date','>=',$request->date_from)
-                    ->where('invoice.inserted_date','<=',$request->date_to)
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','invoice.operator_id')
-                    ->get();
-            }
-            else {
-
-                $predict_cost[$value->id] = DB::table('cdrreport_lead')
-                    ->select(DB::raw('SUM(total_amount) as pre_cost'),'operatoraccount.opername')
-                    ->where('operatorid','=',$value->id)
-                    ->whereNotIn('lead_stage', ['converted'])
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','cdrreport_lead.operatorid')
-                    ->get();
-
-                $proposal[$value->id] = DB::table('proposal')
-                    ->select(DB::raw('SUM(grand_total) as proposal_total'),'operatoraccount.opername')
-                    ->where('operator_id','=',$value->id)
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','proposal.operator_id')
-                    ->get();
-
-                $invoice[$value->id] = DB::table('invoice')
-                    ->select(DB::raw('SUM(grand_total) as invoice_total'),'operatoraccount.opername')
-                    ->where('operator_id','=',$value->id)
-                    ->leftJoin('operatoraccount','operatoraccount.id','=','invoice.operator_id')
-                    ->get();
-            }
-
-
-            foreach ($predict_cost as $key => $pc) {
-                if ($pc[0]->opername == '') {
-                    $pc[0]->pre_cost = 0;
-                    $pc[0]->opername = $value->opername;
-                }
-            }
-
-            foreach ($proposal as $key => $pro) {
-                if ($pro[0]->opername == '') {
-                    $pro[0]->proposal_total = 0;
-                    $pro[0]->opername = $value->opername;
-                }
-            }
-
-            foreach ($invoice as $key => $pro) {
-                if ($pro[0]->opername == '') {
-                    $pro[0]->invoice_total = 0;
-                    $pro[0]->opername = $value->opername;
-                }
-            }
-
-            }
-
-
-        echo json_encode(array('users_list' => $users_list, 'lead_count' => $lead_count,'operator_lead_stage' => $operator_lead_stage,'predict_cost' => $predict_cost,'proposal' => $proposal,'invoice' => $invoice));
-
-    }
-
-    public function callSummary() {
-        $date = date("Y-m-d");
-        $result = DB::table('cdr')
-            ->select('accountgroup.id', 'accountgroup.name', 'cdr.cdrid as calls', 'cdr.firstleg as total', 'cdr.secondleg as outgoing' )
-            ->where('cdr.datetime', 'like', $date . '%')
-            ->leftJoin('accountgroup', 'cdr.groupid', '=', 'accountgroup.id')
-            ->orderBy('id', 'desc')->paginate(10);
-            //dd($summary);
-        return view('home.call_summary', compact('result'));
-    }
-
-    public function dashboardNote() {
+    public function dashboardNote()
+    {
         $result = DB::table('dashbord_annuounce')
-            ->orderBy('id', 'desc')->paginate(10);
-            //dd($result);
-        return view('home.dashboard_note', compact('result'));
+            ->select('dashbord_annuounce.*', 'accountgroup.name as customerName')
+            ->leftJoin('accountgroup', 'accountgroup.id', '=', 'dashbord_annuounce.customer_id')
+            ->orderBy('dashbord_annuounce.id', 'desc')->paginate(10);
+        $customers = getCustomers();
+        return view('home.dashboard_note', compact('result', 'customers'));
     }
 
     public function addAnnouncement(Request $request)
@@ -735,50 +790,56 @@ $group_admin = [];
             'msg.required' => 'Announcement field is required'
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             $data['error'] = $validator->messages();
         } else {
-            $msg = ['user' => Auth::user()->username,
-                     'msg'=> $request->get('msg'),
-                     'date' => NOW()
-                    ];
+            $msg = [
+                'customer_id' => $request->get('customer') ? $request->get('customer') : NULL,
+                'user' => Auth::user()->username,
+                'msg' => $request->get('msg'),
+                'date' => NOW()
+            ];
 
             DB::table('dashbord_annuounce')->insert($msg);
             $data['success'] = 'Announcement added successfully.';
         }
-         return $data;
+        return $data;
     }
 
-    public function deleteAnnouncement($id) {
-        DB::table('dashbord_annuounce')->where('id',$id)->delete();
+    public function deleteAnnouncement($id)
+    {
+        DB::table('dashbord_annuounce')->where('id', $id)->delete();
         toastr()->success('Announcement delete successfully.');
         return redirect()->route('dashboardNote');
     }
 
-    public function cdrTags() {
-        return view('home.cdrtags', ['result' => CdrTag::getReport(), 'tags'=>CdrTag::getTag()]);
+    public function cdrTags()
+    {
+        return view('home.cdrtags', ['result' => CdrTag::getReport(), 'tags' => CdrTag::getTag(Auth::user()->groupid)]);
     }
 
-    public function tagStore(Request $request) {
+    public function tagStore(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'tag' => 'required'
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             $data['error'] = $validator->messages();
         } else {
             $tag = [
-                'tag'=> $request->get('tag'),
-                'groupid'=> Auth::user()->groupid,
+                'tag' => $request->get('tag'),
+                'groupid' => Auth::user()->groupid,
             ];
             DB::table('cdr_tags')->insert($tag);
             $data['success'] = 'Cdr Tag added successfully.';
         }
-       return $data;
+        return $data;
     }
 
-    public function deleteRecord($id, $name) {
-        DB::table($name)->where('id',$id)->delete();
+    public function deleteRecord($id, $name)
+    {
+        DB::table($name)->where('id', $id)->delete();
         toastr()->success('Record delete successfully.');
         return redirect()->route('cdrTags');
     }
@@ -790,16 +851,16 @@ $group_admin = [];
         $now = date("Y-m-d H:i:s");
 
         $add_todo = new ToDoTask([
-                'user_id' => Auth::user()->id,
-                'title' => $request->get('task'),
-                'date' => $request->get('datetime'),
-                'inserted_date' => $now,
-            ]);
+            'user_id' => Auth::user()->id,
+            'title' => $request->get('task'),
+            'date' => $request->get('datetime'),
+            'inserted_date' => $now,
+        ]);
 
-            //dd($add_todo);exit;
-            $add_todo->save();
-            toastr()->success('ToDo added successfully.');
-            return Redirect::back();
+        //dd($add_todo);exit;
+        $add_todo->save();
+        toastr()->success('ToDo added successfully.');
+        return Redirect::back();
     }
 
     public function ToDoTaskEdit(Request $request)
@@ -827,19 +888,18 @@ $group_admin = [];
 
     public function destroy($id)
     {
-        DB::table('todotask')->where('id',$id)->delete();
+        DB::table('todotask')->where('id', $id)->delete();
         $message = toastr()->success('Deleted successfully.');
         return Redirect::back();
     }
 
     public function UpdateStatus($id)
     {
-        $check_data = DB::table('todotask')->where('id',$id)->get();
+        $check_data = DB::table('todotask')->where('id', $id)->get();
         //print_r($check_data[0]->status);exit;
         if ($check_data[0]->status == 'Hold') {
             $status = 'Pending';
-        }
-        else{
+        } else {
             $status = 'Hold';
         }
         $edit_todo = ToDoTask::find($id);
@@ -858,7 +918,8 @@ $group_admin = [];
         return Redirect::back();
     }
 
-    public function smsApi() {
+    public function smsApi()
+    {
         $result = DB::table('sms_api_gateways')
             ->orderBy('id', 'desc')->paginate(10);
         return view('home.sms_api', compact('result'));
@@ -876,55 +937,61 @@ $group_admin = [];
             'message_para_name' => 'required',
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             $data['error'] = $validator->messages();
         } else {
             $sms_data = [
                 'name' => $request->get('name'),
-                'url'=> $request->get('url'),
-                'mobile_param_name'=> $request->get('mobile_param_name'),
-                'user_param_name'=> $request->get('user_param_name'),
-                'password_parm_name'=> $request->get('password_parm_name'),
-                'sender_param_name'=> $request->get('sender_param_name'),
-                'message_para_name'=> $request->get('message_para_name')
+                'url' => $request->get('url'),
+                'mobile_param_name' => $request->get('mobile_param_name'),
+                'user_param_name' => $request->get('user_param_name'),
+                'password_parm_name' => $request->get('password_parm_name'),
+                'sender_param_name' => $request->get('sender_param_name'),
+                'message_para_name' => $request->get('message_para_name')
             ];
 
-            if(!empty($request->get('id'))) {
+            if (!empty($request->get('id'))) {
                 DB::table('sms_api_gateways')->where('id', $request->get('id'))->update($sms_data);
                 $data['success'] = 'Sms api update successfully.';
             } else {
-                    DB::table('sms_api_gateways')->insert(
-                        $sms_data
-                    );
+                DB::table('sms_api_gateways')->insert(
+                    $sms_data
+                );
                 $data['success'] = 'Sms api added successfully.';
             }
-
         }
         return $data;
     }
 
-    public function deleteItem($id, $table) {
+    public function deleteItem($id, $table)
+    {
         $field = ($table == 'cdr') ? 'cdrid' : 'id';
-        $res = DB::table($table)->where($field,$id)->delete();
-        if($table == 'ivr_menu') {
-            DB::table('ast_ivrmenu_language')->where('ivr_menu_id',$id)->delete();
-        } elseif($table == 'operatoraccount' && $id != null) {
-            DB::table('operator_dept_assgin')->where('operatorid',$id)->delete();
-            DB::table('account')->where('operator_id',$id)->delete();
-        } elseif($table == 'resellergroup' && $id != null) {
-            DB::table('account')->where('resellerid',$id)->delete();
+        $res = DB::table($table)->where($field, $id)->delete();
+        if ($table == 'ivr_menu') {
+            DB::table('ast_ivrmenu_language')->where('ivr_menu_id', $id)->delete();
+        } elseif ($table == 'operatoraccount' && $id != null) {
+            DB::table('operator_dept_assgin')->where('operatorid', $id)->delete();
+            DB::table('account')->where('operator_id', $id)->delete();
+        } elseif ($table == 'resellergroup' && $id != null) {
+            DB::table('account')->where('resellerid', $id)->delete();
         }
         return $res;
     }
 
-    public function pushApi() {
-        $result = DB::table('pushapi')->select('pushapi.*', 'accountgroup.name')
-        ->leftJoin('accountgroup', 'accountgroup.id', '=', 'pushapi.groupid')->orderBy('id', 'desc')
-        ->paginate(10);
+    public function pushApi()
+    {
+        $query = DB::table('pushapi')->select('pushapi.*', 'accountgroup.name')
+            ->leftJoin('accountgroup', 'accountgroup.id', '=', 'pushapi.groupid');
+        if (Auth::user()->usertype == 'groupadmin') {
+            $query->where('groupid', Auth::user()->groupid);
+        }
+        $result = $query->orderBy('id', 'desc')
+            ->paginate(10);
         return view('home.push_api', compact('result'));
     }
 
-    public function getData($table, $id) {
+    public function getData($table, $id)
+    {
         return $result = DB::table($table)->where('id', $id)->get();
     }
 
@@ -937,97 +1004,48 @@ $group_admin = [];
             'postvalues' => 'required',
         ]);
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             $data['error'] = $validator->messages();
         } else {
             $push_api_data = [
-                'groupid'=> $request->get('groupid'),
-                'type'=> $request->get('type'),
-                'apitype'=> $request->get('apitype'),
-                'api'=> $request->get('api'),
-                'postvalues'=> $request->get('postvalues')
+                'groupid' => $request->get('groupid'),
+                'type' => $request->get('type'),
+                'apitype' => $request->get('apitype'),
+                'api' => $request->get('api'),
+                'postvalues' => $request->get('postvalues'),
+                'token_bearer' => $request->get('token_bearer') ? $request->get('token_bearer') : ""
             ];
 
-            if(!empty($request->get('id'))) {
+            if (!empty($request->get('id'))) {
                 DB::table('pushapi')->where('id', $request->get('id'))->update($push_api_data);
                 $data['success'] = 'Push api update successfully.';
             } else {
-                    DB::table('pushapi')->insert(
-                        $push_api_data
-                    );
+                DB::table('pushapi')->insert(
+                    $push_api_data
+                );
                 $data['success'] = 'Push api added successfully.';
             }
-
         }
         return $data;
     }
 
     public function NotificationToDo()
     {
-        $now = date("Y-m-d H:i").":00";
+        $now = date("Y-m-d H:i") . ":00";
 
-        $datetime = DB::table('todotask')->where('status','!=','Done')->where('user_id',Auth::user()->id)->get();
+        $datetime = DB::table('todotask')->where('status', '!=', 'Done')->where('user_id', Auth::user()->id)->get();
         //echo $now;
         $new_array = array();
-        foreach ($datetime as $key => $value)
-        {
+        foreach ($datetime as $key => $value) {
             //print_r($value->date);
             $str_to = strtotime($value->date);
             $now_str = strtotime($now);
-            if ($str_to == $now_str)
-            {
+            if ($str_to == $now_str) {
                 $new_array[] = array('title' => $value->title, 'date' => $value->date, 're_value' => '1');
-            }
-            else
-            {
+            } else {
                 $new_array[] = array('title' => '', 'date' => '', 're_value' => '0');
             }
         }
         echo json_encode($new_array);
-
     }
-
-    public function emailConfig() {
-        $result = DB::table('email_config')
-        ->select('email_config.*', 'accountgroup.name')
-        ->leftJoin('accountgroup', 'email_config.groupid', '=', 'accountgroup.id')
-        ->orderBy('email_config.id', 'desc')
-        ->paginate(10);
-        //dd($result);
-        return view('home.email_config', compact('result'));
-    }
-
-    public function addConfig(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'groupid' => 'required',
-            'smtp_host' => 'required',
-            'smtp_user' => 'required',
-            'smtp_pass' => 'required'
-        ]);
-
-        if($validator->fails()) {
-            $data['error'] = $validator->messages();
-        } else {
-            $config = [
-                'groupid' => $request->get('groupid'),
-                'smtp_host'=> $request->get('smtp_host'),
-                'smtp_user'=> $request->get('smtp_user'),
-                'smtp_pass'=> $request->get('smtp_pass')
-            ];
-
-            if(!empty($request->get('id'))) {
-                DB::table('email_config')->where('id', $request->get('id'))->update($config);
-                $data['success'] = 'Email config update successfully.';
-            } else {
-                    DB::table('email_config')->insert(
-                        $config
-                    );
-                $data['success'] = 'Email config added successfully.';
-            }
-
-        }
-        return $data;
-    }
-
 }

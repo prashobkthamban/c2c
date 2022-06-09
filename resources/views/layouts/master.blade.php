@@ -22,6 +22,11 @@
  <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
   @toastr_css
  <!-- <script src="{{asset('assets/js/toastr.script.js')}}"></script> -->
+<style>
+    .card-body a.btn.btn-primary {
+        margin-bottom: 15px;
+    }
+</style>
 
  {{-- page specific css --}}
  @yield('page-css')
@@ -213,7 +218,7 @@
         });
     </script>
      
-    <script src="{{asset('assets/js/ajaxfunctions.js')}}"></script>
+    <script src="{{asset('assets/js/ajaxfunctions.js?v=1.0.1')}}"></script>
     {{-- laravel js --}}
     {{-- <script src="{{mix('assets/js/laravel/app.js')}}"></script> --}}
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
@@ -222,27 +227,56 @@
     <script type="text/javascript" src="{{asset('assets/js/bootstrap-datetimepicker.min.js')}}"></script>
     @yield('bottom-js')
     <script>
-        $('#zero_configuration_table').dataTable( {
-            paging: false
-
-        } );
+        if($('#zero_configuration_table').length) {
+            $('#zero_configuration_table').dataTable( {
+                paging: false,
+                order: []
+            } );
+        }
 
         $( function() {
-            $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });     
-            //$(function () {
-              $('.datetimepicker5').datetimepicker({
-                  //use24hours: true,
-                  format: 'HH:mm'
-              });
-            //});   
-             //$('.datetimepicker5').datetimepicker();
+            if($('.datepicker').length) {
+                $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' });     
+                //$(function () {
+                $('.datetimepicker5').datetimepicker({
+                    //use24hours: true,
+                    format: 'HH:mm'
+                });
+                //});   
+                //$('.datetimepicker5').datetimepicker();
+            }
         });
+        $(document).ready(function() {
+            $("#reload_page_btn").on('click', function() {
+                window.location = window.location.href.split("?")[0];
+            })
+        })
     </script>
     <div class="modal fade" id="ModalContent" tabindex="-1" role="dialog" aria-labelledby="ModalContent" style="display: none;" aria-hidden="true">
         <div class="modal-dialog" id="model-wrapper" role="document">
 
         </div>
     </div>
+
+<!-- small modal -->
+<div class="modal fade" id="smallModal" tabindex="-1" role="dialog" aria-labelledby="smallModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="smallModalLabel"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end of small modal -->
 
 </body>
 @toastr_js

@@ -88,7 +88,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Start Time *</label> 
-                                        <input type="text" class="form-control datetimepicker5" placeholder="00:00:00" name="start_time" id="start_time">
+                                        <input type="text" class="form-control time-picker-24-hr" placeholder="00:00:00" name="start_time" id="start_time">
                                     </div>
                                 </div> 
                                 <div class="row">
@@ -97,7 +97,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">End Time *</label> 
-                                        <input type="text" class="form-control datetimepicker5" placeholder="23:59:59" name="end_time" id="end_time">
+                                        <input type="text" class="form-control time-picker-24-hr" placeholder="23:59:59" name="end_time" id="end_time">
                                     </div>
                                 </div> 
                         </div>
@@ -120,6 +120,12 @@
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script>
     $(document).ready(function() {
+        if($('.time-picker-24-hr').length) {
+            $('.time-picker-24-hr').datetimepicker({
+                //use24hours: true,
+                format: 'HH:mm:ss'
+            });
+        }
         $( '.add_shift_form' ).on( 'submit', function(e) {
             e.preventDefault();
             var errors = ''; 

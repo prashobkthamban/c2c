@@ -20,8 +20,8 @@ class CdrTag extends Model
         return $result;
     }
 
-    public static function getTag(){
-        return DB::table('cdr_tags')->where('groupid', Auth::user()->groupid )->pluck('tag', 'tag');
+    public static function getTag($groupId) {
+        return DB::table('cdr_tags')->where('groupid', $groupId)->pluck('tag', 'tag');
     }
 
     public static function getTagFromId($id){

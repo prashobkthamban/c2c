@@ -120,7 +120,10 @@ class DidController extends Controller
                 'c2cpri'=> $request->get('c2cpri'),
                 'c2ccallerid'=> $request->get('c2ccallerid'),
                 'outgoing_callerid'=> $request->get('outgoing_callerid'),
-                'set_did_no'=> $request->get('set_did_no')
+                'set_did_no'=> $request->get('set_did_no'),
+                'enable_failover_gateway'=> $request->get('enable_failover_gateway'),
+                'failover_outgoing_gatewayid'=> $request->get('failover_outgoing_gatewayid'),
+                'failover_outgoing_callerid'=> $request->get('failover_outgoing_callerid'),
             ]);
 
             //dd($did_data);
@@ -167,7 +170,10 @@ class DidController extends Controller
                         'c2cpri'=> $request->get('c2cpri'),
                         'c2ccallerid'=> $request->get('c2ccallerid'),
                         'outgoing_callerid'=> $request->get('outgoing_callerid'),
-                        'set_did_no'=> $request->get('set_did_no')
+                        'set_did_no'=> $request->get('set_did_no'),
+                        'enable_failover_gateway'=> $request->get('enable_failover_gateway'),
+                        'failover_outgoing_gatewayid'=> $request->get('failover_outgoing_gatewayid'),
+                        'failover_outgoing_callerid'=> $request->get('failover_outgoing_callerid'),
                     ];
 
             $did->fill($dids)->save();

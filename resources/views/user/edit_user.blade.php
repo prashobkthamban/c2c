@@ -252,27 +252,22 @@
                                         {!! Form::select('cdr_chnunavil_log', array('1' => 'Enabled', '0' => 'Disabled'), null,array('class' => 'form-control')) !!} 
                                     </div>
 
-                                    <div class="col-md-4 form-group mb-3">
-                                        <label for="picker1">Inbuilt CRM</label>
-                                        {!! Form::select('crm', array('1' => 'Enabled', '0' => 'Disabled'), null,array('class' => 'form-control')) !!}  
-                                    </div>
-
                                     <div class="col-md-12 form-group mb-3">
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="picker1">Android APP</label>
-                                         {!! Form::select('andriodapp', array('YES' => 'Yes', 'NO' => 'No'), null,array('class' => 'form-control')) !!}
+                                         {!! Form::select('andriodapp', array('Yes' => 'Yes', 'No' => 'No'), null,array('class' => 'form-control')) !!}
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="picker1">Web portal SMS</label>
-                                        {!! Form::select('web_sms', array('YES' => 'Yes', 'NO' => 'No'), null,array('class' => 'form-control')) !!}
+                                        {!! Form::select('web_sms', array('Yes' => 'Yes', 'No' => 'No'), null,array('class' => 'form-control')) !!}
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
                                         <label for="picker1">Dial stratergy Type</label>
-                                         {!! Form::select('dial_statergy', array('1' => 'New', '0' => 'Old'), null,array('class' => 'form-control')) !!}
+                                         {!! Form::select('dial_statergy', array('New' => 'New', 'Old' => 'Old'), null,array('class' => 'form-control')) !!}
                                     </div>
 
                                     <div class="col-md-4 form-group mb-3">
@@ -291,7 +286,7 @@
                                         <label for="picker1">Push Api Service</label>
                                         <div>
                                             <label class="radio-inline">
-                                                {{ Form::radio('pushapi', 'yes') }} Yes
+                                                {{ Form::radio('pushapi', 'Yes') }} Yes
                                             </label>
                                             <label class="radio-inline">
                                                 {{ Form::radio('pushapi', 'No') }} No
@@ -309,17 +304,7 @@
                                                 {{ Form::radio('pbxexten', 'No') }} No
                                             </label>
                                         </div>
-                                    </div>  
-
-                                    <div class="col-md-4 form-group mb-3">
-                                        <label for="crm_users">Number of CRM Users</label>
-                                        <input type="number" name="crm_users" id="crm_users" class="form-control" value="{{ $user_edit->crm_users }}">
-                                    </div>
-
-                                    <div class="col-md-4 form-group mb-3">
-                                        <label for="crm_users">Number of Leads</label>
-                                        <input type="number" name="leads_access" id="leads_access" class="form-control" value="{{ $user_edit->leads_access }}">
-                                    </div>                          
+                                    </div>                        
 
                                     <div class="col-md-12">
                                          <button class="btn btn-primary">Submit</button>

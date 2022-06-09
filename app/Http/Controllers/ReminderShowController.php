@@ -27,12 +27,6 @@ class ReminderShowController extends Controller
 
     public function index()
     {
-        $list_remainder = DB::table('lead_reminders')
-                    ->where('lead_reminders.user_id','=',Auth::user()->id)
-                    ->whereDate('lead_reminders.date', '>=', date('Y-m-d'))
-                    ->leftJoin('cdrreport_lead', 'cdrreport_lead.id', '=', 'lead_reminders.cdrreport_lead_id')
-                    ->select('lead_reminders.*','cdrreport_lead.email')
-                    ->get();
 
         /*echo "<pre>";
         print_r($list_remainder);*/

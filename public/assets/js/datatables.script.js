@@ -1,6 +1,7 @@
 $(document).ready(function () {
     // zero table
     $('#zero_configuration_table').DataTable();
+    $('.zero-configuration-table').DataTable({});
 
     // feature enable/disable
 

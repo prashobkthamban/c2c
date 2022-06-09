@@ -10,6 +10,9 @@
             </div>
             <div class="separator-breadcrumb border-top"></div>
 
+            <!-- search bar -->
+            @include('layouts.search_panel', ['request' => '{{request}}'])
+            <!-- search bar ends -->
 
             <div class="row mb-4">
                 <div class="col-md-12 mb-4">
@@ -17,7 +20,7 @@
 
                         <div class="card-body">
                            <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                                <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
                                     <thead>
                                     <tr>
                                         @if(Auth::user()->usertype == 'admin')
@@ -94,47 +97,10 @@
                             </div>
 
                         </div>
-                        <div class="pull-right">{{ $result->links() }}</div>
                     </div>
                 </div>
                 <!-- end of col -->
 
-            </div>
-
-            <div class="row">
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-                        <div class="card-body text-center">
-                            <!-- <i class="i-Administrator"></i> -->
-                            <div class="content" style="max-width: 100px;">
-                                <p class="text-muted mt-2 mb-0">Lead Balance</p>
-                                <p class="text-primary text-24 line-height-1 mb-2">{{$lead_count.'/'.$total_access_leads}}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-                        <div class="card-body text-center">
-                            <!-- <i class="i-Administrator"></i> -->
-                            <div class="content" style="max-width: 100px;">
-                                <p class="text-muted mt-2 mb-0">SMS Balance</p>
-                                <p class="text-primary text-24 line-height-1 mb-2">{{$response}}</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-md-6 col-sm-6">
-                    <div class="card card-icon-bg card-icon-bg-primary o-hidden mb-4">
-                        <div class="card-body text-center">
-                            <!-- <i class="i-Administrator"></i> -->
-                            <div class="content" style="max-width: 100px;">
-                                <p class="text-muted mt-2 mb-0">User</p>
-                                <p class="text-primary text-24 line-height-1 mb-2"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
             <!-- end of row -->
 

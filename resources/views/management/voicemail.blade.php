@@ -44,7 +44,7 @@
                                 </div> 
                                 <div class="col-md-4 custom_date_div <?= ($date !== 'custom') ? 'd-none' : ''; ?>">
                                     <label class="filter-col"  for="pref-search">Date From</label>
-                                    <input type="text" name="date_from" value="<?= (isset($_GET['date_from'])) ? $_GET['date_from'] : ''; ?>" class="form-control input-sm datepicker" >
+                                    <input type="text" class="form-control input-sm datepicker" name="date_from" value="<?= (isset($_GET['date_from'])) ? $_GET['date_from'] : ''; ?>">
                                 </div>
                                 <div class="col-md-4 custom_date_div <?= ($date !== 'custom') ? 'd-none' : ''; ?>">
                                     <label class="filter-col"  for="pref-search">Date To</label>
@@ -84,9 +84,13 @@
                                     <td>{{$voicemail->duration}}</td>
                                     <td>{{$voicemail->datetime}}</td>
                                     <td>
-                                        <a href="{{ url('download_file/' .$voicemail->filename.'/'.$voicemail->groupid) }}" class="btn bg-gray-100">
-                                        <i class="nav-icon i-Download1 font-weight-bold"></i></a>
-                                        <a href="#" class="btn bg-gray-100 play_audio" data-toggle="modal" data-target="#play_modal" data-file="{{$voicemail->filename}}" id="play_{{$voicemail->groupid}}"><i class="nav-icon i-Play-Music font-weight-bold"></i></a></td>
+                                        <a href="{{ url('download_file/' . $voicemail->filename)}}" class="btn bg-gray-100">
+                                            <i class="nav-icon i-Download1 font-weight-bold"></i>
+                                        </a>
+                                        <button type="button" class="btn bg-gray-100 play_audio" data-toggle="modal" data-target="#play_modal" data-file="{{ url('download_file/' . $voicemail->filename)}}">
+                                            <i class="nav-icon i-Play-Music font-weight-bold"></i>
+                                        </button>
+                                    </td>
 
                                 </tr>
                                 @endforeach
@@ -112,13 +116,13 @@
     </div>
 
     <!-- play modal -->
-        <div class="modal fade" id="play_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2" aria-hidden="true">
+        <div class="modal fade" id="play_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle-2">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-body">
-                        <audio controls>
-                          <source src="https://interactive-examples.mdn.mozilla.net/media/examples/t-rex-roar.mp3" type="audio/mpeg">
-                        Your browser does not support the audio element.
+                        <audio controls id="audio_section">
+                            <source src="" type="audio/mp3">
+                            Your browser does not support the audio element.
                         </audio>
                     </div>
                 </div>
@@ -133,23 +137,21 @@
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
 $(document).ready(function() {
-    $('.play_audio').on('click',function(e)
-    {
-        var id = $(this).attr("id");
-        var groupid = id.replace("play_", "");
-        console.log(groupid);
+    $('.datepicker').datepicker({
+        dateFormat: 'dd-mm-yy'
+    });
+    $('.play_audio').on('click', function(e) {
+        var aud = document.getElementById("audio_section");
         var file = $(this).attr("data-file");
-        console.log(file);
-        
+        aud.src = file;
+        aud.load();
     });
 
-    $(document).on("change","#date_select",function(){
+    $(document).on("change","#date_select",function() {
         var date_val = $(this).val();
-        //$(".custom_date_div").addClass('d-none');
         if(date_val == 'custom')
         {
             $(".custom_date_div").removeClass('d-none');
-            $('.datepicker').pickadate({format: 'yyyy-mm-dd'});
         }
     });
 });

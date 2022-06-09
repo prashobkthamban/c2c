@@ -7,12 +7,20 @@ function getResellers() {
 
 function getAccountgroups($usertype=null, $reseller= null) {
     //dd($reseller);
-	if($usertype != 'reseller' && $reseller != null && $reseller != 0) {
-        $cust =  DB::table('accountgroup')->where('resellerid', $reseller)->pluck('name', 'id');
+	if(Auth::user()->usertype == 'reseller') {
+        $cust =  DB::table('accountgroup')->where('resellerid', Auth::user()->resellerid)->pluck('name', 'id');
     } else {
         $cust =  DB::table('accountgroup')->pluck('name', 'id');
     }
     return $cust;
+}
+
+function getCustomerResellerId($groupid) {
+    $accountGroup =  DB::table('accountgroup')->where('id', $groupid)->first();
+    if(!empty($accountGroup)) {
+        return ['resellerid' => $accountGroup->resellerid];
+    }
+    return ['resellerid' => '0'];
 }
 
 function getOperator() {
@@ -26,9 +34,17 @@ function getOperatorList() {
     return $opAcc;
 }
 
+function getAdminList() {
+    $adminAcc =  DB::table('account')->select('account.username', 'account.id')
+    ->where('account.usertype', 'admin')
+    ->get();
+    return $adminAcc;
+}
+
 function getGroupList() {
     if(Auth::user()->usertype == 'operator') {
         $gpAcc =  DB::table('accountgroup')->select('accountgroup.name', 'account.id')
+        ->where('account.usertype', 'groupadmin')
         ->where('accountgroup.id', Auth::user()->groupid)
         ->leftJoin('account', 'accountgroup.id', '=', 'account.groupid')->get();
     } else {
@@ -261,4 +277,26 @@ function callConfig($params) {
         $data['status'] = 1;
         return $data;
         //return $wrets;
+}
+
+function getReminderCount(){
+    $data = DB::table('reminders')->select('id');
+    $data->where('reminders.operatorid', Auth::user()->id);
+    $data->where('reminders.appoint_status', 'live');
+    $data->where('reminders.reminder_seen', '0');
+    $data->whereBetween('followupdate',[date('Y-m-d') . ' 00:00:00',date('Y-m-d H:i:s')]);
+    $result = $data->count();
+    return $result;
+}
+
+function getCustomers() {
+    $query = DB::table('accountgroup')->select('id', 'name');
+    if (Auth::user()->usertype == 'reseller' && !empty(Auth::user()->reseller->associated_groups)) {
+        $query = $query->whereIn('id', json_decode(Auth::user()->reseller->associated_groups));
+    } else if (Auth::user()->usertype == 'reseller') {
+        $query = $query->where('resellerid', Auth::user()->resellerid);
+    }
+    $customers = $query->get();
+
+    return $customers;
 }

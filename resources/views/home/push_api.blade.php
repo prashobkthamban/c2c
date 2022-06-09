@@ -81,11 +81,24 @@
                                 {!! Form::hidden('id', null, ['class' => 'form-control', 'id' => 'push_api_id']) !!}
                             </div>
 
+                            @if(in_array(Auth::user()->usertype, ["admin","reseller"]))
                             <div class="col-md-8 form-group mb-3">
                                 <label for="firstName1">Customer</label> 
                                 {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'customerId')) !!}
                             </div>
-                        </div>                
+                            @else
+                                <input type="hidden" id="customerId" name="groupid" value="{{Auth::user()->groupid}}" />
+                            @endif
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2 form-group mb-3"> 
+                            </div>
+
+                            <div class="col-md-8 form-group mb-3">
+                                <label for="firstName1">Authroization Token bearer</label> 
+                                <textarea id="token_bearer" name="token_bearer" rows="8" cols="32" class="form-control"></textarea>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-2 form-group mb-3"> 
                             </div>
@@ -222,6 +235,7 @@ $(document).ready(function() {
             $("#apitype").val(res.apitype);
             $("#api").val(res.api);
             $("#postvalues").val(res.postvalues);       
+            $("#token_bearer").val(res.token_bearer);
         },
         error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
         }

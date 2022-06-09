@@ -41,4 +41,10 @@ class Contact extends Model
         return true;
 
     }
+
+    public static function getContacts($groupId) {
+
+        $data = Contact::where("groupid",$groupId)->get();
+        return $data;
+    }
 }

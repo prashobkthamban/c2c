@@ -14,9 +14,10 @@ Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
+Route::get('chart_todays_calls', 'HomeController@chartTodaysCalls');
+Route::get('graph_todays_calls', 'HomeController@graphTodaysCalls');
 Route::get('/test', 'ServiceController@test')->name('test');
 Route::get('home', 'HomeController@index')->name('home');
-Route::get('acc_call_summary', 'HomeController@callSummary')->name('callSummary');
 Route::get('dashboard_note', 'HomeController@dashboardNote')->name('dashboardNote');
 Route::post('add_announcement', 'HomeController@addAnnouncement')->name('addAnnouncement');
 Route::get('delete_announcement/{id}', 'HomeController@deleteAnnouncement')->name('deleteAnnouncement');
@@ -31,7 +32,6 @@ Route::delete('delete_item/{id}/{table}', 'HomeController@deleteItem')->name('de
 Route::get('push_api', 'HomeController@pushApi')->name('pushApi');
 Route::get('get_data/{table}/{id}', 'HomeController@getData')->name('getData');
 Route::post('add_push_api', 'HomeController@addPushApi')->name('addPushApi');
-Route::get('email_config', 'HomeController@emailConfig')->name('emailConfig');
 Route::post('add_config', 'HomeController@addConfig')->name('addConfig');
 
 
@@ -39,6 +39,7 @@ Route::post('add_config', 'HomeController@addConfig')->name('addConfig');
 
 /* ----------Cdr Report----------- */
 Route::get('cdrreport', 'ReportController@index')->name('cdrreport');
+Route::post('ajaxload/cdrreport', 'ReportController@cdrDataAjaxLoad')->name('cdrDataAjaxLoad');
 Route::post('graph_report', 'ReportController@graphReport')->name('graphReport');
 Route::post('add_cdr_contact', 'ReportController@addContact')->name('addContact');
 Route::post('add_tag', 'ReportController@addCdrTag')->name('addCdrTag');
@@ -49,11 +50,18 @@ Route::post('add_reminder', 'ReportController@addReminder')->name('addReminder')
 Route::get('get_reminder/{id}', 'ReportController@getReminder')->name('getReminder');
 //Route::get('delete_reminder/{id}', 'ReportController@deleteReminder')->name('deleteReminder');
 Route::delete('delete_comment/{id}', 'ReportController@deleteComment')->name('deleteComment');
-Route::get('download_file/{file}/{id}', 'ReportController@downloadFile')->name('downloadFile');
+Route::get('download_file/{id}/{file}', 'ReportController@downloadFile')->name('downloadFile');
 Route::get('cdrreportarchive', 'ReportController@cdrreportarchive')->name('cdrreportarchive');
 Route::get('cdrreportout', 'ReportController@cdrreportout')->name('cdrreportout');
 Route::get('reminder', 'ReminderController@index')->name('Reminder');
+Route::post('reminder_seen', 'ReminderController@reminderSeen')->name('reminderSeen');
 Route::post('cdrreport/store','ReportController@addLead')->name('store');
+Route::post('cdrreport/call_details','ReportController@cdrCallDetails');
+Route::post('fetch_departments','ReportController@fetchDepartments');
+Route::post('fetch_operators','ReportController@fetchOperators');
+Route::post('fetch_tags','ReportController@fetchTags');
+Route::post('fetch_status','ReportController@fetchStatus');
+Route::post('fetch_did_numbers','ReportController@fetchDidNumbers');
 
 /* ----------Recharge && Billing----------- */
 Route::get('billing', 'ServiceController@billing')->name('Billing');
@@ -87,10 +95,10 @@ Route::get('delete_pbx_did/{id}', 'ReminderController@deletePbxdid')->name('dele
 Route::get('get_pbx_did/{id}', 'ReminderController@getPbxdid')->name('getPbxdid');
 
 Route::get('operator', 'ReportController@operator')->name('operator');
-Route::get('contacts', 'ReportController@contacts')->name('contacts');
+// Route::get('contacts', 'ReportController@contacts')->name('contacts');
 //Route::get('voicemail', 'ReportController@voicemail')->name('voicemail');
 Route::get('blacklist', 'ReportController@blacklist')->name('blacklist');
-Route::get('holiday', 'ReportController@holiday')->name('holiday');
+//Route::get('holiday', 'ReportController@holiday')->name('holiday');
 Route::get('conference', 'ReportController@conference')->name('conference');
 Route::post('add_conference', 'ReportController@addConference')->name('AddConference');
 Route::post('edit_comment', 'ReportController@editComment')->name('EditComment');
@@ -124,6 +132,7 @@ Route::get('account', 'UserController@loginAccounts')->name('loginAccounts');
 Route::post('add_account', 'UserController@addAccount')->name('addAccount');
 Route::get('edit_account/{id}', 'UserController@editAccount')->name('editAccount');
 Route::get('get_customer/{usertype}/{resellerid}', 'UserController@getCustomer')->name('getCustomer');
+Route::get('get_customer_reseller_id/{groupid}', 'UserController@getCustomerResellerId')->name('getCustomerResellerId');
 Route::get('get_did/{groupid}', 'UserController@getDid')->name('getDid');
 Route::post('edit_profile', 'UserController@editProfile')->name('editProfile');
 Route::post('crm_settings', 'UserController@crmSettings')->name('crmSettings');
@@ -359,75 +368,14 @@ Route::get('/settings/category','CategoryController@index')->name('categoryIndex
 Route::get('/settings/add_category', 'CategoryController@addCategory')->name('addCategory');
 Route::post('/settings/store', 'CategoryController@store')->name('store');
 
-//Products
-Route::get('/product','ProductController@index')->name('productIndex');
-Route::post('/product/store','ProductController@store')->name('store');
-Route::get('product/{id}', 'ProductController@destroy')->name('deleteProduct');
-Route::post('product/edit/', 'ProductController@edit')->name('editProduct');
-Route::patch('/product/update', 'ProductController@update')->name('update');
-Route::post('/product/csvadd','ProductController@addproductcsv')->name('ProductCSV');
-
 //CDR Report Leads
 Route::post('cdrreport/store','ReportController@addLead')->name('store');
-Route::get('/cdrreport_lists','LeadController@index')->name('ListLeads');
-Route::post('/cdrreport_addlead','LeadController@addLead')->name('addLead');
-Route::post('/cdrreport_edit_lead', 'LeadController@editLead')->name('editLead');
-Route::post('/cdrreport_lead_product', 'LeadController@LeadProduct')->name('LeadProduct');
-Route::patch('/cdrreport_update', 'LeadController@update')->name('update');
-Route::post('/cdrreport_pro_amount', 'LeadController@ProductAmount')->name('ProductAmount');
-Route::get('/cdrreport_delete_lead/{id}', 'LeadController@deleteLead')->name('deleteLead');
-Route::get('/cdrreport/lead/{id}', 'LeadController@ViewLeadID')->name('ViewLeadID');
 Route::get('/cdrreport/lead/view/{id}', 'ReportController@ViewLeadReport')->name('ViewLeadReport');
-Route::get('lead_stages/{lead_id}/{id}', [
-    'uses'  => 'LeadController@LeadStages',
-    'as'    => 'lead_stages'
-]);
-Route::patch('/cdrreport/lead_update/{id}', 'LeadController@update_lead')->name('update_lead');
-Route::post('/cdrreport_mail', 'LeadController@Mail')->name('Mail');
-Route::post('/cdrreport_call_log', 'LeadController@CallLog')->name('CallLog');
-Route::post('/cdrreport_msg', 'LeadController@SendMsg')->name('SendMsg');
-Route::post('/cdrreport_notes', 'LeadController@Notes')->name('Notes');
-Route::patch('/cdrreport_editnotes','LeadController@EditNotes')->name('EditNotes');
-Route::get('/cdrreport_notedelete/{id}', 'LeadController@NoteDelete')->name('NoteDelete');
-Route::post('/cdrreport_unquireason','LeadController@Unqui_reason')->name('Unqui_reason');
-Route::post('/cdrreport_converted','LeadController@Converted')->name('Converted');
-Route::post('/cdrreport/reminder','LeadController@Reminder')->name('Reminder');
 Route::get('/cdrreport/converted','ConvertedController@index')->name('ListConverted');
 Route::post('converted/store','ConvertedController@store')->name('store');
 Route::post('cdrreport/converted/edit/', 'ConvertedController@edit')->name('editConverted');
 Route::patch('/converted/update', 'ConvertedController@update')->name('update');
 Route::get('converted/{id}', 'ConvertedController@destroy')->name('deleteConverted');
-Route::post('/cdrreport/mail_temp', 'LeadController@selectmailtemplate')->name('SelectMailTemp');
-Route::post('/cdrreport/sms_temp', 'LeadController@selectsmstemplate')->name('SelectSMSTemp');
-Route::post('lead_assigned','LeadController@Assigned_Lead')->name('Assigned_Lead');
-Route::post('lead_proposal','LeadController@AddProposal')->name('AddProposal');
-Route::post('/cdrreport/filter_data','LeadController@FilterData')->name('FilterData');
-
-//Proposal
-Route::get('proposal/list','ProposalController@index')->name('ProposalIndex');
-Route::get('proposal/add', 'ProposalController@add')->name('ProposalAdd');
-Route::post('proposal/store','ProposalController@store')->name('ProposalStore');
-Route::get('proposal/{id}', 'ProposalController@destroy')->name('deleteProposal');
-Route::get('proposal/edit/{id}', 'ProposalController@edit')->name('editProposal');
-Route::patch('proposal/update/{id}', 'ProposalController@update')->name('updateProposal');
-Route::get('proposal/mail/{id}', 'ProposalController@mailProposal')->name('mailProposal');
-
-//Invoice
-Route::get('invoice/list','InvoiceController@index')->name('InvoiceIndex');
-Route::get('invoice/add', 'InvoiceController@add')->name('InvoiceAdd');
-Route::post('invoice/store','InvoiceController@store')->name('InvoiveStore');
-Route::get('invoice/{id}', 'InvoiceController@destroy')->name('deleteInvoice');
-Route::post('invoice/CustomerAddress','InvoiceController@CustomerAddress')->name('CustomerAddress');
-Route::get('invoice/edit/{id}', 'InvoiceController@edit')->name('editInvoice');
-Route::patch('invoice/update/{id}', 'InvoiceController@update')->name('updateInvoice');
-Route::post('invoice/payment','InvoiceController@payment')->name('InvoicePayment');
-Route::post('/invoice/filter_data','InvoiceController@FilterDataInvoice')->name('FilterDataInvoice');
-Route::get('invoice/view/{id}','InvoiceController@ViewInvoice')->name('ViewInvoice');
-Route::get('invoice/mail/{id}','InvoiceController@MailInvoice')->name('MailInvoice');
-Route::get('invoice/payment/{id}', 'InvoiceController@destroyPayment')->name('deleteInvoicePayment');
-Route::get('invoice/download/{id}','InvoiceController@downloadInvoice')->name('downloadInvoice');
-Route::get('invoice/print/{id}','InvoiceController@printInvoice')->name('printInvoice');
-
 
 //ToDoList
 Route::post('home/todotask','HomeController@ToDoTaskAdd')->name('ToDoTaskAdd');
@@ -478,12 +426,6 @@ Route::post('home/crm_data','HomeController@CRMData')->name('CRMData');
 //Tranfer Leads
 Route::get('transfer_leads/index','TranferLeadsController@index')->name('TranferLeadIndex');
 Route::post('transfer_leads/transferleads','TranferLeadsController@transferleads')->name('transferleads');
-
-//Lead Remainder Index
-Route::get('remainder','LeadController@remainder_show')->name('RemainderIndex');
-Route::get('remainder/{id}','LeadController@remainder_delete')->name('deleteRemainder');
-Route::get('remainder/view/{id}','LeadController@remainder_view')->name('viewRemainder');
-Route::post('lead/reminder','LeadController@updateLeadReminder')->name('updateLeadReminder');
 
 //Notification ToDo
 Route::get('notification/todo','HomeController@NotificationToDo')->name('NotificationToDo');

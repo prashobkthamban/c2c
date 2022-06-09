@@ -274,6 +274,8 @@
                             text : obj.opername 
                         }));
                     });
+
+                    $('input[name="priority"]').val(res.nextPriority);
                
                     if(res.account_det.length > 0) {
                         $.each(res.account_det, function(idx, obj) {
@@ -386,9 +388,9 @@
                     $("#add_operator").modal('hide');
                     var departmentid = $("#departmentid").val();
                     showDetails(departmentid);
-                    $("#add_button").prop('disabled', false);
                     toastr.success(res.success);                
                 } 
+                $("#add_button").prop('disabled', false);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                 toastr.error('Some errors are occured');

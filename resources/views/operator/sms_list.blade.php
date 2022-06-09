@@ -8,13 +8,18 @@
     <h1> Configure SMS </h1>
 </div>
 <div class="separator-breadcrumb border-top"></div>
+
+<!-- search bar -->
+@include('layouts.search_panel', ['request' => '{{request}}'])
+<!-- search bar ends -->
+
 <div class="row mb-4">
     <div class="col-md-12 mb-4">
         <div class="card text-left">
             <div class="card-body">
                 <a title="Add SMS" href="#" data-toggle="modal" data-target="#add_sms" class="btn btn-primary add_sms"> Add New </a>
                 <div class="table-responsive">
-                    <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                    <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Customer</th>
@@ -52,7 +57,6 @@
                         </tfoot>
 
                     </table>
-                    <div class="pull-right">{{ $sms->links() }}</div>
                 </div>
 
             </div>
@@ -108,6 +112,15 @@
                     <div class="col-md-8 form-group mb-3">
                         <label for="firstName1">Miss call alert to</label> 
                         {!! Form::text('addtional_alert', null, ['class' => 'form-control', 'id' => 'addtional_alert']) !!}
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-md-2 form-group mb-3"> 
+                    </div>
+
+                    <div class="col-md-8 form-group mb-3">
+                        <label for="firstName1">SMS Template ID</label> 
+                        {!! Form::text('smstmpid', null, ['class' => 'form-control', 'id' => 'smstmpid']) !!}
                     </div>
                 </div> 
                 <div class="row">
@@ -211,6 +224,7 @@
                 $("#sms_to").val(result.sms_to);
                 $("#addtional_alert").val(result.addtional_alert);
                 $("#sms_id").val(result.id);
+                $("#smstmpid").val(result.smstmpid);
                 
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail

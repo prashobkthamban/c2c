@@ -36,24 +36,47 @@ class ManagementController extends Controller
 
     public function holidayStore(Request $request)
     {
-        if($request->get('format') == 'day') {
-            $validator = Validator::make($request->all(), [
-            'reason' => 'required',
-            'day' => 'required'
-            ]);
-        } else {
-            $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'date' => 'required',
             'reason' => 'required',
-            ]);
-        }
+        ]);
 
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
+            $file=$request->file('holiday_msg_file');
+            //Display File Name
+            // echo 'File Name: '.$file->getClientOriginalName();
+            // echo '<br>';
+        
+            //Display File Extension
+            $extension = $file->getClientOriginalExtension();
+            if(!in_array($extension, ['gsm', 'wav'])) {
+                return ['error' => ['error' => ['Only .gsm or .wav files allowed']]];
+            }
+        
+            //Display File Real Path
+            // echo 'File Real Path: '.$file->getRealPath();
+            // echo '<br>';
+        
+            //Display File Size
+            $fileSize = $file->getSize();
+            if($fileSize) {
+                // return ['error' => ['error' => ['Only .gsm or .wav files allowed']]];
+            }
+        
+            //Display File Mime Type
+            // echo 'File Mime Type: '.$file->getMimeType();
+            $date = !empty($request->get('date')) ? Carbon::parse($request->get('date'))->format('Y-m-d') : null;
+            //Move Uploaded File
+            $destinationPath = '/var/lib/asterisk/sounds/IVRMANGER';
+            $fileName = str_replace('-', '_', $date) . '_holiday_msg_file_' . Auth::user()->groupid . '_' . time() . '.' . $extension;
+            $file->move($destinationPath, $fileName);
+
             $holiday = [
-                'date' => !empty($request->get('date')) ? Carbon::parse($request->get('date'))->format('Y-m-d') : null,
-                'day' => $request->get('day'),
+                'date' => $date,
+                'holidaymsg' => $fileName,
+                'calltransferto' => $request->get('call_transfer_to'),
                 'reason'=> $request->get('reason'),
                 'groupid'=> Auth::user()->groupid,
                 'resellerid'=> 0,
@@ -76,7 +99,7 @@ class ManagementController extends Controller
             ->where('voicemails.groupid', Auth::user()->groupid)
             ->join('accountgroup', 'voicemails.groupid', '=', 'accountgroup.id');
             if(!empty($call_no)) {
-                $query->where('voicemails.callerid', $call_no);
+                $query->where('voicemails.callerid', 'LIKE', '%' . $call_no . '%');
             }
             if(!empty($department)) {
                 $query->where('voicemails.departmentname','like','%'.$department.'%');
@@ -100,15 +123,16 @@ class ManagementController extends Controller
                     if($date_to != '')
                         $date_to = date('Y-m-d',strtotime($date_to));
                 }
-                $query->whereBetween('datetime',[$date_from.'%',$date_to.'%']);
+                $query->whereBetween('datetime',[$date_from.' 00:00:00',$date_to.' 23:59:59']);
             }
+			
 
-        $voicemails = $query->get();
+        $voicemails = $query->orderBy('datetime','DESC')->get();
         return view('management.voicemail', compact('voicemails', 'call_no', 'department', 'date'));
     }
 
     public function contacts() {
-        $contacts = Contact::get();
+        $contacts = Contact::getContacts(Auth::user()->groupid);
         return view('management.contacts', compact('contacts'));
     }
 
@@ -144,16 +168,22 @@ class ManagementController extends Controller
         return $data;
     }
 
-    public function ivrMenu() {
-        $customers = DB::table('ivr_menu')
-            ->select('ivr_menu.*', 'accountgroup.name', 'resellergroup.resellername' )
+    public function ivrMenu(Request $request) {
+        $requests = $request->all();
+        $groupId = $request->get('customer');
+        $query = DB::table('ivr_menu')
+            ->select('ivr_menu.*', 'accountgroup.name', 'resellergroup.resellername', 'operatoraccount.opername as failOverOperatorName')
             ->where('ivr_menu.delete_status', '0')
             ->join('accountgroup', 'ivr_menu.groupid', '=', 'accountgroup.id')
             ->leftJoin('resellergroup', 'ivr_menu.resellerid', '=', 'resellergroup.id')
-            ->orderBy('id', 'desc')->paginate(10);
+            ->leftJoin('operatoraccount', 'operatoraccount.id', 'ivr_menu.failover_dest');
+        if (isset($groupId)) {
+            $query->where('ivr_menu.groupid', $groupId);
+        }
+        $customers = $query->orderBy('id', 'desc')->get();
         $languages = DB::table('languages')->get();
         //dd($customers);
-        return view('management.ivr_menu', compact('customers', 'languages'));
+        return view('management.ivr_menu', compact('customers', 'languages', 'requests'));
     }
 
     public function getIvrMenu($id) {
@@ -173,6 +203,7 @@ class ManagementController extends Controller
             'ivr_level_name' => 'required',
             'ivr_level' => 'required',
             'ivroption' => 'required',
+            'failover_operator_id' => 'required',
             'operator_dept' => 'required',
         ]);    
 
@@ -185,6 +216,7 @@ class ManagementController extends Controller
                 'ivr_level_name'=> $request->get('ivr_level_name'),
                 'ivr_level'=> $request->get('ivr_level'), 
                 'ivroption' => $request->get('ivroption'),
+                'failover_dest' => $request->get('failover_operator_id'),
                 'operator_dept' => $request->get('operator_dept'),
                 'voicefilename' => $vfilename
             ];

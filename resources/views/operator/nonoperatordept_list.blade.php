@@ -11,6 +11,9 @@
             </div>
             <div class="separator-breadcrumb border-top"></div>
 
+            <!-- search bar -->
+            @include('layouts.search_panel', ['request' => '{{request}}'])
+            <!-- search bar ends -->
 
            <div class="row mb-4">
                 <div class="col-md-12 mb-4">
@@ -18,7 +21,7 @@
                         <div class="card-body">
                             <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#add_non_operator" class="btn btn-primary" id="new_non_opt"> Add New </a>
                             <div class="table-responsive">
-                                <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                                <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
                                    <thead>
                                         <tr>
                                             <th>Customer</th>
@@ -73,7 +76,6 @@
                                     </tfoot>
 
                                 </table>
-                                {{ $nonoperatordept->links() }}
                             </div>
 
                         </div>
@@ -109,7 +111,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Customer *</label> 
-                                         {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'customerId', 'onChange' => 'setDepartment()')) !!}
+                                         {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'groupid', 'onChange' => 'setDepartment()')) !!}
                                     </div>
                                 </div>  
                                 <div class="row">
@@ -256,10 +258,11 @@
                         </div>
                          {!! Form::open(['class' => 'upload_form', 'method' => 'post', 'files' => true]) !!} 
                         <div class="modal-body">
-                            <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
-                                <tbody><tr>
-                                    <td nowrap="" align="left">Non Operatoer dpt</td>
-                                    <td align="left" id="non_op_dept"></td>
+                            <table class="display table table-striped table-bordered" style="width:100%">
+                                <tbody>
+                                    <tr>
+                                        <td nowrap="" align="left">Non Operatoer dpt</td>
+                                        <td align="left" id="non_op_dept"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -464,6 +467,10 @@
             $(".non_operator_form").trigger("reset");
             $("#exampleModalCenterTitle-2").text('Add NonOperator Department');
         });
+    });
+
+    $('#resellerid').on('change',function(e) {
+        $('#departmentid').val([])
     });
 </script>
 

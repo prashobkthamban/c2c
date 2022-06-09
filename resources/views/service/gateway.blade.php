@@ -1,5 +1,10 @@
 @extends('layouts.master')
 @section('page-css')
+<style>
+.datepicker {
+      z-index: 1600 !important; /* has to be larger than 1050 */
+    }
+</style>
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">
 @endsection
 
@@ -145,8 +150,15 @@
                                     <div class="col-md-2 form-group mb-3">
                                     </div>
                                     <div class="col-md-8 form-group mb-3">
-                                        <label for="picker1">Billing Date</label>
-                                        <input type="text" class="form-control" placeholder="yyyy-mm-dd" name="billingdate" id="billingdate">
+                                        <label for="billingdate">Billing Date</label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control datepicker" placeholder="dd-mm-yyyy" name="billingdate" id="billingdate">
+                                            <div class="input-group-append">
+                                                <button class="btn btn-secondary"  type="button">
+                                                    <i class="icon-regular i-Calendar-4"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -155,6 +167,14 @@
                                     <div class="col-md-8 form-group mb-3">
                                     <label for="picker1">Used Units</label>
                                         <input type="text" class="form-control" placeholder="Used Units" name="used_units" id="used_units">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3">
+                                    </div>
+                                    <div class="col-md-8 form-group mb-3">
+                                    <label for="picker1">Dial Prefix</label>
+                                        <input type="text" class="form-control" placeholder="Dial Prefix" name="dial_prefix" id="dial_prefix">
                                     </div>
                                 </div>
                         </div>
@@ -253,6 +273,7 @@ $(document).ready(function() {
                 $("#used_units").val(res.used_units);
                 $("#billingdate").val(res.billingdate);
                 $("#Gchannel").val(res.Gchannel);
+                $("#dial_prefix").val(res.dial_prefix);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }

@@ -230,11 +230,6 @@
                                         {!! Form::select('cdr_chnunavil_log', array('1' => 'Enabled', '0' => 'Disabled'), null,array('class' => 'form-control')) !!} 
                                     </div>
 
-                                    <div class="col-md-4 form-group mb-3">
-                                        <label for="picker1">Inbuilt CRM</label>
-                                        {!! Form::select('crm', array('1' => 'Enabled', '0' => 'Disabled'), null,array('class' => 'form-control')) !!} 
-                                    </div>
-
                                     <div class="col-md-12 form-group mb-3">
                                     </div>
 
@@ -275,16 +270,6 @@
                                             <label class="radio-inline">{{ Form::radio('pbxexten', 'Yes') }} Yes</label>
                                             <label class="radio-inline">{{ Form::radio('pbxexten', 'No', true) }} No</label>
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-4 form-group mb-3">
-                                        <label for="crm_users">Number of CRM Users</label>
-                                        <input type="number" name="crm_users" id="crm_users" class="form-control">
-                                    </div>     
-
-                                    <div class="col-md-4 form-group mb-3">
-                                        <label for="crm_users">Number of Leads</label>
-                                        <input type="number" name="leads_access" id="leads_access" class="form-control">
                                     </div>
 
                                     <div class="col-md-12">

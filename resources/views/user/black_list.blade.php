@@ -68,7 +68,7 @@
                         </div>
                         <div class="col-md-8 form-group mb-3">
                             <label for="picker1">Phone number *</label>
-                            <input type="number" class="form-control phone_number" placeholder="Phone number" name="phone_number" id="phone_number" onpaste="return false;">
+                            <input type="number" class="form-control phone_number" placeholder="Phone number" name="phone_number" id="phone_number">
                         </div>
                     </div>
                     <div class="row">

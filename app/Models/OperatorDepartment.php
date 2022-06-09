@@ -10,10 +10,10 @@ class OperatorDepartment extends Model
 {
     protected $table = 'operatordepartment';
     public $timestamps = false;
-    public static function getDepartmentbygroup( ){
+    public static function getDepartmentbygroup($groupId) {
         
         $data = OperatorDepartment::select('id','dept_name');           
-        $result = $data->where('groupid',Auth::user()->groupid )->get();
+        $result = $data->where('groupid', $groupId)->get();
         return $result;
     }
 
