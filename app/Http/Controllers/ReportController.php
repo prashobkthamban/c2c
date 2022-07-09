@@ -95,7 +95,8 @@ class ReportController extends Controller
         $sortOrder = $request->get('order')['0'];
         $columnArray = [
             '0' => ['accountgroup.name'],
-            '1' => [$mainTable . '.number', 'contacts.fname', 'contacts.lname'],
+            //not working at present. need to recheck
+            // '1' => [$mainTable . '.number', 'contacts.fname', 'contacts.lname'],
             '2' => [$mainTable . '.datetime'],
             '3' => [$mainTable . '.firstleg', $mainTable . '.secondleg'],
             '4' => [$mainTable . '.creditused'],
@@ -162,20 +163,19 @@ class ReportController extends Controller
     public function addContact(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'fname' => 'required',
-            'lname' => 'required',
-            'email' => 'required|email',
+            'phone' => 'required'
         ]);
 
         if($validator->fails()) {
             $data['error'] = $validator->messages();
         } else {
-            $contact = ['fname' => $request->get('fname'),
-                     'lname'=> $request->get('lname'),
-                     'phone'=> $request->get('phone'),
-                     'email'=> $request->get('email'),
-                     'groupid'=> Auth::user()->groupid
-                    ];
+            $contact = [
+                'fname' => $request->get('fname') ? $request->get('fname') : '',
+                'lname' => $request->get('lname') ? $request->get('lname') : '',
+                'phone' => $request->get('phone'),
+                'email' => $request->get('email') ? $request->get('email') : '',
+                'groupid' => Auth::user()->groupid
+            ];
             if(!empty($request->get('contact_id'))) {
                 DB::table('contacts')
                     ->where('id', $request->get('contact_id'))
@@ -189,7 +189,7 @@ class ReportController extends Controller
             }
 
         }
-         return $data;
+        return $data;
     }
 
     public function addCdrTag(Request $request)
@@ -612,9 +612,9 @@ class ReportController extends Controller
                 } elseif(Auth::user()->usertype == 'reseller') {
                     $array = array($cdrr->did_no, ($cdrr->accountGroup ? $cdrr->accountGroup->name : ''),$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''));
                 } elseif(Auth::user()->usertype ==  'groupadmin') {
-                    $array = array($cdrr->did_no, ($cdrr->contacts ? $cdrr->contacts->fname . ' ' . $cdrr->contacts->lname : $cdrr->number), ($cdrr->contacts ? $cdrr->contacts->email : ''), $cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg, $cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
+                    $array = array($cdrr->did_no, ($cdrr->contacts ? $cdrr->contacts->fname . ' ' . $cdrr->contacts->lname . ' (' . $cdrr->number . ')' : $cdrr->number), ($cdrr->contacts ? $cdrr->contacts->email : ''), $cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg, $cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
                 } elseif(Auth::user()->usertype ==  'operator') {
-                    $array = array($cdrr->did_no, ($cdrr->contacts ? $cdrr->contacts->fname . ' ' . $cdrr->contacts->lname : $cdrr->number), ($cdrr->contacts ? $cdrr->contacts->email : ''), $cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
+                    $array = array($cdrr->did_no, ($cdrr->contacts ? $cdrr->contacts->fname . ' ' . $cdrr->contacts->lname . ' (' . $cdrr->number . ')' : $cdrr->number), ($cdrr->contacts ? $cdrr->contacts->email : ''), $cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
                 }
                 $notes = $this->notes($cdrr->uniqueid);
                 $notesCount = count($notes) > $notesCount ? count($notes) : $notesCount;

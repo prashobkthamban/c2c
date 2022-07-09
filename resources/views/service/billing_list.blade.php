@@ -20,9 +20,10 @@
 
                         <div class="card-body">
                            <div class="table-responsive">
-                                <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
+                                <table id="billing_list_table" class="display table table-striped table-bordered" style="width:100%">
                                     <thead>
                                     <tr>
+                                        <th>#</th>
                                         @if(Auth::user()->usertype == 'admin')
                                         <th>User</th>
                                         <th>Co-operate</th>
@@ -43,8 +44,9 @@
                                     </thead>
                                     <tbody>
                                     @if(!empty($result))
-                                        @foreach($result as $row )
+                                        @foreach($result as $index => $row )
                                     <tr>
+                                        <td>{{ $index+1 }}</td>
                                         @if(Auth::user()->usertype == 'admin')
                                         <td>{{ $row->name }}</td>
                                         <td>{{ $row->resellername }}</td>
@@ -74,6 +76,7 @@
                                     </tbody>
                                     <tfoot>
                                     <tr>
+                                        <th>#</th>
                                         @if(Auth::user()->usertype == 'admin')
                                         <th>User</th>
                                         <th>Co-operate</th>
@@ -245,6 +248,11 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
+        $('#billing_list_table').DataTable({
+            "order": [
+                [0, "asc"]
+            ]
+        });
         $("#reset").click(function() {
             $("#main_balance").val("");
             $("#main_bal").val("");

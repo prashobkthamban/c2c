@@ -13,7 +13,7 @@
 <body>
 <form method="POST" action="{{ route('login') }}">
     @csrf
-    <div class="auth-layout-wrap" style="background-image: url({{asset('assets/images/photo-wide-4.jpg')}})">
+    <div class="auth-layout-wrap" style="background-image: url({{asset('assets/images/ivr_website_cover.jpg')}})">
         <div class="auth-content">
             <div class="card o-hidden" style="width: 299px;margin-left: 145px;">
                 <div class="row">

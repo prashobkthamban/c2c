@@ -23,7 +23,7 @@
                 <div class="card-body">
                     <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#add_operator" class="btn btn-primary add_operator_dept"> Add New </a>
                     <div class="table-responsive">
-                        <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
+                        <table class="display table table-striped table-bordered" id="oper_dept_list_table" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>Customer</th>
@@ -273,7 +273,7 @@
 
                             <div class="col-md-8 form-group mb-3">
                                 <label for="firstName1">SMS to one number</label> 
-                                {!! Form::select('default_sms', ['no' => 'No', 'yes' => 'Yes'], null,array('class' => 'form-control', 'id' => 'default_sms')) !!}
+                                {!! Form::select('default_sms', ['No' => 'No', 'Yes' => 'Yes'], null,array('class' => 'form-control', 'id' => 'default_sms')) !!}
                             </div>
                         </div> 
                         <div class="row">
@@ -321,6 +321,11 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
+    $('#oper_dept_list_table').DataTable({
+        "order": [
+            [8, "desc"]
+        ]
+    });
     function selectIvr(ivrLevel) {
         var groupid = $("#customerId").val();
         $.ajax({
@@ -375,7 +380,7 @@
           });
         });
 
-        $('.edit_operator').on('click',function(e)
+        $(document).on('click', '.edit_operator', function(e)
         {
             var id = $(this).attr("id");
             $("#modal-title").text('Edit Operator Department');
@@ -383,6 +388,7 @@
             type: "GET",
             url: '/get_operator/'+ id, // This is the url we gave in the route
             success: function(res){ // What to do if we succeed
+                console.log(res);
                // $('#ivr_level').append(ivr_menu);
                 $("#operator_id").val(res.id);
                 $("#resellerid").val(res.resellerid);

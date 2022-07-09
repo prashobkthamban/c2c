@@ -81,7 +81,7 @@
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">First Name*</label> 
+                                <label for="firstName1">First Name</label> 
                                 <input type="text" id="f_name" class="form-control" placeholder="First Name" name="fname">
                             </div>
                         </div>
@@ -90,7 +90,7 @@
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Last Name*</label> 
+                                <label for="firstName1">Last Name</label> 
                                 <input type="text" id="l_name" class="form-control" placeholder="Last Name" name="lname">
                             </div>
                         </div>
@@ -99,7 +99,7 @@
                             </div>
 
                             <div class="col-md-8 form-group mb-3">
-                                <label for="firstName1">Email*</label>
+                                <label for="firstName1">Email</label>
                                 <input type="text" id="e_mail" class="form-control" placeholder="Email" name="email">
                             </div>
                         </div>

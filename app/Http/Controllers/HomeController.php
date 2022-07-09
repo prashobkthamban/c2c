@@ -220,7 +220,7 @@ class HomeController extends Controller
         } else if (Auth::user()->usertype == 'reseller') {
             $groupAdminIds =  DB::table('accountgroup')->where('resellerid', Auth::user()->resellerid)->pluck('id');
         }
-        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+        if (Auth::user()->usertype == "groupadmin") {
             $activeOperators = DB::table('operatoraccount')
                 ->whereIn('operatoraccount.groupid', $groupAdminIds)
                 ->where('operatoraccount.oper_status', 'Online')
@@ -274,8 +274,11 @@ class HomeController extends Controller
             ["title" => "Missed Call", "count" => $missedCalls],
             ["title" => $afterOfficeText, "count" => $afterOfficeCalls]
         ];
-        if (in_array(Auth::user()->usertype, ["groupadmin","reseller"])) {
+        if (Auth::user()->usertype == "groupadmin") {
             array_unshift($data, ["title" => "Active Operators", "count" => $activeOperators]);
+        }
+        if (Auth::user()->usertype == "reseller") {
+            array_unshift($data, ["title" => "Group Admins", "count" => count($groupAdminIds)]);
         }
 
         return $data;

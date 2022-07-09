@@ -296,7 +296,18 @@ function getCustomers() {
     } else if (Auth::user()->usertype == 'reseller') {
         $query = $query->where('resellerid', Auth::user()->resellerid);
     }
-    $customers = $query->get();
+    $customers = $query->orderBy('name')->get();
 
     return $customers;
+}
+
+function getResellerGroupAdminIds($resellerId) {
+    $resellergroup = DB::table('resellergroup')
+                    ->where('id', $resellerId)
+                    ->first();
+    $groupAdminIdArray = [];
+    if($resellergroup) {
+        $groupAdminIdArray = isset($resellergroup->associated_groups) ? json_decode($resellergroup->associated_groups) : [];
+    }
+    return $groupAdminIdArray;
 }

@@ -181,7 +181,7 @@
         <div class="card text-left">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="cdr_table" class="display table table-bordered table-striped" style="width:100%">
+                    <table id="cdr_table" class="display table" style="width:100%">
                         <thead>
                             <tr>
                                 <th></th>
@@ -668,29 +668,29 @@
         </a>
         <ul class="dropdown-menu" role="menu">
             @foreach($operators as $operator)
-            @if( $account_service['smsservice_assign_cdr'] =='Yes' || $account_service['emailservice_assign_cdr'] =='Yes')
-            <li>
-                <a href="#">{{$operator->opername}}</a>
+                @if( $account_service['smsservice_assign_cdr'] =='Yes' || $account_service['emailservice_assign_cdr'] =='Yes')
+                <li>
+                    <a href="#">{{$operator->opername}}</a>
                 <ul>
-                    @else
-                    <li>
-                        <a href="#">{{$operator->opername}}</a>
-                        @endif
-                        @if($account_service['smsservice_assign_cdr'] =='Yes')
-                    <li>
-                        <a href="javascript:assignoper(0,{{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
-                    </li>
-                    @endif
-                    @if($account_service['emailservice_assign_cdr'] =='Yes')
-                    <li>
-                        <a href="javascript:assignoper(0,{{$operator->id}},'{{$operator->opername}}','E');">Notify By Email</a>
-                    </li>
-                    @endif
-                    @if( $account_service['smsservice_assign_cdr'] =='Yes' || $account_service['emailservice_assign_cdr'] =='Yes')
-                </ul>
                 @else
-            </li>
-            @endif
+                <li>
+                <a href="#">{{$operator->opername}}</a>
+                @endif
+                @if($account_service['smsservice_assign_cdr'] =='Yes')
+                <li>
+                    <a href="javascript:assignoper(0,{{$operator->id}},'{{$operator->opername}}','S');">Notify By SMS</a>
+                </li>
+                @endif
+                @if($account_service['emailservice_assign_cdr'] =='Yes')
+                <li>
+                    <a href="javascript:assignoper(0,{{$operator->id}},'{{$operator->opername}}','E');">Notify By Email</a>
+                </li>
+                @endif
+                @if( $account_service['smsservice_assign_cdr'] =='Yes' || $account_service['emailservice_assign_cdr'] =='Yes')
+                    </ul>
+                @else
+                    </li>
+                @endif
             @endforeach
             <?php echo '<li><a href="javascript:assignoper(0);">Unassign</a></li>'; ?>
         </ul>
@@ -789,6 +789,7 @@
             },
             {
                 data: null,
+                orderable: false, //need to change later
                 render: function(data, type) {
                     if (['groupadmin', 'operator'].includes(data.userType)) {
                         return '<a href="?" id="callerid_' + data.cdrId + '" data-toggle="modal" data-target="#dial_modal" title="' + data.number + '" onClick="cdrDial(' + data.number + ');return false;"><i class="i-Telephone"></i>'+data.callerId+'</a>';
@@ -817,8 +818,8 @@
                             let creditUsed = data.creditUsed ? data.creditUsed : 0;
                             htmlData += '<a class="btn bg-gray-100 more-details" '; 
                             htmlData += 'title="More Details" data-tag="' + data.tag + '" ';
-                            htmlData += 'data-operatorname="' + data.operatorName + '" ';
-                            htmlData += 'onClick="moreOption(' + data.cdrId + ',' + didNumber + ',' + "'" + data.duration + "'" + ',' + creditUsed + ');return false;">';
+                            htmlData += 'data-operatorname="' + data.assignedOperatorName + '" ';
+                            htmlData += 'onClick="moreOption(' + data.cdrId + ",'" + didNumber + "'," + "'" + data.duration + "'" + ',' + creditUsed + ');return false;">';
                             htmlData += '<i class="i-Arrow-Down-2" aria-hidden="true"></i>';
                             htmlData += '</a>';
                     }
@@ -828,31 +829,31 @@
                                 htmlData += '<a href="#" class="btn bg-gray-100 play_audio" title="Play Audio" ';
                                 htmlData += 'data-toggle="modal" data-target="#play_modal" ';
                                 htmlData += 'data-file="' + data.recordedFileName + '" id="play_' + data.groupId + '">';
-                                htmlData += '<i class="i-Play-Music"></i>';
+                                htmlData += '<i class="i-Play-Music" style="color:#0000c9"></i>';
                                 htmlData += '</a>';
                             }
                             if ('{{$downloadRecording}}') {
                                 htmlData += '<a href="download_file/' + data.recordedFileName + '" class="btn bg-gray-100" title="Download File">';
-                                htmlData += '<i class="i-Download1"></i>';
+                                htmlData += '<i class="i-Download1 font-weight-bold" style="color:#00a300"></i>';
                                 htmlData += '</a>';
                             }
                         }
                         if (data.cdrNotesCount > 0) {
                             htmlData += '<a href="#" class="btn bg-gray-100 notes_list" title="Notes" ';
                             htmlData += 'data-toggle="modal" data-target="#notes_modal" id="notes_' + data.uniqueId + '">';
-                            htmlData += '<i class="i-Notepad"></i>';
+                            htmlData += '<i class="i-Notepad font-weight-bold" style="color:#00c5bc"></i>';
                             htmlData += '</a>';
                         }
                         if (data.userType == 'groupadmin') {
                             htmlData += '<a href="" class="btn bg-gray-100" title="Assign To" ';
                             htmlData += 'data-toggle="dropdown" id="history_' + data.number + '">';
-                            htmlData += '<i class="i-Add-User"></i>';
+                            htmlData += '<i class="i-Add-User font-weight-bold" style="color:#a5a50d"></i>';
                             htmlData += '</a>';
                         }
                         if (['groupadmin', 'operator'].includes(data.userType)) {
                             htmlData += '<a href="" class="btn bg-gray-100 history_list" title="Call History" ';
                             htmlData += 'data-toggle="modal" data-target="#history_modal" id="history_' + data.number + '">';
-                            htmlData += '<i class="i-Notepad-2"></i>';
+                            htmlData += '<i class="i-Notepad-2 font-weight-bold" style="color:#ffa400"></i>';
                             htmlData += '</a>';
 
                             htmlData += '<ul class="dropdown-menu" role="menu" aria-labelledby="history_' + data.number + '">';
@@ -883,7 +884,7 @@
                             htmlData += '<span>';
 
                             htmlData += '<button class="btn bg-gray-100" type="button" id="action_' + data.cdrId + '" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
-                            htmlData += '<i class="nav-icon i-Gear-2"></i>';
+                            htmlData += '<i class="nav-icon i-Arrow-Down-in-Circle"></i>';
                             htmlData += '</button>';
 
                             let contactText = data.isContactSet ? 'Update Contact': 'Add Contact';
@@ -950,7 +951,7 @@
         } else {
             var tag = $('#row_' + id + ' .more-details').attr('data-tag');
             var operName = $('#row_' + id + ' .more-details').attr('data-operatorname');
-            $('#row_' + id).after('<tr id="second_row" class="show"><td></td><td colspan="7"><span style="margin-right:100px;"><b>DNID :</b>' + did_no + '</span><span style="margin-right:100px;"><b>Duration :</b>' + firstLeg + '</span><span style="margin-right:100px;"><b>Coin :</b>' + creditUsed + '</span><span style="margin-right:100px;"><b>Assigned To :</b> <span id="assigned_' + id + '">' + operName + '</span></span><span style="margin-right:100px;"><b>Tag :</b> <span id="cdrTag_' + id + '">' + tag + '</span></span></td></tr>');
+            $('#row_' + id).after('<tr id="second_row" class="show"><td></td><td colspan="7" style="background-color: #f4f5f7;"><span style="margin-right:100px;"><b>DNID :</b>' + did_no + '</span><span style="margin-right:100px;"><b>Duration :</b>' + firstLeg + '</span><span style="margin-right:100px;"><b>Coin :</b>' + creditUsed + '</span><span style="margin-right:100px;"><b>Assigned To :</b> <span id="assigned_' + id + '">' + operName + '</span></span><span style="margin-right:100px;"><b>Tag :</b> <span id="cdrTag_' + id + '">' + tag + '</span></span></td></tr>');
         }
     }
 
@@ -1412,7 +1413,7 @@
             success: function(data) {
                 if (data.status) {
                     cdrIds.forEach(function (cdrId) {
-                        $('#row_' + cdrId + ' .more-details').data('operatorname', opername);
+                        $('#row_' + cdrId + ' .more-details').attr('data-operatorname', opername);
                         $("#assigned_"+cdrId).text(opername);
                     });
                     toastr.success(data.message);   

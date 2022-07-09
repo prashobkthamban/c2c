@@ -241,7 +241,7 @@
                 $.each(res, function (i, item) {
                     //console.log('reee', item);
                     if(item.name == login_user) {
-                        chatHtml += '<div class="d-flex mb-4 user"><img src="{{asset('assets/images/faces/1.jpg')}}" alt="" class="avatar-sm rounded-circle mr-3"><div class="message flex-grow-1"><div class="d-flex"><p class="mb-1 text-title text-16 flex-grow-1">'+ item.name +'</p></div><p class="m-0">'+ item.desc +'</p></div></div>';
+                        chatHtml += '<div class="d-flex mb-4 user"><img src="{{asset('assets/images/faces/user-logo.png')}}" alt="" class="avatar-sm rounded-circle mr-3"><div class="message flex-grow-1"><div class="d-flex"><p class="mb-1 text-title text-16 flex-grow-1">'+ item.name +'</p></div><p class="m-0">'+ item.desc +'</p></div></div>';
                     } else {
                         chatHtml += '<div class="d-flex mb-4"><div class="message flex-grow-1"><div class="d-flex"><p class="mb-1 text-title text-16 flex-grow-1">'+ item.name +'</p></div><p class="m-0">'+ item.desc +'</p></div><img src="{{asset('assets/images/faces/13.jpg')}}" alt="" class="avatar-sm rounded-circle ml-3"></div>';
                     }

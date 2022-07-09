@@ -1,0 +1,52 @@
+<?php
+/*
+ * date :21/08/2015
+ * API for android operator status 
+ * */
+
+// db connect
+include ("dbconnect.php");
+$date=date('Y-m-d');
+$inputJSON = file_get_contents('php://input');
+$input= json_decode( $inputJSON, TRUE );
+$outputFile = "api_operator_status.log";
+file_put_contents($outputFile,print_r($input, true),FILE_APPEND);
+// log write over 
+$operatorid=$input['operatorid'];
+if($operatorid==''){
+	$arr['status']='Failed';
+	$arr['message']='username is empty';
+	echo json_encode($arr);
+	exit;
+}
+	// operator update CDR table 
+	if($operatorid!=NULL){
+		$s="SELECT * FROM operatoraccount WHERE id='$operatorid'";
+		$re=mysql_query($s); 
+		$opt=mysql_fetch_row($re);
+		if($opt[0]!=NULL){
+			$arr['status']='Success';
+			$arr['message']='datafound';
+			$arr['Number']=$opt[3];	
+			$arr['opername']=$opt[11];
+			$arr['oper_status']=$opt[12];
+			$arr['start_work']=$opt[15];
+			$arr['end_work']=$opt[16];
+		}else{
+			$arr['status']='Failed';
+			$arr['message']='No call record found :';
+		}
+		$s="SELECT COUNT(cdrid) FROM cdr WHERE operatorid='$operatorid' and datetime like'".$date."%' ";
+		$re=mysql_query($s); 
+		$cdr=mysql_fetch_row($re);
+		$s1="SELECT COUNT(cdrid) FROM cdrc2c WHERE cdrc2c.operatorid='$operatorid' and datetime like'".$date."%' ";
+		$re1=mysql_query($s1);
+		$appcdr=mysql_fetch_row($re1); 
+		$arr['incomingcalls']=$cdr[0];
+		$arr['outgoingcalls']=$appcdr[0];
+		$arr['status']='Failed';
+		$arr['message']='No call record found :';
+
+	} 
+print_r(json_encode($arr));	
+?>

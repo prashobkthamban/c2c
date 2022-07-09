@@ -106,17 +106,13 @@ class CdrArchive extends Model
         }
         $userType = Auth::user()->usertype;
         $data = CdrArchive::with(['cdrNotes', 'reminder', 'operatorAssigned'])
-                ->select('cdr_archive.*', 'accountgroup.name as customerName', 'operatoraccount.opername as operatorName',
-                'contacts.fname', 'contacts.lname', 'contacts.email')
+                ->select('cdr_archive.*', 'accountgroup.name as customerName', 'operatoraccount.opername as operatorName')
                 ->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr_archive.groupid')
-                ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'cdr_archive.operatorid')
-                ->leftJoin('contacts', 'contacts.phone', '=', 'cdr_archive.number');
-        if( $userType == 'reseller' && !empty(Auth::user()->reseller->associated_groups)) {
+                ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'cdr_archive.operatorid');
+        if( $userType == 'reseller') {
             if(empty($groupId)) {
-                $groupIdArray = json_decode(Auth::user()->reseller->associated_groups);
+                $groupIdArray = getResellerGroupAdminIds(Auth::user()->resellerid);
             }
-        } else if( $userType == 'reseller' ) {
-            $data->where('cdr_archive.resellerid',Auth::user()->resellerid );
         } else if( $userType == 'operator' ){
             $data->where('cdr_archive.operatorid',Auth::user()->operator_id );
         } else if($userType == 'admin') {

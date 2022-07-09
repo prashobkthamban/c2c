@@ -66,14 +66,13 @@
     </div>
 </div>
 
-
 <div class="row mb-4">
     <div class="col-md-12 mb-4">
         <div class="card text-left">
             <div class="card-body">
                 <a title="Compact Sidebar" href="{{route('addUser')}}" class="btn btn-primary"> Add User </a>
                 <div class="table-responsive">
-                    <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
+                    <table class="display table table-striped table-bordered" id="user_list_table" style="width:100%">
                         <thead>
                             <tr>
                                 @if(Auth::user()->usertype == 'admin')
@@ -173,7 +172,11 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script>
-
+$('#user_list_table').DataTable({
+    "order": [
+        [0, "desc"]
+    ]
+});
 $("#customer_id").on("change", function() {
     if ($("#customer_id").val() == "") {
         resetData();

@@ -290,6 +290,7 @@
                 }
             },
             {
+                "orderable": false,//need to change later
                 "data": "callerId"
             },
             {

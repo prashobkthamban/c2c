@@ -72,7 +72,7 @@ class UserController extends Controller
         if (!empty($status)) {
             $query->where('accountgroup.status', $status);
         }
-        $users = $query->get();
+        $users = $query->orderBy('id', 'DESC')->get();
         return view('user.user_list', compact('users', 'customers', 'dnidnames', 'requests'));
     }
 
@@ -130,7 +130,7 @@ class UserController extends Controller
 
             $account_group = new Accountgroup([
                 'name' => $request->get('name'),
-                'resellerid'=> $request->get('resellerid'),
+                // 'resellerid'=> $request->get('resellerid'),
                 'startdate'=> Carbon::parse($request->get('startdate'))->format('Y-m-d'),
                 'enddate'=> Carbon::parse($request->get('enddate'))->format('Y-m-d'),
                 'status'=> $request->get('status'),
@@ -176,9 +176,9 @@ class UserController extends Controller
         if(!empty($account_group->id)) {
             $this->did::where('id', $request->get('did'))->update(array('assignedto' => $account_group->id));
             //  ivrlevel_id -> department_id OR DT was the preivios fildname
-            $this->op_dept->insert(array('resellerid' => $request->get('resellerid'), 'groupid' => $account_group->id, 'ivrlevel_id' => 1, 'dept_name' => 'DT-DPT', 'opt_calltype' => 'Round_Robin', 'adddate' => NOW(), 'starttime' => '00:00:00', 'endtime' => '23:59:59'));
-            $this->op_dept->insert(array('resellerid' => $request->get('resellerid'), 'groupid' => $account_group->id, 'ivrlevel_id' => 1, 'dept_name' => 'C2C-DPT', 'opt_calltype' => 'Round_Robin', 'adddate' => NOW(), 'starttime' => '00:00:00', 'endtime' => '23:59:59'));
-            $billData = ['resellerid' => $request->get('resellerid'), 'groupid' => $account_group->id];
+            $this->op_dept->insert(array('resellerid' => '0', 'groupid' => $account_group->id, 'ivrlevel_id' => 1, 'dept_name' => 'DT-DPT', 'opt_calltype' => 'Round_Robin', 'adddate' => NOW(), 'starttime' => '00:00:00', 'endtime' => '23:59:59'));
+            $this->op_dept->insert(array('resellerid' => '0', 'groupid' => $account_group->id, 'ivrlevel_id' => 1, 'dept_name' => 'C2C-DPT', 'opt_calltype' => 'Round_Robin', 'adddate' => NOW(), 'starttime' => '00:00:00', 'endtime' => '23:59:59'));
+            $billData = ['resellerid' => '0', 'groupid' => $account_group->id];
             DB::table('billing')->insert($billData);
             $shiftData = ['shift_name' => 'Full Day', 'start_time' => '00:00:00', 'end_time'=> '23:59:59', 'groupid' => $account_group->id];
             DB::table('operator_shifts')->insert($shiftData);
@@ -294,7 +294,7 @@ class UserController extends Controller
         } else {
             $account_group = [
                 'name' => $request->get('name'),
-                'resellerid'=> $request->get('resellerid'),
+                // 'resellerid'=> $request->get('resellerid'),
                 'startdate'=> Carbon::parse($request->get('startdate'))->format('Y-m-d'),
                 'enddate'=> Carbon::parse($request->get('enddate'))->format('Y-m-d'),
                 'status'=> $request->get('status'),
@@ -958,7 +958,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
 
     public function addCoperate(Request $request)
     {
-        if(!empty($request->get('id'))) {
+        if (!empty($request->get('id'))) {
             $validator = Validator::make($request->all(), [
                 'resellername' => 'required',
                 'username' => 'required',
@@ -974,36 +974,55 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
             ]);
         }
 
-        if($validator->fails()) {
+        if ($validator->fails()) {
             $data['error'] = $validator->messages();
         } else {
-            $reseller = ['resellername' => $request->get('resellername'),
-                     'cdr_apikey'=> $request->get('cdr_apikey'),
-                     'associated_groups' => json_encode($request->get('associated_groups'))
-                    ];
-            $account = [ 'status' => 'Active',
-                         'usertype' => 'reseller',
-                         'username' => $request->get('username'),
-                         'password'=> Hash::make($request->get('password')),
-                         'user_pwd' => $request->get('password'),
-                        ];
+            $associated_groups = $request->get('associated_groups') ? $request->get('associated_groups') : [];
+            $reseller = [
+                'resellername' => $request->get('resellername'),
+                'cdr_apikey' => $request->get('cdr_apikey'),
+                'associated_groups' => json_encode($associated_groups)
+            ];
+            $account = [
+                'status' => 'Active',
+                'usertype' => 'reseller',
+                'username' => $request->get('username'),
+                'password' => Hash::make($request->get('password')),
+                'user_pwd' => $request->get('password'),
+            ];
 
-            if(empty($request->get('id'))) {
-                $id = DB::table('resellergroup')->insertGetId($reseller);
-                $new_field = array('resellerid' => $id);
+            $resellerId = $request->get('id');
+            if (empty($resellerId)) {
+                $resellerId = DB::table('resellergroup')->insertGetId($reseller);
+                $new_field = array('resellerid' => $resellerId);
                 $account_1 = array_merge($account, $new_field);
-                if(!empty($id)) {
+                if (!empty($resellerId)) {
                     DB::table('account')->insert($account_1);
                     $data['success'] = 'Coperate added successfully.';
                 }
             } else {
+                $resellerGroup = DB::table('resellergroup')
+                    ->where('id', $resellerId)
+                    ->first();
+                $oldAssociatedGroups = isset($resellerGroup->associated_groups) ? json_decode($resellerGroup->associated_groups) : [];
+                $removedGroups = array_diff($oldAssociatedGroups, $associated_groups);
+                if (count($removedGroups) > 0) {
+                    DB::table('accountgroup')
+                        ->whereIn('id', $removedGroups)
+                        ->update(['resellerid' => '0']);
+                }
                 DB::table('resellergroup')
-                    ->where('id', $request->get('id'))
+                    ->where('id', $resellerId)
                     ->update($reseller);
                 DB::table('account')
-                    ->where('resellerid', $request->get('id'))
+                    ->where('resellerid', $resellerId)
                     ->update($account);
                 $data['success'] = 'Coperate updated successfully.';
+            }
+            if (count($associated_groups) > 0) {
+                DB::table('accountgroup')
+                    ->whereIn('id', $associated_groups)
+                    ->update(['resellerid' => $resellerId]);
             }
         }
         return $data;
@@ -1028,42 +1047,50 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
     public function editProfile(Request $request)
     {
         $rules = [
-            'email' => 'required',
-            'password' => 'required',
-            'phone_number' => 'required',
+            'password' => 'required'
         ];
+        if (Auth::user()->usertype == 'groupadmin') {
+            $rules['email'] = 'required';
+            $rules['phone_number'] = 'required';
+        }
 
         $validator = Validator::make($request->all(), $rules);
-        if($validator->fails()) {
+        if ($validator->fails()) {
             $data['error'] = $validator->messages();
         } else {
-            $profile = ['email' => $request->get('email'),
-                     'password'=> Hash::make($request->get('password')),
-                     'user_pwd'=> $request->get('password'),
-                     'phone_number'=> $request->get('phone_number'),
-                    ];
-            $workingDays = explode(',', $request->working_days);
-            $accGroup = ['office_start' => $request->get('office_start'),
-                     'office_end'=> $request->get('office_end'),
-                     'aocalltransfer'=> $request->get('aocalltransfer'),
-                     'playaom'=> $request->get('playaom'),
-                     'working_days'=> json_encode($workingDays)
-                    ];
+            $profile = [
+                'password' => Hash::make($request->get('password')),
+                'user_pwd' => $request->get('password')
+            ];
 
-                DB::table('account')
-                    ->where('id', $request->get('id'))
-                    ->update($profile);
+            if (Auth::user()->usertype == 'groupadmin') {
+                $profile['email'] = $request->get('email');
+                $profile['phone_number'] = $request->get('phone_number');
+                $workingDays = explode(',', $request->working_days);
+                
+                $accGroup = [
+                    'office_start' => $request->get('office_start'),
+                    'office_end' => $request->get('office_end'),
+                    'aocalltransfer' => $request->get('aocalltransfer'),
+                    'playaom' => $request->get('playaom'),
+                    'working_days' => json_encode($workingDays)
+                ];
                 DB::table('accountgroup')
-                    ->where('id', Auth::user()->groupid)
+                ->where('id', Auth::user()->groupid)
                     ->update($accGroup);
+            }
 
+            DB::table('account')
+            ->where('id', $request->get('id'))
+                ->update($profile);
 
-                    $data['success'] = 'Profile updated successfully.';
-                    $data['data'] = $profile;
-                    $data['data'] = array_merge($data['data'], $accGroup);
-
+            $data['success'] = 'Profile updated successfully.';
+            $data['data'] = $profile;
+            if (Auth::user()->usertype == 'groupadmin') {
+                $data['data'] = array_merge($data['data'], $accGroup);
+            }
         }
-         return $data;
+        return $data;
     }
 
     public function crmSettings(Request $request)
@@ -1092,8 +1119,9 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
     }
 
     public function associatedGroups() {
+        $groupIdArray = getResellerGroupAdminIds(Auth::user()->resellerid);
         $result = DB::table('accountgroup')
-        ->whereIn('accountgroup.id', json_decode(Auth::user()->reseller->associated_groups))
+        ->whereIn('accountgroup.id', $groupIdArray)
         ->leftJoin('dids', 'accountgroup.did', '=', 'dids.id')
         ->select('accountgroup.id', 'accountgroup.name', 'accountgroup.startdate', 'accountgroup.enddate', 'accountgroup.status', 'accountgroup.did', 'dids.did')
         ->paginate(10);

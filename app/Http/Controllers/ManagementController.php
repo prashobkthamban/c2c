@@ -88,16 +88,29 @@ class ManagementController extends Controller
     }
 
     public function voicemail(Request $request) {
+        if (in_array(Auth::user()->usertype, ["admin","reseller"])) {
+            $groupId = $request->get('customer');
+            $groupIdArray = [$groupId];
+            if(Auth::user()->usertype == "reseller" && empty($groupId)) {
+                $groupIdArray = getResellerGroupAdminIds(Auth::user()->resellerid);
+            }
+        } else {
+            $groupId = Auth::user()->groupid;
+            $groupIdArray = [$groupId];
+        }
         $date_to = $request->get('date_to');
         $date_from = $request->get('date_from');
         $date = $request->get('date');
         $call_no = $request->get('caller_number');
         $department = $request->get('department');
 
+        $customers = getCustomers();
         $query = DB::table('voicemails')
             ->select('voicemails.*', 'accountgroup.name' )
-            ->where('voicemails.groupid', Auth::user()->groupid)
             ->join('accountgroup', 'voicemails.groupid', '=', 'accountgroup.id');
+            if (count($groupIdArray) > 0) {
+                $query->whereIn('voicemails.groupid', $groupIdArray);
+            }
             if(!empty($call_no)) {
                 $query->where('voicemails.callerid', 'LIKE', '%' . $call_no . '%');
             }
@@ -127,8 +140,8 @@ class ManagementController extends Controller
             }
 			
 
-        $voicemails = $query->orderBy('datetime','DESC')->get();
-        return view('management.voicemail', compact('voicemails', 'call_no', 'department', 'date'));
+        $voicemails = $query->orderBy('datetime','DESC')->paginate(10);
+        return view('management.voicemail', compact('voicemails', 'customers', 'groupId', 'call_no', 'department', 'date'));
     }
 
     public function contacts() {
@@ -139,9 +152,6 @@ class ManagementController extends Controller
     public function editContact(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'fname' => 'required',
-            'lname' => 'required',
-            'email' => 'required',
             'phone' => 'required'
         ]); 
 
@@ -203,7 +213,6 @@ class ManagementController extends Controller
             'ivr_level_name' => 'required',
             'ivr_level' => 'required',
             'ivroption' => 'required',
-            'failover_operator_id' => 'required',
             'operator_dept' => 'required',
         ]);    
 
@@ -253,11 +262,17 @@ class ManagementController extends Controller
          return $data;
     }
 
-    public function voiceFiles() { 
-        $voicefiles = DB::table('did_voicefilesettings')
+    public function voiceFiles(Request $request) {
+        $requests = $request->all();
+        $groupId = $request->get('customer');
+        $customers = getCustomers();
+        $query = DB::table('did_voicefilesettings')
                     ->leftJoin('accountgroup', 'did_voicefilesettings.groupid', '=', 'accountgroup.id')
-                    ->select('did_voicefilesettings.*', 'accountgroup.name')
-                    ->orderBy('id', 'desc')->paginate(10);
+                    ->select('did_voicefilesettings.*', 'accountgroup.name');
+        if (!empty($groupId)) {
+            $query->where('accountgroup.id', $groupId);
+        }
+        $voicefiles = $query->orderBy('id', 'desc')->paginate(10);
         $voicefilesnames = DB::table('voicefilesnames')->where('file_type', 'mainmenupress0')->pluck('filename', 'filename');
         $thank4calling = DB::table('voicefilesnames')->where('file_type', 'thank4caling')->pluck('filename', 'filename');
         $repeatoptions = DB::table('voicefilesnames')->where('file_type', 'repeatoptions')->pluck('filename', 'filename');
@@ -274,7 +289,7 @@ class ManagementController extends Controller
         $aombefore = DB::table('voicefilesnames')->where('file_type', 'aombefore')->pluck('filename', 'filename');
         $aomafter = DB::table('voicefilesnames')->where('file_type', 'aomafter')->pluck('filename', 'filename');
         $moh = DB::table('mohclassess')->pluck('classname', 'classname');
-        return view('management.voicefiles', compact('voicefiles', 'voicefilesnames', 'thank4calling', 'repeatoptions', 'previousmenu', 'voicemailmsg', 'trasfringcall', 'contactusoon', 'talktooperator9', 'noinput', 'wronginput', 'nonworkinghours', 'moh', 'transferingagent', 'holiday', 'aombefore', 'aomafter'));
+        return view('management.voicefiles', compact('requests', 'customers', 'voicefiles', 'voicefilesnames', 'thank4calling', 'repeatoptions', 'previousmenu', 'voicemailmsg', 'trasfringcall', 'contactusoon', 'talktooperator9', 'noinput', 'wronginput', 'nonworkinghours', 'moh', 'transferingagent', 'holiday', 'aombefore', 'aomafter'));
     }
 
    public function addVoicefile(Request $request) {
@@ -334,7 +349,7 @@ class ManagementController extends Controller
     private function saveVoicefile($welcomefile, $langfile, $old_welcomefile, $old_langfile, $voice_file_id, $groupid) {
         $fileName1 = $fileName2 = null;
         if($welcomefile != null) {
-            $fileName1 = $voice_file_id.'_'.$groupid.'_'.$welcomefile->getClientOriginalName();
+            $fileName1 = $voice_file_id.'_'.$groupid.'_'.str_replace(" ","_",$welcomefile->getClientOriginalName());
         }
         if($langfile != null) {
             $fileName2 = $voice_file_id.'_'.$groupid.'_'.$langfile->getClientOriginalName(); 

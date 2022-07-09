@@ -64,17 +64,13 @@ class CdrReport extends Model
         }
         $userType = Auth::user()->usertype;
         $data = CdrReport::with(['cdrNotes', 'reminder', 'operatorAssigned'])
-                ->select('cdr.*', 'accountgroup.name as customerName', 'operatoraccount.opername as operatorName',
-                'contacts.fname', 'contacts.lname', 'contacts.email')
+                ->select('cdr.*', 'accountgroup.name as customerName', 'operatoraccount.opername as operatorName')
                 ->leftJoin('accountgroup', 'accountgroup.id', '=', 'cdr.groupid')
-                ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'cdr.operatorid')
-                ->leftJoin('contacts', 'contacts.phone', '=', 'cdr.number');
-        if( $userType == 'reseller' && !empty(Auth::user()->reseller->associated_groups)) {
+                ->leftJoin('operatoraccount', 'operatoraccount.id', '=', 'cdr.operatorid');
+        if( $userType == 'reseller') {
             if(empty($groupId)) {
-                $groupIdArray = json_decode(Auth::user()->reseller->associated_groups);
+                $groupIdArray = getResellerGroupAdminIds(Auth::user()->resellerid);
             }
-        } else if( $userType == 'reseller' ) {
-            $data->where('cdr.resellerid',Auth::user()->resellerid );
         } else if( $userType == 'operator' ){
             $data->where('cdr.operatorid',Auth::user()->operator_id );
         } else if($userType == 'admin') {
@@ -176,13 +172,17 @@ class CdrReport extends Model
                 $cdrSubCount = DB::table('cdr_sub')
                                 ->where('cdr_sub.cdr_id', $result->cdrid)
                                 ->count();
+                $contact = DB::table('contacts')
+                                ->where('phone', $result->number)
+                                ->where('groupid', $result->groupid)
+                                ->first();
                 $dataArray[] = [
                     'userType' => Auth::user()->usertype,
                     'cdrId' => $result->cdrid,
                     'uniqueId' => $result->uniqueid,
                     'groupId' => $result->groupid,
                     'customerName' => $result->customerName,
-                    'callerId' => $result->contacts ? $result->contacts->fname . ' ' . $result->contacts->lname : $result->number,
+                    'callerId' => $contact ? $contact->fname . ' ' . $contact->lname : $result->number,
                     'number' => $result->number,
                     'dateTime' => $result->datetime,
                     'duration' => $result->firstleg. '(' .$result->secondleg. ')',
@@ -196,11 +196,11 @@ class CdrReport extends Model
                     'didNumber' => $result->did_no,
                     'recordedFileName' => $result->recordedfilename,
                     'cdrNotesCount' => count($result->cdrNotes),
-                    'isContactSet' => !empty($result->contacts) ? true : false,
-                    'contactId' => $result->contacts ? $result->contacts->id : '',
-                    'email' => $result->contacts ? $result->contacts->email : '',
-                    'firstName' => $result->contacts ? $result->contacts->fname : '',
-                    'lastName' => $result->contacts ? $result->contacts->lname : '',
+                    'isContactSet' => !empty($contact) ? true : false,
+                    'contactId' => $contact ? $contact->id : '',
+                    'email' => $contact ? $contact->email : '',
+                    'firstName' => $contact ? $contact->fname : '',
+                    'lastName' => $contact ? $contact->lname : '',
                     'isReminderSet' => !empty($result->reminder) ? true : false
                 ];
             }
