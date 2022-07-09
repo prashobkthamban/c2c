@@ -22,7 +22,7 @@
                     <div class="row">
                         <div class="col-md-6 form-group mb-3">
                             <label for="firstName1">Mobile/DID *</label>
-                            <input type="number" class="form-control" placeholder="Mobile Number" name="rdins">
+                            <input type="text" class="form-control phone_number" placeholder="Mobile Number" name="rdins">
                             <p class="text-danger">{!! !empty($messages) ? $messages->first('rdins', ':message') : '' !!}</p>
                         </div>
 

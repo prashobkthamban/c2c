@@ -1,0 +1,61 @@
+<?php
+/*
+ * date :21/08/2015
+ * API for android EDIT reminder 
+ * 
+ * */
+
+// db connect
+include ("/var/www/asterconnect_scripts/dbconnect.php");
+
+$inputJSON = file_get_contents('php://input');
+$input= json_decode($inputJSON, TRUE );
+
+$outputFile = "api_edit_reminder.log";
+file_put_contents($outputFile,print_r($input, true),FILE_APPEND);
+
+
+// log write over 
+
+
+
+$id=$input['id'];
+$followupdate=$input['followupdate'];
+$appoint_status=$input['appoint_status'];
+$follower=$input['follower'];
+
+if($id=='' || $follower=='' )
+{$arr['status']='Faild';
+                $arr['message']='id or Follower is empty';
+echo json_encode($arr);
+exit;
+}
+	$s="update reminders SET followupdate='$followupdate',appoint_status='$appoint_status',follower='$follower' where id='$id'";
+$re=mysqli_query($link,$s);   
+if($re)
+{$arr['status']='Success';
+	$arr['message']='Data Updated';
+	}else
+	{$arr['status']='Failed';
+		$arr['message']='No call record found :';
+
+	}
+	
+	$rows=array();
+  while($row=mysqli_fetch_assoc($re)) 
+  {  $rows[] = $row; 
+	  
+ }
+
+
+	// $data = array('cdr' => $rows);
+	 
+$arr['data']=$rows;
+echo json_encode($arr);	
+		
+
+
+
+
+
+?>

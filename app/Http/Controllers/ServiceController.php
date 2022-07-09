@@ -163,7 +163,10 @@ class ServiceController extends Controller
          return $data;
     }
 
-    public function accessLogs() {
+    public function accessLogs(Request $request) {
+        $requests = $request->all();
+        $groupId = $request->get('customer');
+        $customers = getCustomers();
         $query = DB::table('ast_login_log')
             ->select('ast_login_log.*', 'accountgroup.name')
             ->leftJoin('accountgroup', 'ast_login_log.groupid', '=', 'accountgroup.id');
@@ -177,11 +180,14 @@ class ServiceController extends Controller
             $query->where('ast_login_log.groupid', Auth::user()->groupid);
             $query->where('ast_login_log.usertype', 'operator');
         } else {
+            if ($groupId) {
+                $query->where('accountgroup.id', $groupId);
+            }
         }
 
         $query->orderBy('id', 'desc');
         $result = $query->get();
-        return view('service.access_logs', compact('result'));
+        return view('service.access_logs', compact('requests', 'customers', 'result'));
     }
 
     public function liveCalls() {
@@ -204,7 +210,7 @@ class ServiceController extends Controller
         }
             
         $query->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name')->orderBy('id', 'desc');
-        $result = $query->paginate(10);
+        $result = $query->paginate(100);
         //dd($result);
         return view('service.live_calls', compact('result'));
     }
@@ -255,6 +261,7 @@ class ServiceController extends Controller
                 'used_units'=> $request->get('used_units'),
                 'pluse_rate' => $request->get('pluse_rate'),
                 'dial_prefix' => $request->get('dial_prefix'),
+                'sip_header' => $request->get('sip_header'),
             ];
     
             if(empty($request->get('id'))) {

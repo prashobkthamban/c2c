@@ -177,6 +177,14 @@
                                         <input type="text" class="form-control" placeholder="Dial Prefix" name="dial_prefix" id="dial_prefix">
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3">
+                                    </div>
+                                    <div class="col-md-8 form-group mb-3">
+                                    <label for="picker1">SIP Header</label>
+                                        <textarea class="form-control" rows="5" placeholder="SIP Header" name="sip_header" id="sip_header"></textarea>
+                                    </div>
+                                </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -274,6 +282,7 @@ $(document).ready(function() {
                 $("#billingdate").val(res.billingdate);
                 $("#Gchannel").val(res.Gchannel);
                 $("#dial_prefix").val(res.dial_prefix);
+                $("#sip_header").val(res.sip_header);
             },
             error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
             }

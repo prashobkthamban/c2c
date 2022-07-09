@@ -17,7 +17,7 @@
             <div class="card user-profile o-hidden mb-4">
                 <div class="header-cover" style="background-image: url({{asset('assets/images/photo-wide-5.jpeg')}}"></div>
                 <div class="user-info">
-                    <img class="profile-picture avatar-lg mb-2" src="{{asset('assets/images/faces/1.jpg')}}" alt="">
+                    <img class="profile-picture avatar-lg mb-2" src="{{asset('assets/images/faces/user-logo.png')}}" alt="">
                     <p class="m-0 text-24">Timothy Carlson</p>
                     <p class="text-muted m-0">Digital Marketer</p>
                 </div>
@@ -67,7 +67,7 @@
                                 </li>
                                 <li class="timeline-item">
                                     <div class="timeline-badge">
-                                        <img class="badge-img" src="{{asset('assets/images/faces/1.jpg')}}" alt="">
+                                        <img class="badge-img" src="{{asset('assets/images/faces/user-logo.png')}}" alt="">
                                     </div>
                                     <div class="timeline-card card">
                                         <div class="card-body">

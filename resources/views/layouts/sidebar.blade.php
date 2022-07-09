@@ -1,10 +1,10 @@
 <style type="text/css">
-    .nav-item-hold{
-            background-image: -webkit-linear-gradient(-154deg, #004e92 0%, #000428 100%);
-    background: linear-gradient(-154deg, #004e92 0%, #000428 100%);
-    color: white!important;
-    }
-    .btn-round {
+.nav-item-hold {
+    background: linear-gradient(-154deg, #fff8f8 0%, #ffffff 100%);
+    color: black !important;
+    text-decoration: none;
+}
+.btn-round {
     color: #666;
     padding: 3px 9px;
     font-size: 13px;
@@ -13,8 +13,7 @@
     border-color: #ccc;
     border-radius: 50px;
 }
-.mine
-{
+.mine {
     z-index: 1000!important;
     position: absolute!important;
     right: 15px!important;

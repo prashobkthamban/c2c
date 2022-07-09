@@ -282,7 +282,7 @@
                                     <span>
                                         @if(Auth::user()->usertype=='groupadmin' || Auth::user()->usertype=='operator')
                                         <button class="btn bg-gray-100" type="button" id="action_{{$row->cdrid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="nav-icon i-Gear-2"></i>
+                                            <i class="nav-icon i-Arrow-Down-in-Circle"></i>
                                         </button>
                                         @endif
                                         <div class="dropdown-menu" aria-labelledby="action_{{$row->cdrid}}">

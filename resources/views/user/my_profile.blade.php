@@ -16,9 +16,9 @@
             <div class="separator-breadcrumb border-top"></div>
 
             <div class="card user-profile o-hidden mb-4">
-                <div class="header-cover" style="background-image: url({{asset('assets/images/photo-wide-5.jpeg')}}"></div>
+                <div class="header-cover"></div>
                 <div class="user-info">
-                    <img class="profile-picture avatar-lg mb-2" src="{{asset('assets/images/faces/1.jpg')}}" alt="">
+                    <img class="profile-picture avatar-lg mb-2" src="{{asset('assets/images/faces/user-logo.png')}}" alt="">
                     <p class="m-0 text-24">{{ Auth::user()->username }} </p>
                     <!-- s -->
                 </div>
@@ -186,7 +186,7 @@
                                         <button type="button" id="Mon" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Mon',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('Mon');" title="Monday">M</button>
                                         <button type="button" id="Tue" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Tue',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('Tue');" title="Tuesday">T</button>
                                         <button type="button" id="Wed" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Wed',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('Wed');" title="Wednesday">W</button>
-                                        <button type="button" id="Thu" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Thu',$days)){ echo 'btn-primary';} ?>"onClick="selectDay('Thu');" title="Thursday">T</button>
+                                        <button type="button" id="Thu" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Thu',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('Thu');" title="Thursday">T</button>
                                         <button type="button" id="Fri" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Fri',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('Fri');" title="Friday">F</button>
                                         <button type="button" id="Sat" class="btn btn-rounded m-1 <?php  if($days != "" && in_array('Sat',$days)){ echo 'btn-primary';} ?>" onClick="selectDay('Sat');" title="Saturday">S</button>
                                         <input type='hidden' id="working_days" name='working_days' value="" />
@@ -230,9 +230,16 @@
 
 <script type="text/javascript">
     var days = [];
-    <?php foreach($days as $key => $val){ ?>
+    <?php
+    foreach($days as $key => $val) {
+        if ($val) {
+    ?>
         days.push('<?php echo $val; ?>');
-    <?php } ?>
+    <?php
+        }
+    }
+    ?>
+    $("#working_days").val(days);
    
     function selectDay(day) {
         if(!$("#" + day).hasClass('btn-primary')) {

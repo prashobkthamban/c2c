@@ -1,3 +1,4 @@
+@if(in_array(Auth::user()->usertype, ["admin", "reseller"]))
 <?php $customers = getCustomers(); ?>
 <div class="row">
     <div id="filter-panel" class="col-lg-12 col-md-12 filter-panel collapse {{count($requests) > 0 ? 'show' : ''}}">
@@ -38,3 +39,4 @@
         </div>
     </a>
 </div>
+@endif

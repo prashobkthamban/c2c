@@ -210,7 +210,7 @@
                                             <td>Smith Doe</td>
                                             <td>
 
-                                                <img class="rounded-circle m-0 avatar-sm-table " src="{{asset('assets/images/faces/1.jpg')}}" alt="">
+                                                <img class="rounded-circle m-0 avatar-sm-table " src="{{asset('assets/images/faces/user-logo.png')}}" alt="">
 
                                             </td>
 
@@ -230,7 +230,7 @@
                                             <td>Jhon Doe</td>
                                             <td>
 
-                                                <img class="rounded-circle m-0 avatar-sm-table " src="{{asset('assets/images/faces/1.jpg')}}" alt="">
+                                                <img class="rounded-circle m-0 avatar-sm-table " src="{{asset('assets/images/faces/user-logo.png')}}" alt="">
 
                                             </td>
 
@@ -250,7 +250,7 @@
                                             <td>Alex</td>
                                             <td>
 
-                                                <img class="rounded-circle m-0 avatar-sm-table " src="{{asset('assets/images/faces/1.jpg')}}" alt="">
+                                                <img class="rounded-circle m-0 avatar-sm-table " src="{{asset('assets/images/faces/user-logo.png')}}" alt="">
 
                                             </td>
 

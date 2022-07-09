@@ -34,7 +34,7 @@
                                 <div class="inbox-details perfect-scrollbar" data-suppress-scroll-x="true">
                                     <div class="row no-gutters">
                                         <div class="mr-2" style="width: 36px">
-                                            <img class="rounded-circle" src="{{asset('/assets/images/faces/1.jpg')}}" alt="">
+                                            <img class="rounded-circle" src="{{asset('/assets/images/faces/user-logo.png')}}" alt="">
                                         </div>
                                         <div class="col-xs-12">
                                             <p class="m-0">Jhon Doe</p>
@@ -77,7 +77,7 @@
 
                             <div class="mail-item">
                                 <div class="avatar">
-                                    <img src="{{asset('/assets/images/faces/1.jpg')}}" alt="">
+                                    <img src="{{asset('/assets/images/faces/user-logo.png')}}" alt="">
                                 </div>
                                 <div class="col-xs-6 details">
                                     <span class="name text-muted">John Doe</span>

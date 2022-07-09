@@ -25,10 +25,10 @@
                                         <p class="text-danger">{!! !empty($messages) ? $messages->first('name', ':message') : '' !!}</p>
                                     </div>
 
-                                    <div class="col-md-6 form-group mb-3">
+                                    <!-- <div class="col-md-6 form-group mb-3">
                                         <label for="picker1">Coperate name</label>
                                          {!! Form::select('resellerid', $coperate, null,array('class' => 'form-control')) !!}
-                                    </div>
+                                    </div> -->
 
                                     <div class="col-md-6 form-group mb-3">
                                         <label for="picker3">Start date</label>

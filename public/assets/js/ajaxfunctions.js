@@ -64,11 +64,9 @@ function didList(groupid, did_id) {
 
 $(document).ready(function(){
     // phone number validation
-    $('.phone_number').on('keypress', function(){
-        var maxLength = $(this).val().length;
-        if (maxLength >= 10) {
-            return false;
-        }
+    $('.phone_number').on('keyup', function() {
+        let number = $(this).val().replace(/[^0-9+]/g, '');
+        $(this).val(number);
     });
     $('.lead-category').change(function (){
         $.ajax({

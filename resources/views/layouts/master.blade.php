@@ -19,7 +19,7 @@
 <link rel="stylesheet" href="{{asset('assets/styles/css/daterangepicker.css')}}">
 
  <!-- <link rel="stylesheet" href="{{asset('assets/styles/vendor/toastr.css')}}"> -->
- <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+ <link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
   @toastr_css
  <!-- <script src="{{asset('assets/js/toastr.script.js')}}"></script> -->
 <style>
@@ -218,7 +218,7 @@
         });
     </script>
      
-    <script src="{{asset('assets/js/ajaxfunctions.js?v=1.0.1')}}"></script>
+    <script src="{{asset('assets/js/ajaxfunctions.js?v=1.0.2')}}"></script>
     {{-- laravel js --}}
     {{-- <script src="{{mix('assets/js/laravel/app.js')}}"></script> --}}
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>

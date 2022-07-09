@@ -27,17 +27,23 @@ class DidController extends Controller
 
     }
 
-    public function index() {
-        $dids = DB::table('dids')
+    public function index(Request $request) {
+        $requests = $request->all();
+        $groupId = $request->get('customer');
+        $customers = getCustomers();
+        $query = DB::table('dids')
             ->join('prigateway', 'dids.gatewayid', '=', 'prigateway.id')
             ->leftJoin('accountgroup', 'dids.assignedto', '=', 'accountgroup.id')
-            ->select('dids.*', 'prigateway.Gprovider', 'accountgroup.name')
-            ->orderBy('id', 'desc')
+            ->select('dids.*', 'prigateway.Gprovider', 'accountgroup.name');
+        if ($groupId) {
+            $query->where('accountgroup.id', $groupId);
+        }
+        $dids = $query->orderBy('id', 'desc')
             ->paginate(10);
             //dd($dids);
         $did = new Dids();
         $prigateway = $did->get_prigateway();
-        return view('did.did_list', compact('dids', 'prigateway'));
+        return view('did.did_list', compact('dids', 'prigateway', 'requests', 'customers'));
     }
 
     public function extra_did($id) {

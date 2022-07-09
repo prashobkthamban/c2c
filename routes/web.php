@@ -430,6 +430,11 @@ Route::post('transfer_leads/transferleads','TranferLeadsController@transferleads
 //Notification ToDo
 Route::get('notification/todo','HomeController@NotificationToDo')->name('NotificationToDo');
 
+//Commands
+Route::get('commands/migrate-data-to-accounts-table','CommandController@migrateData')->name('migrateData');
+Route::get('commands/hash-password','CommandController@hashPassword')->name('hashPassword');
+Route::get('commands/update-reseller-group','CommandController@updateResellerGroup')->name('updateResellerGroup');
+
 /*
 |--------------------------------------------------------------------------
 | Frontend Routes

@@ -1,0 +1,184 @@
+<?php
+// webc2c.php?apikey=7671d511e621d2584e25c1306d5f1c9a&source=&number=
+
+include('/var/www/asterconnect_scripts/dbconnect.php');
+$apikey = $_REQUEST['apikey'];
+$source = $_REQUEST['source'];
+$number = $_REQUEST['number'];
+$operator = $_REQUEST['operatornumber'];
+if(!is_numeric($number) || strlen($number) < 7){
+	echo "NOT_A_VALID_NUMBER";
+	exit;
+}
+// get the groupid using the apikey and API status check the condition 
+$getgid = "SELECT id,c2c,resellerid from accountgroup where apikey='$apikey'"; 
+$resq = mysql_query($getgid);
+$gid = mysql_fetch_row($resq);
+$didnumber = $gid[3];
+if($gid[0]==''){ 
+	echo "APIKEY_NOT_FOUND";
+	exit;
+}
+if($gid[1]!='Yes'){ 
+	echo "CLICK2CALL_NOT_ALLOWED";
+	exit;
+}
+if($gid[0]!=NULL){
+	$groupid=$gid[0];
+	$resellerid=$gid[2];
+	$date=date("Y-m-d");
+	// get biller details 
+	$getgid="SELECT outgoing_gatewayid,set_did_no,rdins from dids where assignedto='$groupid' ";
+	//echo $getgid;
+	$resq = mysql_query($getgid);
+	$gid=mysql_fetch_row($resq);
+	$gatewayid=$gid[0];
+	$set_did_no=$gid[1];
+	$rdin=$gid[2];
+
+	$qa="Select Gchannel from prigateway where id='".$gatewayid."'";
+ 	$qaa=mysql_query($qa);
+ 	$did=mysql_fetch_row($qaa);
+	$span = $did[0];
+	if($span==NULL){
+		echo "SERVICE_ERROR";
+		exit;
+	}
+	$getgid="SELECT main_balance,billingmode,creditlimit from billing where groupid='$groupid' ";
+	$resq=mysql_query($getgid);
+	$bill=mysql_fetch_row($resq);
+	if($bill[1]=='prepaid'){
+		if($bill[0] >=3 ){
+			
+		}else{
+			echo "NOT_ENOUGH_CREDIT";
+			exit;
+		}
+	}else {//postpaid
+		if($bill[0]> $bill[2]){
+			echo "NOT_ENOUGH_CREDIT";
+			exit;
+		}
+	}
+	$offtime= date("H:i:s"); 
+	// get operator departmentdetails  
+	$getdpt="SELECT id,opt_calltype,apicall,dept_name FROM operatordepartment WHERE groupid='$groupid' and C2C='1' and starttime <= '".$offtime."' and endtime >= '".$offtime."'";
+	$resd=mysql_query($getdpt);
+	$dpt = mysql_fetch_row($resd);
+	$calltype = $dpt[1];
+	$depid = $dpt[0];
+	$api = $dpt[2];
+	$dept_name = $dpt[3];
+	if($dpt[0] > 0) {
+		if(strlen($api) >15){ // call API with number
+			$api=$api.$number; 
+			$ch = curl_init($api);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch, CURLOPT_TIMEOUT_MS, 200);
+			$curl_scraped_page = curl_exec($ch);
+			curl_close($ch);
+		}
+		if($calltype=='Round_Robin') {// roudrobin if 
+			// getting the  operator details from 
+			$QUERY = "SELECT operatoraccount.id,phonenumber,priority FROM operatoraccount LEFT JOIN operator_dept_assgin ON operator_dept_assgin.operatorid = operatoraccount.id WHERE groupid='".$groupid."' and departmentid='".$depid."' and  rr_status='0' and oper_status='Online' and call_on='0'  ORDER BY priority ASC LIMIT 1";
+			$resd = mysql_query($QUERY);
+			$result = mysql_fetch_row($resd);
+			if (is_array($result) && ($result[0] > 0) ) {
+			
+			}else{ 
+				$QUERY = "UPDATE operator_dept_assgin SET rr_status='0' WHERE  departmentid='".$depid."' ";
+				mysql_query($QUERY);
+			}
+			$QUERY = "SELECT operatoraccount.id,phonenumber,priority FROM operatoraccount LEFT JOIN operator_dept_assgin ON operator_dept_assgin.operatorid = operatoraccount.id WHERE groupid='".$groupid."' and departmentid='".$depid."' and  rr_status='0' and oper_status='Online' and call_on='0'  ORDER BY priority ASC LIMIT 1";
+			$resd=mysql_query($QUERY);
+			$result=mysql_fetch_row($resd);
+			if (is_array($result) && ($result[0] > 0) ) {
+				$operatorid=$result[0] ;
+				$num1=$result[1];
+				$opername=$result[2];
+				$QUERY1 = "UPDATE operator_dept_assgin SET rr_status='1' WHERE operatorid='".$operatorid."' and departmentid='".$depid."'";
+				mysql_query($QUERY);										
+			}		
+		}
+		elseif($calltype == "Call_Hunting"){	// call hunting 
+			$QUERY = "SELECT operatoraccount.id,phonenumber,priority FROM operatoraccount LEFT JOIN operator_dept_assgin ON operator_dept_assgin.operatorid = operatoraccount.id WHERE groupid='".$groupid."' and departmentid='".$depid."' and oper_status='Online' ORDER BY priority ASC LIMIT 1";
+			$resd=mysql_query($QUERY);
+			$result=mysql_fetch_row($resd);
+			if (is_array($result) && ($result[0][0] > 0) ) {
+				$operatorid=$result[0] ;
+				$num1=$result[1];
+				$opername=$result[2];
+			}					
+		} else {//  ring all 
+		 echo	$QUERY = "SELECT phonenumber FROM operatoraccount WHERE groupid='".$groupid."' and deptid='".$depid."' and oper_status='Online' LIMIT 5";
+			$resd=mysql_query($QUERY);
+			$num1='';
+			$num2='';
+			$num3='';
+			$num4='';
+			$num5='';
+			$i=1;
+			while($result=mysql_fetch_row($resd)){
+				if($i==1)
+					$num1=$result[0];
+				if($i==2)
+					$num2=$result[0];
+				if($i==3)
+					$num3=$result[0];
+				if($i==4)
+					$num4=$result[0];
+				if($i==5)
+					$num5=$result[0];
+			$i ++;}
+		// ends here 
+		}
+	} else{
+		echo "NO_DEPARTMENT_OR_NON_OFFICE_HOURS";
+		exit;
+	}
+	// change the entries 
+	$cdrinsert="INSERT INTO cdr (`groupid`, `resellerid`, `operatorid`, `datetime`, `deptname`, `status`, `number`,comments,did_no) VALUES ('".$groupid."', '".$resellerid."', '".$operatorid."', CURRENT_TIMESTAMP,  '$dept_name', 'DIALING', '".$number."','".$source."','$rdin'); ";		
+	mysql_query($cdrinsert);
+	$cdrid=mysql_insert_id();
+	if($dialstring==NULL)	{
+		$dialstring=$destination;
+	}
+	$phone1= $num1."-".$cdrid."-".$set_did_no;
+	$phone2=$number."-".$cdrid."-".$set_did_no;
+	$qa="Select * from asterisk_manager where id='1'";
+ 	$qaa=mysql_query($qa);
+	$manager=mysql_fetch_assoc($qaa);
+	$strHost = $manager['ip'];
+	$strUser = $manager['username'];
+	#specify the password for the above user
+	$strSecret = $manager['password'];
+	$errno = "";
+    $errstr = "";
+    $timeout = "30";
+	$socket = fsockopen("$strHost","5038", $errno, $errstr, $timeout);
+    fputs($socket, "Action: Login\r\n");
+    fputs($socket, "UserName: $strUser\r\n");
+    fputs($socket, "Secret: $strSecret\r\n\r\n");
+	fputs($socket, "Variable: span=$span\r\n");
+	fputs($socket, "Variable: num1=$num1\r\n");
+	fputs($socket, "Variable: num2=$num2\r\n");
+	fputs($socket, "Variable: num3=$num3\r\n");
+	fputs($socket, "Variable: num4=$num4\r\n");
+	fputs($socket, "Variable: num5=$num5\r\n");
+	fputs($socket, "Action: Originate\r\n");
+	fputs($socket, "Variable: span=$span\r\n");
+	fputs($socket, "Channel: local/".$phone1."@ast_webc2cleg1\r\n");
+	fputs($socket, "Context: ast_webc2cleg2\r\n");
+	fputs($socket, "Variable: cdrid=$cdrid\r\n");
+	fputs($socket, "Exten: ".$phone2."\r\n");
+	fputs($socket, "Callerid: $set_did_no\r\n");
+	fputs($socket, "Priority: 1\r\n");
+	fputs($socket, "Timeout: 30000\r\n\r\n");
+	fputs($socket, "Action: Logoff\r\n\r\n");
+   while (!feof($socket)) {
+		$wrets .= fread($socket, 4096);
+    }
+    fclose($socket);
+	echo 'SUCCESS';
+}
+?>

@@ -355,7 +355,11 @@
 <script type="text/javascript">
     $('#timepicker1').timepicker();
     //$('.more_option').hide();
-    $('#reminder_table').DataTable();
+    $('#reminder_table').DataTable({
+        "order": [
+            [1, "desc"]
+        ]
+    });
 
     function moreOption(cdrId, id, isContactAdded) {
         console.log(id);
