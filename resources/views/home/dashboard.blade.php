@@ -86,7 +86,6 @@
             </div>
         </div>
     <?php endif; ?>
-    <?php if (Auth::user()->usertype == 'groupadmin') : ?>
         <div class="col-md-2">
             <div class="card card-icon mb-4">
                 <div class="card-body text-center">
@@ -110,7 +109,6 @@
                 </div>
             </div>
         </div>
-    <?php endif; ?>
 
 
 </div>

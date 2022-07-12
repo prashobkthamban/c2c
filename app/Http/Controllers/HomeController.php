@@ -158,14 +158,12 @@ class HomeController extends Controller
                     ->count();
             }
             $ivranswer = DB::table('cdr')
-                ->where('groupid', Auth::user()->groupid)
                 ->where('status', 'ANSWERED')
-                ->whereDate('datetime', '=', date("Y-m-d"))
+                ->whereDate('datetime', '=', $today)
                 ->count();
             $ivrmissed = DB::table('cdr')
-                ->where('groupid', Auth::user()->groupid)
                 ->where('status', 'MISSED')
-                ->whereDate('datetime', '=', date("Y-m-d"))
+                ->whereDate('datetime', '=', $today)
                 ->count();
 
             $todo_lists = DB::table('todotask')

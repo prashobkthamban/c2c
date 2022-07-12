@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\JsonResponse;
 
 class DidController extends Controller
 {
@@ -27,23 +28,79 @@ class DidController extends Controller
 
     }
 
-    public function index(Request $request) {
-        $requests = $request->all();
-        $groupId = $request->get('customer');
-        $customers = getCustomers();
-        $query = DB::table('dids')
-            ->join('prigateway', 'dids.gatewayid', '=', 'prigateway.id')
-            ->leftJoin('accountgroup', 'dids.assignedto', '=', 'accountgroup.id')
-            ->select('dids.*', 'prigateway.Gprovider', 'accountgroup.name');
-        if ($groupId) {
-            $query->where('accountgroup.id', $groupId);
-        }
-        $dids = $query->orderBy('id', 'desc')
-            ->paginate(10);
-            //dd($dids);
+    public function index() {
         $did = new Dids();
         $prigateway = $did->get_prigateway();
-        return view('did.did_list', compact('dids', 'prigateway', 'requests', 'customers'));
+        return view('did.did_list', compact('prigateway'));
+    }
+
+    public function didDataAjaxLoad(Request $request) {
+        $searchText = $request->get('search')['value'];
+
+        $sortOrder = $request->get('order')['0'];
+        $columnArray = [
+            '0' => ['dids.id'],
+            '1' => ['dids.rdins'],
+            '2' => ['dids.did'],
+            '3' => ['prigateway.Gprovider'],
+            '4' => ['accountgroup.name']
+        ];
+        $sortOrderArray = [];
+        foreach ($columnArray[$sortOrder['column']] as $field) {
+            $sortOrderArray[$field] = $sortOrder['dir'];
+        }
+
+        $limit = $request->get('length');
+        $skip = $request->get('start');
+        $draw = $request->get('draw');
+
+        $query = DB::table('dids')
+                ->join('prigateway', 'dids.gatewayid', '=', 'prigateway.id')
+                ->leftJoin('accountgroup', 'dids.assignedto', '=', 'accountgroup.id')
+                ->select('dids.*', 'prigateway.Gprovider', 'accountgroup.name');
+        $recordsTotal = $query->count();
+        if(!empty($searchText)) {
+            $searchText = strtolower(trim($searchText));
+            $query->where(DB::raw('lower(accountgroup.name)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(dids.rdins)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(dids.did)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(prigateway.Gprovider)'), 'like', '%' . $searchText . '%')
+            ;
+        }
+        $recordsFiltered = $query->count();
+
+        if (count($sortOrderArray) > 0) {
+            foreach ($sortOrderArray as $field => $order) {
+                $query->orderBy($field, $order);
+            }
+        }
+
+        if ($limit > 0) {
+            $query->skip($skip)
+                ->take($limit);
+        }
+        $results = $query->get();
+
+        $data = [];
+        if ($results) {
+            foreach ($results as $result) {
+                $data[] = [
+                    'id' => $result->id,
+                    'rdins' => $result->rdins,
+                    'did' => $result->did,
+                    'gprovider' => $result->Gprovider,
+                    'name' => $result->name,
+                    'assignedto' => $result->assignedto
+                ];
+            }
+        }
+
+        return new JsonResponse([
+            "draw" => $draw,
+            "recordsTotal" => $recordsTotal,
+            "recordsFiltered" => $recordsFiltered,
+            "data" => $data
+        ]);
     }
 
     public function extra_did($id) {

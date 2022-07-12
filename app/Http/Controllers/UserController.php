@@ -23,6 +23,7 @@ use Hash;
 $string = 'c4ca4238a0b923820dcc';
 $encrypted = \Illuminate\Support\Facades\Crypt::encrypt($string);
 $decrypted_string = \Illuminate\Support\Facades\Crypt::decrypt($encrypted);
+use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
@@ -45,35 +46,100 @@ class UserController extends Controller
     }
 
     public function index(Request $request) {
-        $requests = $request->all();
-        $groupId = $request->get('customer');
+        return view('user.user_list');
+    }
+
+    public function userDataAjaxLoad(Request $request) {
         $smsSupport = $request->get('sms_support');
         $operatorDpt = $request->get('operator_dpt');
-        $didNo = $request->get('did_no');
         $status = $request->get('status');
-        $customers = getCustomers();
-        $dnidnames = CdrReport::getdids($groupId);
+        $searchText = $request->get('search')['value'];
+
+        $sortOrder = $request->get('order')['0'];
+        $columnArray = [
+            '0' => ['accountgroup.id'],
+            '1' => ['accountgroup.name'],
+            '2' => ['resellergroup.resellername'],
+            '3' => ['accountgroup.startdate'],
+            '4' => ['accountgroup.enddate'],
+            '5' => ['accountgroup.c2c_channels'],
+            '6' => ['accountgroup.sms_support'],
+            '7' => ['accountgroup.operator_dpt'],
+            '8' => ['accountgroup.multi_lang'],
+            '9' => ['dids.did'],
+            '10' => ['accountgroup.created_at'],
+            '11' => ['accountgroup.status']
+        ];
+        $sortOrderArray = [];
+        foreach ($columnArray[$sortOrder['column']] as $field) {
+            $sortOrderArray[$field] = $sortOrder['dir'];
+        }
+
+        $limit = $request->get('length');
+        $skip = $request->get('start');
+        $draw = $request->get('draw');
+
         $query = DB::table('accountgroup')
             ->leftJoin('resellergroup', 'accountgroup.resellerid', '=', 'resellergroup.id')
             ->leftJoin('dids', 'accountgroup.did', '=', 'dids.id')
             ->select('accountgroup.*', 'resellergroup.resellername', 'dids.did');
-        if (!empty($groupId)) {
-            $query->where('accountgroup.id', $groupId);
-        }
         if (!empty($smsSupport)) {
             $query->where('accountgroup.sms_support', $smsSupport);
         }
         if (!empty($operatorDpt)) {
             $query->where('accountgroup.operator_dpt', $operatorDpt);
         }
-        if (!empty($didNo)) {
-            $query->where('dids.did', $didNo);
-        }
         if (!empty($status)) {
             $query->where('accountgroup.status', $status);
         }
-        $users = $query->orderBy('id', 'DESC')->get();
-        return view('user.user_list', compact('users', 'customers', 'dnidnames', 'requests'));
+        $recordsTotal = $query->count();
+        if(!empty($searchText)) {
+            $searchText = strtolower(trim($searchText));
+            $query->where(DB::raw('lower(accountgroup.name)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(resellergroup.resellername)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(dids.did)'), 'like', '%' . $searchText . '%')
+            ;
+        }
+        $recordsFiltered = $query->count();
+
+        if (count($sortOrderArray) > 0) {
+            foreach ($sortOrderArray as $field => $order) {
+                $query->orderBy($field, $order);
+            }
+        }
+
+        if ($limit > 0) {
+            $query->skip($skip)
+                ->take($limit);
+        }
+        $results = $query->get();
+
+        $data = [];
+        if ($results) {
+            foreach ($results as $result) {
+                $data[] = [
+                    'id' => $result->id,
+                    'name' => $result->name,
+                    'resellername' => $result->resellername,
+                    'startdate' => date('d-m-Y', strtotime($result->startdate)),
+                    'enddate' => date('d-m-Y', strtotime($result->enddate)),
+                    'c2c_channels' => $result->c2c_channels,
+                    'sms_support' => $result->sms_support,
+                    'operator_dpt' => $result->operator_dpt,
+                    'multi_lang' => $result->multi_lang,
+                    'did' => $result->did,
+                    'created_at' => date('d-m-Y', strtotime($result->created_at)),
+                    'status' => $result->status,
+                ];
+            }
+        }
+
+        return new JsonResponse([
+            "draw" => $draw,
+            "recordsTotal" => $recordsTotal,
+            "recordsFiltered" => $recordsFiltered,
+            "data" => $data
+        ]);
     }
 
     /**

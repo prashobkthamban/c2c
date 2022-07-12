@@ -129,6 +129,7 @@
                                     <option value="{OPERATORPHONENUMBER}">OPERATOR PHONENUMBER</option>
                                     <option value="{CUSTOMERDID}">CUSTOMER DID</option>
                                     <option value="{CALLERID}">CALLER ID</option>
+                                    <option value="{DIDNAME}">DID NAME</option>
                                     <option value="{DATETIME}">DATETIME</option>
                                     <option value="{CALLUNIQUEID}">CALLUNIQUEID</option>
                                     <option value="{RECLOCATION}">Recordings Location</option>
@@ -157,6 +158,7 @@
                                     <option value="{OPERATORPHONENUMBER}">OPERATOR PHONENUMBER</option>
                                     <option value="{CUSTOMERDID}">CUSTOMER DID</option>
                                     <option value="{CALLERID}">CALLER ID</option>
+                                    <option value="{DIDNAME}">DID NAME</option>
                                     <option value="{DATETIME}">DATETIME</option>
                                     <option value="{CALLUNIQUEID}">CALLUNIQUEID</option>
                                     <option value="{RECLOCATION}">Recordings Location</option>

@@ -29,7 +29,8 @@ function deleteItem(id, table) {
             url: '/delete_item/'+ id +'/' + table, // This is the url we gave in the route
             success: function(result) { 
                 if(result) {
-                    $("#row_"+id).remove(); 
+                    $("#row_"+id).remove();
+                    $("#search_btn").trigger('click');
                     toastr.success('Delete item successfully.'); 
                 } else {
                     toastr.error('Some errors are occured.');
@@ -187,10 +188,9 @@ $(document).ready(function(){
                     });
                     toastr.error(errors);
                 } else {
-                    $('#row_' + cdrid + ' .more-details').attr('data-tag', res.tag);
+                    $('#tag_span_' + cdrid).html(res.tag);
                     $('#row_' + cdrid + ' .edit_tag').attr('data-tag', res.tag);
                     $('.tag_btn_' + cdrid).attr('data-tag', res.tag);
-                    $("#cdrTag_"+cdrid).text(res.tag);
                     $("#tag_"+cdrid).text('Update Tag');
                     $("#tag_modal").modal('hide');
                     toastr.success(res.success);                
