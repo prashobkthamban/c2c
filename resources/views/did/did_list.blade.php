@@ -1,6 +1,10 @@
 @extends('layouts.master')
 @section('page-css')
-
+<style>
+    .table-header-bg-color {
+        background-color: #6633994f;
+    }
+</style>
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">
 @endsection
 
@@ -11,92 +15,36 @@
 </div>
 <div class="separator-breadcrumb border-top"></div>
 
-<div class="row">
-    <div id="filter-panel" class="col-lg-12 col-md-12 filter-panel collapse {{count($requests) > 0 ? 'show' : ''}}">
-        <div class="card mb-2">
-            <div class="card-body">
-                <div>
-                    <h5 class="ml-3">Search Panel</h5></br>
-                    <form class="form" role="form" id="cdr_filter_form">
-                        <div class="row" style="margin-right: 24px;margin-left: 24px;">
-                            <div class="col-md-4" id="customer_div">
-                                <label class="filter-col" for="pref-perpage">Customers</label>
-                                <select name="customer" class="form-control" id="customer_id">
-                                    <option value="">All</option>
-                                    @if(!empty($customers))
-                                    @foreach($customers as $customer )
-                                    <option value="{{$customer->id}}" @if(isset($requests['customer']) && $customer->id == $requests['customer']) selected @endif>{{$customer->name}}
-                                    </option>
-                                    @endforeach
-                                    @endif
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6" style="margin-top: 24px;">
-                            <button id="btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
-                            <a href="{{url('did_list')}}" class="btn btn-outline-secondary" name="btn">Clear</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="row mb-4">
     <div class="col-md-12 mb-4">
         <div class="card text-left">
             <div class="card-body">
                 <a title="Compact Sidebar" href="{{route('addDid')}}" class="btn btn-primary"> Add Did </a>
                 <div class="table-responsive">
-                    <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                    <table id="did_list_table" class="display table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
-                                <th>Mobile No</th>
-                                <th>Did No</th>
-                                <th>PRI gateway</th>
-                                <th>Assigned to</th>
+                                <th>#</th>
+                                <th class="table-header-bg-color">Mobile No</th>
+                                <th class="table-header-bg-color">Did No</th>
+                                <th class="table-header-bg-color">PRI gateway</th>
+                                <th class="table-header-bg-color">Assigned to</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-
-                            @foreach($dids as $did)
-                            <tr>
-                                <td>{{$did->rdins}}</td>
-                                <td>{{$did->did}}</td>
-                                <td>{{$did->Gprovider}}</td>
-                                <td>{{$did->name}}</td>
-                                <td>
-                                    <a href="{{ route('editDid', $did->id) }}" class="text-success mr-2" title="Edit Did">
-                                        <i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                    </a>
-                                    <a href="{{ route('deleteDid', $did->id) }}" onclick="return confirm('Are you sure you want to delete this Did?')" class="text-danger mr-2" title="Delete Did">
-                                        <i class="nav-icon i-Close-Window font-weight-bold"></i>
-                                    </a>
-                                    <a href="#" data-toggle="modal" class="did_list text-warning mr-2" id="{{$did->id}}" data-target="#list_modal" title="Extra Did List">
-                                        <i class="nav-icon i-File font-weight-bold"></i>
-                                    </a>
-                                    <a href="#" data-toggle="modal" class="did_list_form text-info mr-2" id="{{$did->id}}" data-groupid="{{$did->assignedto}}" data-target="#extra_did_modal" title="Add Extra Did">
-                                        <i class="nav-icon i-Add font-weight-bold"></i>
-                                    </a>
-
-                                </td>
-                            </tr>
-                            @endforeach
-
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th>Mobile No</th>
-                                <th>Did No</th>
-                                <th>PRI gateway</th>
-                                <th>Assigned to</th>
+                                <th>#</th>
+                                <th class="table-header-bg-color">Mobile No</th>
+                                <th class="table-header-bg-color">Did No</th>
+                                <th class="table-header-bg-color">PRI gateway</th>
+                                <th class="table-header-bg-color">Assigned to</th>
                                 <th>Action</th>
                             </tr>
                         </tfoot>
                     </table>
-                    {{ $dids->links() }}
                 </div>
 
             </div>
@@ -196,13 +144,6 @@
 </div>
 <!-- end of row -->
 
-<div class="customizer" title="Search" style="top:73px">
-    <a href="#" data-toggle="collapse" data-target="#filter-panel">
-        <div class="handle collapsed">
-            <i class="i-Search-People"></i>
-        </div>
-    </a>
-</div>
 @endsection
 
 @section('page-js')
@@ -211,8 +152,65 @@
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script>
     $(document).ready(function() {
-        $('.did_list').click(function() {
-            // alert(this.id);  
+        const dataTable = $('#did_list_table').DataTable({
+            "order": [
+                [0, "desc"]
+            ],
+            "searchDelay": 1000,
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": '{{ URL::route("didDataAjaxLoad") }}',
+                "type": "POST",
+                "data": function(data) {}
+            },
+            "columns": [{
+                    "data": "id"
+                },
+                {
+                    "data": "rdins"
+                },
+                {
+                    "data": "did"
+                },
+                {
+                    "data": "gprovider"
+                },
+                {
+                    "data": "name"
+                },
+                {
+                    data: null,
+                    orderable: false,
+                    render: function(data, type) {
+                        let htmlData = '<a href="edit/did/' + data.id + '" class="text-success mr-2" title="Edit Did">' +
+                            '<i class="nav-icon i-Pen-2 font-weight-bold"></i>' +
+                            '</a>' +
+                            '<a href="did/' + data.id + '" onclick="return confirm(' + "'Are you sure you want to delete this Did?'" + ')" class="text-danger mr-2" title="Delete Did">' +
+                            '<i class="nav-icon i-Close-Window font-weight-bold"></i>' +
+                            '</a>' +
+                            '<a href="#" data-toggle="modal" class="did_list text-warning mr-2" id="' + data.id + '" data-target="#list_modal" title="Extra Did List">' +
+                            '<i class="nav-icon i-File font-weight-bold"></i>' +
+                            '</a>' +
+                            '<a href="#" data-toggle="modal" class="did_list_form text-info mr-2" id="' + data.id + '" data-groupid="' + data.assignedto + '" data-target="#extra_did_modal" title="Add Extra Did">' +
+                            '<i class="nav-icon i-Add font-weight-bold"></i>' +
+                            '</a>';
+                        return htmlData;
+                    }
+                }
+            ]
+        });
+
+        $("#search_btn").on("click", function() {
+            dataTable.draw();
+        })
+
+        $("#clear_btn").on("click", function() {
+            $("#user_filter_form")[0].reset();
+            dataTable.draw();
+        });
+
+        $(document).on('click', '.did_list', function() {
             $.ajax({
                 url: '/extra_did/' + this.id, // This is the url we gave in the route
                 success: function(res) { // What to do if we succeed
@@ -238,7 +236,7 @@
             });
         });
 
-        $('.add_extra_did').on('submit', function(e) {
+        $(document).on('submit', '.add_extra_did', function(e) {
             e.preventDefault();
             var errors = '';
             $.ajax({
@@ -261,7 +259,6 @@
                             location.reload()
                         }, 500);
                     }
-
                 },
                 error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
                     toastr.error('Some errors are occured');
@@ -269,15 +266,13 @@
             });
         });
 
-        $('.did_list_form').click(function() {
+        $(document).on('click', '.did_list_form', function() {
             $("#did_id").val(this.id);
             $("#groupid").val($(this).attr("data-groupid"));
         });
 
-
         $(document).on("click", ".delete_extra_did", function(event) {
             var action = confirm('Are you sure you want to delete this extra did data?');
-
             if (action == true) {
                 $.ajax({
                     url: "delete_extra_did/" + this.id,
@@ -293,7 +288,6 @@
                 });
             }
         });
-
     });
 </script>
 

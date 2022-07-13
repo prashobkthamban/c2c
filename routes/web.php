@@ -117,6 +117,7 @@ Route::get('cdrtags', 'ReportController@cdrtags')->name('cdrtags');
 //Route::get('operatorgrp', 'ReportController@operatorgrp')->name('operatorgrp');
 Route::get('livecalls', 'ReportController@livecalls')->name('livecalls');
 Route::get('users', 'UserController@index')->name('UserList');
+Route::post('ajaxload/users', 'UserController@userDataAjaxLoad')->name('userDataAjaxLoad');
 Route::get('adduser', 'UserController@addUser')->name('addUser');
 Route::post('user_store', 'UserController@store')->name('user_store');
 Route::get('user/{id}', 'UserController@destroy')->name('deleteUser');
@@ -206,6 +207,7 @@ Route::post('edit_contact', 'ManagementController@editContact')->name('EditConta
 
 /* ---------- Did ----------- */
 Route::get('did_list', 'DidController@index')->name('DidList');
+Route::post('ajaxload/did_list', 'DidController@didDataAjaxLoad')->name('didDataAjaxLoad');
 Route::get('extra_did/{id}', 'DidController@extra_did')->name('extraDid');
 Route::post('add_extra_did', 'DidController@add_extra_did')->name('addExtraDid');
 Route::delete('delete_extra_did/{id}', 'DidController@delete_extra_did')->name('deleteExtraDid');

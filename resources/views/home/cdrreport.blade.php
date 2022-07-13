@@ -190,6 +190,7 @@
                                 <th>Duration</th>
                                 <th>Coin</th>
                                 <th>Status</th>
+                                <th>Tag</th>
                                 <th>Department</th>
                                 <th>Agent</th>
                                 <th class="noExport">Actions</th>
@@ -806,6 +807,12 @@
                     return '<a href="?" data-toggle="modal" data-target="#call_details_modal">' + data.status + '(' + data.cdrSubCount + ')' + '</a>';
                 }
             },
+            {
+                data: null,
+                render: function(data, type) {
+                    return '<span id="tag_span_' + data.cdrId + '">' + data.tag + '</span>';
+                }
+            },
             { "data": "departmentName" },
             { "data": "operatorName" },
             {
@@ -949,9 +956,8 @@
         if (className == 'show') {
             $("#second_row").remove();
         } else {
-            var tag = $('#row_' + id + ' .more-details').attr('data-tag');
             var operName = $('#row_' + id + ' .more-details').attr('data-operatorname');
-            $('#row_' + id).after('<tr id="second_row" class="show"><td></td><td colspan="7" style="background-color: #f4f5f7;"><span style="margin-right:100px;"><b>DNID :</b>' + did_no + '</span><span style="margin-right:100px;"><b>Duration :</b>' + firstLeg + '</span><span style="margin-right:100px;"><b>Coin :</b>' + creditUsed + '</span><span style="margin-right:100px;"><b>Assigned To :</b> <span id="assigned_' + id + '">' + operName + '</span></span><span style="margin-right:100px;"><b>Tag :</b> <span id="cdrTag_' + id + '">' + tag + '</span></span></td></tr>');
+            $('#row_' + id).after('<tr id="second_row" class="show"><td></td><td colspan="7" style="background-color: #f4f5f7;"><span style="margin-right:100px;"><b>DNID :</b>' + did_no + '</span><span style="margin-right:100px;"><b>Duration :</b>' + firstLeg + '</span><span style="margin-right:100px;"><b>Coin :</b>' + creditUsed + '</span><span style="margin-right:100px;"><b>Assigned To :</b> <span id="assigned_' + id + '">' + operName + '</span></span></td></tr>');
         }
     }
 
@@ -1311,7 +1317,7 @@
 
         });
 
-        $('.history_list').on('click', function(e) {
+        $(document).on('click', '.history_list', function(e) {
             var id = $(this).attr("id");
             var number = id.replace("history_", "");
             $.ajax({
@@ -1538,17 +1544,17 @@
 function exportCdr() {
     var url = "{{ url('cdrexport') }}";
     url += "?customer=" + $("#customer_id").val();
-    url += "&department=" + $("#department_id").val();
-    url += "&operator=" + $("#operator_id").val();
-    url += "&tag=" + $("#tag").val();
+    url += "&department=" + ($("#department_id").val() ? $("#department_id").val() : '');
+    url += "&operator=" + ($("#operator_id").val() ? $("#operator_id").val() : '');
+    url += "&tag=" + ($("#tag").val() ? $("#tag").val() : '');
     url += "&status=" + $("#status_id").val();
-    url += "&assigned_to=" + $("#assigned_to_id").val();
+    url += "&assigned_to=" + ($("#assigned_to_id").val() ? $("#assigned_to_id").val() : '');
     url += "&did_no=" + $("#did_no").val();
     url += "&caller_number=" + $("#caller_number").val();
     url += "&date=" + $("#date_select").val();
     url += "&start_date=" + $("#start_date").val();
     url += "&end_date=" + $("#end_date").val();
-    url += "&search_text=" + $("#cdr_table_filter input[type='search']").val();
+    url += "&search_text=" + ($("#cdr_table_filter input[type='search']").val() ? $("#cdr_table_filter input[type='search']").val() : '');
     console.log(url);
     window.location = url;
 }

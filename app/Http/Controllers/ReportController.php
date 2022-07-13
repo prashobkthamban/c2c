@@ -594,11 +594,11 @@ class ReportController extends Controller
     {
         $data = CdrReport::getReport($groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date, $searchText);
         if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller') {
-            $columns = ['DID_no', 'Customer', 'Caller', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Agent'];
+            $columns = ['DID_no', 'Customer', 'Caller ID Number', 'Caller ID Name', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Agent'];
         } elseif(Auth::user()->usertype ==  'groupadmin') {
-            $columns = ['DID_no', 'Caller', 'Email', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assigned To'];
+            $columns = ['DID_no', 'Caller ID Number', 'Caller ID Name', 'Email', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assigned To'];
         } elseif(Auth::user()->usertype ==  'operator') {
-            $columns = ['DID_no', 'Caller', 'Email', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assignedto'];
+            $columns = ['DID_no', 'Caller ID Number', 'Caller ID Name', 'Email', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assignedto'];
         }
 
         $result_array = [];
@@ -608,13 +608,13 @@ class ReportController extends Controller
             foreach($data['data'] as $k=>$cdrr) {
                 $array = array();
                 if(Auth::user()->usertype ==  'admin') {
-                    $array = array($cdrr->did_no,$cdrr->name,$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''));
+                    $array = array($cdrr->did_no,$cdrr->name,$cdrr->number, ($cdrr->contacts ? $cdrr->contacts->fname . ' ' . $cdrr->contacts->lname : ''), $cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''));
                 } elseif(Auth::user()->usertype == 'reseller') {
-                    $array = array($cdrr->did_no, ($cdrr->accountGroup ? $cdrr->accountGroup->name : ''),$cdrr->number ,$cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''));
+                    $array = array($cdrr->did_no, ($cdrr->accountGroup ? $cdrr->accountGroup->name : ''),$cdrr->number, ($cdrr->contacts ? $cdrr->contacts->fname . ' ' . $cdrr->contacts->lname : ''), $cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''));
                 } elseif(Auth::user()->usertype ==  'groupadmin') {
-                    $array = array($cdrr->did_no, ($cdrr->contacts ? $cdrr->contacts->fname . ' ' . $cdrr->contacts->lname . ' (' . $cdrr->number . ')' : $cdrr->number), ($cdrr->contacts ? $cdrr->contacts->email : ''), $cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg, $cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
+                    $array = array($cdrr->did_no, $cdrr->number, ($cdrr->contacts ? $cdrr->contacts->fname . ' ' . $cdrr->contacts->lname : ''), ($cdrr->contacts ? $cdrr->contacts->email : ''), $cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg, $cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
                 } elseif(Auth::user()->usertype ==  'operator') {
-                    $array = array($cdrr->did_no, ($cdrr->contacts ? $cdrr->contacts->fname . ' ' . $cdrr->contacts->lname . ' (' . $cdrr->number . ')' : $cdrr->number), ($cdrr->contacts ? $cdrr->contacts->email : ''), $cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
+                    $array = array($cdrr->did_no, $cdrr->number, ($cdrr->contacts ? $cdrr->contacts->fname . ' ' . $cdrr->contacts->lname : ''), ($cdrr->contacts ? $cdrr->contacts->email : ''), $cdrr->datetime,$cdrr->firstleg,$cdrr->secondleg,$cdrr->status,$cdrr->creditused,$cdrr->deptname,$cdrr->tag, ($cdrr->operatorAccount ? $cdrr->operatorAccount->opername : ''), ($cdrr->operatorAssigned ? $cdrr->operatorAssigned->opername : ''));
                 }
                 $notes = $this->notes($cdrr->uniqueid);
                 $notesCount = count($notes) > $notesCount ? count($notes) : $notesCount;
