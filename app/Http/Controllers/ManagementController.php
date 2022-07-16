@@ -432,7 +432,7 @@ class ManagementController extends Controller
     }
 
     public function mohListings() { 
-        $moh = DB::table('mohclassess')->orderBy('id', 'desc')->paginate(10);
+        $moh = DB::table('mohclassess')->orderBy('id', 'desc')->paginate(100);
         //dd($moh);
         return view('management.mohlistings', compact('moh'));
     }
@@ -444,6 +444,7 @@ class ManagementController extends Controller
             File::deleteDirectory($file);
         }
         DB::table('mohclassess')->where('id', $id)->delete();
+        $this->reloadMohConfigFile();
         toastr()->success('Record deleted successfully.');
         return redirect()->route('mohListings');
     }
@@ -458,7 +459,6 @@ class ManagementController extends Controller
                 'classname' => 'required|alpha_dash',
             ]);
         }
-        
         
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
@@ -482,10 +482,10 @@ class ManagementController extends Controller
                     }
                }
             }
-            //die;
+
             $moh = [
-                     'classname' => $request->get('classname'),
-                   ];
+                'classname' => $request->get('classname'),
+            ];
 
             if(empty($request->get('id'))) {
                 DB::table('mohclassess')->insert($moh);
@@ -496,6 +496,8 @@ class ManagementController extends Controller
                     ->update($moh);
                 $data['success'] = 'Moh updated successfully.';
             }
+
+            $this->reloadMohConfigFile();
         } 
          return $data;
     }
@@ -504,6 +506,19 @@ class ManagementController extends Controller
         return $moh = DB::table('mohclassess')->where('id', $id)->get();
     }
 
-
+    private function reloadMohConfigFile() {
+        $contents = "";
+        $entries = DB::table('mohclassess')->get();
+        if ($entries) {
+            foreach ($entries as $entry) {
+                $className = $entry->classname;
+                $contents .= "[" . $className . "]\n";
+                $contents .= "mode=files\n";
+                $contents .= "directory=" . config('constants.moh_file'). "/" . $className . "\n";
+            }
+        }
+        file_put_contents('/etc/asterisk/musiconhold-asterconnect.conf', $contents);
+        shell_exec("asterisk -rx 'moh reload'");
+    }
 
 }
