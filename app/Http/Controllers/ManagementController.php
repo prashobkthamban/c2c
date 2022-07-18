@@ -302,10 +302,20 @@ class ManagementController extends Controller
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
+            $didList = getDidList($request->get('groupid'));
+            $didNumber = '';
+            if (!empty($didList)) {
+                foreach ($didList as $list) {
+                    if ($list['id'] == $request->get('did')) {
+                        $didNumber = $list['did'];
+                        break;
+                    }
+                }
+            }
             $voicefile = [
                      'groupid' => $request->get('groupid'),
                      'did'=> $request->get('did'),
-		     'did_number'=> $request->get('did_number'),
+		             'did_number'=> $didNumber,
                      'wfile'=> $request->get('wfile'), 
                      'languagesection' => $request->get('languagesection'),
                      'mainmenupress0' => $request->get('mainmenupress0'),
