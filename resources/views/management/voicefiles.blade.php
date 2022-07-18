@@ -127,7 +127,6 @@
                     <div class="col-md-8 form-group mb-3">
                         <label for="firstName1">Did *</label>
                         {!! Form::select('did', ['' => 'Select Did'], null,array('class' => 'form-control', 'id' => 'did')) !!}
-                        {!! Form::hidden('did_number', '', array('id' =>'did_number')) !!}
                     </div>
                 </div>
                 <div class="row">
@@ -350,11 +349,6 @@
             }
         });
 
-        $('#did').change(function() {
-            var did_number = $("#did option:selected").text();
-            $("#did_number").val(did_number);
-        });
-
         $('.add_voicefile_form').on('submit', function(e) {
             e.preventDefault();
             var errors = '';
@@ -402,7 +396,6 @@
                     console.log(res);
                     $("#groupid").val(res.groupid);
                     didList(res.groupid, res.did);
-                    $("#did_number").val(res.did_number);
                     $("#voicefile_id").val(res.id);
                     $("#mainmenupress0").val(res.mainmenupress0);
                     $("#thank4caling").val(res.thank4caling);
