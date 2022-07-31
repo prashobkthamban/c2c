@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Holiday;
 use App\Models\Contact;
 use File;
+use Illuminate\Http\JsonResponse;
 
 class ManagementController extends Controller
 {
@@ -140,7 +141,7 @@ class ManagementController extends Controller
             }
 			
 
-        $voicemails = $query->orderBy('datetime','DESC')->paginate(10);
+        $voicemails = $query->orderBy('datetime','DESC')->paginate(25);
         return view('management.voicemail', compact('voicemails', 'customers', 'groupId', 'call_no', 'department', 'date'));
     }
 
@@ -266,13 +267,6 @@ class ManagementController extends Controller
         $requests = $request->all();
         $groupId = $request->get('customer');
         $customers = getCustomers();
-        $query = DB::table('did_voicefilesettings')
-                    ->leftJoin('accountgroup', 'did_voicefilesettings.groupid', '=', 'accountgroup.id')
-                    ->select('did_voicefilesettings.*', 'accountgroup.name');
-        if (!empty($groupId)) {
-            $query->where('accountgroup.id', $groupId);
-        }
-        $voicefiles = $query->orderBy('id', 'desc')->paginate(10);
         $voicefilesnames = DB::table('voicefilesnames')->where('file_type', 'mainmenupress0')->pluck('filename', 'filename');
         $thank4calling = DB::table('voicefilesnames')->where('file_type', 'thank4caling')->pluck('filename', 'filename');
         $repeatoptions = DB::table('voicefilesnames')->where('file_type', 'repeatoptions')->pluck('filename', 'filename');
@@ -292,7 +286,74 @@ class ManagementController extends Controller
         return view('management.voicefiles', compact('requests', 'customers', 'voicefiles', 'voicefilesnames', 'thank4calling', 'repeatoptions', 'previousmenu', 'voicemailmsg', 'trasfringcall', 'contactusoon', 'talktooperator9', 'noinput', 'wronginput', 'nonworkinghours', 'moh', 'transferingagent', 'holiday', 'aombefore', 'aomafter'));
     }
 
-   public function addVoicefile(Request $request) {
+    public function voiceFilesAjaxLoad(Request $request) {
+        $searchText = $request->get('search')['value'];
+
+        $sortOrder = $request->get('order')['0'];
+        $columnArray = [
+            '0' => ['accountgroup.name'],
+            '1' => ['did_voicefilesettings.welcomemsg'],
+            '2' => ['did_voicefilesettings.flanguagesection'],
+            '3' => ['did_voicefilesettings.did_number'],
+            '4' => ['did_voicefilesettings.MOH']
+        ];
+        $sortOrderArray = [];
+        foreach ($columnArray[$sortOrder['column']] as $field) {
+            $sortOrderArray[$field] = $sortOrder['dir'];
+        }
+
+        $limit = $request->get('length');
+        $skip = $request->get('start');
+        $draw = $request->get('draw');
+
+        $query = DB::table('did_voicefilesettings')
+                    ->leftJoin('accountgroup', 'did_voicefilesettings.groupid', '=', 'accountgroup.id')
+                    ->select('did_voicefilesettings.*', 'accountgroup.name');
+        $recordsTotal = $query->count();
+        if(!empty($searchText)) {
+            $searchText = strtolower(trim($searchText));
+            $query->where(DB::raw('lower(accountgroup.name)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(did_voicefilesettings.welcomemsg)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(did_voicefilesettings.did_number)'), 'like', '%' . $searchText . '%')
+            ;
+        }
+        $recordsFiltered = $query->count();
+
+        if (count($sortOrderArray) > 0) {
+            foreach ($sortOrderArray as $field => $order) {
+                $query->orderBy($field, $order);
+            }
+        }
+
+        if ($limit > 0) {
+            $query->skip($skip)
+                ->take($limit);
+        }
+        $results = $query->get();
+
+        $data = [];
+        if ($results) {
+            foreach ($results as $result) {
+                $data[] = [
+                    'id' => $result->id,
+                    'name' => $result->name,
+                    'welcomemsg' => $result->welcomemsg,
+                    'flanguagesection' => $result->flanguagesection,
+                    'did_number' => $result->did_number,
+                    'MOH' => $result->MOH,
+                ];
+            }
+        }
+
+        return new JsonResponse([
+            "draw" => $draw,
+            "recordsTotal" => $recordsTotal,
+            "recordsFiltered" => $recordsFiltered,
+            "data" => $data
+        ]);
+    }
+
+    public function addVoicefile(Request $request) {
         $fileName1 = $fileName2 = '';
         $validator = Validator::make($request->all(), [
             'groupid' => 'required',

@@ -5,6 +5,11 @@
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.date.css')}}">
 <link rel="stylesheet" href="{{asset('assets/styles/vendor/pickadate/classic.time.css')}}">
+<style>
+    .table-header-bg-color {
+        background-color: #6633994f;
+    }
+</style>
 @endsection
 
 @section('main-content')
@@ -14,84 +19,37 @@
 </div>
 <div class="separator-breadcrumb border-top"></div>
 
-<div class="row">
-    <div id="filter-panel" class="col-lg-12 col-md-12 filter-panel collapse {{count($requests) > 0 ? 'show' : ''}}">
-        <div class="card mb-2">
-            <div class="card-body">
-                <div>
-                    <h5 class="ml-3">Search Panel</h5></br>
-                    <form class="form" role="form" id="cdr_filter_form">
-                        <div class="row" style="margin-right: 24px;margin-left: 24px;">
-                            <div class="col-md-4" id="customer_div">
-                                <label class="filter-col" for="pref-perpage">Customers</label>
-                                <select name="customer" class="form-control" id="customer_id">
-                                    <option value="">All</option>
-                                    @if(!empty($customers))
-                                    @foreach($customers as $customer )
-                                    <option value="{{$customer->id}}" @if(isset($requests['customer']) && $customer->id == $requests['customer']) selected @endif>{{$customer->name}}
-                                    </option>
-                                    @endforeach
-                                    @endif
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-6" style="margin-top: 24px;">
-                            <button id="btn" class="btn btn-outline-danger" name="btn" style="margin-right: 15px;">Search</button>
-                            <a href="{{url('did_list')}}" class="btn btn-outline-secondary" name="btn">Clear</a>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="row mb-4">
     <div class="col-md-12 mb-4">
         <div class="card text-left">
             <div class="card-body">
                 <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#add_voice_file" class="btn btn-primary" id="add_voice"> Add New Voicefile</a>
                 <div class="table-responsive">
-                    <table id="zero_configuration_table" class="display table table-striped table-bordered" style="width:100%">
+                    <table id="voice_file_table" class="display table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
-                                <th>Customer</th>
-                                <th>Welcome</th>
+                                <th class="table-header-bg-color">Customer</th>
+                                <th class="table-header-bg-color">Welcome</th>
                                 <th>Multi Language file</th>
-                                <th>DID</th>
+                                <th class="table-header-bg-color">DID</th>
                                 <th>MOH</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
 
-                            @foreach($voicefiles as $listOne)
-                            <tr>
-                                <td>{{$listOne->name}}</td>
-                                <td>{{$listOne->welcomemsg}}</td>
-                                <td>{{$listOne->flanguagesection}}</td>
-                                <td>{{$listOne->did_number}}</td>
-                                <td>{{$listOne->MOH}}</td>
-                                <td><a href="#" data-toggle="modal" data-target="#add_voice_file" class="text-success mr-2 edit_voicefile" id="{{$listOne->id}}">
-                                        <i class="nav-icon i-Pen-2 font-weight-bold"></i>
-                                    </a></td>
-                            </tr>
-                            @endforeach
-
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th>Customer</th>
-                                <th>Welcome</th>
+                                <th class="table-header-bg-color">Customer</th>
+                                <th class="table-header-bg-color">Welcome</th>
                                 <th>Multi Language file</th>
-                                <th>DID</th>
+                                <th class="table-header-bg-color">DID</th>
                                 <th>MOH</th>
                                 <th>Action</th>
                             </tr>
                         </tfoot>
-
                     </table>
-                    {{ $voicefiles->links() }}
                 </div>
 
             </div>
@@ -325,13 +283,13 @@
 
 </div>
 
-<div class="customizer" title="Search" style="top:75px">
+<!-- <div class="customizer" title="Search" style="top:75px">
     <a href="#" data-toggle="collapse" data-target="#filter-panel">
         <div class="handle collapsed">
             <i class="i-Search-People"></i>
         </div>
     </a>
-</div>
+</div> -->
 
 @endsection
 
@@ -340,6 +298,59 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
+    const dataTable = $('#voice_file_table').DataTable({
+        "order": [
+            [0, "desc"]
+        ],
+        "searchDelay": 1000,
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": '{{ URL::route("voiceFilesAjaxLoad") }}',
+            "type": "POST",
+            "data": function(data) {
+                data._token = "{{ csrf_token() }}";
+            }
+        },
+        "columns": [{
+                "data": "name"
+            },
+            {
+                "data": "welcomemsg"
+            },
+            {
+                "data": "flanguagesection"
+            },
+            {
+                "data": "did_number"
+            },
+            {
+                "data": "MOH"
+            },
+            {
+                data: null,
+                orderable: false,
+                render: function(data, type) {
+                    let htmlData = '<a href="#" data-toggle="modal" data-target="#add_voice_file" class="text-success mr-2 edit_voicefile" id="' + data.id + '">' +
+                        '<i class="nav-icon i-Pen-2 font-weight-bold"></i>' +
+                        '</a>' +
+                        '<a href="javascript:void(0)" onClick="deleteItem(' + data.id + ', ' + "'did_voicefilesettings'" + ')" class="text-danger mr-2">' +
+                        '<i class="nav-icon i-Close-Window font-weight-bold"></i>' +
+                        '</a>';
+                    return htmlData;
+                }
+            }
+        ]
+    });
+
+    function reloadDataTable() {
+        dataTable.draw();
+    }
+
+    $("#clear_btn").on("click", function() {
+        $("#voice_file_filter_form")[0].reset();
+        dataTable.draw();
+    });
     $(document).ready(function() {
         $("input:file").change(function() {
             var ext = $('input:file').val().split('.').pop().toLowerCase();
@@ -385,7 +396,7 @@
             });
         });
 
-        $('.edit_voicefile').on('click', function(e) {
+        $(document).on('click', '.edit_voicefile', function(e) {
             $("#exampleModalCenterTitle-2").text('Edit Voicefile');
             var id = $(this).attr("id");
             $.ajax({

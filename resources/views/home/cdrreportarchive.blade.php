@@ -253,6 +253,7 @@
         ],
         "searching": false,
         "searchDelay": 1000,
+        "pageLength": 25,
         "processing": true,
         "serverSide": true,
         "ajax": {

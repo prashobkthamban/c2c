@@ -29,6 +29,9 @@
     .datepicker {
       z-index: 1600 !important; /* has to be larger than 1050 */
     }
+    .hidden {
+        display: none;
+    }
 </style>
 @endsection
 
@@ -582,6 +585,7 @@
                 </button>
             </div>
             {!! Form::open(['class' => 'contact_form', 'method' => 'post']) !!}
+            <input type="hidden" id="contact_form_contact_id" />
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-2 form-group mb-3"></div>
@@ -736,6 +740,7 @@
         "order": [[2, "desc" ]],
         "searching": false,
         "searchDelay": 1000,
+        "pageLength": 25,
         "processing": true,
         "serverSide": true,
         "ajax": {
@@ -845,12 +850,11 @@
                                 htmlData += '</a>';
                             }
                         }
-                        if (data.cdrNotesCount > 0) {
-                            htmlData += '<a href="#" class="btn bg-gray-100 notes_list" title="Notes" ';
-                            htmlData += 'data-toggle="modal" data-target="#notes_modal" id="notes_' + data.uniqueId + '">';
-                            htmlData += '<i class="i-Notepad font-weight-bold" style="color:#00c5bc"></i>';
-                            htmlData += '</a>';
-                        }
+                        let noteDisplayClass = data.cdrNotesCount > 0 ? '' : 'hidden';
+                        htmlData += '<a href="#" class="btn bg-gray-100 notes_list ' + noteDisplayClass + '" title="Notes" ';
+                        htmlData += 'data-toggle="modal" data-target="#notes_modal" id="notes_' + data.uniqueId + '">';
+                        htmlData += '<i class="i-Notepad font-weight-bold" style="color:#00c5bc"></i>';
+                        htmlData += '</a>';
                         if (data.userType == 'groupadmin') {
                             htmlData += '<a href="" class="btn bg-gray-100" title="Assign To" ';
                             htmlData += 'data-toggle="dropdown" id="history_' + data.number + '">';
@@ -896,8 +900,8 @@
 
                             let contactText = data.isContactSet ? 'Update Contact': 'Add Contact';
                             htmlData += '<div class="dropdown-menu" aria-labelledby="action_' + data.cdrId + '">';
-                            htmlData += '<a class="dropdown-item edit_contact" href="#" data-toggle="modal" data-target="#contact_modal" ';
-                            htmlData += 'id="contact_' + data.contactId + '" data-email="' + data.email + '" data-fname="' + data.firstName + '" data-lname="' + data.lastName + '" data-phone="' + data.number + '">' + contactText;
+                            htmlData += '<a class="dropdown-item edit_contact contact_' + data.number + '" href="#" data-toggle="modal" data-target="#contact_modal" ';
+                            htmlData += 'data-contact-id="contact_' + data.contactId + '" data-email="' + data.email + '" data-fname="' + data.firstName + '" data-lname="' + data.lastName + '" data-phone="' + data.number + '">' + contactText;
                             htmlData += '</a>';
 
                             let tagText = data.tag ? 'Update Tag': 'Add Tag';
@@ -1247,11 +1251,12 @@
         });
 
         $(document).on('click', '.edit_contact', function(e) {
-            var id = $(this).attr("id");
+            var id = $(this).attr("data-contact-id");
             var email = $(this).attr("data-email");
             var fname = $(this).attr("data-fname");
             var lname = $(this).attr("data-lname");
             var phone = $(this).attr("data-phone");
+            $("#contact_form_contact_id").val(phone);
             var contactid = id.replace("contact_", "");
             $("#contact_id").val(contactid);
             $("#emailaddress").val(email);

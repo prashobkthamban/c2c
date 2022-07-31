@@ -218,7 +218,7 @@
         });
     </script>
      
-    <script src="{{asset('assets/js/ajaxfunctions.js?v=1.0.3')}}"></script>
+    <script src="{{asset('assets/js/ajaxfunctions.js?v=1.0.4')}}"></script>
     {{-- laravel js --}}
     {{-- <script src="{{mix('assets/js/laravel/app.js')}}"></script> --}}
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
