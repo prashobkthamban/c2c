@@ -176,17 +176,19 @@ class ReportController extends Controller
                 'email' => $request->get('email') ? $request->get('email') : '',
                 'groupid' => Auth::user()->groupid
             ];
-            if(!empty($request->get('contact_id'))) {
+            $contactId = $request->get('contact_id');
+            if(!empty($contactId)) {
                 DB::table('contacts')
-                    ->where('id', $request->get('contact_id'))
+                    ->where('id', $contactId)
                     ->update($contact);
-                $data['success'] = 'Contact update successfully.';
-                $data['fname'] = $request->get('fname');
+                $data['success'] = 'Contact updated successfully.';
             } else {
-                DB::table('contacts')->insert($contact);
+                $contactId = DB::table('contacts')->insertGetId($contact);
                 $data['success'] = 'Contact added successfully.';
-                $data['fname'] = $request->get('fname');
             }
+            $data['contactId'] = $contactId;
+            $data['callerId'] = $contact['fname'] . ' ' . $contact['lname'];
+            $data = array_merge($data, $contact);
 
         }
         return $data;
@@ -402,14 +404,20 @@ class ReportController extends Controller
     }
 
     public function deleteComment($id) {
+        $data = DB::table('cdr_notes')->where('id',$id)->first();
         $res = DB::table('cdr_notes')->where('id',$id)->delete();
+        $notesCount = DB::table('cdr_notes')
+            ->where('uniqueid', $data->uniqueid)
+            ->count();
         return response()->json([
-            'status' => $res
+            'status' => $res,
+            'uniqueId' => $data->uniqueid,
+            'notesCount' => $notesCount,
         ]);
     }
 
     public function downloadFile($id, $file) {
-        $myFile = '/var/spool/asterisk/monitorDONE/MP3/'.$id.'/'.$file;
+        $myFile = '/home/var/spool/asterisk/monitorDONE/MP3/'.$id.'/'.$file;
         return response()->download($myFile);
     }
 

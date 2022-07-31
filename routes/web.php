@@ -188,6 +188,7 @@ Route::get('voicemail', 'ManagementController@voicemail')->name('Voicemail');
 
 /* voicefiles */
 Route::get('voice_files', 'ManagementController@voiceFiles')->name('voiceFiles');
+Route::post('ajaxload/voice_files', 'ManagementController@voiceFilesAjaxLoad')->name('voiceFilesAjaxLoad');
 Route::post('add_voicefile', 'ManagementController@addVoicefile')->name('addVoicefile');
 Route::get('get_voicefile/{id}', 'ManagementController@getVoicefile')->name('getVoicefile');
 
@@ -436,6 +437,8 @@ Route::get('notification/todo','HomeController@NotificationToDo')->name('Notific
 Route::get('commands/migrate-data-to-accounts-table','CommandController@migrateData')->name('migrateData');
 Route::get('commands/hash-password','CommandController@hashPassword')->name('hashPassword');
 Route::get('commands/update-reseller-group','CommandController@updateResellerGroup')->name('updateResellerGroup');
+
+Route::get('cron-job/send-sample-mail','CronJobController@sendSampleMail')->name('sendSampleMail');
 
 /*
 |--------------------------------------------------------------------------

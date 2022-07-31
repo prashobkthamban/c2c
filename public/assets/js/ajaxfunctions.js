@@ -30,7 +30,11 @@ function deleteItem(id, table) {
             success: function(result) { 
                 if(result) {
                     $("#row_"+id).remove();
-                    $("#search_btn").trigger('click');
+                    if ($("#search_btn").length) {
+                        $("#search_btn").trigger('click');
+                    } else {
+                        reloadDataTable();
+                    }
                     toastr.success('Delete item successfully.'); 
                 } else {
                     toastr.error('Some errors are occured.');
@@ -111,18 +115,16 @@ $(document).ready(function(){
                     });
                     toastr.error(errors);
                 } else {
-                    /*noteHTML += "<tr class='cmnt_row_" + res.id + "'>";
-                    noteHTML += "<td>" + res.result.operator  + "</td>";
-                    noteHTML += "<td>" + moment(res.result.datetime.date).format('YYYY-MM-DD hh:mm:ss')  + "</td>";
-                    noteHTML += "<td>" + res.result.note + "</td>";
-                    noteHTML += "<td><a href='#' class='text-danger mr-2 delete_comment' id='" + res.id + "'><i class='nav-icon i-Close-Window font-weight-bold'></td>";
-                    noteHTML += "</tr>";
-                    $("#notes_list_table tbody").append(noteHTML);*/
                     $("#add_note_modal").modal('hide');
-                    toastr.success(res.success);        
-                    setTimeout( function() { 
-                            location.reload(true); 
-                    }, 300);             
+                    toastr.success(res.success);
+                    $('.notes_form')[0].reset();
+                    if ($('#cdr_table').length) {
+                        $("#notes_" + uniqueId.replace('.', '\\.')).removeClass('hidden');
+                    } else {
+                        setTimeout( function() {
+                                location.reload(true);
+                        }, 300);
+                    }         
                 }
                
             },
@@ -154,10 +156,21 @@ $(document).ready(function(){
                 toastr.error(errors);
             } else {
                 $("#contact_modal").modal('hide');
-                toastr.success(res.success);    
-                setTimeout( function() { 
-                        location.reload(true); 
-                }, 800);            
+                toastr.success(res.success);
+                let id = $("#contact_form_contact_id").val();
+                if ($('#cdr_table').length) {
+                    $('[title="' + res.phone + '"]').html('<i class="i-Telephone"></i>' + res.callerId);
+                    $('.contact_' + id).attr('data-contact-id', 'contact_' + res.contactId);
+                    $('.contact_' + id).attr('data-fname', res.fname);
+                    $('.contact_' + id).attr('data-lname', res.lname);
+                    $('.contact_' + id).attr('data-email', res.email);
+                    $('.contact_' + id).attr('data-phone', res.phone);
+                    $('.contact_' + id).text('Update Contact');
+                } else {
+                    setTimeout( function() { 
+                            location.reload(true); 
+                    }, 800); 
+                }         
             }
            
         },
@@ -213,8 +226,12 @@ $(document).ready(function(){
                 success: function (res) {
 
                     if(res.status == 1) {
-                       $(".cmnt_row_"+id).remove();
-                       toastr.success('Comment delete successfully.')
+
+                        if (res.notesCount == 0) {
+                            $("#notes_" + res.uniqueId.replace('.', '\\.')).addClass('hidden');
+                        }
+                        $(".cmnt_row_"+id).remove();
+                        toastr.success('Comment delete successfully.')
                     }
                     
                 }

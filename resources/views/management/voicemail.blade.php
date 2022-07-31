@@ -100,6 +100,12 @@
                                 <td>{{$voicemail->duration}}</td>
                                 <td>{{$voicemail->datetime}}</td>
                                 <td>
+                                    <a href="{{ url('download_file/' . $voicemail->filename)}}" class="btn bg-gray-100">
+                                        <i class="nav-icon i-Download1 font-weight-bold"></i>
+                                    </a>
+                                    <a href="#" class="btn bg-gray-100 play_audio" data-toggle="modal" data-target="#play_modal" data-file="{{ url('download_file/' . $voicemail->filename)}}">
+                                        <i class="i-Play-Music" style="color:#0000c9"></i>
+                                    </a>
                                 </td>
 
                             </tr>
@@ -150,7 +156,8 @@
         $('#voicemail_table').DataTable({
             "order": [
                 [5, "desc"]
-            ]
+            ],
+            "bLengthChange": false
         });
         $('.datepicker').datepicker({
             dateFormat: 'dd-mm-yy'
