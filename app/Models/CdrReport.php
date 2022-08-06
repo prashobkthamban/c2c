@@ -185,6 +185,8 @@ class CdrReport extends Model
                     'callerId' => $contact ? $contact->fname . ' ' . $contact->lname : $result->number,
                     'number' => $result->number,
                     'dateTime' => $result->datetime,
+                    'totalTime' => $result->firstleg,
+                    'talkTime' => $result->secondleg,
                     'duration' => $result->firstleg. '(' .$result->secondleg. ')',
                     'creditUsed' => $result->creditused,
                     'status' => $result->status,
@@ -201,6 +203,7 @@ class CdrReport extends Model
                     'email' => $contact ? $contact->email : '',
                     'firstName' => $contact ? $contact->fname : '',
                     'lastName' => $contact ? $contact->lname : '',
+                    'fullName' => $contact ? $contact->fname . ' ' . $contact->lname : '',
                     'isReminderSet' => !empty($result->reminder) ? true : false
                 ];
             }

@@ -759,7 +759,7 @@
                 data.date = $("#date_select").val();
                 data.start_date = $("#start_date").val();
                 data.end_date = $("#end_date").val();
-                data.fetchArchive = false;
+                data.fetchArchive = '{{$fetchArchive}}';
             }
         },
         "headerCallback": function( thead, data, start, end, display ) {
@@ -1559,6 +1559,7 @@ function exportCdr() {
     url += "&date=" + $("#date_select").val();
     url += "&start_date=" + $("#start_date").val();
     url += "&end_date=" + $("#end_date").val();
+    url += "&fetchArchive={{$fetchArchive}}";
     url += "&search_text=" + ($("#cdr_table_filter input[type='search']").val() ? $("#cdr_table_filter input[type='search']").val() : '');
     console.log(url);
     window.location = url;
