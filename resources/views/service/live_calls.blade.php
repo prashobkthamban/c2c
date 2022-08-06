@@ -28,6 +28,9 @@
                                 <th>DID Number</th>
                                 <th>Department</th>
                                 <th>Operator</th>
+                                @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'reseller')
+                                <th>Webhook Link</th>
+                                @endif
                                 <th>Call status</th>
                                 <th>Dial Statergy</th>
                                 <th>Duration</th>
@@ -56,11 +59,20 @@
                                 <td>{{ $row->DID }}</td>
                                 <td>{{ $row->dept_name }}</td>
                                 <td>{{ $row->opername }}</td>
+                                @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'reseller')
+                                <td style="text-align: center;">
+                                    @if(isset($row->apitype) && $row->apitype == 'webhook')
+                                        <a href="{{str_replace('{CALLERID}', $row->callerid, $row->api)}}" target="_blank">
+                                            <i class="i-Link-2"></i>
+                                        </a>
+                                    @endif
+                                </td>
+                                @endif
                                 <td>{{ $row->call_status }}</td>
                                 <td>{{ $row->dial_statergy }}</td>
                                 <td>{{ $interval->format('%H:%i:%s') }}</td>
                                 @if(Auth::user()->usertype == 'groupadmin')
-                                <td><i class="i-Headphone" data-toggle="modal" data-target="#listen_modal"></i></td>
+                                <td style="text-align: center;"><i class="i-Headphone" data-toggle="modal" data-target="#listen_modal"></i></td>
                                 @endif
                             </tr>
                             @endforeach
@@ -76,6 +88,9 @@
                                 <th>DID Number</th>
                                 <th>Department</th>
                                 <th>Operator</th>
+                                @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'reseller')
+                                <th>Webhook Link</th>
+                                @endif
                                 <th>Call status</th>
                                 <th>Dial Statergy</th>
                                 <th>Duration</th>

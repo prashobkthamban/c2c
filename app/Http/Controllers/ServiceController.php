@@ -196,6 +196,7 @@ class ServiceController extends Controller
             ->leftJoin('accountgroup', 'cur_channel_used.groupid', '=', 'accountgroup.id')
             ->leftJoin('operatoraccount', 'cur_channel_used.operatorid', '=', 'operatoraccount.id')
             ->leftJoin('operatordepartment', 'cur_channel_used.departmentid', '=', 'operatordepartment.id')
+            ->leftJoin('pushapi', 'pushapi.groupid', '=', 'accountgroup.id')
             ->where('cur_channel_used.calltype', 'ivr');
 
         if (Auth::user()->usertype == 'groupadmin') {
@@ -209,7 +210,7 @@ class ServiceController extends Controller
             $query->where('cur_channel_used.operatorid', Auth::user()->operator_id);
         }
             
-        $query->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name')->orderBy('id', 'desc');
+        $query->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name', 'pushapi.api', 'pushapi.apitype')->orderBy('id', 'desc');
         $result = $query->paginate(100);
         //dd($result);
         return view('service.live_calls', compact('result'));
