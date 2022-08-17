@@ -62,7 +62,7 @@
                                 @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'reseller')
                                 <td style="text-align: center;">
                                     @if(isset($row->apitype) && $row->apitype == 'webhook')
-                                        <a href="{{str_replace('{CALLERID}', $row->callerid, $row->api)}}" target="_blank">
+                                        <a href="{{str_replace('{CALLERID}', substr($row->callerid, -10), $row->api)}}" target="_blank">
                                             <i class="i-Link-2"></i>
                                         </a>
                                     @endif
