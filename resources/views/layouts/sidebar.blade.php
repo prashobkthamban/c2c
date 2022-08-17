@@ -178,6 +178,26 @@
                             <span class="item-name">Voice Mails</span>
                         </a>
                     </li>
+                    @if(Auth::user()->usertype == 'admin')
+                    <li class="nav-item">
+                        <a class="{{ Route::currentRouteName()=='daily_report' ? 'open' : '' }}" href="{{url('daily_report')}}" >
+                            <i class="nav-icon i-Over-Time"></i>
+                            <span class="item-name">Daily Report</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="{{ Route::currentRouteName()=='weekly_report' ? 'open' : '' }}" href="{{url('weekly_report')}}" >
+                            <i class="nav-icon i-Notepad-2"></i>
+                            <span class="item-name">Weekly Report</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="{{ Route::currentRouteName()=='monthly_report' ? 'open' : '' }}" href="{{url('monthly_report')}}" >
+                            <i class="nav-icon i-Calendar-4"></i>
+                            <span class="item-name">Monthly Report</span>
+                        </a>
+                    </li>
+                    @endif
                 </ul>
                 <ul class="childNav" data-parent="insightivr">
                     @if(Auth::user()->usertype == 'admin')
