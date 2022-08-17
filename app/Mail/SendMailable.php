@@ -11,13 +11,16 @@ class SendMailable extends Mailable
 {
     use Queueable, SerializesModels;
 
+    protected $mailData;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($mailData)
     {
+        $this->mailData = $mailData;
     }
 
     /**
@@ -27,6 +30,21 @@ class SendMailable extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.test');
+        $mail = $this->to($this->mailData['to'])
+            ->subject($this->mailData['subject'])
+            ->view($this->mailData['view'])
+            ->with($this->mailData['params']);
+
+        if (isset($this->mailData['fromAddress']) && isset($this->mailData['fromName'])) {
+            $mail->from($this->mailData['fromAddress'], $this->mailData['fromName']);
+        }
+
+        if (isset($this->mailData['attachment'])) {
+            $mail->attach($this->mailData['attachment'], [
+                'mime' => $this->mailData['fileType']]
+            );
+        }
+
+        return $mail;
     }
 }

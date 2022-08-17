@@ -19,6 +19,7 @@ class VerifyCsrfToken extends Middleware
      * @var array
      */
     protected $except = [
-        //
+        'https://ivrmanager.in/send-mail',
+        'http://127.0.0.1:81/send-mail',
     ];
 }

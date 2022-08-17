@@ -62,6 +62,9 @@ Route::post('fetch_operators','ReportController@fetchOperators');
 Route::post('fetch_tags','ReportController@fetchTags');
 Route::post('fetch_status','ReportController@fetchStatus');
 Route::post('fetch_did_numbers','ReportController@fetchDidNumbers');
+Route::get('daily_report','ReportController@dailyReport');
+Route::get('weekly_report','ReportController@weeklyReport');
+Route::get('monthly_report','ReportController@monthlyReport');
 
 /* ----------Recharge && Billing----------- */
 Route::get('billing', 'ServiceController@billing')->name('Billing');
@@ -438,7 +441,8 @@ Route::get('commands/migrate-data-to-accounts-table','CommandController@migrateD
 Route::get('commands/hash-password','CommandController@hashPassword')->name('hashPassword');
 Route::get('commands/update-reseller-group','CommandController@updateResellerGroup')->name('updateResellerGroup');
 
-Route::get('cron-job/send-sample-mail','CronJobController@sendSampleMail')->name('sendSampleMail');
+Route::post('send-mail','MailController@sendMail');
+Route::get('get-csrf-token','MailController@getCsrfToken');
 
 /*
 |--------------------------------------------------------------------------
