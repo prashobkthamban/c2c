@@ -5,29 +5,28 @@
 
     $data = [
         'to' => $emailTo,
-        'subject' => "daily IVR Report-Surat-bharuch",
+        'subject' => "Sample Mail from Dev",
         'view' => 'emails.test',
-        'heading' => 'Sample Heading',
-        'content' => 'Dear sir, Please find attached report.',
+        'heading' => 'Test Mail',
+        'content' => 'Dear, Please find attached report.',
         'attachment' => $fileName,
         'fileType' => 'text/csv'
     ];
 
     $ch = curl_init();
 
-    curl_setopt($ch, CURLOPT_URL,"http://127.0.0.1:81/send-mail");
+    curl_setopt($ch, CURLOPT_URL,"http://127.0.0.1:6002/send-mail");
     curl_setopt($ch, CURLOPT_POST, 1);
     curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
     $output = curl_exec($ch);
 
-    curl_close ($ch);
+    curl_close($ch);
 
-    echo $output;
-    if ($output == "OK") {
-        echo("Message successfully sent!");
+    if (trim($output) == "OK") {
+        echo("Message successfully sent!\n");
     } else {
-        echo("Message not sent!");
+        echo("Message not sent!\n");
     }
 ?>
