@@ -775,4 +775,181 @@ class ReportController extends Controller
 
         return new JsonResponse(['status' => true, 'data' => $data]);
     }
+
+    public function dailyReport(Request $request) {
+        $data = $this->getReportConfigPageData('daily');
+        $data['heading'] = 'Daily CDR Report';
+        return view('reports.report_config', $data);
+    }
+
+    public function weeklyReport(Request $request) {
+        $data = $this->getReportConfigPageData('weekly');
+        $data['heading'] = 'Weekly CDR Report';
+        return view('reports.report_config', $data);
+    }
+
+    public function monthlyReport(Request $request) {
+        $data = $this->getReportConfigPageData('monthly');
+        $data['heading'] = 'Monthly CDR Report';
+        return view('reports.report_config', $data);
+    }
+
+    private function getReportConfigPageData($type) {
+        $weeks = [
+            'Sunday' => 'Sunday',
+            'Monday' => 'Monday',
+            'Tuesday' => 'Tuesday',
+            'Wednesday' => 'Wednesday',
+            'Thursday' => 'Thursday',
+            'Friday' => 'Friday',
+            'Saturday' => 'Saturday',
+        ];
+        $days = [];
+        for ($i = 1 ; $i <= 31 ; $i++) {
+            $day = str_pad($i, 2, '0', STR_PAD_LEFT);
+            $days[$day] = $day;
+        }
+        $tables = $this->getReportConfigTables();
+        return [
+            'customers' => getCustomers(),
+            'weeks' => $weeks,
+            'days' => $days,
+            'type' => $type,
+            'tableName' => $tables[$type]
+        ];
+    }
+
+    private function getReportConfigTables() {
+        return [
+            'daily' => 'ast_daily',
+            'weekly' => 'ast_weekly',
+            'monthly' => 'ast_monthly',
+        ];
+    }
+
+    public function reportConfigDataAjaxLoad(Request $request) {
+        $tables = $this->getReportConfigTables();
+        $type = $request->get('type');
+        $mainTable = $tables[$type];
+        $searchText = $request->get('search')['value'];
+
+        $sortOrder = $request->get('order')['0'];
+        $secondColumn = '';
+        if ($type == 'weekly') {
+            $secondColumn = 'day';
+        } else if ($type == 'monthly') {
+            $secondColumn = 'date';
+        }
+        $columnArray = [
+            '0' => ['accountgroup.name'],
+            '1' => [$mainTable . '.time'],
+            '2' => [$mainTable . '.' . $secondColumn],
+            '3' => [$mainTable . '.email']
+        ];
+        $sortOrderArray = [];
+        foreach ($columnArray[$sortOrder['column']] as $field) {
+            $sortOrderArray[$field] = $sortOrder['dir'];
+        }
+
+        $limit = $request->get('length');
+        $skip = $request->get('start');
+        $draw = $request->get('draw');
+        $data = DB::table($mainTable)
+                ->select($mainTable . '.*', 'accountgroup.name as customerName')
+                ->leftJoin('accountgroup', 'accountgroup.id', '=', $mainTable . '.groupid');
+        $recordsTotal = $data->count();
+        if(!empty($searchText)) {
+            $searchText = strtolower(trim($searchText));
+            $data->where(DB::raw('lower(accountgroup.name)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(' . $mainTable . '.time)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(' . $mainTable . '.email)'), 'like', '%' . $searchText . '%')
+            ;
+        }
+        $recordsFiltered = $data->count();
+
+        if (count($sortOrderArray) > 0) {
+            foreach ($sortOrderArray as $field => $order) {
+                $data->orderBy($field, $order);
+            }
+        }
+
+        if ($limit > 0) {
+            $data->skip($skip)
+                ->take($limit);
+        }
+        $results = $data->get();
+
+        $dataArray = [];
+        if(count($results) > 0) {
+            foreach($results as $result) {
+                $dayOrDate = '';
+                if ($type == 'weekly') {
+                    $dayOrDate = $result->day;
+                } else if ($type == 'monthly') {
+                    $dayOrDate = $result->date;
+                }
+                $dataArray[] = [
+                    'id' => $result->id,
+                    'customerName' => $result->customerName,
+                    'time' => $result->time,
+                    'dayOrDate' => $dayOrDate,
+                    'email' => $result->email
+                ];
+            }
+        }
+
+        $result = [
+            "draw" => $draw,
+            "recordsTotal" => $recordsTotal,
+            "recordsFiltered" => $recordsFiltered,
+            "data" => $dataArray
+        ];
+        
+        return new JsonResponse($result);
+    }
+    
+    public function getReportConfig($id, $type) {
+        $tables = $this->getReportConfigTables();
+        return (array)DB::table($tables[$type])->where('id', $id)->first();
+    }
+
+    public function addReportConfig(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'type' => 'required',
+            'groupid' => 'required',
+            'time' => 'required',
+            'email' => 'required',
+            'subject' => 'required',
+            'content' => 'required'
+        ]);    
+
+        if($validator->fails()) {
+            $data['error'] = $validator->messages(); 
+        } else {
+            $tables = $this->getReportConfigTables();
+            $type = $request->get('type');
+            $id = $request->get('id');
+            $data = $request->all();
+            unset($data['_token']);
+            unset($data['type']);
+            unset($data['id']);
+            if(empty($id)) {
+                $checkConfigExists = DB::table($tables[$type])
+                    ->where('groupid', $data['groupid'])
+                    ->first();
+                if (!empty($checkConfigExists)) {
+                    $data['error'] = ['entry_exists' => ['Configuration already exists for this customer.']]; 
+                } else {
+                    $configId = DB::table($tables[$type])->insertGetId($data);
+                    $data['success'] = 'Configuration added successfully.';
+                }
+            } else {
+                DB::table($tables[$type])
+                    ->where('id', $id)
+                    ->update($data);
+                $data['success'] = 'Configuration updated successfully.';
+            }
+        } 
+        return $data;
+    }
 }
