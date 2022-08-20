@@ -65,6 +65,9 @@ Route::post('fetch_did_numbers','ReportController@fetchDidNumbers');
 Route::get('daily_report','ReportController@dailyReport');
 Route::get('weekly_report','ReportController@weeklyReport');
 Route::get('monthly_report','ReportController@monthlyReport');
+Route::post('ajaxload/report_config','ReportController@reportConfigDataAjaxLoad')->name('reportConfigDataAjaxLoad');
+Route::post('add_report_config', 'ReportController@addReportConfig')->name('addReportConfig');
+Route::get('get_report_config/{id}/{type}', 'ReportController@getReportConfig')->name('getReportConfig');
 
 /* ----------Recharge && Billing----------- */
 Route::get('billing', 'ServiceController@billing')->name('Billing');

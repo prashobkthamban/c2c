@@ -193,8 +193,9 @@ function callConfig($params) {
     $didnumber=$did->did;
     $gatewayid=$did->c2cpri;
     $didnumber=$did->c2ccallerid;
-    $prigateway = DB::table('prigateway')->where('id',$gatewayid)->select('Gchannel')->first();
+    $prigateway = DB::table('prigateway')->where('id',$gatewayid)->select('Gchannel','dial_prefix')->first();
     $span = $prigateway->Gchannel;
+    $dialPrefix = $prigateway->dial_prefix;
     $groupid = Auth::user()->groupid;
     $dept = DB::table('operatordepartment')->where('groupid',$groupid)->where('C2C',1)->select('dept_name')->first();
     $dptname=$dept->dept_name;
@@ -219,13 +220,13 @@ function callConfig($params) {
 
     if($params['callf'] == 'cust')
     {
-        $phone2 = $params['phone'];// leg1 operator
-        $phone1 = '0'.substr($params['number'],-10);//leg2 customer number
+        $phone2 = $dialPrefix.substr($params['phone'],-10);// leg1 operator
+        $phone1 = $dialPrefix.substr($params['number'],-10);//leg2 customer number
     }
     else
     {
-        $phone1 = $params['phone'];// leg1 operator
-        $phone2 = '0'.substr($params['number'],-10);//leg2 customer number
+        $phone1 = $dialPrefix.substr($params['phone'],-10);//leg1 operator
+        $phone2 = $dialPrefix.substr($params['number'],-10);//leg2 customer number
     }
 
     $rand_no = substr(str_shuffle("0123456789"), 0, 4);
