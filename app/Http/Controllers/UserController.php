@@ -564,10 +564,12 @@ class UserController extends Controller
     public function operators() {
         $operators = OperatorAccount::with(['accounts'])
                 ->where('groupid', Auth::user()->groupid)
+                ->where('operatortype', 'web')
                 ->orderBy('adddate','DESC')
                 ->paginate(10);
         $data = DB::table('operatoraccount')
                 ->where('groupid', Auth::user()->groupid)
+                ->where('operatortype', 'web')
                 ->orderByRaw('CONVERT(livetrasferid, SIGNED) desc')
                 ->first();
         $nextLiveTransferId = !empty($data) ? $data->livetrasferid+1 : 1;

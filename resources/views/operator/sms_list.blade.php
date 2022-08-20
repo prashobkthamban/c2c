@@ -208,7 +208,7 @@
                 });
         });
 
-        $('.edit_sms').on('click',function(e)
+        $(document).on('click', '.edit_sms', function(e)
         {
             $("#modal-title").text('Edit Record');
             var id = $(this).attr("id");
