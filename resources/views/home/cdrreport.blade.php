@@ -825,7 +825,7 @@
                 orderable: false,
                 render: function(data, type) {
                     let htmlData = '';
-                    if (['groupadmin', 'operator'].includes(data.userType)) {
+                    if (['groupadmin', 'operator', 'reseller'].includes(data.userType)) {
                             let didNumber = data.didNumber ? data.didNumber : 0;
                             let creditUsed = data.creditUsed ? data.creditUsed : 0;
                             htmlData += '<a class="btn bg-gray-100 more-details" '; 
@@ -861,7 +861,7 @@
                             htmlData += '<i class="i-Add-User font-weight-bold" style="color:#a5a50d"></i>';
                             htmlData += '</a>';
                         }
-                        if (['groupadmin', 'operator'].includes(data.userType)) {
+                        if (['groupadmin', 'operator', 'reseller'].includes(data.userType)) {
                             htmlData += '<a href="" class="btn bg-gray-100 history_list" title="Call History" ';
                             htmlData += 'data-toggle="modal" data-target="#history_modal" id="history_' + data.number + '">';
                             htmlData += '<i class="i-Notepad-2 font-weight-bold" style="color:#ffa400"></i>';
