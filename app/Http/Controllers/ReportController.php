@@ -834,16 +834,16 @@ class ReportController extends Controller
         $searchText = $request->get('search')['value'];
 
         $sortOrder = $request->get('order')['0'];
-        $secondColumn = '';
+        $specificColumn = '';
         if ($type == 'weekly') {
-            $secondColumn = 'day';
+            $specificColumn = 'day';
         } else if ($type == 'monthly') {
-            $secondColumn = 'date';
+            $specificColumn = 'date';
         }
         $columnArray = [
             '0' => ['accountgroup.name'],
             '1' => [$mainTable . '.time'],
-            '2' => [$mainTable . '.' . $secondColumn],
+            '2' => [$mainTable . '.' . $specificColumn],
             '3' => [$mainTable . '.email']
         ];
         $sortOrderArray = [];
@@ -864,6 +864,9 @@ class ReportController extends Controller
             ->orWhere(DB::raw('lower(' . $mainTable . '.time)'), 'like', '%' . $searchText . '%')
             ->orWhere(DB::raw('lower(' . $mainTable . '.email)'), 'like', '%' . $searchText . '%')
             ;
+            if (!empty($specificColumn)) {
+                $data->orWhere(DB::raw('lower(' . $mainTable . '.' . $specificColumn . ')'), 'like', '%' . $searchText . '%');
+            }
         }
         $recordsFiltered = $data->count();
 
