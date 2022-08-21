@@ -80,6 +80,7 @@ Route::get('gate_way', 'ServiceController@gateway')->name('GateWay');
 Route::post('add_gateway', 'ServiceController@addGateway')->name('AddGateway');
 Route::get('get_pri_gateway/{id}', 'ServiceController@getPriGateway')->name('GetPriGateway');
 Route::get('pri_log/{id}', 'ServiceController@prilog')->name('priLog');
+Route::post('listen_to_live_call', 'ServiceController@listenToLiveCall')->name('listenToLiveCall');
 
 /* pbx extension */
 Route::get('pbx_extension', 'ReminderController@pbxextension')->name('PbxExtension');
