@@ -148,7 +148,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="submit" id="dial_submit" class="btn btn-primary">Dialing</button>
+                <button type="submit" class="btn btn-primary">Dialing</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
             {!! Form::close() !!}
@@ -186,7 +186,7 @@
         $("#cur_channel_used_id").val($(this).data('id'));
     });
 
-    $('.listen_form').on('submit', function(e) {
+    $('#listen_form').on('submit', function(e) {
         e.preventDefault();
         var errors = '';
         $.ajax({
