@@ -290,4 +290,80 @@ class ServiceController extends Controller
             ->get();
     }
 
+    public function listenToLiveCall(Request $request) {
+
+            $groupId = Auth::user()->groupid;
+            $dids = DB::table('dids')->where('assignedto', $groupId)->first();
+            $didnumber = $dids->did;
+            $gatewayid = $dids->outgoing_gatewayid;
+            $didnumber = $dids->set_did_no;
+
+            $prigateway = DB::table('prigateway')->where('id', $gatewayid)->first();
+            $span = $prigateway->Gchannel;
+            $dialPrefix = $prigateway->dial_prefix;
+
+            $phoneNumber = $request->get('number');
+            $option = $request->get('option');
+
+            $curChannelUsed = DB::table('cur_channel_used')->where('id', $request->get('cur_channel_used_id'))->first();
+            $inChannel = $curChannelUsed->in_channel;
+            $callerId = $curChannelUsed->callerid;
+
+            $phoneNumber = $dialPrefix.substr($phoneNumber, -10);
+            $cdrData = [
+                'did_no' => $didnumber,
+                'groupid' => $groupId,
+                'resellerid' => Auth::user()->resellerid,
+                'operatorid' => Auth::user()->operator_id,
+                'datetime' => NOW(),
+                'deptname' => 'LISTEN',
+                'status' => 'Listen',
+                'number' => $phoneNumber,
+            ];
+            $cdrId = DB::table('cdr')->insertGetId($cdrData);
+
+            $phone1 = $phoneNumber . "-" . $cdrId . "-" . $didnumber . "-" . $groupId;
+
+            $manager = DB::table('asterisk_manager')->where('id', 1)->first();
+            $strHost = $manager->ip;
+            $strUser = $manager->username;
+            $strSecret = $manager->password;
+
+            $errno = "";
+            $errstr = "";
+            $timeout = "30";
+
+            $socket = fsockopen("$strHost","5038", $errno, $errstr, $timeout);
+            fputs($socket, "Action: Login\r\n");
+            fputs($socket, "UserName: $strUser\r\n");
+            fputs($socket, "Secret: $strSecret\r\n\r\n");
+
+            fputs($socket, "Action: Originate\r\n");
+            fputs($socket, "Variable: span=$span\r\n");
+            fputs($socket, "Variable: inchannel=$inChannel\r\n");
+
+            fputs($socket, "Channel: local/".$phone1."@ast_ivrc2clisen\r\n");
+            fputs($socket, "Context: ast_ivrlisten\r\n");
+            fputs($socket, "Exten: 22\r\n");
+            fputs($socket, "Variable: option=$option\r\n");
+
+            fputs($socket, "Callerid: $callerId\r\n");
+            fputs($socket, "Priority: 1\r\n");
+            fputs($socket, "Timeout: 30000\r\n\r\n");
+
+            fputs($socket, "Action: Logoff\r\n\r\n");
+            while (!feof($socket)) {
+            $wrets .= fread($socket, 4096);
+            }
+            fclose($socket);
+            return $wrets;
+
+
+
+
+    }
+
+
+
+
 }

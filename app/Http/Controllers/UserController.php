@@ -836,6 +836,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
             'priority' => 'required',
             'livetransfer' => 'required',
             'shift_id' => 'required',
+            'working_days' => 'required'
         ]);
 
         if($validator->fails()) {
@@ -848,6 +849,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
             if (!empty($data)) {
                 return ['error' => ['error' => ['Priority Number already in use. Please choose a different Number']]];
             }
+            $workingDays = explode(',', $request->get('working_days'));
             $dept = ['groupid' => Auth::user()->groupid,
                      'oper_status' => 'online',
                      'phonenumber'=> $request->get('phonenumber'),
@@ -858,6 +860,7 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                      'operatortype'=> 'mob',
                      'shift_id'=> $request->get('shift_id'),
                      'adddate'=> now(),
+                     'working_days'=> json_encode($workingDays),
                     ];
 
             $optid = DB::table('operatoraccount')->insertGetId($dept);

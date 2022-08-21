@@ -114,6 +114,20 @@
                             shiftList()->prepend('Select Shift', ''), 0,array('class' => 'form-control', 'id' => 'shift_id')) !!}
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-2 form-group mb-3"></div>
+                        <div class="col-md-8 form-group mb-3">
+                            <label for="picker1">Working Days</label></br>
+                            <button type="button" id="Sun" class="btn btn-rounded m-1 week_days" onClick="selectDay('Sun');" title="Sunday">S</button>
+                            <button type="button" id="Mon" class="btn btn-rounded m-1 week_days" onClick="selectDay('Mon');" title="Monday">M</button>
+                            <button type="button" id="Tue" class="btn btn-rounded m-1 week_days" onClick="selectDay('Tue');" title="Tuesday">T</button>
+                            <button type="button" id="Wed" class="btn btn-rounded m-1 week_days" onClick="selectDay('Wed');" title="Wednesday">W</button>
+                            <button type="button" id="Thu" class="btn btn-rounded m-1 week_days"onClick="selectDay('Thu');" title="Thursday">T</button>
+                            <button type="button" id="Fri" class="btn btn-rounded m-1 week_days" onClick="selectDay('Fri');" title="Friday">F</button>
+                            <button type="button" id="Sat" class="btn btn-rounded m-1 week_days" onClick="selectDay('Sat');" title="Saturday">S</button>
+                            <input type='hidden' id="working_days" name='working_days' value="" />
+                        </div>
+                    </div>
             </div>
             <div class="modal-footer">
 
@@ -431,6 +445,19 @@
           });
         });
     });
+
+    var days = [];
+    function selectDay(day) {
+        if(!$("#" + day).hasClass('btn-primary')) {
+            $("#" + day).addClass('btn-primary');
+            days.push(day);
+        } else {
+            $("#" + day).removeClass('btn-primary');
+            var dayIndex = days.indexOf(day);
+            days.splice(dayIndex, 1);
+        }
+        $("#working_days").val(days);
+    }
 </script>
 
 

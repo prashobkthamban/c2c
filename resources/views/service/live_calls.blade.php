@@ -72,7 +72,7 @@
                                 <td>{{ $row->dial_statergy }}</td>
                                 <td>{{ $interval->format('%H:%i:%s') }}</td>
                                 @if(Auth::user()->usertype == 'groupadmin')
-                                <td style="text-align: center;"><i class="i-Headphone" data-toggle="modal" data-target="#listen_modal"></i></td>
+                                <td style="text-align: center;"><i class="i-Headphone listen-live-call" data-toggle="modal" data-target="#listen_modal" data-id="{{$row->id}}"></i></td>
                                 @endif
                             </tr>
                             @endforeach
@@ -129,6 +129,7 @@
                     <div class="col-md-2 form-group mb-3">
                     </div>
 
+                    <input type="hidden" name="cur_channel_used_id" id="cur_channel_used_id" value="0">
                     <div class="col-md-8 form-group mb-3">
                         <label for="number">Listen from Number</label>
                         <input type="number" id="customer_number" onpaste="return false;" class="form-control" placeholder="Customer Number" name="number">
@@ -148,7 +149,7 @@
             </div>
             <div class="modal-footer">
                 <button type="submit" id="dial_submit" class="btn btn-primary">Dialing</button>
-                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button> -->
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
             {!! Form::close() !!}
         </div>
@@ -180,5 +181,42 @@
             }
         }, 5000)
     }
+
+    $(document).on('click', '.listen-live-call', function() {
+        $("#cur_channel_used_id").val($(this).data('id'));
+    });
+
+    $('.listen_form').on('submit', function(e) {
+        e.preventDefault();
+        var errors = '';
+        $.ajax({
+            type: "POST",
+            url: '{{ URL::route("listenToLiveCall") }}', // This is the url we gave in the route
+            data: new FormData(this),
+            dataType: 'JSON',
+            contentType: false,
+            enctype: 'multipart/form-data',
+            cache: false,
+            processData: false,
+            success: function(res) { // What to do if we succeed
+                if (res.error) {
+                    $.each(res.error, function(index, value) {
+                        if (value.length != 0) {
+                            errors += value[0];
+                            errors += "</br>";
+                        }
+                    });
+                    toastr.error(errors);
+                } else {
+                    $("#listen_modal").modal('hide');
+                    toastr.success(res.success);
+                }
+
+            },
+            error: function(jqXHR, textStatus, errorThrown) { // What to do if we fail
+                toastr.error('Some errors are occured');
+            }
+        });
+    });
 </script>
 @endsection
