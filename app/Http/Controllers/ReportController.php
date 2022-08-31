@@ -742,6 +742,7 @@ class ReportController extends Controller
                 ->leftJoin('operatoraccount', 'cdr_sub.operator', 'operatoraccount.id')
                 ->select('cdr_sub.date_time', 'operatoraccount.opername', 'cdr_sub.status')
                 ->where('cdr_sub.cdr_id', $cdrId)
+                ->where('operatoraccount.groupid', Auth::user()->groupid)
                 ->get();
         $content = View('home.cdr_call_details', ['data' => $data])->render();
 

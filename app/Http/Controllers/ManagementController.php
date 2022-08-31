@@ -146,8 +146,73 @@ class ManagementController extends Controller
     }
 
     public function contacts() {
-        $contacts = Contact::getContacts(Auth::user()->groupid);
-        return view('management.contacts', compact('contacts'));
+        return view('management.contacts');
+    }
+
+    public function contactsAjaxLoad(Request $request) {
+        $type = $request->get('type');
+        $searchText = $request->get('search')['value'];
+
+        $sortOrder = $request->get('order')['0'];
+        $columnArray = [
+            '0' => ['contacts.fname'],
+            '1' => ['contacts.lname'],
+            '2' => ['contacts.phone'],
+            '3' => ['contacts.email']
+        ];
+        $sortOrderArray = [];
+        foreach ($columnArray[$sortOrder['column']] as $field) {
+            $sortOrderArray[$field] = $sortOrder['dir'];
+        }
+
+        $limit = $request->get('length');
+        $skip = $request->get('start');
+        $draw = $request->get('draw');
+        $data = DB::table('contacts');
+        $recordsTotal = $data->count();
+        if(!empty($searchText)) {
+            $searchText = strtolower(trim($searchText));
+            $data->where(DB::raw('lower(contacts.fname)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(contacts.lname)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(contacts.phone)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(contacts.email)'), 'like', '%' . $searchText . '%')
+            ;
+        }
+        $recordsFiltered = $data->count();
+
+        if (count($sortOrderArray) > 0) {
+            foreach ($sortOrderArray as $field => $order) {
+                $data->orderBy($field, $order);
+            }
+        }
+
+        if ($limit > 0) {
+            $data->skip($skip)
+                ->take($limit);
+        }
+        $results = $data->get();
+
+        $dataArray = [];
+        if(count($results) > 0) {
+            foreach($results as $result) {
+                $dataArray[] = [
+                    'id' => $result->id,
+                    'firstName' => $result->fname,
+                    'lastName' => $result->lname,
+                    'phone' => $result->phone,
+                    'email' => $result->email
+                ];
+            }
+        }
+
+        $result = [
+            "draw" => $draw,
+            "recordsTotal" => $recordsTotal,
+            "recordsFiltered" => $recordsFiltered,
+            "data" => $dataArray
+        ];
+        
+        return new JsonResponse($result);
     }
 
     public function editContact(Request $request)
@@ -373,11 +438,12 @@ class ManagementController extends Controller
                     }
                 }
             }
+            $wFile = $request->get('wfile');
             $voicefile = [
                      'groupid' => $request->get('groupid'),
                      'did'=> $request->get('did'),
 		             'did_number'=> $didNumber,
-                     'wfile'=> $request->get('wfile'), 
+                     'wfile'=> $wFile, 
                      'languagesection' => $request->get('languagesection'),
                      'mainmenupress0' => $request->get('mainmenupress0'),
                      'thank4caling' => $request->get('thank4caling'),
@@ -404,20 +470,20 @@ class ManagementController extends Controller
               //dd($voicefile);    
             if(empty($request->get('id'))) {
                 $voice_file_id = DB::table('did_voicefilesettings')->insertGetId($voicefile);
-                $this->saveVoicefile($welcomefile, $langfile, $old_welcomefile, $old_langfile, $voice_file_id, $groupid);
+                $this->saveVoicefile($welcomefile, $langfile, $old_welcomefile, $old_langfile, $voice_file_id, $groupid, $wFile);
                 $data['success'] = 'Voicefile added successfully.';
             } else {
                 DB::table('did_voicefilesettings')
                     ->where('id', $request->get('id'))
                     ->update($voicefile);
-                $this->saveVoicefile($welcomefile, $langfile, $old_welcomefile, $old_langfile, $request->get('id'), $groupid);
+                $this->saveVoicefile($welcomefile, $langfile, $old_welcomefile, $old_langfile, $request->get('id'), $groupid, $wFile);
                 $data['success'] = 'Voicefile updated successfully.';
             }
         } 
          return $data;
     }
 
-    private function saveVoicefile($welcomefile, $langfile, $old_welcomefile, $old_langfile, $voice_file_id, $groupid) {
+    private function saveVoicefile($welcomefile, $langfile, $old_welcomefile, $old_langfile, $voice_file_id, $groupid, $wFile) {
         $fileName1 = $fileName2 = null;
         if($welcomefile != null) {
             $fileName1 = $voice_file_id.'_'.$groupid.'_'.str_replace(" ","_",$welcomefile->getClientOriginalName());
@@ -426,7 +492,7 @@ class ManagementController extends Controller
             $fileName2 = $voice_file_id.'_'.$groupid.'_'.$langfile->getClientOriginalName(); 
         }
         $files = [
-            'welcomemsg' => isset($fileName1) ? $fileName1 : $old_welcomefile,
+            'welcomemsg' => ($wFile == 'PLAY') ? (isset($fileName1) ? $fileName1 : $old_welcomefile) : null,
             'flanguagesection' => isset($fileName2) ? $fileName2 : $old_langfile
         ];
         DB::table('did_voicefilesettings')

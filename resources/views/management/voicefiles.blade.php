@@ -94,14 +94,14 @@
 
                     <div class="col-md-8 form-group mb-3">
                         <label for="firstName1">Welcome File</label>
-                        {!! Form::select('wfile', array('' => 'Do not Play Welcome'), null,array('class' => 'form-control', 'id' => 'wfile')) !!}
+                        {!! Form::select('wfile', array('PLAY' => 'Play Welcome', 'DO_NOT_PLAY' => 'Do not Play Welcome'), null,array('class' => 'form-control', 'id' => 'wfile')) !!}
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-2 form-group mb-3">
                     </div>
 
-                    <div class="col-md-8 form-group mb-3">
+                    <div class="col-md-8 form-group mb-3" id="welcome_msg_div">
                         <!-- <label for="firstName1">Welcome File</label>  -->
                         {!! Form::file('welcomemsg', array('class' => 'form-control', 'id' => 'welcomemsg')) !!}
                         {!! Form::hidden('old_welcomemsg', '', array('id' =>'old_welcomemsg')) !!}
@@ -426,6 +426,13 @@
                     $("#aomafter").val(res.aomafterwelcome);
                     $("#old_flanguagesection").val(res.flanguagesection);
                     $("#flanguagesection_value").text(res.flanguagesection);
+                    let wFile = res.welcomemsg ? 'PLAY' : 'DO_NOT_PLAY';
+                    if (wFile == 'PLAY') {
+                        $("#welcome_msg_div").show();
+                    } else {
+                        $("#welcome_msg_div").hide();
+                    }
+                    $("#wfile").val(wFile);
                     $("#old_welcomemsg").val(res.welcomemsg);
                     $("#welcomemsg_value").text(res.welcomemsg);
                 },
@@ -434,13 +441,21 @@
             });
         });
 
-        $('#add_voice').click(function() {
+        $(document).on("click", '#add_voice', function() {
             $(".add_voicefile_form")[0].reset();
             $("#welcomemsg_value").text("");
             $("#flanguagesection_value").text("");
-            $("exampleModalCenterTitle-2").text('Add Voicefile');
+            $("#exampleModalCenterTitle-2").text('Add Voicefile');
             $("#did").find('option').not(':first').remove();
         });
+
+        $("#wfile").on('change', function() {
+            if ($(this).val() == 'PLAY') {
+                $("#welcome_msg_div").show();
+            } else {
+                $("#welcome_msg_div").hide();
+            }
+        })
     });
 </script>
 @endsection

@@ -21,7 +21,7 @@
                         <div class="card-body">
                             <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#add_non_operator" class="btn btn-primary" id="new_non_opt"> Add New </a>
                             <div class="table-responsive">
-                                <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
+                                <table id="non_opr_dept_table" class="display table table-striped table-bordered" style="width:100%">
                                    <thead>
                                         <tr>
                                             <th>Customer</th>
@@ -301,6 +301,7 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
+    const dataTable = $('#non_opr_dept_table').DataTable();
     function copyVal(id, param){
         document.getElementById(id).value = document.getElementById(id).value + $("#"+param).val() ;
     }

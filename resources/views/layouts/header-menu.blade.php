@@ -1,3 +1,11 @@
+    <style>
+        .support-call {
+            margin-top: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 14px;
+        }
+    </style>
     <div class="main-header">
             <div class="logo">
                 <img src="{{asset('assets/images/logo-new.png')}}" alt="">
@@ -10,6 +18,9 @@
             </div>
 
             <div style="margin: auto"></div>
+            <div class="support-call">
+                <label>Need Asssistance? </br> Call +91 9016 544 566</label>
+            </div>
                 @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'operator')
                     <!-- Reminder -->
                     <div class="dropdown">

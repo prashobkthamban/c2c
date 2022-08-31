@@ -20,7 +20,7 @@
                 <div class="card-body">
                     <a title="Compact Sidebar" href="#" data-toggle="modal" data-target="#ivr_modal" id="add_ivr" class="btn btn-primary"> Add Ivr Menu </a>
                     <div class="table-responsive">
-                        <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
+                        <table id="ivr_menu_table" class="display table table-striped table-bordered" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>Customer</th>
@@ -185,6 +185,7 @@
  <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
  <script src="{{asset('assets/js/datatables.script.js')}}"></script>
  <script type="text/javascript">
+    const dataTable = $('#ivr_menu_table').DataTable();
      $(document).ready(function() {
         var langs = [];
         $("input:file").change(function (){
@@ -258,7 +259,7 @@
           });
         });
 
-        $('.edit_ivr').on('click',function(e)
+        $(document).on('click', '.edit_ivr', function(e)
         {
             $("#exampleModalCenterTitle-2").text('Edit Customer Ivr Menu');
             var id = $(this).attr("id");
@@ -290,8 +291,9 @@
           });
         });
 
-        $('#add_ivr').click(function() {
+        $(document).on('click', '#add_ivr', function() {
             $(".ivr_menu_form").trigger("reset");
+            $("#exampleModalCenterTitle-2").text('Add Customer Ivr Menu');
         });
      });
 

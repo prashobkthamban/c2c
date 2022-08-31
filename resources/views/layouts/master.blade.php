@@ -158,6 +158,7 @@
         <!-- ============ Body content start ============= -->
         <div class="main-content-wrap sidenav-open d-flex flex-column">
 <div class="main-content">  
+    @include('service.live_call_console')
     @yield('main-content')
 </div>
 
