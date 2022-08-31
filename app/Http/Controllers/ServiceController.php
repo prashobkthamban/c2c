@@ -7,6 +7,7 @@ use App\Services\IUserService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Http\JsonResponse;
 
 class ServiceController extends Controller
 {
@@ -213,6 +214,94 @@ class ServiceController extends Controller
         $result = $query->paginate(100);
         //dd($result);
         return view('service.live_calls', compact('result'));
+    }
+
+    public function liveCallsDataAjaxLoad(Request $request) {
+        $searchText = $request->get('search')['value'];
+
+        $sortOrder = $request->get('order')['0'];
+        $columnArray = [
+            '0' => ['accountgroup.name'],
+            '1' => ['cur_channel_used.DID'],
+            '2' => ['cur_channel_used.callerid'],
+            '3' => ['cur_channel_used.call_status'],
+            '4' => ['cur_channel_used.status_change_time'],
+        ];
+        $sortOrderArray = [];
+        foreach ($columnArray[$sortOrder['column']] as $field) {
+            $sortOrderArray[$field] = $sortOrder['dir'];
+        }
+
+        $limit = $request->get('length');
+        $skip = $request->get('start');
+        $draw = $request->get('draw');
+        $data = DB::table('cur_channel_used')
+                ->leftJoin('accountgroup', 'cur_channel_used.groupid', '=', 'accountgroup.id')
+                ->leftJoin('operatoraccount', 'cur_channel_used.operatorid', '=', 'operatoraccount.id')
+                ->leftJoin('operatordepartment', 'cur_channel_used.departmentid', '=', 'operatordepartment.id')
+                ->leftJoin('pushapi', 'pushapi.groupid', '=', 'accountgroup.id')
+                ->where('cur_channel_used.calltype', 'ivr');
+        if (Auth::user()->usertype == 'groupadmin') {
+            $groupAdminIds = [Auth::user()->groupid];
+        } else if (Auth::user()->usertype == 'reseller') {
+            $groupAdminIds =  DB::table('accountgroup')->where('resellerid', Auth::user()->resellerid)->pluck('id');
+        }
+        if (in_array(Auth::user()->usertype, ["groupadmin", "reseller"])) {
+            $data->whereIn('cur_channel_used.groupid', $groupAdminIds);
+        } else if (Auth::user()->usertype == 'operator') {
+            $data->where('cur_channel_used.operatorid', Auth::user()->operator_id);
+        }
+        $data->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name', 'pushapi.api', 'pushapi.apitype');
+        $recordsTotal = $data->count();
+        // if(!empty($searchText)) {
+        //     $searchText = strtolower(trim($searchText));
+        //     $data->where(DB::raw('lower(accountgroup.name)'), 'like', '%' . $searchText . '%')
+        //     ->orWhere(DB::raw('lower(' . $mainTable . '.time)'), 'like', '%' . $searchText . '%')
+        //     ->orWhere(DB::raw('lower(' . $mainTable . '.email)'), 'like', '%' . $searchText . '%')
+        //     ;
+        //     if (!empty($specificColumn)) {
+        //         $data->orWhere(DB::raw('lower(' . $mainTable . '.' . $specificColumn . ')'), 'like', '%' . $searchText . '%');
+        //     }
+        // }
+        $recordsFiltered = $data->count();
+
+        if (count($sortOrderArray) > 0) {
+            foreach ($sortOrderArray as $field => $order) {
+                $data->orderBy($field, $order);
+            }
+        }
+
+        if ($limit > 0) {
+            $data->skip($skip)
+                ->take($limit);
+        }
+        $results = $data->get();
+
+        $dataArray = [];
+        if(count($results) > 0) {
+            foreach($results as $result) {
+                $date1 = date_create();
+                $date2 = date_create($result->status_change_time);
+                $interval = date_diff($date1,$date2);
+                $dataArray[] = [
+                    'id' => $result->id,
+                    'customerName' => $result->name,
+                    'didNumber' => $result->DID,
+                    'callerId' => $result->callerid,
+                    'callStatus' => $result->call_status,
+                    'duration' => $interval->format('%H:%i:%s')
+                ];
+            }
+        }
+
+        $result = [
+            "draw" => $draw,
+            "recordsTotal" => $recordsTotal,
+            "recordsFiltered" => $recordsFiltered,
+            "data" => $dataArray
+        ];
+        
+        return new JsonResponse($result);
     }
 
     public function fetchLiveCalls()

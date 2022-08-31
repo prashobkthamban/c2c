@@ -76,6 +76,7 @@ Route::get('get_billing/{id}', 'ServiceController@getBilling')->name('getBilling
 Route::post('edit_billing', 'ServiceController@editBilling')->name('editBilling');
 Route::get('access_logs', 'ServiceController@accessLogs')->name('AccessLogs');
 Route::get('live_calls', 'ServiceController@liveCalls')->name('LiveCalls');
+Route::post('ajaxload/live_calls', 'ServiceController@liveCallsDataAjaxLoad')->name('liveCallsDataAjaxLoad');
 Route::get('gate_way', 'ServiceController@gateway')->name('GateWay');
 Route::post('add_gateway', 'ServiceController@addGateway')->name('AddGateway');
 Route::get('get_pri_gateway/{id}', 'ServiceController@getPriGateway')->name('GetPriGateway');
@@ -211,6 +212,7 @@ Route::get('get_moh/{id}', 'ManagementController@getMoh')->name('getMoh');
 
 /* contacts */
 Route::get('contacts', 'ManagementController@contacts')->name('Contacts');
+Route::post('ajaxload/contacts','ManagementController@contactsAjaxLoad')->name('contactsAjaxLoad');
 Route::post('edit_contact', 'ManagementController@editContact')->name('EditContact');
 
 /* ---------- Did ----------- */
