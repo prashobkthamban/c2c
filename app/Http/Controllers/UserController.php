@@ -34,10 +34,10 @@ class UserController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
-        if(!Auth::check()){
-            return redirect('login');
-        }
+        // $this->middleware('auth');
+        // if(!Auth::check()){
+        //     return redirect('login');
+        // }
         $this->did = new Dids();
 	    $this->extra_dids = new Extra_dids();
         $this->op_dept = new OperatorDepartment();
