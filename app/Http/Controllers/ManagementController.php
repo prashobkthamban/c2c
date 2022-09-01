@@ -168,7 +168,8 @@ class ManagementController extends Controller
         $limit = $request->get('length');
         $skip = $request->get('start');
         $draw = $request->get('draw');
-        $data = DB::table('contacts');
+        $data = DB::table('contacts')
+                ->where('groupid', Auth::user()->groupid);
         $recordsTotal = $data->count();
         if(!empty($searchText)) {
             $searchText = strtolower(trim($searchText));
