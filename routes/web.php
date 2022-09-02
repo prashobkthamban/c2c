@@ -12,6 +12,9 @@
 */
 Auth::routes();
 
+Route::get('password/forgot_custom', 'Auth\ForgotPasswordController@forgotPasswordCustom')->name('forgot_custom');
+Route::post('password/send_mail', 'Auth\ForgotPasswordController@forgotPasswordSendMail')->name('forgot_send_mail');
+
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('dashboard', 'HomeController@dashboard')->name('dashboard');
 Route::get('chart_todays_calls', 'HomeController@chartTodaysCalls');

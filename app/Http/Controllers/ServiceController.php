@@ -222,10 +222,11 @@ class ServiceController extends Controller
         $sortOrder = $request->get('order')['0'];
         $columnArray = [
             '0' => ['accountgroup.name'],
-            '1' => ['cur_channel_used.DID'],
-            '2' => ['cur_channel_used.callerid'],
-            '3' => ['cur_channel_used.call_status'],
+            '1' => ['cur_channel_used.callerid'],
+            '2' => ['cur_channel_used.dept_name'],
+            '3' => ['cur_channel_used.opername'],
             '4' => ['cur_channel_used.status_change_time'],
+            '5' => ['cur_channel_used.call_status']
         ];
         $sortOrderArray = [];
         foreach ($columnArray[$sortOrder['column']] as $field) {
@@ -287,6 +288,8 @@ class ServiceController extends Controller
                     'id' => $result->id,
                     'customerName' => $result->name,
                     'didNumber' => $result->DID,
+                    'departmentName' => $result->dept_name,
+                    'operatorName' => $result->opername,
                     'callerId' => $result->callerid,
                     'callStatus' => $result->call_status,
                     'duration' => $interval->format('%H:%i:%s')

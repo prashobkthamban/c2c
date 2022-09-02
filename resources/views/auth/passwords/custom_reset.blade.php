@@ -11,7 +11,7 @@
 </head>
 
 <body>
-<form method="POST" action="{{ route('login') }}">
+<form method="POST" action="{{ route('forgot_send_mail') }}">
     @csrf
     <div class="auth-layout-wrap" style="background-image: url({{asset('assets/images/ivr_website_cover.jpg')}})">
         <div class="auth-content">
@@ -22,32 +22,56 @@
                             <div class="auth-logo text-center mb-4">
                                 <img src="{{asset('assets/images/logo-new.png')}}" alt="">
                             </div>
-                            <h1 class="mb-3 text-18">Sign In</h1>
+
+                            @if (isset($messages['status']))
+                            <div class="alert alert-{{$messages['status']}}" role="alert">
+                                {{ $messages['message'] }}
+                            </div>
+                            @endif
+                            <h1 class="mb-3 text-18">Forgot Password</h1>
                             <form>
                                 <div class="form-group">
-                                    <label for="username">User Name</label>
-                                    <input id="username" class="form-control form-control-rounded {{ $errors->has('username') ? ' is-invalid' : '' }}" type="text" name="username" value="{{ old('username') }}" required autofocus>
-                                    @if ($errors->has('username'))
+                                    <label for="name">Name</label>
+                                    <input id="name" class="form-control form-control-rounded {{ isset($message['name'][0]) ? ' is-invalid' : '' }}" type="text" name="name" value="{{ old('name') }}" autofocus>
+                                    @if (isset($message['name']))
                                         <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('username') }}</strong>
+                                        <strong>{{ $message['name'][0] }}</strong>
                                     </span>
                                     @endif
                                 </div>
                                 <div class="form-group">
-                                    <label for="password">Password</label>
-                                    <input id="password" class="form-control form-control-rounded {{ $errors->has('password') ? ' is-invalid' : '' }}" type="password" name="password" required>
-                                    @if ($errors->has('password'))
+                                    <label for="mobile">Mobile Number</label>
+                                    <input id="mobile" class="form-control form-control-rounded {{ isset($message['mobile'][0]) ? ' is-invalid' : '' }}" type="text" name="mobile" value="{{ old('mobile') }}">
+                                    @if (isset($message['mobile']))
                                         <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $errors->first('password') }}</strong>
+                                        <strong>{{ $message['mobile'][0] }}</strong>
                                     </span>
                                     @endif
                                 </div>
-                                <button type="submit" class="btn btn-rounded btn-primary btn-block mt-2">Sign In</button>
+                                <div class="form-group">
+                                    <label for="username">User Name</label>
+                                    <input id="username" class="form-control form-control-rounded {{ isset($message['username'][0]) ? ' is-invalid' : '' }}" type="text" name="username" value="{{ old('username') }}">
+                                    @if (isset($message['username']))
+                                        <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message['username'][0] }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input id="email" class="form-control form-control-rounded {{ isset($message['email'][0]) ? ' is-invalid' : '' }}" type="text" name="email" value="{{ old('email') }}">
+                                    @if (isset($message['email']))
+                                        <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message['email'][0] }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
+                                <button type="submit" class="btn btn-rounded btn-primary btn-block mt-2">Submit</button>
 
                             </form>
 
                             <div class="mt-3 text-center">
-                                <a href="{{ route('forgot_custom') }}" class="text-muted"><u>Forgot Password?</u></a>
+                                <a href="{{ route('login') }}" class="text-muted"><u>Login</u></a>
                             </div>
                         </div>
                     </div>

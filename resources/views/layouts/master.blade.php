@@ -158,7 +158,9 @@
         <!-- ============ Body content start ============= -->
         <div class="main-content-wrap sidenav-open d-flex flex-column">
 <div class="main-content">  
-    @include('service.live_call_console')
+    @if(Auth::user()->usertype != 'admin')
+        @include('service.live_call_console')
+    @endif
     @yield('main-content')
 </div>
 

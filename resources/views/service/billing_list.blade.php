@@ -272,7 +272,7 @@
             //$('#billdate').append(billd);
         }
         billDateVals();
-        $('.bill_details').click(function() {
+        $(document).on('click', '.bill_details', function() {
             var groupid = this.id;
             var billHtml = '';
             $("#bill_details_list tbody").empty();
@@ -295,7 +295,7 @@
             });
         });
 
-        $('.edit_billing').on('click',function(e)
+        $(document).on('click', '.edit_billing', function(e)
         {
             var id = $(this).attr("id");
             $.ajax({
