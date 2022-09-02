@@ -45,10 +45,11 @@
                 <thead>
                     <tr>
                         <th>Customer</th>
-                        <th>DID Number</th>
                         <th>Caller ID</th>
-                        <th>Call Status</th>
+                        <th>Department</th>
+                        <th>Operator</th>
                         <th>Duration</th>
+                        <th>Call Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,21 +85,27 @@
                 data._token = "{{ csrf_token() }}";
             }
         },
+        "columnDefs": [
+            { targets: 0, visible: ['admin', 'reseller'].includes('{{Auth::user()->usertype}}') }
+        ],
         "columns": [
             {
                 "data": "customerName"
             },
             {
-                "data": "didNumber"
-            },
-            {
                 "data": "callerId"
             },
             {
-                "data": "callStatus"
+                "data": "departmentName"
+            },
+            {
+                "data": "operatorName"
             },
             {
                 "data": "duration"
+            },
+            {
+                "data": "callStatus"
             }
         ]
     });

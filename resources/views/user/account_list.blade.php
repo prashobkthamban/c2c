@@ -271,7 +271,7 @@
             });
         });
 
-        $('.edit_login').click(function() {
+        $(document).on('click', '.edit_login', function() {
             $.ajax({
                 url: '/edit_account/' + this.id, // This is the url we gave in the route
                 success: function(res) { // What to do if we succeed
