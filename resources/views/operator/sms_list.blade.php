@@ -19,7 +19,7 @@
             <div class="card-body">
                 <a title="Add SMS" href="#" data-toggle="modal" data-target="#add_sms" class="btn btn-primary add_sms"> Add New </a>
                 <div class="table-responsive">
-                    <table class="display table table-striped table-bordered zero-configuration-table" style="width:100%">
+                    <table class="display table table-striped table-bordered" id="sms_list_table" style="width:100%">
                         <thead>
                             <tr>
                                 <th>Customer</th>
@@ -168,6 +168,11 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script type="text/javascript">
+    $('#sms_list_table').DataTable({
+        "order": [
+            [0, "desc"]
+        ]
+    });
     function copyval(){
         document.getElementById("content").value = document.getElementById("content").value + $("#param").val() ;
     }

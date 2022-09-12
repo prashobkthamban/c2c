@@ -163,30 +163,91 @@ class ServiceController extends Controller
 
     public function accessLogs(Request $request)
     {
-        $requests = $request->all();
-        $groupId = $request->get('customer');
-        $customers = getCustomers();
-        $query = DB::table('ast_login_log')
-            ->select('ast_login_log.*', 'accountgroup.name')
-            ->leftJoin('accountgroup', 'ast_login_log.groupid', '=', 'accountgroup.id');
+        return view('service.access_logs');
+    }
 
-        if (Auth::user()->usertype == 'reseller') {
-            $query->where('account.resellerid', Auth::user()->resellerid);
-        } elseif (Auth::user()->usertype == 'groupadmin') {
-            $query->where('ast_login_log.groupid', Auth::user()->groupid);
-            $query->where('ast_login_log.usertype', 'groupadmin');
-        } elseif (Auth::user()->usertype == 'operator') {
-            $query->where('ast_login_log.groupid', Auth::user()->groupid);
-            $query->where('ast_login_log.usertype', 'operator');
-        } else {
-            if ($groupId) {
-                $query->where('accountgroup.id', $groupId);
+    public function accessLogsAjaxLoad(Request $request) {
+        $searchText = $request->get('search')['value'];
+
+        $sortOrder = $request->get('order')['0'];
+        $columnArray = [
+            '0' => ['ast_login_log.username'],
+            '1' => ['ast_login_log.password'],
+            '2' => ['ast_login_log.usertype'],
+            '3' => ['accountgroup.name'],
+            '4' => ['ast_login_log.ipaddress'],
+            '5' => ['ast_login_log.status'],
+            '6' => ['ast_login_log.login_time']
+        ];
+        $sortOrderArray = [];
+        foreach ($columnArray[$sortOrder['column']] as $field) {
+            $sortOrderArray[$field] = $sortOrder['dir'];
+        }
+        $userTypeArray = [
+            'admin' => 'super admin',
+            'reseller' => 'coperate admin',
+            'groupadmin' => 'group admin',
+            'operator' => 'operator'
+        ];
+
+        $limit = $request->get('length');
+        $skip = $request->get('start');
+        $draw = $request->get('draw');
+        $data = DB::table('ast_login_log')
+                ->select('ast_login_log.*', 'accountgroup.name')
+                ->leftJoin('accountgroup', 'ast_login_log.groupid', '=', 'accountgroup.id');
+        $recordsTotal = $data->count();
+        if(!empty($searchText)) {
+            $revTypeArray = array_flip($userTypeArray);
+            $searchText = strtolower(trim($searchText));
+            $searchText = isset($revTypeArray[$searchText]) ? $revTypeArray[$searchText] : $searchText;
+            $data->where(DB::raw('lower(accountgroup.name)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(ast_login_log.username)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(ast_login_log.password)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(ast_login_log.userType)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(ast_login_log.ipaddress)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(ast_login_log.status)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(ast_login_log.login_time)'), 'like', '%' . $searchText . '%')
+            ;
+        }
+        $recordsFiltered = $data->count();
+
+        if (count($sortOrderArray) > 0) {
+            foreach ($sortOrderArray as $field => $order) {
+                $data->orderBy($field, $order);
             }
         }
 
-        $query->orderBy('id', 'desc');
-        $result = $query->get();
-        return view('service.access_logs', compact('requests', 'customers', 'result'));
+        if ($limit > 0) {
+            $data->skip($skip)
+                ->take($limit);
+        }
+        $results = $data->get();
+
+        $dataArray = [];
+        if(count($results) > 0) {
+            foreach($results as $result) {
+                $dataArray[] = [
+                    'id' => $result->id,
+                    'userName' => $result->username,
+                    'password' => $result->password,
+                    'userType' => isset($userTypeArray[$result->usertype]) ? ucwords($userTypeArray[$result->usertype]) : "",
+                    'customerName' => ($result->usertype == 'reseller') ? 'Coperate Admin' : (($result->usertype =='admin') ? 'Super Admin' : (!empty($result->usertype) ? $result->name : "")),
+                    'ipAddress' => $result->ipaddress,
+                    'status' => $result->status,
+                    'loginTime' => $result->login_time
+                ];
+            }
+        }
+
+        $result = [
+            "draw" => $draw,
+            "recordsTotal" => $recordsTotal,
+            "recordsFiltered" => $recordsFiltered,
+            "data" => $dataArray
+        ];
+        
+        return new JsonResponse($result);
     }
 
     public function liveCalls()
