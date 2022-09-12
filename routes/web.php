@@ -78,6 +78,7 @@ Route::get('bill_details/{id}', 'ServiceController@billDetails')->name('billDeta
 Route::get('get_billing/{id}', 'ServiceController@getBilling')->name('getBilling');
 Route::post('edit_billing', 'ServiceController@editBilling')->name('editBilling');
 Route::get('access_logs', 'ServiceController@accessLogs')->name('AccessLogs');
+Route::post('ajaxload/access_logs','ServiceController@accessLogsAjaxLoad')->name('accessLogsAjaxLoad');
 Route::get('live_calls', 'ServiceController@liveCalls')->name('LiveCalls');
 Route::post('ajaxload/live_calls', 'ServiceController@liveCallsDataAjaxLoad')->name('liveCallsDataAjaxLoad');
 Route::get('gate_way', 'ServiceController@gateway')->name('GateWay');

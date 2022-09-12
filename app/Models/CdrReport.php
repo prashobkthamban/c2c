@@ -170,7 +170,9 @@ class CdrReport extends Model
         if(count($data['data']) > 0) {
             foreach($data['data'] as $result) {
                 $cdrSubCount = DB::table('cdr_sub')
+                                ->leftJoin('operatoraccount', 'cdr_sub.operator', 'operatoraccount.id')
                                 ->where('cdr_sub.cdr_id', $result->cdrid)
+                                ->where('operatoraccount.groupid', Auth::user()->groupid)
                                 ->count();
                 $contact = DB::table('contacts')
                                 ->where('phone', $result->number)
