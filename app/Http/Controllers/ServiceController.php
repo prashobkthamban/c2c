@@ -232,7 +232,7 @@ class ServiceController extends Controller
                     'userName' => $result->username,
                     'password' => $result->password,
                     'userType' => isset($userTypeArray[$result->usertype]) ? ucwords($userTypeArray[$result->usertype]) : "",
-                    'customerName' => ($result->usertype == 'reseller') ? 'Coperate Admin' : (($result->usertype =='admin') ? 'Super Admin' : (!empty($result->usertype) ? $result->name : "")),
+                    'customerName' => ($result->usertype == 'reseller') ? '[Coperate Admin]' : (($result->usertype =='admin') ? '[Super Admin]' : (!empty($result->usertype) ? $result->name : "")),
                     'ipAddress' => $result->ipaddress,
                     'status' => $result->status,
                     'loginTime' => $result->login_time
