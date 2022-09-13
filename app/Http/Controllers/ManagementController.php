@@ -490,7 +490,7 @@ class ManagementController extends Controller
             $fileName1 = $voice_file_id.'_'.$groupid.'_'.str_replace(" ","_",$welcomefile->getClientOriginalName());
         }
         if($langfile != null) {
-            $fileName2 = $voice_file_id.'_'.$groupid.'_'.$langfile->getClientOriginalName(); 
+            $fileName2 = $voice_file_id.'_'.$groupid.'_language.'.$langfile->getClientOriginalExtension(); 
         }
         $files = [
             'welcomemsg' => ($wFile == 'PLAY') ? (isset($fileName1) ? $fileName1 : $old_welcomefile) : null,
