@@ -1,6 +1,13 @@
 @extends('layouts.master')
 @section('page-css')
-<link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}">
+<link rel="stylesheet" href="{{asset('assets/styles/vendor/datatables.min.css')}}"><style>
+    .table-header-bg-color {
+        background-color: #6633994f;
+    }
+    .align-center {
+        text-align: center;
+    }
+</style>
 @endsection
 
 @section('main-content')
@@ -10,102 +17,32 @@
 </div>
 <div class="separator-breadcrumb border-top"></div>
 
-
 <div class="row mb-4">
     <div class="col-md-12 mb-4">
         <div class="card text-left">
-
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="live_calls_table" class="display table table-striped table-bordered" style="width:100%">
                         <thead>
                             <tr>
-                                @if(Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'reseller')
-                                <th>Customer</th>
-                                @endif
-                                <th>Callerid</th>
-                                <th>Call time</th>
-                                <th>DID Number</th>
-                                <th>Department</th>
-                                <th>Operator</th>
-                                @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'reseller')
+                                <th class="table-header-bg-color">Customer</th>
+                                <th>Caller ID</th>
+                                <th class="table-header-bg-color">Call Time</th>
+                                <th class="table-header-bg-color">DID Number</th>
+                                <th class="table-header-bg-color">Department</th>
+                                <th class="table-header-bg-color">Operator</th>
                                 <th>Webhook Link</th>
-                                @endif
-                                <th>Call status</th>
-                                <th>Dial Statergy</th>
+                                <th class="table-header-bg-color">Call status</th>
+                                <th class="table-header-bg-color">Dial Statergy</th>
                                 <th>Duration</th>
-                                @if(Auth::user()->usertype == 'groupadmin')
                                 <th>Listen</th>
-                                @endif
                             </tr>
                         </thead>
                         <tbody>
-                            @if(!empty($result))
-                            @foreach($result as $row )
-                            <?php
-                            $contactName = getConatctName($row->callerid);
-                            date_default_timezone_set('Asia/Kolkata');
-                            $datetime1 = new DateTime();
-                            $datetime2 = new DateTime($row->status_change_time);
-                            $interval = $datetime1->diff($datetime2);
-                            $fname = count($contactName) == null ? $row->callerid :  $contactName[0]->fname;
-                            ?>
-                            <tr>
-                                @if(Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'reseller')
-                                <td>{{ $row->name }}</td>
-                                @endif
-                                <td>{{ $fname }}</td>
-                                <td>{{ $row->time }}</td>
-                                <td>{{ $row->DID }}</td>
-                                <td>{{ $row->dept_name }}</td>
-                                <td>{{ $row->opername }}</td>
-                                @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'reseller')
-                                <td style="text-align: center;">
-                                    @if(isset($row->apitype) && $row->apitype == 'webhook')
-                                        <a href="{{str_replace('{CALLERID}', substr($row->callerid, -10), $row->api)}}" target="_blank">
-                                            <i class="i-Link-2"></i>
-                                        </a>
-                                    @endif
-                                </td>
-                                @endif
-                                <td>{{ $row->call_status }}</td>
-                                <td>{{ $row->dial_statergy }}</td>
-                                <td>{{ $interval->format('%H:%i:%s') }}</td>
-                                @if(Auth::user()->usertype == 'groupadmin')
-                                <td style="text-align: center;"><i class="i-Headphone listen-live-call" data-toggle="modal" data-target="#listen_modal" data-id="{{$row->id}}"></i></td>
-                                @endif
-                            </tr>
-                            @endforeach
-                            @endif
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                @if(Auth::user()->usertype == 'admin' || Auth::user()->usertype == 'reseller')
-                                <th>Customer</th>
-                                @endif
-                                <th>Callerid</th>
-                                <th>Call time</th>
-                                <th>DID Number</th>
-                                <th>Department</th>
-                                <th>Operator</th>
-                                @if(Auth::user()->usertype == 'groupadmin' || Auth::user()->usertype == 'reseller')
-                                <th>Webhook Link</th>
-                                @endif
-                                <th>Call status</th>
-                                <th>Dial Statergy</th>
-                                <th>Duration</th>
-                                @if(Auth::user()->usertype == 'groupadmin')
-                                <th>Listen</th>
-                                @endif
-                            </tr>
-
-                        </tfoot>
-
                     </table>
                 </div>
-
             </div>
-            <div class="pull-right">{{ $result->links() }}</div>
         </div>
     </div>
     <!-- end of col -->
@@ -164,22 +101,96 @@
 <script src="{{asset('assets/js/vendor/datatables.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables.script.js')}}"></script>
 <script>
+    const dataTable = $('#live_calls_table').DataTable({
+        "order": [[0, "desc" ]],
+        "searchDelay": 1000,
+        "pageLength": 50,
+        "processing": true,
+        "serverSide": true,
+        "ajax": {
+            "url": '{{ URL::route("liveCallDataAjaxLoad") }}',
+            "type": "POST",
+            "data": function(data) {
+                data._token = "{{ csrf_token() }}";
+            }
+        },
+        "createdRow": function( row, data, dataIndex ) {
+            $(row).attr('id', data.id);
+            $(row).find('td [target="_blank"]').parent('td').addClass('align-center');
+            $(row).find('.listen-live-call').parent('td').addClass('align-center');
+        },
+        "columnDefs": [
+            { targets: 0, visible: ['admin', 'reseller'].includes('{{Auth::user()->usertype}}') },
+            { targets: 6, visible: ['groupadmin', 'reseller'].includes('{{Auth::user()->usertype}}') },
+            { targets: 10, visible: ['groupadmin'].includes('{{Auth::user()->usertype}}') }
+        ],
+        "columns": [
+            {
+                "data": "customerName"
+            },
+            {
+                data: null,
+                orderable: false,
+                render: function(data, type) {
+                    return data.firstName;
+                }
+            },
+            {
+                "data": "callTime"
+            },
+            {
+                "data": "didNumber"
+            },
+            {
+                "data": "departmentName"
+            },
+            {
+                "data": "operatorName"
+            },
+            {
+                data: null,
+                orderable: false,
+                render: function(data, type) {
+                    let htmlData = '';
+                    if (data.webHookLink) {
+                        htmlData = '<a href="' + data.webHookLink + '" target="_blank">' +
+                                    '<i class="i-Link-2"></i>' +
+                                    '</a>';
+                    }
+                    return htmlData;
+                }
+            },
+            {
+                "data": "callStatus"
+            },
+            {
+                "data": "dialStatergy"
+            },
+            {
+                "data": "duration"
+            },
+            {
+                data: null,
+                orderable: false,
+                render: function(data, type) {
+                    let htmlData = '<i class="i-Headphone listen-live-call" data-toggle="modal" data-target="#listen_modal" data-id="' + data.id + '"></i>';
+                    return htmlData;
+                }
+            }
+        ]
+    });
+
     reloadPage();
 
     function reloadPage() {
         setTimeout(function() {
-            console.log("time out");
-            console.log(($("#listen_modal").data('bs.modal') || {
-                _isShown: false
-            })._isShown);
             if (!($("#listen_modal").data('bs.modal') || {
                     _isShown: false
                 })._isShown) {
-                location.reload();
-            } else {
-                reloadPage();
+                dataTable.ajax.reload(null, false);
             }
-        }, 5000)
+            reloadPage();
+        }, 10000)
     }
 
     $(document).on('click', '.listen-live-call', function() {

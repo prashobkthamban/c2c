@@ -252,40 +252,44 @@ class ServiceController extends Controller
 
     public function liveCalls()
     {
-        //dd(Auth::user());
-        $query = DB::table('cur_channel_used')
-            ->leftJoin('accountgroup', 'cur_channel_used.groupid', '=', 'accountgroup.id')
-            ->leftJoin('operatoraccount', 'cur_channel_used.operatorid', '=', 'operatoraccount.id')
-            ->leftJoin('operatordepartment', 'cur_channel_used.departmentid', '=', 'operatordepartment.id')
-            ->leftJoin('pushapi', 'pushapi.groupid', '=', 'accountgroup.id')
-            ->where('cur_channel_used.calltype', 'ivr');
-
-        if (Auth::user()->usertype == 'groupadmin') {
-            $groupAdminIds = [Auth::user()->groupid];
-        } else if (Auth::user()->usertype == 'reseller') {
-            $groupAdminIds =  DB::table('accountgroup')->where('resellerid', Auth::user()->resellerid)->pluck('id');
-        }
-        if (in_array(Auth::user()->usertype, ["groupadmin", "reseller"])) {
-            $query->whereIn('cur_channel_used.groupid', $groupAdminIds);
-        } else if (Auth::user()->usertype == 'operator') {
-            $query->where('cur_channel_used.operatorid', Auth::user()->operator_id);
-        }
-
-        $query->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name', 'pushapi.api', 'pushapi.apitype')->orderBy('id', 'desc');
-        $result = $query->paginate(100);
-        //dd($result);
-        return view('service.live_calls', compact('result'));
+        return view('service.live_calls');
     }
 
-    public function liveCallsDataAjaxLoad(Request $request) {
+    public function liveCallDataAjaxLoad(Request $request) {
         $searchText = $request->get('search')['value'];
-
         $sortOrder = $request->get('order')['0'];
         $columnArray = [
             '0' => ['accountgroup.name'],
             '1' => ['cur_channel_used.callerid'],
-            '2' => ['cur_channel_used.dept_name'],
-            '3' => ['cur_channel_used.opername'],
+            '2' => ['cur_channel_used.time'],
+            '3' => ['cur_channel_used.DID'],
+            '4' => ['operatordepartment.dept_name'],
+            '5' => ['operatoraccount.opername'],
+            '6' => [''],
+            '7' => ['cur_channel_used.call_status'],
+            '8' => ['cur_channel_used.dial_statergy'],
+            '9' => ['cur_channel_used.status_change_time']
+        ];
+        $sortOrderArray = [];
+        foreach ($columnArray[$sortOrder['column']] as $field) {
+            $sortOrderArray[$field] = $sortOrder['dir'];
+        }
+
+        $limit = $request->get('length');
+        $skip = $request->get('start');
+        $draw = $request->get('draw');
+        $result = $this->getLiveCallData($searchText, $sortOrderArray, $limit, $skip, $draw);
+        return new JsonResponse($result);
+    }
+
+    public function liveCallConsoleAjaxLoad(Request $request) {
+        $searchText = $request->get('search')['value'];
+        $sortOrder = $request->get('order')['0'];
+        $columnArray = [
+            '0' => ['accountgroup.name'],
+            '1' => ['cur_channel_used.callerid'],
+            '2' => ['operatordepartment.dept_name'],
+            '3' => ['operatoraccount.opername'],
             '4' => ['cur_channel_used.status_change_time'],
             '5' => ['cur_channel_used.call_status']
         ];
@@ -297,6 +301,12 @@ class ServiceController extends Controller
         $limit = $request->get('length');
         $skip = $request->get('start');
         $draw = $request->get('draw');
+        $result = $this->getLiveCallData($searchText, $sortOrderArray, $limit, $skip, $draw);
+        
+        return new JsonResponse($result);
+    }
+
+    public function getLiveCallData($searchText, $sortOrderArray, $limit, $skip, $draw) {
         $data = DB::table('cur_channel_used')
                 ->leftJoin('accountgroup', 'cur_channel_used.groupid', '=', 'accountgroup.id')
                 ->leftJoin('operatoraccount', 'cur_channel_used.operatorid', '=', 'operatoraccount.id')
@@ -315,16 +325,17 @@ class ServiceController extends Controller
         }
         $data->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name', 'pushapi.api', 'pushapi.apitype');
         $recordsTotal = $data->count();
-        // if(!empty($searchText)) {
-        //     $searchText = strtolower(trim($searchText));
-        //     $data->where(DB::raw('lower(accountgroup.name)'), 'like', '%' . $searchText . '%')
-        //     ->orWhere(DB::raw('lower(' . $mainTable . '.time)'), 'like', '%' . $searchText . '%')
-        //     ->orWhere(DB::raw('lower(' . $mainTable . '.email)'), 'like', '%' . $searchText . '%')
-        //     ;
-        //     if (!empty($specificColumn)) {
-        //         $data->orWhere(DB::raw('lower(' . $mainTable . '.' . $specificColumn . ')'), 'like', '%' . $searchText . '%');
-        //     }
-        // }
+        if(!empty($searchText)) {
+            $searchText = strtolower(trim($searchText));
+            $data->where(DB::raw('lower(accountgroup.name)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(cur_channel_used.time)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(cur_channel_used.DID)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(operatordepartment.dept_name)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(operatoraccount.opername)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(cur_channel_used.call_status)'), 'like', '%' . $searchText . '%')
+            ->orWhere(DB::raw('lower(cur_channel_used.dial_statergy)'), 'like', '%' . $searchText . '%')
+            ;
+        }
         $recordsFiltered = $data->count();
 
         if (count($sortOrderArray) > 0) {
@@ -342,56 +353,41 @@ class ServiceController extends Controller
         $dataArray = [];
         if(count($results) > 0) {
             foreach($results as $result) {
+                $contactName = getConatctName($result->callerid);
+                $firstName = count($contactName) == null ? $result->callerid :  $contactName[0]->fname;
+                $pushApi = DB::table('pushapi')
+                            ->where('apitype', 'AgentPopup')
+                            ->where('groupid', $result->groupid)
+                            ->first();
+                $webHookLink = '';
+                if (!empty($pushApi) && $pushApi->apitype == 'AgentPopup') {
+                    $webHookLink = str_replace('{CALLERID}', substr($result->callerid, -10), $pushApi->api);
+                }
                 $date1 = date_create();
                 $date2 = date_create($result->status_change_time);
                 $interval = date_diff($date1,$date2);
                 $dataArray[] = [
                     'id' => $result->id,
                     'customerName' => $result->name,
+                    'firstName' => $firstName,
+                    'callTime' => $result->time,
                     'didNumber' => $result->DID,
                     'departmentName' => $result->dept_name,
                     'operatorName' => $result->opername,
-                    'callerId' => $result->callerid,
+                    'webHookLink' => $webHookLink,
                     'callStatus' => $result->call_status,
+                    'dialStatergy' => $result->dial_statergy,
                     'duration' => $interval->format('%H:%i:%s')
                 ];
             }
         }
 
-        $result = [
+        return [
             "draw" => $draw,
             "recordsTotal" => $recordsTotal,
             "recordsFiltered" => $recordsFiltered,
             "data" => $dataArray
         ];
-        
-        return new JsonResponse($result);
-    }
-
-    public function fetchLiveCalls()
-    {
-        //dd(Auth::user());
-        $query = DB::table('cur_channel_used')
-            ->leftJoin('accountgroup', 'cur_channel_used.groupid', '=', 'accountgroup.id')
-            ->leftJoin('operatoraccount', 'cur_channel_used.operatorid', '=', 'operatoraccount.id')
-            ->leftJoin('operatordepartment', 'cur_channel_used.departmentid', '=', 'operatordepartment.id')
-            ->where('cur_channel_used.calltype', 'ivr');
-
-        if (Auth::user()->usertype == 'groupadmin') {
-            $groupAdminIds = [Auth::user()->groupid];
-        } else if (Auth::user()->usertype == 'reseller') {
-            $groupAdminIds =  DB::table('accountgroup')->where('resellerid', Auth::user()->resellerid)->pluck('id');
-        }
-        if (in_array(Auth::user()->usertype, ["groupadmin", "reseller"])) {
-            $query->whereIn('cur_channel_used.groupid', $groupAdminIds);
-        } else if (Auth::user()->usertype == 'operator') {
-            $query->where('cur_channel_used.operatorid', Auth::user()->operator_id);
-        }
-
-        $query->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name')->orderBy('id', 'desc');
-        $result = $query->paginate(10);
-        //dd($result);
-        return view('service.live_calls', compact('result'));
     }
 
     public function gateway()
