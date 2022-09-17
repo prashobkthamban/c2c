@@ -311,7 +311,6 @@ class ServiceController extends Controller
                 ->leftJoin('accountgroup', 'cur_channel_used.groupid', '=', 'accountgroup.id')
                 ->leftJoin('operatoraccount', 'cur_channel_used.operatorid', '=', 'operatoraccount.id')
                 ->leftJoin('operatordepartment', 'cur_channel_used.departmentid', '=', 'operatordepartment.id')
-                ->leftJoin('pushapi', 'pushapi.groupid', '=', 'accountgroup.id')
                 ->where('cur_channel_used.calltype', 'ivr');
         if (Auth::user()->usertype == 'groupadmin') {
             $groupAdminIds = [Auth::user()->groupid];
@@ -323,7 +322,7 @@ class ServiceController extends Controller
         } else if (Auth::user()->usertype == 'operator') {
             $data->where('cur_channel_used.operatorid', Auth::user()->operator_id);
         }
-        $data->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name', 'pushapi.api', 'pushapi.apitype');
+        $data->select('cur_channel_used.*', 'accountgroup.name', 'operatoraccount.opername', 'operatordepartment.dept_name');
         $recordsTotal = $data->count();
         if(!empty($searchText)) {
             $searchText = strtolower(trim($searchText));

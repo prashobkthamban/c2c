@@ -104,7 +104,7 @@
     const dataTable = $('#live_calls_table').DataTable({
         "order": [[0, "desc" ]],
         "searchDelay": 1000,
-        "pageLength": 50,
+        "pageLength": 25,
         "processing": true,
         "serverSide": true,
         "ajax": {
