@@ -158,7 +158,7 @@
         <!-- ============ Body content start ============= -->
         <div class="main-content-wrap sidenav-open d-flex flex-column">
 <div class="main-content">  
-    @if(Auth::user()->usertype != 'admin')
+    @if(Auth::user()->usertype != 'admin' && Route::currentRouteName() != 'LiveCalls')
         @include('service.live_call_console')
     @endif
     @yield('main-content')

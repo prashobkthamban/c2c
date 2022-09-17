@@ -80,7 +80,8 @@ Route::post('edit_billing', 'ServiceController@editBilling')->name('editBilling'
 Route::get('access_logs', 'ServiceController@accessLogs')->name('AccessLogs');
 Route::post('ajaxload/access_logs','ServiceController@accessLogsAjaxLoad')->name('accessLogsAjaxLoad');
 Route::get('live_calls', 'ServiceController@liveCalls')->name('LiveCalls');
-Route::post('ajaxload/live_calls', 'ServiceController@liveCallsDataAjaxLoad')->name('liveCallsDataAjaxLoad');
+Route::post('ajaxload/live_calls', 'ServiceController@liveCallDataAjaxLoad')->name('liveCallDataAjaxLoad');
+Route::post('ajaxload/live_call_console', 'ServiceController@liveCallConsoleAjaxLoad')->name('liveCallConsoleAjaxLoad');
 Route::get('gate_way', 'ServiceController@gateway')->name('GateWay');
 Route::post('add_gateway', 'ServiceController@addGateway')->name('AddGateway');
 Route::get('get_pri_gateway/{id}', 'ServiceController@getPriGateway')->name('GetPriGateway');

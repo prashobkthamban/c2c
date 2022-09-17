@@ -79,7 +79,7 @@
         "processing": true,
         "serverSide": true,
         "ajax": {
-            "url": '{{ URL::route("liveCallsDataAjaxLoad") }}',
+            "url": '{{ URL::route("liveCallConsoleAjaxLoad") }}',
             "type": "POST",
             "data": function(data) {
                 data._token = "{{ csrf_token() }}";
@@ -93,7 +93,7 @@
                 "data": "customerName"
             },
             {
-                "data": "callerId"
+                "data": "firstName"
             },
             {
                 "data": "departmentName"
