@@ -863,7 +863,7 @@
                         }
                         if (['groupadmin', 'operator', 'reseller'].includes(data.userType)) {
                             htmlData += '<a href="" class="btn bg-gray-100 history_list" title="Call History" ';
-                            htmlData += 'data-toggle="modal" data-target="#history_modal" id="history_' + data.number + '">';
+                            htmlData += 'data-toggle="modal" data-target="#history_modal" id="history_' + data.number + '" data-group-id="' + data.groupId + '">';
                             htmlData += '<i class="i-Notepad-2 font-weight-bold" style="color:#ffa400"></i>';
                             htmlData += '</a>';
 
@@ -1324,9 +1324,10 @@
 
         $(document).on('click', '.history_list', function(e) {
             var id = $(this).attr("id");
+            var groupId = $(this).attr("data-group-id");
             var number = id.replace("history_", "");
             $.ajax({
-                url: '/call_history/' + number, // This is the url we gave in the route
+                url: '/call_history/' + number + '/' + groupId, // This is the url we gave in the route
                 success: function(res) { // What to do if we succeed
                     var response = JSON.stringify(res);
                     var historyHTML = "";
@@ -1562,7 +1563,7 @@ function exportCdr() {
     url += "&fetchArchive={{$fetchArchive}}";
     url += "&search_text=" + ($("#cdr_table_filter input[type='search']").val() ? $("#cdr_table_filter input[type='search']").val() : '');
     console.log(url);
-    window.location = url;
+    window.open(url, "_blank");
 }
 </script>
 

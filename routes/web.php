@@ -48,7 +48,7 @@ Route::post('add_cdr_contact', 'ReportController@addContact')->name('addContact'
 Route::post('add_tag', 'ReportController@addCdrTag')->name('addCdrTag');
 Route::post('add_note', 'ReportController@addNote')->name('addNote');
 Route::get('notes/{id}', 'ReportController@notes')->name('notes');
-Route::get('call_history/{number}', 'ReportController@callHistory')->name('callHistory');
+Route::get('call_history/{number}/{groupId}', 'ReportController@callHistory')->name('callHistory');
 Route::post('add_reminder', 'ReportController@addReminder')->name('addReminder');
 Route::get('get_reminder/{id}', 'ReportController@getReminder')->name('getReminder');
 //Route::get('delete_reminder/{id}', 'ReportController@deleteReminder')->name('deleteReminder');

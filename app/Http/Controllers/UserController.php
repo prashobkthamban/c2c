@@ -699,9 +699,9 @@ class UserController extends Controller
             'shift_name' => 'required',
             'start_time' => 'required',
             'end_time' => 'required',
-            'end_time' => 'after:start_time'
+            // 'end_time' => 'after:start_time'
         ], [
-            'end_time.after' => 'End Time greater than Start Time.',
+            // 'end_time.after' => 'End Time greater than Start Time.',
         ]);
 
         if($validator->fails()) {

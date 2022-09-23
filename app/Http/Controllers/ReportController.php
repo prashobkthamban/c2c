@@ -245,8 +245,8 @@ class ReportController extends Controller
             ->get();
     }
 
-    public function callHistory($number) {
-        return CdrReport::where('number', $number)->orderBy('datetime','DESC')->get();
+    public function callHistory($number, $groupId) {
+        return CdrReport::where('number', $number)->where('groupid', $groupId)->orderBy('datetime','DESC')->get();
     }
 
     public function addReminder(Request $request)
@@ -606,7 +606,27 @@ class ReportController extends Controller
     //     return view('home.livecalls', ['result' => CdrTag::getReport()]);
     // }
     public function cdrexport(Request $request) {
+
+        set_time_limit(0);
+        $filePath = base_path() . "/storage/cdrreport/report_".Auth::user()->id."_".date('Y_m_d_H_i_s').".csv";
         
+        $reportFile = fopen($filePath, "a+");
+        
+        if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller') {
+            $columns = ['DID_no', 'Customer', 'Caller ID Number', 'Caller ID Name', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Agent'];
+        } elseif(Auth::user()->usertype ==  'groupadmin') {
+            $columns = ['DID_no', 'Caller ID Number', 'Caller ID Name', 'Email', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assigned To'];
+        } elseif(Auth::user()->usertype ==  'operator') {
+            $columns = ['DID_no', 'Caller ID Number', 'Caller ID Name', 'Email', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assignedto'];
+        }
+        fputcsv($reportFile, []);
+        fputcsv($reportFile, $columns);
+
+        fclose($reportFile);
+
+        $limit = 10000;
+        $skipCount = 0;
+
         if(Auth::user()->usertype ==  'admin') {
             $groupId = $request->get('customer');
         } else {
@@ -624,14 +644,45 @@ class ReportController extends Controller
         $end_date = $request->get('end_date');
         $fetchArchive = $request->get('fetchArchive') == '1' ? true : false;
         $searchText = $request->get('search_text');
-
-        $data = $this->getExportData($fetchArchive, $groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date, $searchText);
-        return Excel::create('Report', function($excel) use ($data) {
-            $excel->sheet('mySheet', function($sheet) use ($data)
+        
+        $endOfData = false;
+        while(!$endOfData) {
+            $reportFile = fopen($filePath, "a+");
+            $data = CdrReport::getReportAjax($groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date, $fetchArchive, $searchText, [], $limit, ($limit * $skipCount));
+            $notesCount = 0;
+            if(!empty($data['data']))
             {
-                $sheet->fromArray($data);
-            });
-        })->download('csv');
+                foreach($data['data'] as $k=>$cdrr) {
+                    $array = array();
+                    if(Auth::user()->usertype ==  'admin') {
+                        $array = array($cdrr['didNumber'],$cdrr['customerName'],$cdrr['number'], $cdrr['fullName'], $cdrr['dateTime'],$cdrr['totalTime'],$cdrr['talkTime'],$cdrr['status'],$cdrr['creditUsed'],$cdrr['departmentName'], $cdrr['operatorName']);
+                    } elseif(Auth::user()->usertype == 'reseller') {
+                        $array = array($cdrr['didNumber'], $cdrr['customerName'],$cdrr['number'], $cdrr['fullName'], $cdrr['dateTime'],$cdrr['totalTime'],$cdrr['talkTime'],$cdrr['status'],$cdrr['creditUsed'],$cdrr['departmentName'], $cdrr['operatorName']);
+                    } elseif(Auth::user()->usertype ==  'groupadmin') {
+                        $array = array($cdrr['didNumber'], $cdrr['number'], $cdrr['fullName'], $cdrr['email'], $cdrr['dateTime'],$cdrr['totalTime'],$cdrr['talkTime'], $cdrr['status'],$cdrr['creditUsed'],$cdrr['departmentName'],$cdrr['tag'], $cdrr['operatorName'], $cdrr['assignedOperatorName']);
+                    } elseif(Auth::user()->usertype ==  'operator') {
+                        $array = array($cdrr['didNumber'], $cdrr['number'], $cdrr['fullName'], $cdrr['email'], $cdrr['dateTime'],$cdrr['totalTime'],$cdrr['talkTime'],$cdrr['status'],$cdrr['creditUsed'],$cdrr['departmentName'],$cdrr['tag'], $cdrr['operatorName'], $cdrr['assignedOperatorName']);
+                    }
+                    $notes = $this->notes($cdrr['uniqueId']);
+                    $notesCount = count($notes) > $notesCount ? count($notes) : $notesCount;
+                    if (!empty($notes)) {
+                        foreach ($notes as $index => $note) {
+                            $array[] = "Comments: " . $note->note . " Date: " . $note->datetime . " Operator: " . $note->operator;
+                        }
+                    }
+                    fputcsv($reportFile, $array);
+                    unset($array);
+                }
+            }
+
+            fclose($reportFile);
+            $fetchCount = count($data['data']);
+            unset($data);
+            $skipCount++;
+            $endOfData = $fetchCount < $limit ? true : false;
+        }
+
+    	return response()->download($filePath)->deleteFileAfterSend(true);
         // return Excel::download(new PostExport(), "Report.csv");
     }
 
@@ -678,6 +729,50 @@ class ReportController extends Controller
         array_unshift($result_array, $columns);
         return $result_array;
     }
+
+    // public function getExportData($fetchArchive,$groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date, $searchText)
+    // {
+    //     $data = CdrReport::getReportAjax($groupId, $department, $operator, $tag, $status, $assigned_to, $did_no, $caller_number, $date, $start_date, $end_date, $fetchArchive, $searchText);
+    //     if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller') {
+    //         $columns = ['DID_no', 'Customer', 'Caller ID Number', 'Caller ID Name', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Agent'];
+    //     } elseif(Auth::user()->usertype ==  'groupadmin') {
+    //         $columns = ['DID_no', 'Caller ID Number', 'Caller ID Name', 'Email', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assigned To'];
+    //     } elseif(Auth::user()->usertype ==  'operator') {
+    //         $columns = ['DID_no', 'Caller ID Number', 'Caller ID Name', 'Email', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assignedto'];
+    //     }
+
+    //     $result_array = [];
+    //     $notesCount = 0;
+    //     if(!empty($data['data']))
+    //     {
+    //         foreach($data['data'] as $k=>$cdrr) {
+    //             $array = array();
+    //             if(Auth::user()->usertype ==  'admin') {
+    //                 $array = array($cdrr['didNumber'],$cdrr['customerName'],$cdrr['number'], $cdrr['fullName'], $cdrr['dateTime'],$cdrr['totalTime'],$cdrr['talkTime'],$cdrr['status'],$cdrr['creditUsed'],$cdrr['departmentName'], $cdrr['operatorName']);
+    //             } elseif(Auth::user()->usertype == 'reseller') {
+    //                 $array = array($cdrr['didNumber'], $cdrr['customerName'],$cdrr['number'], $cdrr['fullName'], $cdrr['dateTime'],$cdrr['totalTime'],$cdrr['talkTime'],$cdrr['status'],$cdrr['creditUsed'],$cdrr['departmentName'], $cdrr['operatorName']);
+    //             } elseif(Auth::user()->usertype ==  'groupadmin') {
+    //                 $array = array($cdrr['didNumber'], $cdrr['number'], $cdrr['fullName'], $cdrr['email'], $cdrr['dateTime'],$cdrr['totalTime'],$cdrr['talkTime'], $cdrr['status'],$cdrr['creditUsed'],$cdrr['departmentName'],$cdrr['tag'], $cdrr['operatorName'], $cdrr['assignedOperatorName']);
+    //             } elseif(Auth::user()->usertype ==  'operator') {
+    //                 $array = array($cdrr['didNumber'], $cdrr['number'], $cdrr['fullName'], $cdrr['email'], $cdrr['dateTime'],$cdrr['totalTime'],$cdrr['talkTime'],$cdrr['status'],$cdrr['creditUsed'],$cdrr['departmentName'],$cdrr['tag'], $cdrr['operatorName'], $cdrr['assignedOperatorName']);
+    //             }
+    //             $notes = $this->notes($cdrr['uniqueId']);
+    //             $notesCount = count($notes) > $notesCount ? count($notes) : $notesCount;
+    //             if (!empty($notes)) {
+    //                 foreach ($notes as $index => $note) {
+    //                     $array[] = "Comments: " . $note->note . " Date: " . $note->datetime . " Operator: " . $note->operator;
+    //                 }
+    //             }
+    //             //dd($array);
+    //             $result_array[] = $array;
+    //         }
+    //     }
+    //     for ($i = 0 ; $i < $notesCount ; $i++) {
+    //         $columns[] = 'notes_' . ($i+1);
+    //     }
+    //     array_unshift($result_array, $columns);
+    //     return $result_array;
+    // }
 
     public function cdroutexport()
     {
@@ -742,7 +837,6 @@ class ReportController extends Controller
                 ->leftJoin('operatoraccount', 'cdr_sub.operator', 'operatoraccount.id')
                 ->select('cdr_sub.date_time', 'operatoraccount.opername', 'cdr_sub.status')
                 ->where('cdr_sub.cdr_id', $cdrId)
-                ->where('operatoraccount.groupid', Auth::user()->groupid)
                 ->get();
         $content = View('home.cdr_call_details', ['data' => $data])->render();
 
