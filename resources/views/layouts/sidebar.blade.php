@@ -172,12 +172,14 @@
                             <span class="item-name">Archived CDR Report</span>
                         </a>
                     </li>
+                    @if(Auth::user()->usertype != 'operator')
                     <li class="nav-item">
                         <a class="{{ Route::currentRouteName()=='voicemail' ? 'open' : '' }}" href="{{url('voicemail')}}" >
                             <i class="nav-icon i-Voicemail"></i>
                             <span class="item-name">Voice Mails</span>
                         </a>
                     </li>
+                    @endif
                     @if(Auth::user()->usertype == 'admin')
                     <li class="nav-item">
                         <a class="{{ Route::currentRouteName()=='daily_report' ? 'open' : '' }}" href="{{url('daily_report')}}" >
