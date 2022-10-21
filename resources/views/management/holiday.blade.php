@@ -71,14 +71,14 @@
                                 <input class="form-control datepicker" placeholder="dd-mm-yyyy" name="date" id="date_input" autocomplete="off">
                             </div>
                         </div>
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-md-2 form-group mb-3"> 
                             </div>
                             <div class="col-md-8 form-group mb-3">
                                 <label for="audio_file">Holiday Message File</label>
                                 <input type="file" class="form-control" name="holiday_msg_file" id="holiday_msg_file">
                             </div>
-                        </div>
+                        </div> -->
                         <!-- show message and validate .gsm, .wav, 8kHz  -->
                         <!-- /var/lib/asterisk/sounds/IVRMANGER -->
                         <div class="row">
@@ -127,11 +127,11 @@
             var errors = ''; 
             var formData = new FormData();
 
-            var files = $('#holiday_msg_file')[0].files;
-            // Check file selected or not
-            if(files.length > 0 ){
-                formData.append('holiday_msg_file',files[0]);
-            }
+            // var files = $('#holiday_msg_file')[0].files;
+            // // Check file selected or not
+            // if(files.length > 0 ){
+            //     formData.append('holiday_msg_file',files[0]);
+            // }
             formData.append('_token', $('.holiday_form input[name="_token"]').val());
             formData.append('date', $('.holiday_form #date_input').val());
             formData.append('call_transfer_to', $('.holiday_form #call_transfer_to').val());

@@ -170,6 +170,8 @@ class OperatorController extends Controller
                      'sms_template_caller' => $request->get('sms_template_caller'),
                      'sms_template_operator' => $request->get('sms_template_operator'),
                      'email_to_operator' => $request->get('email_to_operator'),
+                     'caller_sms_template_id' => $request->get('caller_sms_template_id'),
+                     'operator_sms_template_id' => $request->get('operator_sms_template_id'),
                     ];
 
             if(empty($request->get('id'))) {

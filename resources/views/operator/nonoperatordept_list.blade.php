@@ -111,7 +111,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Customer *</label> 
-                                         {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'groupid', 'onChange' => 'setDepartment()')) !!}
+                                         {!! Form::select('groupid', getAccountgroups()->prepend('Select Customer', ''), null,array('class' => 'form-control', 'id' => 'customerId', 'onChange' => 'setDepartment()')) !!}
                                     </div>
                                 </div>  
                                 <div class="row">
@@ -197,7 +197,16 @@
                                             <option value="{DATETIME}">DATETIME</option>
                                         </select>
                                     </div>
-                                </div>          
+                                </div>     
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="caller_sms_template_id">Caller SMS Template ID</label> 
+                                        <input class="form-control" id="caller_sms_template_id" name="caller_sms_template_id" type="text" autocomplete="off">
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
                                     </div>
@@ -216,7 +225,16 @@
                                             <option value="{DATETIME}">DATETIME</option>
                                         </select>
                                     </div>
-                                </div>     
+                                </div>    
+                                <div class="row">
+                                    <div class="col-md-2 form-group mb-3"> 
+                                    </div>
+
+                                    <div class="col-md-8 form-group mb-3">
+                                        <label for="operator_sms_template_id">Operator SMS Template ID</label> 
+                                        <input class="form-control" id="operator_sms_template_id" name="operator_sms_template_id" type="text" autocomplete="off">
+                                    </div>
+                                </div> 
                                 <div class="row">
                                     <div class="col-md-2 form-group mb-3"> 
                                     </div>
@@ -426,7 +444,7 @@
             });             
         });
         
-        $('.edit_non_operator').on('click',function(e)
+        $(document).on('click', '.edit_non_operator', function(e)
         {
             $("#exampleModalCenterTitle-2").text('Edit NonOperator Department');
             var id = $(this).attr("id");
@@ -439,7 +457,7 @@
                 $("#non_operator_id").val(res.id);
                 $("#resellerid").val(res.resellerid);
                 $("#customerId").val(res.groupid);
-                setDepartment(groupid);
+                setDepartment(res.departmentid);
                 $("#departmentid").val(res.departmentid);
                 $("#sms_to_caller").val(res.sms_to_caller);
                 $("#sms_to_operator").val(res.sms_to_operator);
@@ -448,6 +466,8 @@
                 $("#email_to_operator").val(res.email_to_operator);
                 $("#sms_template_caller").val(res.sms_template_caller);
                 $("#sms_template_operator").val(res.sms_template_operator);
+                $("#caller_sms_template_id").val(res.caller_sms_template_id);
+                $("#operator_sms_template_id").val(res.operator_sms_template_id);
                 if(res.generateticket == 'Yes') {
                     $("#generateticket_yes").prop("checked", true);
                 } else {
