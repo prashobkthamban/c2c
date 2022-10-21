@@ -610,6 +610,8 @@ class ReportController extends Controller
         set_time_limit(0);
         $filePath = base_path() . "/storage/cdrreport/report_".Auth::user()->id."_".date('Y_m_d_H_i_s').".csv";
         
+        header('Content-Type: application/csv'); 
+        // header('Content-disposition: attachment; filename="' . $filePath . '"');
         $reportFile = fopen($filePath, "a+");
         
         if(Auth::user()->usertype ==  'admin' || Auth::user()->usertype == 'reseller') {
@@ -619,7 +621,7 @@ class ReportController extends Controller
         } elseif(Auth::user()->usertype ==  'operator') {
             $columns = ['DID_no', 'Caller ID Number', 'Caller ID Name', 'Email', 'Date', 'Totaltime', 'Talktime', 'Status', 'Credit', 'Department', 'Call Tag', 'Agent', 'Assignedto'];
         }
-        fputcsv($reportFile, []);
+        // fputcsv($reportFile, []);
         fputcsv($reportFile, $columns);
 
         fclose($reportFile);
