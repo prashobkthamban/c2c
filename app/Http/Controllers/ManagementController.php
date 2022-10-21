@@ -45,34 +45,37 @@ class ManagementController extends Controller
         if($validator->fails()) {
             $data['error'] = $validator->messages(); 
         } else {
-            $file=$request->file('holiday_msg_file');
+            $file = $request->file('holiday_msg_file');
             //Display File Name
             // echo 'File Name: '.$file->getClientOriginalName();
             // echo '<br>';
         
-            //Display File Extension
-            $extension = $file->getClientOriginalExtension();
-            if(!in_array($extension, ['gsm', 'wav'])) {
-                return ['error' => ['error' => ['Only .gsm or .wav files allowed']]];
-            }
-        
-            //Display File Real Path
-            // echo 'File Real Path: '.$file->getRealPath();
-            // echo '<br>';
-        
-            //Display File Size
-            $fileSize = $file->getSize();
-            if($fileSize) {
-                // return ['error' => ['error' => ['Only .gsm or .wav files allowed']]];
-            }
-        
-            //Display File Mime Type
-            // echo 'File Mime Type: '.$file->getMimeType();
             $date = !empty($request->get('date')) ? Carbon::parse($request->get('date'))->format('Y-m-d') : null;
-            //Move Uploaded File
-            $destinationPath = '/var/lib/asterisk/sounds/IVRMANGER';
-            $fileName = str_replace('-', '_', $date) . '_holiday_msg_file_' . Auth::user()->groupid . '_' . time() . '.' . $extension;
-            $file->move($destinationPath, $fileName);
+            $fileName = '';
+            if ($file) {
+                //Display File Extension
+                $extension = $file->getClientOriginalExtension();
+                if(!in_array($extension, ['gsm', 'wav'])) {
+                    return ['error' => ['error' => ['Only .gsm or .wav files allowed']]];
+                }
+            
+                //Display File Real Path
+                // echo 'File Real Path: '.$file->getRealPath();
+                // echo '<br>';
+            
+                //Display File Size
+                $fileSize = $file->getSize();
+                if($fileSize) {
+                    // return ['error' => ['error' => ['Only .gsm or .wav files allowed']]];
+                }
+            
+                //Display File Mime Type
+                // echo 'File Mime Type: '.$file->getMimeType();
+                //Move Uploaded File
+                $destinationPath = '/var/lib/asterisk/sounds/IVRMANGER';
+                $fileName = str_replace('-', '_', $date) . '_holiday_msg_file_' . Auth::user()->groupid . '_' . time() . '.' . $extension;
+                $file->move($destinationPath, $fileName);
+            }
 
             $holiday = [
                 'date' => $date,
