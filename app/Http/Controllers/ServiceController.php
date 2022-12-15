@@ -355,11 +355,11 @@ class ServiceController extends Controller
                 $contactName = getConatctName($result->callerid);
                 $firstName = count($contactName) == null ? $result->callerid :  $contactName[0]->fname;
                 $pushApi = DB::table('pushapi')
-                            ->where('apitype', 'AgentPopup')
+                            ->whereIn('apitype', ['AgentPopup', 'webhook'])
                             ->where('groupid', $result->groupid)
                             ->first();
                 $webHookLink = '';
-                if (!empty($pushApi) && $pushApi->apitype == 'AgentPopup') {
+                if (!empty($pushApi) && in_array($pushApi->apitype, ['AgentPopup', 'webhook'])) {
                     $webHookLink = str_replace('{CALLERID}', substr($result->callerid, -10), $pushApi->api);
                 }
                 $date1 = date_create();
