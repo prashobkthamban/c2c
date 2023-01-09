@@ -167,7 +167,7 @@
 
                                     <div class="col-md-8 form-group mb-3">
                                         <label for="firstName1">Operator number</label> 
-                                        {!! Form::number('operator_no', null, ['class' => 'form-control', 'id' => 'operator_no']) !!}
+                                        {!! Form::text('operator_no', null, ['class' => 'form-control', 'id' => 'operator_no']) !!}
                                     </div>
                                 </div> 
                                 <div class="row">
@@ -466,8 +466,8 @@
                 $("#email_to_operator").val(res.email_to_operator);
                 $("#sms_template_caller").val(res.sms_template_caller);
                 $("#sms_template_operator").val(res.sms_template_operator);
-                $("#caller_sms_template_id").val(res.caller_sms_template_id);
-                $("#operator_sms_template_id").val(res.operator_sms_template_id);
+                $("#caller_sms_template_id").val(res.templateid_caller);
+                $("#operator_sms_template_id").val(res.templateid_operator);
                 if(res.generateticket == 'Yes') {
                     $("#generateticket_yes").prop("checked", true);
                 } else {
