@@ -383,9 +383,9 @@
                     });
                     toastr.error(errors);
                 } else {
-                    // $("#upload_comp").modal('hide');
-                    // setTimeout(function(){ location.reload() }, 500);
-                    // toastr.success(res.success);                
+                    $("#upload_comp").modal('hide');
+                    toastr.success(res.success);            
+                    setTimeout(function(){ location.reload() }, 500);
                 }
                
             },
@@ -427,7 +427,7 @@
           });
         });
 
-        $('.upload_complaints').on('click',function(e)
+        $(document).on('click', '.upload_complaints', function(e)
         {
             var uploadid = this.id;
             var upload_val = uploadid.replace("upload_", "");
@@ -490,7 +490,7 @@
         });
     });
 
-    $('#resellerid').on('change',function(e) {
+    $(document).on('change', '#resellerid', function(e) {
         $('#departmentid').val([])
     });
 </script>
