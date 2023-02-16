@@ -1032,8 +1032,6 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
         if (!empty($request->get('id'))) {
             $validator = Validator::make($request->all(), [
                 'resellername' => 'required',
-                'username' => 'required',
-                'password' => 'required',
                 'cdr_apikey' => 'required',
             ]);
         } else {

@@ -87,7 +87,7 @@
                                         <input type="text" class="form-control" placeholder="Coperate Name" name="resellername" id="resellername"> 
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row credentials">
                                     <div class="col-md-2 form-group mb-3"> 
                                     </div>
 
@@ -96,7 +96,7 @@
                                         <input type="text" class="form-control" placeholder="Username" name="username" id="username">
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row credentials">
                                     <div class="col-md-2 form-group mb-3"> 
                                     </div>
 
@@ -187,8 +187,9 @@
                     $("#id").val(data.id);
                     $("#resellername").val(data.resellername);
                     $("#cdr_apikey").val(data.cdr_apikey);
-                    $("#username").val(data.username);
-                    $("#password").val(data.user_pwd);
+                    $('.credentials').hide();
+                    // $("#username").val(data.username);
+                    // $("#password").val(data.user_pwd);
                     $("#associated_groups").val(jQuery.parseJSON(data.associated_groups));
                 } 
             },
