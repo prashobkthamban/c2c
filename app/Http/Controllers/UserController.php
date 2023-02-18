@@ -1052,21 +1052,20 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                 'cdr_apikey' => $request->get('cdr_apikey'),
                 'associated_groups' => json_encode($associated_groups)
             ];
-            $account = [
-                'status' => 'Active',
-                'usertype' => 'reseller',
-                'username' => $request->get('username'),
-                'password' => Hash::make($request->get('password')),
-                'user_pwd' => $request->get('password'),
-            ];
 
             $resellerId = $request->get('id');
             if (empty($resellerId)) {
                 $resellerId = DB::table('resellergroup')->insertGetId($reseller);
-                $new_field = array('resellerid' => $resellerId);
-                $account_1 = array_merge($account, $new_field);
+                $account = [
+                    'resellerid' => $resellerId,
+                    'username' => $request->get('username'),
+                    'password' => Hash::make($request->get('password')),
+                    'user_pwd' => $request->get('password'),
+                    'status' => 'Active',
+                    'usertype' => 'reseller'
+                ];
                 if (!empty($resellerId)) {
-                    DB::table('account')->insert($account_1);
+                    DB::table('account')->insert($account);
                     $data['success'] = 'Coperate added successfully.';
                 }
             } else {
@@ -1083,9 +1082,6 @@ LEFT JOIN accountgroup ON accountgroup.id = operatoraccount.groupid LEFT JOIN op
                 DB::table('resellergroup')
                     ->where('id', $resellerId)
                     ->update($reseller);
-                DB::table('account')
-                    ->where('resellerid', $resellerId)
-                    ->update($account);
                 $data['success'] = 'Coperate updated successfully.';
             }
             if (count($associated_groups) > 0) {
